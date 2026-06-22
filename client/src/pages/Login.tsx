@@ -233,10 +233,11 @@ export default function Login() {
                     <div className="flex items-start gap-3 pb-3 border-b border-white/10">
                       <Checkbox 
                         id="selectAll" 
-                        checked={agreeTerms && agreeAge}
+                        checked={agreeTerms && agreeAge && agreeMarketing}
                         onCheckedChange={(checked) => {
                           setBgAgreeTerms(!!checked);
                           setBgAgreeAge(!!checked);
+                          setAgreeMarketing(!!checked);
                         }}
                         className="mt-0.5 border-white/20 data-[state=checked]:bg-primary"
                       />
