@@ -268,16 +268,23 @@ export default function Home() {
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background border-b border-border">
           <div className="container pt-3 md:pt-4">
-            <div className="mb-6">
+            <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
                 News
               </h2>
+              <Link href="/news">
+                <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white font-semibold text-sm px-5">
+                  View More
+                </Button>
+              </Link>
             </div>
 
             {/* News Grid - 2 rows of 3 cards on desktop, 2 columns on mobile */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
               {newsData.map((item) => (
-                <NewsCard key={item.id} item={item} category="NEWS" />
+                <Link key={item.id} href={`/news/${item.id}`}>
+                  <NewsCard item={item} category="NEWS" />
+                </Link>
               ))}
             </div>
           </div>
