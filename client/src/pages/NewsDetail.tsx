@@ -167,11 +167,6 @@ function NewsDetailContent() {
     );
   }
 
-  // Related articles: same category, excluding current
-  const related = newsData
-    .filter(n => n.id !== news.id && n.category === news.category)
-    .slice(0, 3);
-
   return (
     <Layout>
       <>
@@ -222,36 +217,6 @@ function NewsDetailContent() {
             </Link>
           </div>
 
-          {/* Related Articles */}
-          {related.length > 0 && (
-            <div className="max-w-3xl mx-auto mt-14">
-              <h2 className="text-xl font-black text-slate-900 mb-5">Related Articles</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {related.map(rel => (
-                  <Link key={rel.id} href={`/news/${rel.id}`}>
-                    <div className="bg-white border border-purple-100 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
-                      <div className="aspect-video overflow-hidden">
-                        <img
-                          src={rel.image}
-                          alt={rel.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                      <div className="p-3">
-                        <span className={`px-2 py-0.5 rounded text-xs font-semibold ${getCategoryColor(rel.category)}`}>
-                          {rel.category.toLowerCase()}
-                        </span>
-                        <h3 className="text-sm font-bold text-slate-900 mt-1.5 line-clamp-2 group-hover:text-purple-600 transition-colors">
-                          {rel.title}
-                        </h3>
-                        <p className="text-xs text-slate-500 mt-1">{rel.date}</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
         </main>
       </>
     </Layout>
