@@ -5,31 +5,43 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import News from "./pages/News";
+import NewsDetail from "./pages/NewsDetail";
+import Notice from "./pages/Notice";
+import NoticeDetail from "./pages/NoticeDetail";
+import GameInfo from "./pages/GameInfo";
+import PointShop from "./pages/PointShop";
+import Login from "./pages/Login";
+import MyPage from "./pages/MyPage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import CookiePolicy from "./pages/CookiePolicy";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      <Route path="/" component={Home} />
+      <Route path="/news" component={News} />
+      <Route path="/news/:id" component={NewsDetail} />
+      <Route path="/notice" component={Notice} />
+      <Route path="/notice/:id" component={NoticeDetail} />
+      <Route path="/game-info" component={GameInfo} />
+      <Route path="/point-shop" component={PointShop} />
+      <Route path="/login" component={Login} />
+      <Route path="/my-page" component={MyPage} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/terms-of-service" component={TermsOfService} />
+      <Route path="/cookie-policy" component={CookiePolicy} />
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light" switchable>
         <TooltipProvider>
           <Toaster />
           <Router />
