@@ -25,4 +25,21 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Files table for storing user-uploaded files
+ * Stores metadata and S3 storage references
+ */
+export const files = mysqlTable("files", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  filename: varchar("filename", { length: 255 }).notNull(),
+  fileKey: varchar("fileKey", { length: 512 }).notNull(),
+  fileUrl: text("fileUrl").notNull(),
+  mimeType: varchar("mimeType", { length: 100 }),
+  fileSize: int("fileSize"),
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type File = typeof files.$inferSelect;
+export type InsertFile = typeof files.$inferInsert;

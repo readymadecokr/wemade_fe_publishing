@@ -1,224 +1,214 @@
-import { useState } from "react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 
-const ALL_NEWS = [
-  {
-    id: 1,
-    title: "Ragnarok Online: Patch Update June 17, 2026",
-    date: "June 17, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO1_pathupdate_17062026_3443274d.jpg",
-    excerpt: "New content and balance adjustments arrive in this week's patch update for Ragnarok Online.",
-  },
-  {
-    id: 2,
-    title: "Ragnarok Online: Patch Update June 10, 2026",
-    date: "June 10, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO_PatchUpdate_10062026_8b6abd6d.jpg",
-    excerpt: "This week's patch brings new quests, item adjustments, and bug fixes to Ragnarok Online.",
-  },
-  {
-    id: 3,
-    title: "Ragnarok Online: Patch Update June 4, 2026",
-    date: "June 4, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO_PatchUpdate_04062026-1_eab33218.jpg",
-    excerpt: "June 4th patch update includes new seasonal content and class balance improvements.",
-  },
-  {
-    id: 4,
-    title: "Ragnarok Online: Patch Update May 27, 2026",
-    date: "May 27, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO_PatchUpdate_27052026_f346f204.webp",
-    excerpt: "May 27th update delivers new dungeon content and performance improvements.",
-  },
-  {
-    id: 5,
-    title: "Ragnarok Online: Patch Update May 13, 2026",
-    date: "May 13, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO1_patchupdate_13052026_61973db6.jpg",
-    excerpt: "Mid-May patch introduces new equipment sets and PvP balance changes.",
-  },
-  {
-    id: 6,
-    title: "Ragnarok Online: Patch Update May 6, 2026",
-    date: "May 6, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO1_06052026_ade8545e.jpg",
-    excerpt: "Early May update focuses on guild system improvements and new crafting recipes.",
-  },
-  {
-    id: 7,
-    title: "Ragnarok Online: Patch Update April 22, 2026",
-    date: "April 22, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO_PatchUpdate_22042026_c87e4338.webp",
-    excerpt: "Spring patch brings new seasonal events and limited-time rewards.",
-  },
-  {
-    id: 8,
-    title: "Ragnarok Online: Patch Update April 1, 2026",
-    date: "April 1, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO_PatchUpdate_700x360_01042026_5124866d.webp",
-    excerpt: "April Fool's Day special patch with surprise content and limited events.",
-  },
-  {
-    id: 9,
-    title: "Ragnarok Online: Patch Update March 18, 2026",
-    date: "March 18, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO_PatchUpdate18032026_700x360_e42342e6.webp",
-    excerpt: "March 18th patch includes new map areas and improved monster AI.",
-  },
-  {
-    id: 10,
-    title: "Ragnarok Online: Patch Update March 11, 2026",
-    date: "March 11, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO_PatchUpdate11032026_700x360_e6f2da5a.webp",
-    excerpt: "New skill updates and party system improvements in this week's patch.",
-  },
-  {
-    id: 11,
-    title: "Ragnarok Online: Patch Update March 4, 2026",
-    date: "March 4, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO1_04032026PatchUpdate_700X360_6a1e12c3.webp",
-    excerpt: "Early March patch delivers new headgear items and crafting system updates.",
-  },
-  {
-    id: 12,
-    title: "Ragnarok Online: Patch Update February 4, 2026",
-    date: "February 4, 2026",
-    category: "Patch Update",
-    image: "/manus-storage/RO_PatchUpdate_700X360_04022026_055a0936.webp",
-    excerpt: "February patch brings Valentine's Day events and new couple quests.",
-  },
-  {
-    id: 13,
-    title: "6th Anniversary Music Performance",
-    date: "June 1, 2026",
-    category: "Event",
-    image: "/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_4149e08c.png",
-    excerpt: "Celebrate the 6th anniversary with a special live music performance event.",
-  },
-  {
-    id: 14,
-    title: "TRO Championship 2026 — Registration Open",
-    date: "May 20, 2026",
-    category: "Event",
-    image: "/manus-storage/TRO-Championship-2026_d74b0527.webp",
-    excerpt: "Register now for the Thailand Ragnarok Online Championship 2026.",
-  },
-  {
-    id: 15,
-    title: "Play With Discord — Community Event",
-    date: "May 15, 2026",
-    category: "Event",
-    image: "/manus-storage/ChatGPT-Image-Play-With-Discord_735dde20.webp",
-    excerpt: "Join our Discord community event for exclusive in-game rewards.",
-  },
-  {
-    id: 16,
-    title: "LINE OA Official Channel Launch",
-    date: "May 20, 2026",
-    category: "Event",
-    image: "/manus-storage/PR-pack-Line-OA-Cover-700x36020052026_073afc30.webp",
-    excerpt: "Follow our new official LINE OA channel for exclusive news and promotions.",
-  },
-  {
-    id: 17,
-    title: "Ragnarok Online MC Championship 2024",
-    date: "December 20, 2024",
-    category: "Event",
-    image: "/manus-storage/20241220_ROMC_PC_Banner_86d74bdb.jpg",
-    excerpt: "Highlights from the Ragnarok Online MC Championship 2024 grand finals.",
-  },
-  {
-    id: 18,
-    title: "GGT RO Shop — Craft & Play",
-    date: "April 10, 2026",
-    category: "Event",
-    image: "/manus-storage/GGT-RO-Shop-Craft-Play-3-1920x1080_37bb44a8.webp",
-    excerpt: "New crafting items available in the GGT RO Shop. Craft, play, and earn rewards.",
-  },
-];
+const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
-const CATEGORIES = ["All", "Patch Update", "Event"];
+/**
+ * Design Philosophy: Flyff Universe + Play2Bit Style
+ * - Professional gaming portal design
+ * - News listing page (promotional content)
+ * - Interviews, events, updates with banner images
+ */
 
-export default function News() {
-  const [activeCategory, setActiveCategory] = useState("All");
+function NewsPageContent() {
+  const [isMobile, setIsMobile] = useState(false);
 
-  const filtered = activeCategory === "All"
-    ? ALL_NEWS
-    : ALL_NEWS.filter((n) => n.category === activeCategory);
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // 15 news items with banner images
+  const newsData = [
+    {
+      id: 1,
+      title: "Ragnarok Online: Patch Update June 17, 2026",
+      date: "6/17/2026 10:38 PM",
+      category: "Update",
+      image: `${ASSET_BASE_URL}/manus-storage/RO1_pathupdate_17062026_f83f13b8_0ccbefaa.jpg`,
+    },
+    {
+      id: 2,
+      title: "Ragnarok Online: Patch Update June 10, 2026",
+      date: "6/17/2026 10:32 PM",
+      category: "Event",
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_10062026_219a465c_5903482d.jpg`,
+    },
+    {
+      id: 3,
+      title: "Ragnarok Online: Patch Update June 4, 2026",
+      date: "6/17/2026 1:08:40 PM",
+      category: "Event",
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_04062026-1_29153260_878bf95f.jpg`,
+    },
+    {
+      id: 4,
+      title: "Ragnarok Online: Patch Update May 27, 2026",
+      date: "5/28/2026 4:07:24 PM",
+      category: "Interview",
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_27052026_953943aa_fa54354f.webp`,
+    },
+    {
+      id: 5,
+      title: "Gravity Game Tech Launches LINE Official Account",
+      date: "5/28/2026 2:18:45 PM",
+      category: "Event",
+      image: `${ASSET_BASE_URL}/manus-storage/PR-pack-Line-OA-Cover-700x36020052026_d4332f85_70996280.webp`,
+    },
+    {
+      id: 6,
+      title: "Ragnarok Online: Music Contest Winners Announced",
+      date: "5/22/2026 2:03:43 PM",
+      category: "Update",
+      image: `${ASSET_BASE_URL}/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_bc640d8a_0c8f7386.png`,
+    },
+    {
+      id: 7,
+      title: "Ragnarok Online: Patch Update May 13, 2026",
+      date: "5/14/2026 8:54:59 AM",
+      category: "Update",
+      image: `${ASSET_BASE_URL}/manus-storage/RO1_patchupdate_13052026_700e9d1f_01c2e74f.jpg`,
+    },
+    {
+      id: 8,
+      title: "Ragnarok Online: Special Anniversary Event",
+      date: "5/11/2026 10:02:34 AM",
+      category: "Event",
+      image: `${ASSET_BASE_URL}/manus-storage/RO1_04032026PatchUpdate_700X360_3345ccff_33b86c1a.webp`,
+    },
+    {
+      id: 9,
+      title: "Ragnarok Monster Shop @ Craft & Play 2026",
+      date: "5/6/2026 5:40:04 PM",
+      category: "Event",
+      image: `${ASSET_BASE_URL}/manus-storage/GGT-RO-Shop-Craft-Play-3-1920x1080_46621aa6_4cf197fb.webp`,
+    },
+    {
+      id: 10,
+      title: "Ragnarok Online: Patch Update May 6, 2026",
+      date: "5/6/2026 2:47:16 PM",
+      category: "Update",
+      image: `${ASSET_BASE_URL}/manus-storage/RO1_06052026_47ecad62_ae242c6b.jpg`,
+    },
+    {
+      id: 11,
+      title: "Ragnarok Online: Patch Update April 29, 2026",
+      date: "4/30/2026 11:29:14 AM",
+      category: "Event",
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate18032026_700x360_68e5480e_82a64304.webp`,
+    },
+    {
+      id: 12,
+      title: "Ragnarok Online: Patch Update April 22, 2026",
+      date: "4/30/2026 11:27:05 AM",
+      category: "Update",
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_22042026_337d2472_7c5c5406.webp`,
+    },
+    {
+      id: 13,
+      title: "Ragnarok Online: Patch Update April 8, 2026",
+      date: "4/8/2026 2:24:50 PM",
+      category: "Update",
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_700x360_01042026_04e81156_70b5b497.webp`,
+    },
+    {
+      id: 14,
+      title: "Ragnarok Online: Patch Update April 1, 2026",
+      date: "4/8/2026 2:22:00 PM",
+      category: "Event",
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_700X360_04022026_d0450ed3_83809f8e.webp`,
+    },
+    {
+      id: 15,
+      title: "Ragnarok Online: Patch Update March 25, 2026",
+      date: "4/7/2026 6:49:23 AM",
+      category: "Update",
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate11032026_700x360_e08b651b_934c919f.webp`,
+    },
+  ];
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "Update":
+        return "bg-purple-100 text-purple-700";
+      case "Event":
+        return "bg-pink-100 text-pink-700";
+      case "Interview":
+        return "bg-indigo-100 text-indigo-700";
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  const renderCard = (news: any) => (
+    <div className="bg-white border border-purple-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
+      {/* Image */}
+      <div className="w-full h-20 md:h-48 overflow-hidden">
+        <img
+          src={news.image}
+          alt={news.title}
+          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+        />
+      </div>
+
+      {/* Content */}
+      <div className="p-1.5 md:p-4 flex flex-col justify-between flex-1">
+        <div>
+          <span className={`px-2 py-0.5 rounded text-xs font-semibold ${getCategoryColor(news.category)}`}>
+            {news.category.toLowerCase()}
+          </span>
+          <h3 className="text-xs md:text-lg font-bold text-slate-900 mt-0.5 md:mt-2 line-clamp-2">
+            {news.title}
+          </h3>
+        </div>
+        <span className="text-xs md:text-sm text-slate-500 mt-0.5 md:mt-3">{news.date}</span>
+      </div>
+    </div>
+  );
 
   return (
-    <Layout>
+    <>
       {/* Page Header */}
-      <div className="bg-primary/10 border-b border-border py-10">
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-12">
         <div className="container">
-          <h1 className="text-3xl font-bold text-foreground">News</h1>
-          <p className="text-muted-foreground mt-2 text-sm">
-            Latest patch updates, events, and announcements
-          </p>
+          <h1 className="text-4xl font-black mb-2">📰 News</h1>
+          <p className="text-purple-100">Latest news, interviews, and community highlights</p>
         </div>
       </div>
 
-      <div className="container py-10">
-        {/* Category Filter */}
-        <div className="flex items-center gap-2 mb-8">
-          {CATEGORIES.map((cat) => (
-            <Button
-              key={cat}
-              variant={activeCategory === cat ? "default" : "outline"}
-              size="sm"
-              onClick={() => setActiveCategory(cat)}
-              className={activeCategory === cat ? "gaming-gradient text-white" : ""}
-            >
-              {cat}
-            </Button>
+      {/* Content - 2 columns grid on mobile, 3 columns on desktop */}
+      <main className="container py-4 px-2 md:px-4 md:py-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-6">
+          {newsData.map((news) => (
+            <div key={news.id}>
+              {isMobile ? (
+                // Mobile: No link, just display card
+                renderCard(news)
+              ) : (
+                // Desktop: Clickable link
+                <Link href={`/news/${news.id}`} asChild>
+                  <a>
+                    {renderCard(news)}
+                  </a>
+                </Link>
+              )}
+            </div>
           ))}
-          <span className="ml-auto text-sm text-muted-foreground">{filtered.length} articles</span>
         </div>
+      </main>
+    </>
+  );
+}
 
-        {/* News Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((item) => (
-            <Link key={item.id} href={`/news/${item.id}`}>
-              <div className="bg-card border border-border rounded-xl overflow-hidden card-hover cursor-pointer group h-full flex flex-col">
-                <div className="relative aspect-video overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <span className={`absolute top-2 left-2 px-2 py-0.5 text-white text-xs font-semibold rounded ${
-                    item.category === "Event" ? "bg-purple-600" : "bg-primary"
-                  }`}>
-                    {item.category}
-                  </span>
-                </div>
-                <div className="p-4 flex flex-col flex-1">
-                  <p className="text-xs text-muted-foreground mb-1.5">{item.date}</p>
-                  <h3 className="text-sm font-semibold text-card-foreground leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground line-clamp-2 mt-auto">
-                    {item.excerpt}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
+export default function NewsPage() {
+  return (
+    <Layout>
+      <NewsPageContent />
     </Layout>
   );
 }

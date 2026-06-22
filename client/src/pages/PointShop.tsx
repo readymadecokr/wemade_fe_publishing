@@ -1,324 +1,292 @@
-import { useState } from "react";
-import Layout from "@/components/Layout";
+import { useLocation } from "wouter";
+import { ShoppingCart, Star, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Star, Zap, Package, Crown, Sparkles } from "lucide-react";
-import { toast } from "sonner";
-import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+import Layout from "@/components/Layout";
+import { useState } from "react";
 
-const CATEGORIES = ["All", "Costumes", "Mounts", "Consumables", "Bundles", "Limited"];
+const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
-const SHOP_ITEMS = [
-  {
-    id: 1,
-    name: "Summer Crown Headgear",
-    category: "Costumes",
-    price: 500,
-    originalPrice: null,
-    image: "/manus-storage/RO1_pathupdate_17062026_3443274d.jpg",
-    badge: "New",
-    description: "A dazzling summer crown that shines under the Midgard sun.",
-    limited: false,
-  },
-  {
-    id: 2,
-    name: "Ocean Wave Costume Set",
-    category: "Costumes",
-    price: 1200,
-    originalPrice: 1500,
-    image: "/manus-storage/GGT-RO-Shop-Craft-Play-3-1920x1080_37bb44a8.webp",
-    badge: "Sale",
-    description: "Complete summer costume set with ocean-themed accessories.",
-    limited: false,
-  },
-  {
-    id: 3,
-    name: "Tropical Poring Mount",
-    category: "Mounts",
-    price: 2000,
-    originalPrice: null,
-    image: "/manus-storage/poring-character_89ac5939.png",
-    badge: "Popular",
-    description: "Ride the adorable Tropical Poring across Midgard in style.",
-    limited: false,
-  },
-  {
-    id: 4,
-    name: "Summer Token Booster Pack",
-    category: "Consumables",
-    price: 300,
-    originalPrice: null,
-    image: "/manus-storage/RO_PatchUpdate_27052026_f346f204.webp",
-    badge: null,
-    description: "Boost your Summer Token collection rate for 7 days.",
-    limited: false,
-  },
-  {
-    id: 5,
-    name: "Anniversary Bundle — 6th Year",
-    category: "Bundles",
-    price: 3500,
-    originalPrice: 5000,
-    image: "/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_4149e08c.png",
-    badge: "Limited",
-    description: "Exclusive 6th Anniversary bundle with rare costume, mount, and consumables.",
-    limited: true,
-  },
-  {
-    id: 6,
-    name: "EXP Boost Potion (30 days)",
-    category: "Consumables",
-    price: 800,
-    originalPrice: null,
-    image: "/manus-storage/RO_PatchUpdate_10062026_8b6abd6d.jpg",
-    badge: null,
-    description: "Increase your EXP gain by 50% for 30 days.",
-    limited: false,
-  },
-  {
-    id: 7,
-    name: "Discord Exclusive Headgear",
-    category: "Costumes",
-    price: 0,
-    originalPrice: null,
-    image: "/manus-storage/ChatGPT-Image-Play-With-Discord_735dde20.webp",
-    badge: "Free",
-    description: "Exclusive headgear for Discord community members. Join our Discord to claim!",
-    limited: true,
-  },
-  {
-    id: 8,
-    name: "Champion's War Steed",
-    category: "Mounts",
-    price: 4500,
-    originalPrice: null,
-    image: "/manus-storage/TRO-Championship-2026_d74b0527.webp",
-    badge: "Premium",
-    description: "The legendary war steed used by TRO Championship champions.",
-    limited: true,
-  },
-  {
-    id: 9,
-    name: "Starter Adventure Pack",
-    category: "Bundles",
-    price: 1000,
-    originalPrice: 1800,
-    image: "/manus-storage/RO_PatchUpdate_22042026_c87e4338.webp",
-    badge: "Sale",
-    description: "Perfect for new adventurers — includes EXP boost, equipment, and currency.",
-    limited: false,
-  },
-  {
-    id: 10,
-    name: "Kafra Teleport Tickets (x50)",
-    category: "Consumables",
-    price: 200,
-    originalPrice: null,
-    image: "/manus-storage/RO_PatchUpdate_700X360_04022026_055a0936.webp",
-    badge: null,
-    description: "50 Kafra Teleport Tickets for instant travel across Midgard.",
-    limited: false,
-  },
-  {
-    id: 11,
-    name: "Ayothaya Festival Costume",
-    category: "Costumes",
-    price: 1800,
-    originalPrice: null,
-    image: "/manus-storage/6th-Anniversary-Sunset-of-Ayothaya-1900x600_4d61df38.webp",
-    badge: "Limited",
-    description: "Exclusive costume from the Sunset of Ayothaya 6th Anniversary event.",
-    limited: true,
-  },
-  {
-    id: 12,
-    name: "Premium Monthly Pass",
-    category: "Bundles",
-    price: 2500,
-    originalPrice: null,
-    image: "/manus-storage/ROS-Thailand-2026-1900x600_9802f0ff.webp",
-    badge: "Best Value",
-    description: "30-day premium pass with daily rewards, EXP boost, and exclusive items.",
-    limited: false,
-  },
-];
-
-const BADGE_STYLES: Record<string, string> = {
-  New: "bg-green-500 text-white",
-  Sale: "bg-red-500 text-white",
-  Popular: "bg-orange-500 text-white",
-  Limited: "bg-purple-600 text-white",
-  Premium: "bg-yellow-500 text-black",
-  Free: "bg-blue-500 text-white",
-  "Best Value": "bg-emerald-600 text-white",
-};
+interface ShopItem {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+  image: string;
+  discount?: number;
+  popular?: boolean;
+}
 
 export default function PointShop() {
-  const { isAuthenticated } = useAuth();
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [cart, setCart] = useState<number[]>([]);
+  const [, setLocation] = useLocation();
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [cart, setCart] = useState<ShopItem[]>([]);
 
-  const filtered = activeCategory === "All"
-    ? SHOP_ITEMS
-    : SHOP_ITEMS.filter((i) => i.category === activeCategory);
+  const shopItems: ShopItem[] = [
+    {
+      id: 1,
+      name: "Premium Character Skin",
+      price: 9900,
+      category: "cosmetics",
+      image: `${ASSET_BASE_URL}/manus-storage/20241220_ROMC_PC_Banner_1c1329c9_9464f63e.jpg`,
+      popular: true,
+    },
+    {
+      id: 2,
+      name: "Exclusive Pet",
+      price: 4900,
+      category: "pets",
+      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d_340f09e8.png`,
+      discount: 20,
+    },
+    {
+      id: 3,
+      name: "Weapon Enhancement Pack",
+      price: 14900,
+      category: "items",
+      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d_340f09e8.png`,
+      popular: true,
+    },
+    {
+      id: 4,
+      name: "Mount Costume",
+      price: 7900,
+      category: "cosmetics",
+      image: `${ASSET_BASE_URL}/manus-storage/20241220_ROMC_PC_Banner_1c1329c9_9464f63e.jpg`,
+    },
+    {
+      id: 5,
+      name: "Battle Pass",
+      price: 9900,
+      category: "battle-pass",
+      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d_340f09e8.png`,
+      discount: 10,
+    },
+    {
+      id: 6,
+      name: "Rare Wings",
+      price: 19900,
+      category: "cosmetics",
+      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d_340f09e8.png`,
+      popular: true,
+    },
+    {
+      id: 7,
+      name: "Experience Booster (7 Days)",
+      price: 4900,
+      category: "items",
+      image: `${ASSET_BASE_URL}/manus-storage/20241220_ROMC_PC_Banner_1c1329c9_9464f63e.jpg`,
+    },
+    {
+      id: 8,
+      name: "Legendary Armor Set",
+      price: 24900,
+      category: "items",
+      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d_340f09e8.png`,
+      discount: 15,
+    },
+  ];
 
-  const handleBuy = (item: typeof SHOP_ITEMS[0]) => {
-    if (!isAuthenticated) {
-      toast.error("Please sign in to purchase items.");
-      setTimeout(() => (window.location.href = getLoginUrl()), 1000);
-      return;
-    }
-    if (item.price === 0) {
-      toast.success(`${item.name} claimed successfully!`);
-      return;
-    }
-    setCart((prev) => [...prev, item.id]);
-    toast.success(`${item.name} added to cart!`);
+  const categories = [
+    { id: "all", label: "All Items" },
+    { id: "cosmetics", label: "Cosmetics" },
+    { id: "pets", label: "Pets" },
+    { id: "items", label: "Items" },
+    { id: "battle-pass", label: "Battle Pass" },
+  ];
+
+  const filteredItems =
+    selectedCategory === "all"
+      ? shopItems
+      : shopItems.filter((item) => item.category === selectedCategory);
+
+  const handleAddToCart = (item: ShopItem) => {
+    setCart([...cart, item]);
   };
 
   return (
     <Layout>
-      {/* Page Header */}
-      <div className="bg-primary/10 border-b border-border py-10">
-        <div className="container flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Point Shop</h1>
-            <p className="text-muted-foreground mt-2 text-sm">
-              Purchase exclusive items, costumes, and bundles
-            </p>
-          </div>
-          {cart.length > 0 && (
-            <Button className="gaming-gradient text-white gap-2">
-              <ShoppingCart className="w-4 h-4" />
-              Cart ({cart.length})
-            </Button>
-          )}
-        </div>
-      </div>
-
-      <div className="container py-10">
-        {/* Point Balance Banner */}
-        <div className="bg-gradient-to-r from-primary/10 to-blue-600/10 border border-primary/20 rounded-xl p-5 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-primary" />
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
+          <div className="container">
+            <div className="flex items-center gap-3 mb-2">
+              <ShoppingCart size={32} />
+              <h1 className="text-4xl font-black">Ragnarok Point Shop</h1>
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Your Point Balance</p>
-              <p className="text-xl font-bold text-foreground">
-                {isAuthenticated ? "0 Points" : "Sign in to view"}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <Package className="w-4 h-4" /> Purchase Points
-            </Button>
-            {!isAuthenticated && (
-              <Button
-                size="sm"
-                className="gaming-gradient text-white"
-                onClick={() => (window.location.href = getLoginUrl())}
-              >
-                Sign In
-              </Button>
-            )}
+            <p className="text-blue-100">Exclusive items and cosmetics for your adventure</p>
           </div>
         </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap items-center gap-2 mb-8">
-          {CATEGORIES.map((cat) => (
-            <Button
-              key={cat}
-              variant={activeCategory === cat ? "default" : "outline"}
-              size="sm"
-              onClick={() => setActiveCategory(cat)}
-              className={activeCategory === cat ? "gaming-gradient text-white" : ""}
-            >
-              {cat}
-            </Button>
-          ))}
-          <span className="ml-auto text-sm text-muted-foreground">{filtered.length} items</span>
-        </div>
+        {/* Main Content */}
+        <div className="container py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
+                <h3 className="text-lg font-bold text-foreground mb-4">Categories</h3>
+                <div className="space-y-2">
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`w-full text-left px-4 py-2 rounded transition-colors ${
+                        selectedCategory === category.id
+                          ? "bg-blue-600 text-white font-semibold"
+                          : "bg-gray-100 text-foreground hover:bg-gray-200"
+                      }`}
+                    >
+                      {category.label}
+                    </button>
+                  ))}
+                </div>
 
-        {/* Items Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filtered.map((item) => (
-            <div
-              key={item.id}
-              className="bg-card border border-border rounded-xl overflow-hidden card-hover flex flex-col"
-            >
-              {/* Item Image */}
-              <div className="relative aspect-video overflow-hidden bg-muted">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover"
-                />
-                {item.badge && (
-                  <span className={`absolute top-2 left-2 px-2 py-0.5 text-xs font-bold rounded ${BADGE_STYLES[item.badge] ?? "bg-primary text-white"}`}>
-                    {item.badge}
-                  </span>
-                )}
-                {item.limited && (
-                  <span className="absolute top-2 right-2 px-2 py-0.5 bg-black/60 text-white text-xs rounded flex items-center gap-1">
-                    <Crown className="w-3 h-3" /> Limited
-                  </span>
-                )}
-              </div>
-
-              {/* Item Info */}
-              <div className="p-4 flex flex-col flex-1">
-                <h3 className="font-semibold text-card-foreground text-sm mb-1 line-clamp-1">{item.name}</h3>
-                <p className="text-xs text-muted-foreground mb-3 line-clamp-2 flex-1">{item.description}</p>
-
-                {/* Price & Buy */}
-                <div className="flex items-center justify-between mt-auto">
-                  <div>
-                    {item.price === 0 ? (
-                      <span className="text-green-600 dark:text-green-400 font-bold text-sm">FREE</span>
-                    ) : (
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="font-bold text-primary text-sm flex items-center gap-0.5">
-                          <Sparkles className="w-3 h-3" />
-                          {item.price.toLocaleString()}
-                        </span>
-                        {item.originalPrice && (
-                          <span className="text-xs text-muted-foreground line-through">
-                            {item.originalPrice.toLocaleString()}
-                          </span>
-                        )}
-                      </div>
-                    )}
+                {/* Cart Summary */}
+                <div className="mt-8 pt-8 border-t border-gray-200">
+                  <h4 className="font-bold text-foreground mb-3">Cart Summary</h4>
+                  <div className="bg-blue-50 rounded p-4">
+                    <p className="text-sm text-foreground/70 mb-2">
+                      Items in cart: <span className="font-bold text-blue-600">{cart.length}</span>
+                    </p>
+                    <p className="text-sm text-foreground/70">
+                      Total: <span className="font-bold text-blue-600">{cart.reduce((sum, item) => sum + item.price, 0).toLocaleString()}원</span>
+                    </p>
+                    <Button
+                      className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white"
+                      disabled={cart.length === 0}
+                    >
+                      Proceed to Checkout
+                    </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    className={`text-xs ${cart.includes(item.id) ? "bg-green-600 hover:bg-green-700 text-white" : "gaming-gradient text-white"}`}
-                    onClick={() => handleBuy(item)}
-                    disabled={cart.includes(item.id)}
-                  >
-                    {cart.includes(item.id) ? (
-                      <><Star className="w-3 h-3 mr-1" /> Added</>
-                    ) : item.price === 0 ? (
-                      "Claim"
-                    ) : (
-                      <><ShoppingCart className="w-3 h-3 mr-1" /> Buy</>
-                    )}
-                  </Button>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
 
-        {/* Info Banner */}
-        <div className="mt-10 bg-muted/50 border border-border rounded-xl p-5 text-center">
-          <p className="text-sm text-muted-foreground">
-            All purchases are subject to our{" "}
-            <a href="/terms-of-service" className="text-primary hover:underline">Terms of Service</a>.
-            Virtual items have no real-world monetary value and are non-refundable.
-          </p>
+            {/* Products Grid */}
+            <div className="lg:col-span-3">
+              <div className="mb-6">
+                <p className="text-foreground/70">
+                  Showing {filteredItems.length} item{filteredItems.length !== 1 ? "s" : ""}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                  >
+                    {/* Image Container */}
+                    <div className="relative h-48 overflow-hidden bg-gray-200">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                      {item.popular && (
+                        <div className="absolute top-3 right-3 bg-yellow-500 text-white px-3 py-1 rounded-full flex items-center gap-1 text-sm font-semibold">
+                          <Star size={14} fill="currentColor" />
+                          Popular
+                        </div>
+                      )}
+                      {item.discount && (
+                        <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                          -{item.discount}%
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-4">
+                      <h3 className="font-bold text-foreground mb-2 line-clamp-2">{item.name}</h3>
+
+                      {/* Price */}
+                      <div className="mb-4">
+                        {item.discount ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg font-bold text-blue-600">
+                              {Math.round(item.price * (1 - item.discount / 100)).toLocaleString()}원
+                            </span>
+                            <span className="text-sm text-foreground/50 line-through">
+                              {item.price.toLocaleString()}원
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-lg font-bold text-blue-600">
+                            {item.price.toLocaleString()}원
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Category Badge */}
+                      <div className="mb-4">
+                        <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
+                          {categories.find((c) => c.id === item.category)?.label}
+                        </span>
+                      </div>
+
+                      {/* Add to Cart Button */}
+                      <Button
+                        onClick={() => handleAddToCart(item)}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition-colors"
+                      >
+                        <ShoppingCart size={16} className="mr-2" />
+                        Add to Cart
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Info Section */}
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-blue-50 rounded-lg p-6 border-l-4 border-blue-600">
+              <div className="flex items-start gap-3">
+                <Zap size={24} className="text-blue-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h4 className="font-bold text-foreground mb-1">Instant Delivery</h4>
+                  <p className="text-sm text-foreground/70">
+                    Items are delivered to your account immediately after purchase.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-green-50 rounded-lg p-6 border-l-4 border-green-600">
+              <div className="flex items-start gap-3">
+                <ShoppingCart size={24} className="text-green-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h4 className="font-bold text-foreground mb-1">Secure Payment</h4>
+                  <p className="text-sm text-foreground/70">
+                    All transactions are encrypted and protected for your safety.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-purple-50 rounded-lg p-6 border-l-4 border-purple-600">
+              <div className="flex items-start gap-3">
+                <Star size={24} className="text-purple-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h4 className="font-bold text-foreground mb-1">Exclusive Content</h4>
+                  <p className="text-sm text-foreground/70">
+                    Access unique cosmetics and items not available elsewhere.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Back Button */}
+          <div className="mt-12 pt-8 border-t border-border">
+            <button
+              onClick={() => setLocation("/")}
+              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+            >
+              ← Back to Home
+            </button>
+          </div>
         </div>
       </div>
     </Layout>

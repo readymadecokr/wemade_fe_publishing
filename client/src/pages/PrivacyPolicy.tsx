@@ -1,109 +1,126 @@
+import { X } from "lucide-react";
 import Layout from "@/components/Layout";
+import { useLocation } from "wouter";
 
 export default function PrivacyPolicy() {
+  const [, setLocation] = useLocation();
+
   return (
     <Layout>
-      {/* Page Header */}
-      <div className="bg-primary/10 border-b border-border py-10">
-        <div className="container">
-          <h1 className="text-3xl font-bold text-foreground">Privacy Policy</h1>
-          <p className="text-muted-foreground mt-2 text-sm">Last updated: June 2026</p>
+      <div className="min-h-screen bg-white dark:bg-[#0a0a0a]">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-12">
+          <div className="container">
+            <h1 className="text-4xl font-black mb-2">Privacy Policy</h1>
+            <p className="text-blue-100">Last updated: May 6, 2021</p>
+          </div>
         </div>
-      </div>
 
-      <div className="container py-12 max-w-4xl mx-auto">
-        <div className="prose prose-sm dark:prose-invert max-w-none space-y-8">
+        {/* Content */}
+        <div className="container py-12">
+          <div className="max-w-4xl mx-auto prose prose-sm dark:prose-invert">
+            <div className="bg-blue-50 dark:bg-slate-800 border-l-4 border-blue-600 p-6 mb-8 rounded">
+              <h2 className="text-xl font-bold text-foreground dark:text-white mt-0 mb-2">Welcome to Gravity Interactive!</h2>
+              <p className="text-foreground/80 dark:text-white/80 mb-0">
+                The use of our services and websites is subject to agreement to the terms of this Privacy Policy. If you do not agree to the terms of our Privacy Policy, please do not use our services or access our sites.
+              </p>
+            </div>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mb-3">1. Introduction</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Gravity Co., Ltd. ("we," "our," or "us") operates the Ragnarok Universe gaming portal. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services. Please read this policy carefully. If you disagree with its terms, please discontinue use of the site.
+            <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4">Our Privacy Commitment</h2>
+            <p className="text-foreground/70 dark:text-white/70 mb-6">
+              Gravity Interactive, Inc., its subsidiaries, and affiliates (collectively, "Gravity Interactive") respect the privacy rights of our online visitors and recognize the importance of protecting all information that you may choose to share with us. To further this commitment, we have adopted this Online Privacy Policy ("Privacy Policy") to guide how we collect, store, and use the information you provide us.
             </p>
-          </section>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mb-3">2. Information We Collect</h2>
-            <p className="text-muted-foreground leading-relaxed mb-3">
-              We may collect information about you in a variety of ways. The information we may collect includes:
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              <li><strong className="text-foreground">Personal Data:</strong> Name, email address, and other identifiers you provide when registering or logging in.</li>
-              <li><strong className="text-foreground">Usage Data:</strong> Pages visited, time spent, links clicked, and other interaction data.</li>
-              <li><strong className="text-foreground">Device Data:</strong> IP address, browser type, operating system, and device identifiers.</li>
-              <li><strong className="text-foreground">Cookies:</strong> Session and persistent cookies to maintain your preferences and login state.</li>
+            <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4">Table of Contents</h2>
+            <ul className="list-disc list-inside space-y-2 text-foreground/70 dark:text-white/70 mb-8">
+              <li>What information does this Privacy Statement cover?</li>
+              <li>What types of personally identifiable information do we collect about our users?</li>
+              <li>How is your personally identifiable information used and shared?</li>
+              <li>What choices do you have about the collection, use, and sharing of your personally identifiable information?</li>
+              <li>What kinds of security measures do we take to safeguard your personally identifiable information?</li>
+              <li>How can you update your personal information and profile?</li>
+              <li>How can you ask questions, or send us comments, about this Privacy Policy?</li>
+              <li>How will you know if we amend this Privacy Policy?</li>
+              <li>What are the application areas of this Privacy Policy?</li>
             </ul>
-          </section>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mb-3">3. How We Use Your Information</h2>
-            <p className="text-muted-foreground leading-relaxed mb-3">
-              We use the information we collect to:
+            <h3 className="text-xl font-bold text-foreground dark:text-white mb-3">What Information Does This Privacy Statement Cover?</h3>
+            <p className="text-foreground/70 dark:text-white/70 mb-6">
+              This Privacy Policy applies only to personal information collected on the websites where this Privacy Policy is posted, and does not apply to any other information collected by Gravity Interactive through any other means. This Privacy Policy applies to use and sharing of personal information collected on and after the date that this Privacy Policy is posted.
             </p>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              <li>Provide, operate, and maintain our services</li>
-              <li>Improve, personalize, and expand our services</li>
-              <li>Process transactions and manage your account</li>
-              <li>Send administrative information, updates, and security alerts</li>
-              <li>Respond to your comments and questions</li>
-              <li>Analyze usage patterns to enhance user experience</li>
-              <li>Comply with legal obligations</li>
+            <p className="text-foreground/70 dark:text-white/70 mb-6">
+              Please note that this Privacy Policy applies only to information submitted and collected online and does not apply to information that may be collected by Gravity Interactive offline. This Privacy Policy applies only to websites maintained by Gravity Interactive, and not to our international affiliates or any websites maintained by other companies or organizations to which we link.
+            </p>
+
+            <h3 className="text-xl font-bold text-foreground dark:text-white mb-3">What Types of Personally Identifiable Information Do We Collect?</h3>
+            <p className="text-foreground/70 dark:text-white/70 mb-4">
+              We don't require personal information to access our website. However, if you prefer not to disclose personal information, you will not be able to enjoy certain features of our website. Personal information is information that identifies you and may be used to contact you.
+            </p>
+            
+            <h4 className="text-lg font-semibold text-foreground dark:text-white mb-2">Children</h4>
+            <p className="text-foreground/70 dark:text-white/70 mb-6">
+              Our Terms of Agreement specify that memberships are available only to individuals who are 16 years of age or older. Gravity Interactive will not knowingly collect, maintain, or disclose any personal information from children under the age of 16. We take children's privacy seriously and encourage parents to play an active role in their children's online experience at all times.
+            </p>
+
+            <h4 className="text-lg font-semibold text-foreground dark:text-white mb-2">Information You Provide to Us</h4>
+            <p className="text-foreground/70 dark:text-white/70 mb-4">All of the personal information we receive comes directly from our users. We collect personal information to:</p>
+            <ul className="list-disc list-inside space-y-1 text-foreground/70 dark:text-white/70 mb-6">
+              <li>Register for our website</li>
+              <li>Subscribe to our newsletter</li>
+              <li>Join our message boards and forums</li>
+              <li>Participate in polls, surveys, and questionnaires</li>
+              <li>Participate in contests, sweepstakes, or other promotions</li>
+              <li>Purchase a product at one of our online stores</li>
+              <li>Receive customer or technical support</li>
             </ul>
-          </section>
+            <p className="text-foreground/70 dark:text-white/70 mb-6">
+              Typically, this information includes: name, email address, telephone number, shipping and billing address, and for those purchasing products online, credit card information. We may also collect demographic information such as your age or date of birth, gender, hobbies, and occupation.
+            </p>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mb-3">4. Sharing Your Information</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties except as described in this policy. We may share information with trusted third parties who assist us in operating our website, conducting our business, or servicing you, as long as those parties agree to keep this information confidential. We may also release information when its release is appropriate to comply with the law, enforce our site policies, or protect ours or others' rights, property, or safety.
+            <h4 className="text-lg font-semibold text-foreground dark:text-white mb-2">Information Collected Through Technology</h4>
+            <p className="text-foreground/70 dark:text-white/70 mb-4">
+              We collect information through technology to make our websites more interesting and useful to you. For example, when you come to one of our websites, we collect your IP address. An IP address is often associated with the portal through which you enter the Internet, like your ISP (Internet service provider), your company, or your school.
             </p>
-          </section>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mb-3">5. Data Retention</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              We retain your personal data for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law. When your data is no longer needed, we will securely delete or anonymize it.
+            <h4 className="text-lg font-semibold text-foreground dark:text-white mb-2">Cookies</h4>
+            <p className="text-foreground/70 dark:text-white/70 mb-6">
+              Our websites use cookies. Cookies are pieces of information that a website sends to your computer while you are viewing the website. We use cookies for a variety of purposes. For example, when you return to one of our websites after logging in, cookies provide information to the website so that the website will remember who you are. You can choose to have your computer warn you each time a cookie is being sent, or you can choose to turn off all cookies through your browser settings.
             </p>
-          </section>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mb-3">6. Security</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security.
+            <h3 className="text-xl font-bold text-foreground dark:text-white mb-3">How Is Your Personally Identifiable Information Used and Shared?</h3>
+            <p className="text-foreground/70 dark:text-white/70 mb-6">
+              We don't share, sell, or rent your personal information to third parties without your consent. Whatever the purpose may be, we will only collect information to the extent reasonably necessary to fulfill your requests and our legitimate business objectives.
             </p>
-          </section>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mb-3">7. Your Rights</h2>
-            <p className="text-muted-foreground leading-relaxed mb-3">
-              Depending on your location, you may have the following rights regarding your personal data:
+            <h4 className="text-lg font-semibold text-foreground dark:text-white mb-2">Gravity Interactive Tools and Updates</h4>
+            <p className="text-foreground/70 dark:text-white/70 mb-6">
+              Information collected from those who voluntarily submit it to us is used to provide services like newsletter subscription, updates on special events, game news, and email announcements of interest to our users. If you register for access to our blogs or message boards, we will use your personal information to enable you to view and post messages on the boards.
             </p>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              <li>Right to access your personal data</li>
-              <li>Right to correct inaccurate data</li>
-              <li>Right to request deletion of your data</li>
-              <li>Right to restrict or object to processing</li>
-              <li>Right to data portability</li>
-            </ul>
-            <p className="text-muted-foreground leading-relaxed mt-3">
-              To exercise these rights, please contact us at privacy@gravity.co.kr.
-            </p>
-          </section>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mb-3">8. Changes to This Policy</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date. You are advised to review this Privacy Policy periodically for any changes.
+            <h4 className="text-lg font-semibold text-foreground dark:text-white mb-2">Third Parties' Use of Personal Information</h4>
+            <p className="text-foreground/70 dark:text-white/70 mb-6">
+              Occasionally, we share your personal information with third parties that provide products or services that may be of interest to you. We may use other companies, agents or contractors to perform services necessary to our operations. We will attempt to ensure that these entities do not use your personal information for any other purpose, and that they have agreed to maintain the confidentiality, security, and integrity of the personal information they obtain from us.
             </p>
-          </section>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mb-3">9. Contact Us</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              If you have any questions about this Privacy Policy, please contact us at:<br />
-              <strong className="text-foreground">Gravity Co., Ltd.</strong><br />
-              Email: privacy@gravity.co.kr<br />
-              Address: Seoul, South Korea
+            <h3 className="text-xl font-bold text-foreground dark:text-white mb-3">Security Measures</h3>
+            <p className="text-foreground/70 dark:text-white/70 mb-6">
+              Gravity Interactive takes reasonable precautions to protect your personal information. We maintain appropriate administrative, technical, and physical safeguards to protect personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the Internet or electronic storage is completely secure.
             </p>
-          </section>
+
+            <h3 className="text-xl font-bold text-foreground dark:text-white mb-3">Contact Us</h3>
+            <p className="text-foreground/70 dark:text-white/70 mb-6">
+              If you have any questions about this Privacy Policy or our privacy practices, please contact us at our customer support channels. We will be happy to assist you with any concerns you may have regarding your personal information.
+            </p>
+
+            <div className="mt-12 pt-8 border-t border-border dark:border-slate-700">
+              <button
+                onClick={() => setLocation("/")}
+                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+              >
+                ← Back to Home
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>
