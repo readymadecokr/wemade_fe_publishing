@@ -88,8 +88,8 @@ export default function MyPage() {
   }
 
   const handleNicknameChange = () => {
-    if (newNickname.length < 2 || newNickname.length > 16) {
-      toast.error("Nickname must be between 2 and 16 characters.");
+    if (newNickname.length < 2 || newNickname.length > 20) {
+      toast.error("Nickname must be between 2 and 20 characters.");
       return;
     }
     setUserNickname(newNickname);
@@ -431,11 +431,11 @@ export default function MyPage() {
               placeholder="Enter new nickname"
               value={newNickname}
               onChange={(e) => setNewNickname(e.target.value)}
-              maxLength={16}
+              maxLength={20}
               className="mb-4 bg-white dark:bg-slate-800 border-black/20 dark:border-white/20 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40"
             />
             <p className="text-xs text-black dark:text-white mb-4">
-              {newNickname.length}/16 characters (minimum 2)
+              {newNickname.length}/20 characters (minimum 2)
             </p>
             <div className="flex gap-3">
               <Button
