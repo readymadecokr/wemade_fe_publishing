@@ -12,13 +12,14 @@ const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
  */
 
 function NewsPageContent() {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
 
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
@@ -30,105 +31,105 @@ function NewsPageContent() {
       title: "Ragnarok Online: Patch Update June 17, 2026",
       date: "6/17/2026 10:38 PM",
       category: "Update",
-      image: `${ASSET_BASE_URL}/manus-storage/RO1_pathupdate_17062026_f83f13b8.jpg`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO1_pathupdate_17062026_f83f13b8_0ccbefaa.jpg`,
     },
     {
       id: 2,
       title: "Ragnarok Online: Patch Update June 10, 2026",
       date: "6/17/2026 10:32 PM",
       category: "Event",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_10062026_219a465c.jpg`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_10062026_219a465c_5903482d.jpg`,
     },
     {
       id: 3,
       title: "Ragnarok Online: Patch Update June 4, 2026",
       date: "6/17/2026 1:08:40 PM",
       category: "Event",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_04062026-1_29153260.jpg`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_04062026-1_29153260_878bf95f.jpg`,
     },
     {
       id: 4,
       title: "Ragnarok Online: Patch Update May 27, 2026",
       date: "5/28/2026 4:07:24 PM",
       category: "Interview",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_27052026_953943aa.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_27052026_953943aa_fa54354f.webp`,
     },
     {
       id: 5,
       title: "Gravity Game Tech Launches LINE Official Account",
       date: "5/28/2026 2:18:45 PM",
       category: "Event",
-      image: `${ASSET_BASE_URL}/manus-storage/PR-pack-Line-OA-Cover-700x36020052026_d4332f85.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/PR-pack-Line-OA-Cover-700x36020052026_d4332f85_70996280.webp`,
     },
     {
       id: 6,
       title: "Ragnarok Online: Music Contest Winners Announced",
       date: "5/22/2026 2:03:43 PM",
       category: "Update",
-      image: `${ASSET_BASE_URL}/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_bc640d8a.png`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_bc640d8a_0c8f7386.png`,
     },
     {
       id: 7,
       title: "Ragnarok Online: Patch Update May 13, 2026",
       date: "5/14/2026 8:54:59 AM",
       category: "Update",
-      image: `${ASSET_BASE_URL}/manus-storage/RO1_patchupdate_13052026_700e9d1f.jpg`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO1_patchupdate_13052026_700e9d1f_01c2e74f.jpg`,
     },
     {
       id: 8,
       title: "Ragnarok Online: Special Anniversary Event",
       date: "5/11/2026 10:02:34 AM",
       category: "Event",
-      image: `${ASSET_BASE_URL}/manus-storage/RO1_04032026PatchUpdate_700X360_3345ccff.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO1_04032026PatchUpdate_700X360_3345ccff_33b86c1a.webp`,
     },
     {
       id: 9,
       title: "Ragnarok Monster Shop @ Craft & Play 2026",
       date: "5/6/2026 5:40:04 PM",
       category: "Event",
-      image: `${ASSET_BASE_URL}/manus-storage/GGT-RO-Shop-Craft-Play-3-1920x1080_46621aa6.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/GGT-RO-Shop-Craft-Play-3-1920x1080_46621aa6_4cf197fb.webp`,
     },
     {
       id: 10,
       title: "Ragnarok Online: Patch Update May 6, 2026",
       date: "5/6/2026 2:47:16 PM",
       category: "Update",
-      image: `${ASSET_BASE_URL}/manus-storage/RO1_06052026_47ecad62.jpg`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO1_06052026_47ecad62_ae242c6b.jpg`,
     },
     {
       id: 11,
       title: "Ragnarok Online: Patch Update April 29, 2026",
       date: "4/30/2026 11:29:14 AM",
       category: "Event",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate18032026_700x360_68e5480e.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate18032026_700x360_68e5480e_82a64304.webp`,
     },
     {
       id: 12,
       title: "Ragnarok Online: Patch Update April 22, 2026",
       date: "4/30/2026 11:27:05 AM",
       category: "Update",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_22042026_337d2472.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_22042026_337d2472_7c5c5406.webp`,
     },
     {
       id: 13,
       title: "Ragnarok Online: Patch Update April 8, 2026",
       date: "4/8/2026 2:24:50 PM",
       category: "Update",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_700x360_01042026_04e81156.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_700x360_01042026_04e81156_70b5b497.webp`,
     },
     {
       id: 14,
       title: "Ragnarok Online: Patch Update April 1, 2026",
       date: "4/8/2026 2:22:00 PM",
       category: "Event",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_700X360_04022026_d0450ed3.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_700X360_04022026_d0450ed3_83809f8e.webp`,
     },
     {
       id: 15,
       title: "Ragnarok Online: Patch Update March 25, 2026",
       date: "4/7/2026 6:49:23 AM",
       category: "Update",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate11032026_700x360_e08b651b.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate11032026_700x360_e08b651b_934c919f.webp`,
     },
   ];
 
