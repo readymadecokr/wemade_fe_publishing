@@ -31,35 +31,35 @@ export default function Home() {
   const bannerImages = [
     {
       id: 1,
-      url: `${ASSET_BASE_URL}/manus-storage/ChatGPT-Image-Play-With-Discord_f803e1b3.webp`,
+      url: `${ASSET_BASE_URL}/manus-storage/ChatGPT-Image-Play-With-Discord_f803e1b3_988b3aeb.webp`,
       title: "PLAY WITH DISCORD",
       subtitle: "Please visit our official Discord channel for more information",
       link: "/game-info",
     },
     {
       id: 2,
-      url: `${ASSET_BASE_URL}/manus-storage/TRO-Championship-2026_c417f04e.webp`,
+      url: `${ASSET_BASE_URL}/manus-storage/TRO-Championship-2026_c417f04e_848eb2d9.webp`,
       title: "RAGNAROK CHAMPIONSHIP",
       subtitle: "The Ragnarok Sea Championship 2026",
       link: "/game-info",
     },
     {
       id: 3,
-      url: `${ASSET_BASE_URL}/manus-storage/2-1-Gnjoysidebanner-1900x60006112025_9eb2918f.webp`,
+      url: `${ASSET_BASE_URL}/manus-storage/2-1-Gnjoysidebanner-1900x60006112025_9eb2918f_10d96d95.webp`,
       title: "RAGNAROK ABYSS",
       subtitle: "Light Up The New Gen - Pre-Register Now",
       link: "/game-info",
     },
     {
       id: 4,
-      url: `${ASSET_BASE_URL}/manus-storage/6th-Anniversary-Sunset-of-Ayothaya-1900x600_ad2ad494.webp`,
+      url: `${ASSET_BASE_URL}/manus-storage/6th-Anniversary-Sunset-of-Ayothaya-1900x600_ad2ad494_1cd501ef.webp`,
       title: "SUNSET OF AYOTHAYA",
       subtitle: "6th Anniversary Celebration",
       link: "/game-info",
     },
     {
       id: 5,
-      url: `${ASSET_BASE_URL}/manus-storage/ROS-Thailand-2026-1900x600_509eb9c7.webp`,
+      url: `${ASSET_BASE_URL}/manus-storage/ROS-Thailand-2026-1900x600_509eb9c7_7491dd69.webp`,
       title: "RAGNAROK STARS",
       subtitle: "Thailand Championship 2026",
       link: "/game-info",
@@ -86,37 +86,37 @@ export default function Home() {
       id: 1,
       title: "Ragnarok Online: Patch Update June 17, 2026",
       date: "6/17/2026 10:38 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/RO1_pathupdate_17062026_f83f13b8.jpg`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO1_pathupdate_17062026_f83f13b8_0ccbefaa.jpg`,
     },
     {
       id: 2,
       title: "Ragnarok Online: Patch Update June 10, 2026",
       date: "6/17/2026 10:32 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_10062026_219a465c.jpg`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_10062026_219a465c_5903482d.jpg`,
     },
     {
       id: 3,
       title: "Ragnarok Online: Patch Update June 4, 2026",
       date: "6/17/2026 1:08:40 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_04062026-1_29153260.jpg`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_04062026-1_29153260_878bf95f.jpg`,
     },
     {
       id: 4,
       title: "Ragnarok Online: Patch Update May 27, 2026",
       date: "5/28/2026 4:07:24 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_27052026_953943aa.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_27052026_953943aa_fa54354f.webp`,
     },
     {
       id: 5,
       title: "Gravity Game Tech Launches LINE Official Account",
       date: "5/28/2026 2:18:45 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/PR-pack-Line-OA-Cover-700x36020052026_d4332f85.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/PR-pack-Line-OA-Cover-700x36020052026_d4332f85_70996280.webp`,
     },
     {
       id: 6,
       title: "Ragnarok Online: Music Contest Winners Announced",
       date: "5/22/2026 2:03:43 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_bc640d8a.png`,
+      image: `${ASSET_BASE_URL}/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_bc640d8a_0c8f7386.png`,
     },
   ];
 
@@ -268,16 +268,23 @@ export default function Home() {
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background border-b border-border">
           <div className="container pt-3 md:pt-4">
-            <div className="mb-6">
+            <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
                 News
               </h2>
+              <Link href="/news">
+                <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white font-semibold text-sm px-5">
+                  View More
+                </Button>
+              </Link>
             </div>
 
             {/* News Grid - 2 rows of 3 cards on desktop, 2 columns on mobile */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
               {newsData.map((item) => (
-                <NewsCard key={item.id} item={item} category="NEWS" />
+                <Link key={item.id} href={`/news/${item.id}`}>
+                  <NewsCard item={item} category="NEWS" />
+                </Link>
               ))}
             </div>
           </div>
@@ -301,7 +308,7 @@ export default function Home() {
               {/* Game Image */}
               <div className="rounded-2xl overflow-hidden shadow-lg">
                 <img
-                  src={`${ASSET_BASE_URL}/manus-storage/main2_0c694426.png`}
+                  src={`${ASSET_BASE_URL}/manus-storage/main2_0c694426_d1284510.png`}
                   alt="Ragnarok Universe Gameplay"
                   className="w-full h-auto object-cover"
                 />
