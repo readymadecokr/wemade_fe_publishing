@@ -223,39 +223,43 @@ function NewsDetailContent() {
             <div className="flex items-center justify-between gap-3 pt-6 border-t border-purple-100 dark:border-border">
               {/* Previous */}
               {prevNews ? (
-                <Link href={`/news/${prevNews.id}`} className="flex-1 min-w-0">
-                  <button className="w-full flex items-center gap-2 px-4 py-3 rounded-xl border border-purple-200 dark:border-border hover:bg-purple-50 dark:hover:bg-white/5 transition-colors text-left group">
-                    <ArrowLeft size={16} className="shrink-0 text-purple-500 group-hover:text-purple-700" />
-                    <div className="min-w-0">
-                      <p className="text-xs text-slate-400 mb-0.5">Previous</p>
-                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 line-clamp-1">{prevNews.title}</p>
-                    </div>
+                <Link href={`/news/${prevNews.id}`} className="flex-1">
+                  <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-purple-200 dark:border-border hover:bg-purple-50 dark:hover:bg-white/5 transition-colors font-semibold text-slate-700 dark:text-slate-200 text-sm">
+                    <ArrowLeft size={15} className="text-purple-500" />
+                    Previous
                   </button>
                 </Link>
               ) : (
-                <div className="flex-1" />
+                <div className="flex-1">
+                  <button disabled className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-purple-100 dark:border-border/40 text-slate-300 dark:text-slate-600 text-sm cursor-not-allowed">
+                    <ArrowLeft size={15} />
+                    Previous
+                  </button>
+                </div>
               )}
 
               {/* News List */}
-              <Link href="/news" className="shrink-0">
-                <Button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-5">
+              <Link href="/news" className="flex-1">
+                <button className="w-full flex items-center justify-center px-4 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-sm transition-colors">
                   News List
-                </Button>
+                </button>
               </Link>
 
               {/* Next */}
               {nextNews ? (
-                <Link href={`/news/${nextNews.id}`} className="flex-1 min-w-0">
-                  <button className="w-full flex items-center justify-end gap-2 px-4 py-3 rounded-xl border border-purple-200 dark:border-border hover:bg-purple-50 dark:hover:bg-white/5 transition-colors text-right group">
-                    <div className="min-w-0">
-                      <p className="text-xs text-slate-400 mb-0.5">Next</p>
-                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 line-clamp-1">{nextNews.title}</p>
-                    </div>
-                    <ArrowLeft size={16} className="shrink-0 rotate-180 text-purple-500 group-hover:text-purple-700" />
+                <Link href={`/news/${nextNews.id}`} className="flex-1">
+                  <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-purple-200 dark:border-border hover:bg-purple-50 dark:hover:bg-white/5 transition-colors font-semibold text-slate-700 dark:text-slate-200 text-sm">
+                    Next
+                    <ArrowLeft size={15} className="rotate-180 text-purple-500" />
                   </button>
                 </Link>
               ) : (
-                <div className="flex-1" />
+                <div className="flex-1">
+                  <button disabled className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-purple-100 dark:border-border/40 text-slate-300 dark:text-slate-600 text-sm cursor-not-allowed">
+                    Next
+                    <ArrowLeft size={15} className="rotate-180" />
+                  </button>
+                </div>
               )}
             </div>
           </div>
