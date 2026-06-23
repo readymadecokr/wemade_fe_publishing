@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
-import { User, Shield, LogOut, Trash2, CheckCircle2, ShieldAlert, CreditCard, Clock, ArrowRight, Edit2, Ticket, Unlink, Mail, Users, LogIn } from "lucide-react";
+import { User, Shield, LogOut, Trash2, CheckCircle2, ShieldAlert, CreditCard, Clock, ArrowRight, Edit2, Ticket, Unlink, Mail, Users, LogIn, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
@@ -43,6 +44,26 @@ export default function MyPage() {
   };
 
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
+
+  // Marketing consent state — synced with onboarding value via localStorage
+  const [marketingConsent, setMarketingConsent] = useState<boolean>(() => {
+    const stored = localStorage.getItem("rou_marketing_consent");
+    return stored === "true";
+  });
+
+  const handleMarketingToggle = (value: boolean) => {
+    setMarketingConsent(value);
+    // Persist as the latest consent log (mirrors /gdpr/consent API behaviour)
+    localStorage.setItem("rou_marketing_consent", value ? "true" : "false");
+    // Record timestamp of the change
+    localStorage.setItem("rou_marketing_consent_updated_at", new Date().toISOString());
+    toast.success(
+      value
+        ? "Marketing information consent has been enabled."
+        : "Marketing information consent has been disabled."
+    );
+  };
+
   // Initialize with stored nickname or generate a new one if not found
   const [userNickname, setUserNickname] = useState(() => {
     const stored = localStorage.getItem("rou_nickname");
@@ -385,15 +406,56 @@ export default function MyPage() {
                       <CheckCircle2 size={18} />
                       Terms Agreement
                     </h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 size={16} className="text-green-600" />
-                        <span className="text-sm text-black dark:text-white">Terms of Service: Agreed</span>
+                    <div className="space-y-3">
+                      {/* Terms of Service — read-only */}
+                      <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 size={15} className="text-green-600 shrink-0" />
+                          <span className="text-sm text-black dark:text-white">Terms of Service</span>
+                        </div>
+                        <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 size={16} className="text-green-600" />
-                        <span className="text-sm text-black dark:text-white">Privacy Policy: Agreed</span>
+
+                      {/* Privacy Policy — read-only */}
+                      <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 size={15} className="text-green-600 shrink-0" />
+                          <span className="text-sm text-black dark:text-white">Privacy Policy</span>
+                        </div>
+                        <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
                       </div>
+
+                      {/* Marketing Consent — user-controllable toggle */}
+                      <div className={`flex items-center justify-between p-3 rounded-xl border transition-colors ${
+                        marketingConsent
+                          ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700/40"
+                          : "bg-black/5 dark:bg-white/5 border-transparent"
+                      }`}>
+                        <div className="flex items-start gap-2">
+                          <Bell size={15} className={`mt-0.5 shrink-0 ${marketingConsent ? "text-blue-600" : "text-black/40 dark:text-white/40"}`} />
+                          <div>
+                            <p className="text-sm font-medium text-black dark:text-white">Receive Marketing Information</p>
+                            <p className="text-xs text-black/50 dark:text-white/50 mt-0.5">
+                              {marketingConsent
+                                ? "You are currently receiving marketing updates."
+                                : "You are not receiving marketing updates."}
+                            </p>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={marketingConsent}
+                          onCheckedChange={handleMarketingToggle}
+                          className="shrink-0 ml-4 data-[state=checked]:bg-blue-600"
+                        />
+                      </div>
+
+                      {/* Last updated timestamp */}
+                      {localStorage.getItem("rou_marketing_consent_updated_at") && (
+                        <p className="text-xs text-black/40 dark:text-white/40 px-1">
+                          Last updated:{" "}
+                          {new Date(localStorage.getItem("rou_marketing_consent_updated_at")!).toLocaleString()}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
