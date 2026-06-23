@@ -133,6 +133,30 @@ const newsData = [
     image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate11032026_700x360_e08b651b_934c919f.webp`,
     content: `The March 25th patch delivers new headgear items and crafting system updates.\n\nEight new craftable headgear items have been added, the headgear enchantment system has been expanded, and a new headgear quest chain is available in Lighthalzen.\n\nThe crafting UI has been completely redesigned for better usability, a batch crafting feature has been added, and a crafting material preview system has been implemented.\n\nThis patch also includes standard bug fixes and server stability improvements based on community feedback.`,
   },
+  {
+    id: 16,
+    title: "Important: Account Security Policy Update",
+    date: "3/15/2026 9:00:00 AM",
+    category: "Notice",
+    image: null,
+    content: `Dear Adventurers,\n\nWe are writing to inform you of an important update to our Account Security Policy, effective April 1, 2026.\n\nIn response to increasing security threats across the gaming industry, Ragnarok Universe is strengthening its account protection measures to better safeguard your personal information and in-game assets.\n\nKey Changes:\n\n1. Two-Factor Authentication (2FA) will become mandatory for all accounts performing in-game purchases or account modifications starting April 1, 2026.\n\n2. Suspicious login detection has been enhanced. If our system detects a login from an unrecognized device or location, you will receive an email notification and may be asked to verify your identity.\n\n3. Password requirements have been updated. All passwords must now be at least 8 characters long and include a combination of uppercase letters, lowercase letters, numbers, and special characters.\n\n4. Session timeout has been reduced from 30 days to 14 days for inactive sessions to minimize unauthorized access risks.\n\nAction Required:\n\nPlease review your current account security settings and enable 2FA before April 1, 2026. Accounts without 2FA enabled will be prompted to set it up upon their next login after the deadline.\n\nIf you have any questions or concerns about these changes, please contact our support team at support@ragnarokuniversal.com.\n\nThank you for your continued trust in Ragnarok Universe. Your security is our top priority.`,
+  },
+  {
+    id: 17,
+    title: "Ragnarok Universe Community Guidelines Revision",
+    date: "3/1/2026 2:00:00 PM",
+    category: "Notice",
+    image: null,
+    content: `Dear Community Members,\n\nWe have revised our Community Guidelines to create a safer, more inclusive, and more enjoyable environment for all Ragnarok Universe players. The updated guidelines take effect on March 15, 2026.\n\nSummary of Key Changes:\n\nRespect and Inclusion: We have strengthened our policies against harassment, discrimination, and hate speech. All players are expected to treat others with respect regardless of their background, nationality, or playstyle.\n\nContent Standards: Clearer guidelines have been established for user-generated content, including player profiles, guild names, and in-game chat. Content that is offensive, misleading, or violates intellectual property rights is prohibited.\n\nTrading and Commerce: Updated rules for player-to-player trading to prevent scams and protect both buyers and sellers. Real-money trading (RMT) remains strictly prohibited.\n\nCheating and Exploits: Zero-tolerance policy for the use of third-party programs, bots, or exploits that provide unfair advantages. Violations will result in immediate account suspension.\n\nReporting System: We have improved our in-game reporting tools to make it easier to report violations. All reports are reviewed by our moderation team within 48 hours.\n\nConsequences for Violations:\n\nMinor violations will result in a warning. Repeated or serious violations will result in temporary suspension. Severe violations, including cheating and harassment, will result in permanent account termination.\n\nWe encourage all players to read the full updated Community Guidelines available on our website. Together, we can make Ragnarok Universe a welcoming place for adventurers of all backgrounds.`,
+  },
+  {
+    id: 18,
+    title: "Developer Note: Upcoming Content Roadmap 2026",
+    date: "2/20/2026 11:00:00 AM",
+    category: "Interview",
+    image: null,
+    content: `Greetings, Adventurers!\n\nThe Ragnarok Universe development team is excited to share our content roadmap for the remainder of 2026. We have been working hard on new features and content that we believe will significantly enhance your gaming experience.\n\nQ2 2026 (April – June):\n\nNew Job Classes: We are introducing two new advanced job classes — the Shadow Chaser and the Mechanic. Each class brings a unique playstyle and skill set that will open up new strategic possibilities in both PvE and PvP content.\n\nExpanded World: Three new field maps will be added, expanding the explorable world of Midgard. These areas will feature new monsters, hidden quests, and rare item drops.\n\nGuild System Overhaul: The guild system is receiving a major update, including new guild skills, expanded guild halls, and a revamped War of Emperium experience.\n\nQ3 2026 (July – September):\n\nNew Dungeon: "The Abyss of Forgotten Gods" — a challenging 10-player raid dungeon with multiple boss encounters and exclusive legendary equipment rewards.\n\nPvP Ranked Season: The first official PvP ranked season will launch, featuring a competitive ladder, seasonal rewards, and a new PvP arena map.\n\nMobile Companion App: A companion app for iOS and Android will allow players to manage their characters, check auction house listings, and receive push notifications while away from the game.\n\nQ4 2026 (October – December):\n\nHoliday Events: Exciting seasonal events for Halloween and the Winter Festival, featuring limited-time content, exclusive cosmetics, and special login rewards.\n\nMajor Story Expansion: A new story chapter will continue the main narrative, featuring fully voiced cutscenes and new lore-rich questlines.\n\nWe are committed to delivering high-quality content updates that keep Ragnarok Universe fresh and exciting. Thank you for your continued support and feedback — it directly shapes the direction of our development.\n\nSee you in Midgard!\n\n— The Ragnarok Universe Development Team`,
+  },
 ];
 
 function NewsDetailContent() {
@@ -201,14 +225,16 @@ function NewsDetailContent() {
         {/* Article Content */}
         <main className="container py-10">
           <div className="max-w-3xl mx-auto">
-            {/* Featured Image */}
-            <div className="rounded-xl overflow-hidden mb-8 shadow-sm">
-              <img
-                src={news.image}
-                alt={news.title}
-                className="w-full object-cover max-h-96"
-              />
-            </div>
+            {/* Featured Image — only shown when image exists */}
+            {news.image && (
+              <div className="rounded-xl overflow-hidden mb-8 shadow-sm">
+                <img
+                  src={news.image}
+                  alt={news.title}
+                  className="w-full object-cover max-h-96"
+                />
+              </div>
+            )}
 
             {/* Body Text — no box */}
             <div className="mb-12">

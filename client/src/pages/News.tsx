@@ -131,6 +131,27 @@ function NewsPageContent() {
       category: "Update",
       image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate11032026_700x360_e08b651b_934c919f.webp`,
     },
+    {
+      id: 16,
+      title: "Important: Account Security Policy Update",
+      date: "3/15/2026 9:00:00 AM",
+      category: "Notice",
+      image: `${ASSET_BASE_URL}/manus-storage/ragnarok-news-default-banner_0d5427e8.png`,
+    },
+    {
+      id: 17,
+      title: "Ragnarok Universe Community Guidelines Revision",
+      date: "3/1/2026 2:00:00 PM",
+      category: "Notice",
+      image: `${ASSET_BASE_URL}/manus-storage/ragnarok-news-default-banner_0d5427e8.png`,
+    },
+    {
+      id: 18,
+      title: "Developer Note: Upcoming Content Roadmap 2026",
+      date: "2/20/2026 11:00:00 AM",
+      category: "Interview",
+      image: `${ASSET_BASE_URL}/manus-storage/ragnarok-news-default-banner_0d5427e8.png`,
+    },
   ];
 
   const getCategoryColor = (category: string) => {
@@ -141,6 +162,8 @@ function NewsPageContent() {
         return "bg-pink-100 text-pink-700";
       case "Interview":
         return "bg-indigo-100 text-indigo-700";
+      case "Notice":
+        return "bg-slate-100 text-slate-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
