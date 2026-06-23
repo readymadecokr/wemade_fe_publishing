@@ -175,7 +175,7 @@ export default function Login() {
                     onClick={() => handleSocialClick("Apple")}
                     className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98"
                   >
-                    <img src={`${ASSET_BASE_URL}/manus-storage/icon_apple_ascii_ae22901e.png`} alt="Apple" className="w-5 h-5" />
+                    <img src={`${ASSET_BASE_URL}/manus-storage/icon_apple_ascii_ae22901e_e0e901f2.png`} alt="Apple" className="w-5 h-5" />
                     Sign In with Apple
                   </Button>
 
@@ -183,7 +183,7 @@ export default function Login() {
                     onClick={() => handleSocialClick("Facebook")}
                     className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98"
                   >
-                    <img src={`${ASSET_BASE_URL}/manus-storage/icon_fb_ascii_315f83e7.png`} alt="Facebook" className="w-5 h-5" />
+                    <img src={`${ASSET_BASE_URL}/manus-storage/icon_fb_ascii_315f83e7_ea4d87ad.png`} alt="Facebook" className="w-5 h-5" />
                     Sign In with Facebook
                   </Button>
                 </div>
@@ -233,10 +233,11 @@ export default function Login() {
                     <div className="flex items-start gap-3 pb-3 border-b border-white/10">
                       <Checkbox 
                         id="selectAll" 
-                        checked={agreeTerms && agreeAge}
+                        checked={agreeTerms && agreeAge && agreeMarketing}
                         onCheckedChange={(checked) => {
                           setBgAgreeTerms(!!checked);
                           setBgAgreeAge(!!checked);
+                          setAgreeMarketing(!!checked);
                         }}
                         className="mt-0.5 border-white/20 data-[state=checked]:bg-primary"
                       />
@@ -476,25 +477,66 @@ export default function Login() {
                 <X size={24} />
               </button>
             </div>
-            <div className="p-6 text-slate-300 text-sm space-y-4">
-              <p>For the complete Terms of Service, please visit:</p>
-              <a
-                href="https://www.warpportal.com/policy/useragreement.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 underline break-all"
-              >
-                https://www.warpportal.com/policy/useragreement.html
-              </a>
-              <div className="mt-6 pt-6 border-t border-white/10">
-                <p className="font-semibold text-white mb-2">Summary:</p>
-                <ul className="list-disc list-inside space-y-2 text-xs">
-                  <li>You agree to comply with all applicable laws and regulations</li>
-                  <li>You are responsible for maintaining the confidentiality of your account</li>
-                  <li>You agree not to engage in any prohibited activities</li>
-                  <li>The game service may be modified or terminated at any time</li>
-                  <li>We reserve the right to suspend or terminate accounts that violate these terms</li>
-                </ul>
+            <div className="p-6 text-slate-300 text-sm space-y-5">
+              <p className="text-slate-400 text-xs">Last updated: May 24, 2018</p>
+
+              <div className="bg-blue-500/10 border-l-4 border-blue-500 p-4 rounded">
+                <p className="font-semibold text-white mb-1">Accepting the Terms</p>
+                <p className="text-xs text-slate-300">If you reside outside of the Republic of Korea, the terms of this agreement govern the relationship between you and Wemade Connect regarding your play or use of, or participation in, Wemade Connect mobile games and related services.</p>
+              </div>
+
+              <div>
+                <p className="font-bold text-white mb-2">1. Parties</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">1.1.</strong> These Terms create a legally binding agreement between you ("User" or "you") and Wemade Connect in relation to the Services.</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">1.2.</strong> Natural persons as opposed to any kinds of legal entities shall have the right to create an account. By accessing, using and/or submitting content or messages to or through our Services, you represent and agree that you have the legal capacity to agree to accept the Terms of Service in the jurisdiction where you reside.</p>
+                <p className="text-xs text-slate-300"><strong className="text-slate-200">1.3.</strong> You agree to comply with the Terms of Service on behalf of yourself and, at your discretion, any minor children for whom you are the parent or legal guardian and whom you have authorized to use our Services using your account.</p>
+              </div>
+
+              <div>
+                <p className="font-bold text-white mb-2">2. About Accessing and Using Our Services</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">2.1 Limited License:</strong> Subject to your agreement and complete compliance with the Terms of Service, we grant you a non-exclusive, non-transferable, non-sublicensable, revocable limited license to access and use our Services for your own personal and non-commercial use.</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">2.2 Revocation of Limited License:</strong> We reserve the right to revoke the limited license granted to you in our sole and absolute discretion. We may also limit or terminate your right to access or use our Services or part thereof, maintain or delete your account and any items associated therewith, including but not limited to any Virtual Money or Virtual Goods, without any liability to you.</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">2.3 System Outage:</strong> There may be times when our Services or any part thereof are not available for technical or maintenance related reasons. You agree that Wemade Connect has no responsibility and is not liable for unavailability of the Services or any loss caused by such system outages.</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">2.4 Game Rules:</strong> The specific game rules, scoring rules, controls and guidelines for each Service form part of the Terms of Service and you agree that you shall comply with them.</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">2.5 Third Party Charges:</strong> You are responsible for the internet connection and/or mobile charges that you may incur for playing the Games or using the Services. We are not responsible or liable to you for any credit card or bank-related charges and fees related to your transactions.</p>
+                <p className="text-xs text-slate-300"><strong className="text-slate-200">2.6 Equipment/Internet:</strong> You are responsible for obtaining and maintaining your device, operating system, data connection or network environment, and any services necessary for using the Service under your own responsibility and at your own expense.</p>
+              </div>
+
+              <div>
+                <p className="font-bold text-white mb-2">3. Accounts</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">3.1 Guest Account:</strong> If you use the Services without creating a Wemade Connect account, we will create and assign to your device an identifier that is similar to an account number ("Guest Accounts"). Please note that you may not receive customer support or use Virtual Money or Virtual Goods if you change your mobile device without creating a Wemade Connect account.</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">3.2 SNS Account:</strong> You may allow our Services to interact with a third party social network or platform. If you choose to connect through a third-party social network such as Facebook, we may collect personal information from your profile on such third-party social networks, such as your name, username, and photograph.</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">3.3 Responsibility of Account User:</strong> You are solely and fully responsible for keeping your login details confidential and all uses of your account. You may not use anyone else's account or permit others to use your account at any time. You acknowledge and agree to accept full responsibility for all fees and purchases made through your account.</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">3.4 Termination of Inactive Account:</strong> We reserve the right to terminate your account without any notice if your account has not been accessed for more than 1 year since your last accessed time. Any Virtual Money and/or Virtual Goods associated with the terminated account will also be deleted, and no refund will be offered.</p>
+                <p className="text-xs text-slate-300"><strong className="text-slate-200">3.5 Effect of Account Termination:</strong> You understand that if you delete your account, or if we terminate and/or delete your account, you may lose access to any data previously associated with your account.</p>
+              </div>
+
+              <div>
+                <p className="font-bold text-white mb-2">4. Virtual Goods and Virtual Money</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">4.1:</strong> Our Services may include fictional currencies such as coins, gold coins and points ("Virtual Money") and virtual items or services for use with our Services ("Virtual Goods"). You can buy Virtual Money from us for real money if you are a legal adult in your country of residence.</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">4.2:</strong> You do not own Virtual Goods or Virtual Money but instead you purchase a limited personal revocable license to use Virtual Goods or Virtual Money exclusively within the Services. Virtual Money and Virtual Goods have no cash value and can never be exchanged for real money, goods or services from us or anyone else.</p>
+                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">4.3:</strong> You agree that all sales of Virtual Money and Virtual Goods are final and that we will not refund any transaction once it has been made. A license to use Virtual Goods or Virtual Money is granted immediately when your purchase is complete.</p>
+                <p className="text-xs text-slate-300"><strong className="text-slate-200">4.4:</strong> We reserve the right to control, regulate, change or remove any Virtual Money or Virtual Goods in our sole discretion and without any liability to you.</p>
+              </div>
+
+              <div>
+                <p className="font-bold text-white mb-2">Eligibility</p>
+                <p className="text-xs text-slate-300">By agreeing with these Terms, you represent that you are thirteen (13) years of age or older. If you are a minor, you represent that your legal guardian has reviewed and agreed to these Terms. Wemade Connect may amend any portion of these Terms at any time by posting or displaying the amended Terms within and/or on the Games, or any of the Websites.</p>
+              </div>
+
+              <div className="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 rounded">
+                <p className="text-xs text-slate-300"><strong className="text-yellow-300">Important:</strong> By downloading or playing the Game, accessing and/or using the Services, and/or creating a Wemade Connect account, you accept and agree to be bound by these Terms of Service, the Privacy Policy, and Wemade Connect's community standards.</p>
+              </div>
+
+              <div className="pt-4 border-t border-white/10">
+                <a
+                  href="https://raguniverse-izcifhmz.manus.space/terms-of-service"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 underline text-xs break-all"
+                >
+                  View full Terms of Service page →
+                </a>
               </div>
             </div>
           </div>
