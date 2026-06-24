@@ -255,7 +255,7 @@ export default function Layout({ children }: LayoutProps) {
             <span className="text-slate-300 dark:text-slate-600">|</span>
             <div className="flex items-center gap-2">
               <Disc size={16} className="text-blue-600 dark:text-blue-400" />
-              <a href="https://discord.gg/ragnarok" target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Discord</a>
+              <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Discord</a>
             </div>
           </div>
 
@@ -292,7 +292,7 @@ export default function Layout({ children }: LayoutProps) {
               <Button variant="outline" onClick={() => setShowTTKeyDialog(false)} className="flex-1">
                 Close
               </Button>
-              <Button onClick={() => { window.open('https://discord.com/invite/ragnarok', '_blank'); setShowTTKeyDialog(false); }} className="flex-1 bg-blue-600 hover:bg-blue-700">
+              <Button onClick={() => { window.open('https://discord.gg/yVWJkWdkAU', '_blank'); setShowTTKeyDialog(false); }} className="flex-1 bg-blue-600 hover:bg-blue-700">
                 Join Discord
               </Button>
             </div>
@@ -326,7 +326,7 @@ export default function Layout({ children }: LayoutProps) {
       <div className="floating-social-box fixed top-1/2 -translate-y-1/2 right-3 z-40 flex flex-col items-center gap-2 bg-black/50 backdrop-blur-sm rounded-2xl py-3 px-2 shadow-2xl border border-white/10">
         {/* Discord */}
         <button
-          onClick={() => window.open('https://discord.com/invite/ragnarok', '_blank')}
+          onClick={() => window.open('https://discord.gg/yVWJkWdkAU', '_blank')}
           title="Discord"
           className="w-[58px] h-[58px] flex items-center justify-center rounded-xl hover:bg-white/20 transition-all duration-200 hover:scale-110 active:scale-95"
         >
@@ -334,7 +334,7 @@ export default function Layout({ children }: LayoutProps) {
         </button>
         {/* YouTube */}
         <button
-          onClick={() => window.open('https://www.youtube.com/@ragnarokuniversal', '_blank')}
+          onClick={() => window.open('https://www.youtube.com/@RagnarokUniverse', '_blank')}
           title="YouTube"
           className="w-[58px] h-[58px] flex items-center justify-center rounded-xl hover:bg-white/20 transition-all duration-200 hover:scale-110 active:scale-95"
         >
