@@ -197,70 +197,108 @@ export default function Home() {
   return (
     <Layout>
       <div className="min-h-screen bg-background">
-        {/* BANNER SECTION */}
-        <section className="relative w-full bg-foreground/10 overflow-hidden flex items-center justify-center" style={{ aspectRatio: '1900 / 600' }}>
-          {/* Banner Image */}
-          <img
-            src={bannerImages[currentBannerIndex].url}
-            alt={bannerImages[currentBannerIndex].title}
-            onClick={() => {
-              // Only "PLAY WITH DISCORD" banner triggers the TT Key dialog
-              if (bannerImages[currentBannerIndex].id === 1) {
-                setShowTTKeyDialog(true);
+        {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
+        <div className="relative w-full">
+          {/* BANNER SECTION */}
+          <section className="relative w-full bg-foreground/10 overflow-hidden flex items-center justify-center" style={{ aspectRatio: '1900 / 600' }}>
+            {/* Banner Image */}
+            <img
+              src={bannerImages[currentBannerIndex].url}
+              alt={bannerImages[currentBannerIndex].title}
+              onClick={() => {
+                if (bannerImages[currentBannerIndex].id === 1) {
+                  setShowTTKeyDialog(true);
+                }
+              }}
+              className="h-full w-full object-cover cursor-pointer"
+            />
+            {/* Banner Navigation Buttons */}
+            <button
+              onClick={(e) => { e.stopPropagation(); prevBanner(); }}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); nextBanner(); }}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </section>
+
+          {/* GAME START Button — overlaps banner bottom 30% */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[30%] z-30">
+            <style>{`
+              @keyframes spin-ring {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
               }
-              // Other banners do nothing
-            }}
-            className="h-full w-full object-cover cursor-pointer"
-          />
-
-
-
-
-          {/* Banner Navigation Buttons */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              prevBanner();
-            }}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm pointer-events-auto"
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              nextBanner();
-            }}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm pointer-events-auto"
-          >
-            <ChevronRight size={16} />
-          </button>
-        </section>
-
-        {/* GAME START Button Section */}
-        <section className="py-0 bg-background flex items-center justify-center">
-          <div className="flex items-center justify-center py-4 md:py-6">
+              .game-start-ring {
+                position: absolute;
+                inset: -8px;
+                border-radius: 9999px;
+                border: 3px solid transparent;
+                border-top-color: rgba(255,255,255,0.9);
+                border-right-color: rgba(255,255,255,0.5);
+                opacity: 0;
+                transition: opacity 0.3s;
+              }
+              .game-start-ring-2 {
+                position: absolute;
+                inset: -14px;
+                border-radius: 9999px;
+                border: 2px solid transparent;
+                border-bottom-color: rgba(99,179,237,0.8);
+                border-left-color: rgba(99,179,237,0.4);
+                opacity: 0;
+                transition: opacity 0.3s;
+              }
+              .game-start-btn:hover .game-start-ring {
+                opacity: 1;
+                animation: spin-ring 1.2s linear infinite;
+              }
+              .game-start-btn:hover .game-start-ring-2 {
+                opacity: 1;
+                animation: spin-ring 2s linear infinite reverse;
+              }
+              .game-start-btn:hover .game-start-img {
+                transform: scale(1.08);
+              }
+              .game-start-btn:hover {
+                box-shadow: 0 0 40px rgba(99,179,237,0.7), 0 0 80px rgba(99,179,237,0.3);
+              }
+            `}</style>
             <button
               onClick={() => setShowTTKeyDialog(true)}
+              className="game-start-btn group relative w-32 h-32 md:w-44 md:h-44 rounded-full shadow-2xl transition-all duration-300 active:scale-95 focus:outline-none overflow-visible"
               title="Game Start"
-              className="group relative w-36 h-36 md:w-48 md:h-48 rounded-full overflow-hidden shadow-2xl transition-all duration-300 hover:scale-110 hover:shadow-[0_0_40px_rgba(99,102,241,0.6)] active:scale-95 focus:outline-none"
             >
-              {/* Background image */}
-              <img
-                src={`${ASSET_BASE_URL}/manus-storage/game-start-btn_27f1a0a1.png`}
-                alt="Game Start"
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-              />
-              {/* Hover glow ring */}
-              <span className="absolute inset-0 rounded-full border-4 border-white/0 group-hover:border-white/40 transition-all duration-300" />
-              {/* Rotating outer ring on hover */}
-              <span
-                className="absolute inset-[-6px] rounded-full border-2 border-dashed border-indigo-400/0 group-hover:border-indigo-400/70 transition-all duration-500 group-hover:animate-spin"
-                style={{ animationDuration: '3s' }}
-              />
+              {/* Sky background circle */}
+              <div className="absolute inset-0 rounded-full overflow-hidden border-4 border-white/80 shadow-xl">
+                <img
+                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663723000641/izcifHmzBa4gqYqn3Mqkpb/game-start-sky-bg-ALQkcpu2LKks3vyppsJE8L.webp"
+                  alt=""
+                  className="game-start-img w-full h-full object-cover transition-transform duration-500"
+                />
+                {/* Dark overlay for text readability */}
+                <div className="absolute inset-0 bg-black/20 rounded-full" />
+                {/* GAME START text */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-white font-black text-sm md:text-lg leading-tight tracking-widest drop-shadow-lg text-center" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(99,179,237,0.6)' }}>
+                    GAME<br />START
+                  </span>
+                </div>
+              </div>
+              {/* Rotating rings (shown on hover via CSS) */}
+              <span className="game-start-ring" />
+              <span className="game-start-ring-2" />
             </button>
           </div>
-        </section>
+        </div>
+
+        {/* Spacer for the overlapping button */}
+        <div className="h-16 md:h-24 bg-background" />
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background border-b border-border">

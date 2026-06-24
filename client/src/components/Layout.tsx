@@ -313,27 +313,24 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       )}
 
-      {/* Floating Social Icons Panel */}
-      <div className="fixed top-1/2 -translate-y-1/2 right-0 z-40 flex flex-col items-center gap-1 bg-black/50 backdrop-blur-sm rounded-l-xl py-3 px-2 shadow-2xl border border-white/10">
-        {/* Discord */}
-        <button
-          onClick={() => window.open('https://discord.com/invite/ragnarok', '_blank')}
-          title="Discord"
-          className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/20 transition-all duration-200 hover:scale-110 active:scale-95"
-        >
-          <img src={`${ASSET_BASE_URL}/manus-storage/Discord_icon_230fdb89_6026051e.png`} alt="Discord" className="w-7 h-7 object-contain" />
-        </button>
-        {/* YouTube */}
-        <button
-          onClick={() => window.open('https://www.youtube.com/@ragnarokuniversal', '_blank')}
-          title="YouTube"
-          className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/20 transition-all duration-200 hover:scale-110 active:scale-95"
-        >
-          <svg viewBox="0 0 24 24" className="w-7 h-7" fill="#FF0000">
-            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-          </svg>
-        </button>
-      </div>
+      {/* Floating Discord Icon — floating style with semi-transparent bg */}
+      <button
+        onClick={() => window.open('https://discord.com/invite/ragnarok', '_blank')}
+        className="floating-discord fixed top-80 right-4 z-40 w-16 h-16 rounded-full shadow-lg hover:shadow-xl transition-shadow bg-black/40 backdrop-blur-sm p-1"
+        title="Join Discord"
+      >
+        <img src={`${ASSET_BASE_URL}/manus-storage/Discord_icon_230fdb89_6026051e.png`} alt="Discord" className="w-full h-full rounded-full object-contain" />
+      </button>
+      {/* Floating YouTube Icon */}
+      <button
+        onClick={() => window.open('https://www.youtube.com/@ragnarokuniversal', '_blank')}
+        className="fixed top-[26rem] right-4 z-40 w-16 h-16 rounded-full shadow-lg hover:shadow-xl transition-shadow bg-black/40 backdrop-blur-sm flex items-center justify-center"
+        title="YouTube"
+      >
+        <svg viewBox="0 0 24 24" className="w-9 h-9" fill="#FF0000">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+      </button>
     </div>
   );
 }
