@@ -34,7 +34,7 @@ const generateRandomNickname = (): string => {
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const [step, setStep] = useState<"login" | "register_social" | "register_success" | "find_account">("login");
+  const [step, setStep] = useState<"login" | "register_social" | "register_guest" | "register_success" | "find_account">("login");
   
   // Login / Form States
   const [socialProvider, setSocialProvider] = useState<"Google" | "Apple" | "Facebook" | "">("Google");
@@ -48,6 +48,15 @@ export default function Login() {
   // Find ID States (Password reset removed)
   const [findEmail, setFindEmail] = useState("");
   const [findStep, setFindStep] = useState<"input" | "success">("input");
+
+  // Auto-jump to guest register step if ?guest=1 in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("guest") === "1") {
+      setSocialProvider("");
+      setStep("register_guest");
+    }
+  }, []);
 
   // Modal States for Terms Details
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -79,14 +88,30 @@ export default function Login() {
     }, 1000);
   };
 
-  // Handle Guest Mode (PPTX 기획안 11번 슬라이드)
+  // Handle Guest Mode — go to Verify & Accept first
   const handleGuestMode = () => {
+    setSocialProvider("");
+    setStep("register_guest");
+  };
+
+  // Complete Guest Registration after Verify & Accept
+  const handleGuestRegisterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!agreeTerms) {
+      toast.error("You must agree to the Terms of Service.");
+      return;
+    }
+    if (!agreeAge) {
+      toast.error("You must confirm that you are 15 years or older.");
+      return;
+    }
     const randomNickname = generateRandomNickname();
     localStorage.setItem("rou_logged_in", "true");
     localStorage.setItem("rou_nickname", randomNickname);
     localStorage.setItem("rou_guest_mode", "true");
+    localStorage.setItem("rou_marketing_consent", agreeMarketing ? "true" : "false");
     toast.success(`Welcome, ${randomNickname}! You are now in guest mode.`);
-    setLocation("/");
+    setStep("register_success");
   };
 
   // Handle Social Register (PPTX 기획안 2번, 7번 슬라이드)
@@ -324,6 +349,103 @@ export default function Login() {
                     Back
                   </Button>
                   <Button 
+                    type="submit"
+                    className="w-2/3 bg-primary hover:bg-primary/90 text-white font-bold text-xs py-5 rounded-xl cursor-pointer"
+                  >
+                    Confirm
+                  </Button>
+                </div>
+              </form>
+            )}
+
+            {/* STEP 2-B: GUEST REGISTER FORM (Verify & Accept) */}
+            {step === "register_guest" && (
+              <form onSubmit={handleGuestRegisterSubmit} className="flex flex-col gap-6">
+                <div className="text-center flex flex-col gap-2">
+                  <Badge className="bg-primary/20 text-primary border border-primary/30 self-center text-[10px]">GUEST</Badge>
+                  <h2 className="text-2xl font-black tracking-wider text-white uppercase font-display">
+                    Verify &amp; Accept
+                  </h2>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-3 bg-white/5 p-4 rounded-xl border border-white/5 mt-2">
+                    {/* Select All */}
+                    <div className="flex items-start gap-3 pb-3 border-b border-white/10">
+                      <Checkbox
+                        id="guestSelectAll"
+                        checked={agreeTerms && agreeAge && agreeMarketing}
+                        onCheckedChange={(checked) => {
+                          setBgAgreeTerms(!!checked);
+                          setBgAgreeAge(!!checked);
+                          setAgreeMarketing(!!checked);
+                        }}
+                        className="mt-0.5 border-white/20 data-[state=checked]:bg-primary"
+                      />
+                      <Label htmlFor="guestSelectAll" className="text-xs text-slate-300 font-semibold cursor-pointer">
+                        Select All Checkbox
+                      </Label>
+                    </div>
+
+                    {/* Age */}
+                    <div className="flex items-start gap-3 justify-between">
+                      <div className="flex items-start gap-3 flex-1">
+                        <Checkbox
+                          id="guestAgreeAge"
+                          checked={agreeAge}
+                          onCheckedChange={(checked) => setBgAgreeAge(!!checked)}
+                          className="mt-0.5 border-white/20 data-[state=checked]:bg-primary"
+                        />
+                        <Label htmlFor="guestAgreeAge" className="text-xs text-slate-300 cursor-pointer leading-relaxed">
+                          (Required) I am 15 years of age or older.
+                        </Label>
+                      </div>
+                    </div>
+
+                    {/* Terms */}
+                    <div className="flex items-start gap-3 border-t border-white/5 pt-3 mt-1 justify-between">
+                      <div className="flex items-start gap-3 flex-1">
+                        <Checkbox
+                          id="guestAgreeTerms"
+                          checked={agreeTerms}
+                          onCheckedChange={(checked) => setBgAgreeTerms(!!checked)}
+                          className="mt-0.5 border-white/20 data-[state=checked]:bg-primary"
+                        />
+                        <Label htmlFor="guestAgreeTerms" className="text-xs text-slate-300 cursor-pointer leading-relaxed">
+                          (Required) I acknowledge that I have read and agree to the Terms of Service.
+                        </Label>
+                      </div>
+                      <a href="https://raguniverse-izcifhmz.manus.space/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline">Read more</a>
+                    </div>
+
+                    {/* Privacy */}
+                    <div className="flex items-start gap-3 border-t border-white/5 pt-3 mt-1 justify-between">
+                      <div className="flex items-start gap-3 flex-1">
+                        <Checkbox
+                          id="guestAgreeMarketing"
+                          checked={agreeMarketing}
+                          onCheckedChange={(checked) => setAgreeMarketing(!!checked)}
+                          className="mt-0.5 border-white/20 data-[state=checked]:bg-primary"
+                        />
+                        <Label htmlFor="guestAgreeMarketing" className="text-xs text-slate-300 cursor-pointer leading-relaxed">
+                          (Required) I acknowledge that I have read and understood the Privacy Policy.
+                        </Label>
+                      </div>
+                      <a href="https://raguniverse-izcifhmz.manus.space/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline">Read more</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 mt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setStep("login")}
+                    className="w-1/3 border-white/10 hover:bg-white/5 text-slate-400 text-xs py-5 rounded-xl"
+                  >
+                    Back
+                  </Button>
+                  <Button
                     type="submit"
                     className="w-2/3 bg-primary hover:bg-primary/90 text-white font-bold text-xs py-5 rounded-xl cursor-pointer"
                   >

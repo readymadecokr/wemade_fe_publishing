@@ -44,13 +44,9 @@ export default function SignInPanel({ onLoginSuccess }: SignInPanelProps) {
   };
 
   const handleGuestMode = () => {
-    const randomNickname = generateRandomNickname();
-    localStorage.setItem("rou_logged_in", "true");
-    localStorage.setItem("rou_nickname", randomNickname);
-    localStorage.setItem("rou_guest_mode", "true");
-    toast.success(`Welcome, ${randomNickname}! You are now in guest mode.`);
+    // Redirect to login page with guest flag to show Verify & Accept
     onLoginSuccess?.();
-    window.location.reload();
+    setLocation("/login?guest=1");
   };
 
   return (
