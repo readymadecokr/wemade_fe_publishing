@@ -14,6 +14,7 @@ import Layout from "@/components/Layout";
 export default function MyPage() {
   const [, setLocation] = useLocation();
   const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [agreeWithdrawTerms, setBgAgreeWithdrawTerms] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [showNicknameEdit, setShowNicknameEdit] = useState(false);
@@ -283,9 +284,10 @@ export default function MyPage() {
                         Cancel
                       </Button>
                       <Button 
-                        type="submit"
-                        disabled={isWithdrawing}
-                        className="bg-red-600 hover:bg-red-500 text-white font-bold text-xs px-8 py-4 rounded-xl cursor-pointer"
+                        type="button"
+                        disabled={isWithdrawing || !agreeWithdrawTerms}
+                        onClick={() => agreeWithdrawTerms && setShowDeleteConfirm(true)}
+                        className="bg-red-600 hover:bg-red-500 text-white font-bold text-xs px-8 py-4 rounded-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isWithdrawing ? "Processing..." : "Delete Account"}
                       </Button>
@@ -551,6 +553,51 @@ export default function MyPage() {
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {isValidatingCoupon ? "Validating..." : "Apply Coupon"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Delete Account Confirmation Popup */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#131313] rounded-2xl p-6 max-w-sm w-full border border-red-200 dark:border-red-900/50 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
+                <ShieldAlert size={20} className="text-red-600" />
+              </div>
+              <h3 className="text-base font-bold text-black dark:text-white">Are you sure you want to delete your account?</h3>
+            </div>
+            <p className="text-sm text-black/60 dark:text-white/60 mb-6">
+              This action cannot be undone. Your account and all associated data will be permanently removed.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setIsWithdrawing(true);
+                  setTimeout(() => {
+                    localStorage.removeItem("rou_logged_in");
+                    localStorage.removeItem("rou_nickname");
+                    localStorage.removeItem("rou_guest_mode");
+                    localStorage.removeItem("rou_social_provider");
+                    localStorage.removeItem("rou_ttkey_verified");
+                    localStorage.removeItem("rou_agreed_at");
+                    toast.success("Your account has been permanently deleted.");
+                    setLocation("/");
+                  }, 1500);
+                }}
+                disabled={isWithdrawing}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold"
+              >
+                {isWithdrawing ? "Deleting..." : "Yes, Delete Account"}
               </Button>
             </div>
           </div>
