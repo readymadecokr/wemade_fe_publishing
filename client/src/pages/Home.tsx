@@ -1,4 +1,4 @@
-import { Play, ChevronRight, ChevronLeft, ArrowRight, X, MessageCircle } from "lucide-react";
+import { ChevronRight, ChevronLeft, ArrowRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -237,30 +237,27 @@ export default function Home() {
           </button>
         </section>
 
-        {/* Game Start and Join Community Buttons Section */}
+        {/* GAME START Button Section */}
         <section className="py-0 bg-background flex items-center justify-center">
-          <div className="flex flex-row items-center justify-center gap-2 md:gap-6 py-3 md:py-4 w-full px-2 md:px-0">
-            {/* START GAME NOW Button */}
+          <div className="flex items-center justify-center py-4 md:py-6">
             <button
               onClick={() => setShowTTKeyDialog(true)}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-3 md:px-8 py-3 md:py-4 bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-xs md:text-base shadow-lg transition-all hover:shadow-xl active:scale-95 rounded"
-              title="Start Game Now"
-              style={{ fontFamily: 'Poppins, sans-serif' }}
+              title="Game Start"
+              className="group relative w-36 h-36 md:w-48 md:h-48 rounded-full overflow-hidden shadow-2xl transition-all duration-300 hover:scale-110 hover:shadow-[0_0_40px_rgba(99,102,241,0.6)] active:scale-95 focus:outline-none"
             >
-              <Play size={16} className="md:w-5 md:h-5" /> <span className="hidden md:inline">START GAME NOW</span><span className="md:hidden text-center"><div>START</div><div>GAME NOW</div></span>
-            </button>
-
-            {/* JOIN COMMUNITY Button */}
-            <button
-              onClick={() => window.open('https://discord.com/invite/ragnarok', '_blank')}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-3 md:px-8 py-3 md:py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs md:text-base shadow-lg transition-all hover:shadow-xl active:scale-95 rounded"
-              title="Join Community"
-              style={{ fontFamily: 'Poppins, sans-serif' }}
-            >
-              <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.211.375-.444.864-.607 1.25a18.27 18.27 0 0 0-5.487 0c-.163-.386-.395-.875-.607-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.975 14.975 0 0 0 1.293-2.1a.07.07 0 0 0-.038-.098a13.11 13.11 0 0 1-1.872-.892a.072.072 0 0 1-.007-.12a10.15 10.15 0 0 0 .372-.294a.074.074 0 0 1 .076-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .076.01c.12.098.246.198.373.294a.072.072 0 0 1-.006.12a12.3 12.3 0 0 1-1.873.892a.077.077 0 0 0-.037.099c.36.698.772 1.362 1.293 2.1a.074.074 0 0 0 .084.028a19.963 19.963 0 0 0 6.002-3.03a.079.079 0 0 0 .033-.057c.5-4.761-.838-8.898-3.557-12.562a.06.06 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-.967-2.157-2.156c0-1.193.93-2.157 2.157-2.157c1.226 0 2.157.964 2.157 2.157c0 1.19-.93 2.155-2.157 2.155zm7.975 0c-1.183 0-2.157-.967-2.157-2.156c0-1.193.93-2.157 2.157-2.157c1.226 0 2.157.964 2.157 2.157c0 1.19-.931 2.155-2.157 2.155z" />
-              </svg>
-              <span className="hidden md:inline">JOIN COMMUNITY</span><span className="md:hidden text-center"><div>JOIN</div><div>COMMUNITY</div></span>
+              {/* Background image */}
+              <img
+                src={`${ASSET_BASE_URL}/manus-storage/game-start-btn_27f1a0a1.png`}
+                alt="Game Start"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+              {/* Hover glow ring */}
+              <span className="absolute inset-0 rounded-full border-4 border-white/0 group-hover:border-white/40 transition-all duration-300" />
+              {/* Rotating outer ring on hover */}
+              <span
+                className="absolute inset-[-6px] rounded-full border-2 border-dashed border-indigo-400/0 group-hover:border-indigo-400/70 transition-all duration-500 group-hover:animate-spin"
+                style={{ animationDuration: '3s' }}
+              />
             </button>
           </div>
         </section>
