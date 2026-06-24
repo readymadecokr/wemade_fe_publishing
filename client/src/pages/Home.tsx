@@ -388,7 +388,7 @@ export default function Home() {
         {/* TT Key Dialog */}
         {showTTKeyDialog && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-background border border-border rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl">
+            <div className="bg-background border border-border rounded-2xl p-6 md:p-8 max-w-2xl w-full shadow-2xl">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-2xl font-black text-foreground">Please enter your Technical Test Key</h3>
                 <button
@@ -434,15 +434,7 @@ export default function Home() {
                   onClick={handleTTKeySubmit}
                   className="w-full bg-primary hover:bg-primary/90 text-white font-bold"
                 >
-                  Start Game
-                </Button>
-
-                <Button
-                  onClick={() => setShowTTKeyDialog(false)}
-                  variant="outline"
-                  className="w-full"
-                >
-                  Cancel
+                  Confirm
                 </Button>
               </div>
             </div>
