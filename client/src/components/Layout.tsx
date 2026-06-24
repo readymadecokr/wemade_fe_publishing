@@ -27,11 +27,11 @@ export default function Layout({ children }: LayoutProps) {
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
   const userNickname = localStorage.getItem("rou_nickname") || "Adventurer";
 
-  // Check if user has already accepted cookies
+  // Show Privacy Settings popup on first visit (no cookie consent yet)
   useEffect(() => {
     const cookieConsent = localStorage.getItem("rou_cookie_consent");
     if (!cookieConsent) {
-      setShowCookieConsent(true);
+      setShowPrivacySettings(true);
     }
   }, []);
 
@@ -203,33 +203,7 @@ export default function Layout({ children }: LayoutProps) {
       </main>
 
       {/* Cookie Consent Banner */}
-      {showCookieConsent && (
-        <>
-        <div className="fixed bottom-0 left-0 right-0 bg-slate-700/50 text-white p-4 z-50 shadow-lg backdrop-blur-sm">
-          <div className="container flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-white/90">
-              We use cookies on this website to make your experience better. Hereby you give your consent to the use of cookies for personalizing content under the{" "}
-              <Link href="/privacy-policy" className="underline hover:text-blue-100">Privacy Policy</Link> and the{" "}
-              <Link href="/cookie-policy" className="underline hover:text-blue-100">Cookies Policy.</Link>
-            </p>
-            <div className="flex gap-3 whitespace-nowrap">
-              <button
-                onClick={() => handleCookieConsent(false)}
-                className="px-4 py-2 text-sm font-semibold bg-slate-600 hover:bg-slate-500 rounded transition-colors"
-              >
-                Essential Cookies Only
-              </button>
-              <button
-                onClick={() => handleCookieConsent(true)}
-                className="px-4 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-700 rounded transition-colors"
-              >
-                Allow All
-              </button>
-            </div>
-          </div>
-        </div>
-        </>
-      )}
+
 
       {/* Footer */}
       <footer className="w-full bg-background border-t border-blue-100 mt-auto">
