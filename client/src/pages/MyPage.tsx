@@ -222,6 +222,14 @@ export default function MyPage() {
                     <LogOut size={12} className="mr-1" /> Logout
                   </Button>
 
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowWithdrawDialog(true)}
+                    className="w-full text-xs border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                  >
+                    <ShieldAlert size={12} className="mr-1" /> Withdraw Account
+                  </Button>
+
                 </div>
               </div>
             </div>
