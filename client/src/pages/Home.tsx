@@ -370,8 +370,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Spacer: 80% of button height below banner — responsive using clamp */}
-        <div className="bg-background" style={{ height: 'clamp(115px, 21.1vw, 307px)' }} />
+        {/* Spacer: 80% of button height minus News top padding to minimize gap */}
+        <div className="bg-background" style={{ height: 'clamp(103px, 20vw, 295px)' }} />
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background border-b border-border">
