@@ -45,8 +45,8 @@ export default function MyPage() {
 
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
 
-  // Format agreed_at as "Date. MM/DD/YYYY H:MM AM/PM"
-  const agreedDate = (() => {
+  // Format agreed_at as "Agreed on: MM/DD/YYYY H:MM AM/PM"
+  const agreedDateStr = (() => {
     const raw = localStorage.getItem("rou_agreed_at");
     if (!raw) return null;
     const d = new Date(raw);
@@ -55,9 +55,9 @@ export default function MyPage() {
     const yyyy = d.getFullYear();
     const hours = d.getHours();
     const minutes = String(d.getMinutes()).padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
     const h12 = hours % 12 || 12;
-    return `Date. ${mm}/${dd}/${yyyy} ${h12}:${minutes} ${ampm}`;
+    const ap = hours >= 12 ? 'PM' : 'AM';
+    return `Agreed on: ${mm}/${dd}/${yyyy} ${h12}:${minutes} ${ap}`;
   })();
 
   // Marketing consent state — synced with onboarding value via localStorage
@@ -426,10 +426,10 @@ export default function MyPage() {
 
                   {/* Terms Agreement */}
                   <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50">
-                    {/* Agreed date — shown above Terms Agreement title */}
-                    {agreedDate && (
-                      <p className="text-xs text-black/50 dark:text-white/50 mb-2">{agreedDate}</p>
-                    )}
+                    {/* Agreed date — always shown above Terms Agreement title */}
+                    <p className="text-xs font-medium text-black/60 dark:text-white/60 mb-2">
+                      {agreedDateStr ?? "Agreed on: -"}
+                    </p>
                     <h4 className="text-black dark:text-white font-bold text-sm mb-4 flex items-center gap-2">
                       <CheckCircle2 size={18} />
                       Terms Agreement
