@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
+import SignInPanel from "@/components/SignInPanel";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -152,7 +153,7 @@ export default function Login() {
             {/* STEP 1: LOGIN PAGE */}
             {step === "login" && (
               <div className="flex flex-col gap-6">
-                <div className="text-center flex flex-col gap-2">
+                <div className="text-center flex flex-col gap-2 hidden">
                   <h2 className="text-2xl font-black tracking-wider text-white uppercase font-display">
                     Sign In
                   </h2>
