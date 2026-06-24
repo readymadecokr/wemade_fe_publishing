@@ -45,6 +45,21 @@ export default function MyPage() {
 
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
 
+  // Format agreed_at as "Date. MM/DD/YYYY H:MM AM/PM"
+  const agreedDate = (() => {
+    const raw = localStorage.getItem("rou_agreed_at");
+    if (!raw) return null;
+    const d = new Date(raw);
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    const hours = d.getHours();
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const h12 = hours % 12 || 12;
+    return `Date. ${mm}/${dd}/${yyyy} ${h12}:${minutes} ${ampm}`;
+  })();
+
   // Marketing consent state — synced with onboarding value via localStorage
   const [marketingConsent, setMarketingConsent] = useState<boolean>(() => {
     const stored = localStorage.getItem("rou_marketing_consent");
@@ -416,85 +431,73 @@ export default function MyPage() {
                       Terms Agreement
                     </h4>
                     <div className="space-y-3">
-                      {/* Terms of Service — read-only */}
-                      <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl">
-                        <div className="flex flex-col gap-0.5">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 size={15} className="text-green-600 shrink-0" />
-                            <span className="text-sm text-black dark:text-white">Terms of Service</span>
+                          {/* Terms of Service */}
+                          <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 size={15} className="text-green-600 shrink-0" />
+                              <span className="text-sm text-black dark:text-white">Terms of Service</span>
+                            </div>
+                            <div className="flex flex-col items-end gap-0.5 ml-2 shrink-0">
+                              <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
+                              {agreedDate && <span className="text-[10px] text-black/40 dark:text-white/40">{agreedDate}</span>}
+                            </div>
                           </div>
-                          {localStorage.getItem("rou_agreed_at") && (
-                            <span className="text-[10px] text-black/40 dark:text-white/40 pl-5">
-                              {new Date(localStorage.getItem("rou_agreed_at")!).toLocaleString()}
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full shrink-0 ml-2">Agreed</span>
-                      </div>
 
-                      {/* Privacy Policy — read-only */}
-                      <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl">
-                        <div className="flex flex-col gap-0.5">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 size={15} className="text-green-600 shrink-0" />
-                            <span className="text-sm text-black dark:text-white">Privacy Policy</span>
+                          {/* Privacy Policy */}
+                          <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 size={15} className="text-green-600 shrink-0" />
+                              <span className="text-sm text-black dark:text-white">Privacy Policy</span>
+                            </div>
+                            <div className="flex flex-col items-end gap-0.5 ml-2 shrink-0">
+                              <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
+                              {agreedDate && <span className="text-[10px] text-black/40 dark:text-white/40">{agreedDate}</span>}
+                            </div>
                           </div>
-                          {localStorage.getItem("rou_agreed_at") && (
-                            <span className="text-[10px] text-black/40 dark:text-white/40 pl-5">
-                              {new Date(localStorage.getItem("rou_agreed_at")!).toLocaleString()}
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full shrink-0 ml-2">Agreed</span>
-                      </div>
 
-                      {/* Age Verification — read-only */}
-                      <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl">
-                        <div className="flex flex-col gap-0.5">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 size={15} className="text-green-600 shrink-0" />
-                            <span className="text-sm text-black dark:text-white">Age Verification</span>
+                          {/* Age Verification */}
+                          <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 size={15} className="text-green-600 shrink-0" />
+                              <span className="text-sm text-black dark:text-white">Age Verification</span>
+                            </div>
+                            <div className="flex flex-col items-end gap-0.5 ml-2 shrink-0">
+                              <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
+                              {agreedDate && <span className="text-[10px] text-black/40 dark:text-white/40">{agreedDate}</span>}
+                            </div>
                           </div>
-                          {localStorage.getItem("rou_agreed_at") && (
-                            <span className="text-[10px] text-black/40 dark:text-white/40 pl-5">
-                              {new Date(localStorage.getItem("rou_agreed_at")!).toLocaleString()}
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full shrink-0 ml-2">Agreed</span>
-                      </div>
 
-                      {/* Marketing Consent — user-controllable toggle */}
-                      <div className={`flex items-center justify-between p-3 rounded-xl border transition-colors ${
-                        marketingConsent
-                          ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700/40"
-                          : "bg-black/5 dark:bg-white/5 border-transparent"
-                      }`}>
-                        <div className="flex items-start gap-2">
-                          <Bell size={15} className={`mt-0.5 shrink-0 ${marketingConsent ? "text-blue-600" : "text-black/40 dark:text-white/40"}`} />
-                          <div>
-                            <p className="text-sm font-medium text-black dark:text-white">Receive Marketing Information</p>
-                            <p className="text-xs text-black/50 dark:text-white/50 mt-0.5">
-                              {marketingConsent
-                                ? "You are currently receiving marketing updates."
-                                : "You are not receiving marketing updates."}
+                          {/* Marketing Consent — user-controllable toggle */}
+                          <div className={`flex items-center justify-between p-3 rounded-xl border transition-colors ${
+                            marketingConsent
+                              ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700/40"
+                              : "bg-black/5 dark:bg-white/5 border-transparent"
+                          }`}>
+                            <div className="flex items-start gap-2">
+                              <Bell size={15} className={`mt-0.5 shrink-0 ${marketingConsent ? "text-blue-600" : "text-black/40 dark:text-white/40"}`} />
+                              <div>
+                                <p className="text-sm font-medium text-black dark:text-white">Receive Marketing Information</p>
+                                <p className="text-xs text-black/50 dark:text-white/50 mt-0.5">
+                                  {marketingConsent
+                                    ? "You are currently receiving marketing updates."
+                                    : "You are not receiving marketing updates."}
+                                </p>
+                              </div>
+                            </div>
+                            <Switch
+                              checked={marketingConsent}
+                              onCheckedChange={handleMarketingToggle}
+                              className="shrink-0 ml-4 data-[state=checked]:bg-blue-600"
+                            />
+                          </div>
+
+                          {/* Last updated timestamp */}
+                          {localStorage.getItem("rou_marketing_consent_updated_at") && (
+                            <p className="text-xs text-black/40 dark:text-white/40 px-1">
+                              Last updated:{" "}
+                              {new Date(localStorage.getItem("rou_marketing_consent_updated_at")!).toLocaleString()}
                             </p>
-                          </div>
-                        </div>
-                        <Switch
-                          checked={marketingConsent}
-                          onCheckedChange={handleMarketingToggle}
-                          className="shrink-0 ml-4 data-[state=checked]:bg-blue-600"
-                        />
-                      </div>
-
-                      {/* Last updated timestamp */}
-                      {localStorage.getItem("rou_marketing_consent_updated_at") && (
-                        <p className="text-xs text-black/40 dark:text-white/40 px-1">
-                          Last updated:{" "}
-                          {new Date(localStorage.getItem("rou_marketing_consent_updated_at")!).toLocaleString()}
-                        </p>
-                      )}
+                          )}
                     </div>
                   </div>
                 </div>
