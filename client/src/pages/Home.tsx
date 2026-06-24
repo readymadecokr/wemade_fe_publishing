@@ -67,6 +67,13 @@ export default function Home() {
       subtitle: "Thailand Championship 2026",
       link: "/game-info",
     },
+    {
+      id: 6,
+      url: `${ASSET_BASE_URL}/manus-storage/banner_03_f49c3526.webp`,
+      title: "TT Announcement",
+      subtitle: "Ragnarok Universe TT(Technical Test) Announcement",
+      link: "/news",
+    },
   ];
 
   const nextBanner = () => {
