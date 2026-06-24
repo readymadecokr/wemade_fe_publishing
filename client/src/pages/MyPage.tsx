@@ -310,6 +310,7 @@ export default function MyPage() {
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Name</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Provider</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Registration Date</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Last Account Activity</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -334,6 +335,7 @@ export default function MyPage() {
                               )}
                             </TableCell>
                             <TableCell className="text-black/70 dark:text-white/70">06/19/2026 at 5:14 AM</TableCell>
+                            <TableCell className="text-black/70 dark:text-white/70">South Korea • 06/19/2026 • 05:49 AM</TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
@@ -370,6 +372,10 @@ export default function MyPage() {
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Registration Date</p>
                         <p className="text-sm text-black dark:text-white">06/19/2026 at 5:14 AM</p>
                       </div>
+                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Last Account Activity</p>
+                        <p className="text-sm text-black dark:text-white">South Korea • 06/19/2026 • 05:49 AM</p>
+                      </div>
                     </div>
                   </div>
 
@@ -392,14 +398,7 @@ export default function MyPage() {
                         Associate with Apple
                       </Button>
                     </div>
-                    {/* Last Account Activity */}
-                    <div className="pt-4 border-t border-black/10 dark:border-white/10">
-                      <h5 className="text-black dark:text-white font-bold text-xs mb-2 flex items-center gap-2">
-                        <Clock size={14} />
-                        Last Account Activity
-                      </h5>
-                      <p className="text-xs text-black/70 dark:text-white/70">South Korea • 06/19/2026 • 05:49 AM</p>
-                    </div>
+
                   </div>
 
                   {/* Playing Games */}
