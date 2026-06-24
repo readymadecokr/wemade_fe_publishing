@@ -156,9 +156,6 @@ export default function Login() {
                   <h2 className="text-2xl font-black tracking-wider text-white uppercase font-display">
                     Sign In
                   </h2>
-                  <p className="text-xs text-slate-400">
-                    Ragnarok Universe & Portal Unified Social Sign In
-                  </p>
                 </div>
 
                 {/* Social Login Buttons (PPTX 기획안 11번 슬라이드) */}
@@ -203,12 +200,7 @@ export default function Login() {
                     GUEST MODE (Try as Guest)
                   </Button>
                   
-                  <button 
-                    onClick={() => { setStep("find_account"); setFindStep("input"); }}
-                    className="text-xs text-slate-500 hover:text-primary transition-colors text-center mt-2 cursor-pointer flex items-center justify-center gap-1"
-                  >
-                    <HelpCircle size={12} /> Forgot your ID?
-                  </button>
+
                 </div>
               </div>
             )}
@@ -219,11 +211,8 @@ export default function Login() {
                 <div className="text-center flex flex-col gap-2">
                   <Badge className="bg-primary/20 text-primary border border-primary/30 self-center text-[10px]">SIGN UP</Badge>
                   <h2 className="text-2xl font-black tracking-wider text-white uppercase font-display">
-                    Complete Your Profile
+                    Verify &amp; Accept
                   </h2>
-                  <p className="text-xs text-slate-400">
-                    Complete your profile with {socialProvider} account
-                  </p>
                 </div>
 
                 <div className="flex flex-col gap-4">
@@ -242,35 +231,12 @@ export default function Login() {
                         className="mt-0.5 border-white/20 data-[state=checked]:bg-primary"
                       />
                       <Label htmlFor="selectAll" className="text-xs text-slate-300 font-semibold cursor-pointer">
-                        Select All
+                        Select All Checkbox
                       </Label>
                     </div>
 
+                    {/* Age Verification */}
                     <div className="flex items-start gap-3 justify-between">
-                      <div className="flex items-start gap-3 flex-1">
-                        <Checkbox 
-                          id="agreeTerms" 
-                          checked={agreeTerms} 
-                          onCheckedChange={(checked) => setBgAgreeTerms(!!checked)}
-                          className="mt-0.5 border-white/20 data-[state=checked]:bg-primary"
-                        />
-                        <div className="flex flex-col gap-1">
-                          <Label htmlFor="agreeTerms" className="text-xs text-slate-300 font-semibold cursor-pointer">
-                            Ragnarok Universe Terms of Service (Required)
-                          </Label>
-                          <span className="text-[10px] text-slate-500">Agree to service terms and privacy policy</span>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setShowTermsModal(true)}
-                        className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline"
-                      >
-                        View Details
-                      </button>
-                    </div>
-
-                    <div className="flex items-start gap-3 border-t border-white/5 pt-3 mt-1 justify-between">
                       <div className="flex items-start gap-3 flex-1">
                         <Checkbox 
                           id="agreeAge" 
@@ -278,22 +244,36 @@ export default function Login() {
                           onCheckedChange={(checked) => setBgAgreeAge(!!checked)}
                           className="mt-0.5 border-white/20 data-[state=checked]:bg-primary"
                         />
-                        <div className="flex flex-col gap-1">
-                          <Label htmlFor="agreeAge" className="text-xs text-slate-300 font-semibold cursor-pointer">
-                            Age 20+ Verification (Required)
-                          </Label>
-                          <span className="text-[10px] text-slate-500">This game is rated for ages 20 and up</span>
-                        </div>
+                        <Label htmlFor="agreeAge" className="text-xs text-slate-300 cursor-pointer leading-relaxed">
+                          (Required) I am 15 years of age or older.
+                        </Label>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setShowAgeModal(true)}
-                        className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline"
-                      >
-                        View Details
-                      </button>
                     </div>
 
+                    {/* Terms of Service */}
+                    <div className="flex items-start gap-3 border-t border-white/5 pt-3 mt-1 justify-between">
+                      <div className="flex items-start gap-3 flex-1">
+                        <Checkbox 
+                          id="agreeTerms" 
+                          checked={agreeTerms} 
+                          onCheckedChange={(checked) => setBgAgreeTerms(!!checked)}
+                          className="mt-0.5 border-white/20 data-[state=checked]:bg-primary"
+                        />
+                        <Label htmlFor="agreeTerms" className="text-xs text-slate-300 cursor-pointer leading-relaxed">
+                          (Required) I acknowledge that I have read and agree to the Terms of Service.
+                        </Label>
+                      </div>
+                      <a
+                        href="https://raguniverse-izcifhmz.manus.space/terms-of-service"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline"
+                      >
+                        Read more
+                      </a>
+                    </div>
+
+                    {/* Privacy Policy */}
                     <div className="flex items-start gap-3 border-t border-white/5 pt-3 mt-1 justify-between">
                       <div className="flex items-start gap-3 flex-1">
                         <Checkbox 
@@ -302,20 +282,18 @@ export default function Login() {
                           onCheckedChange={(checked) => setAgreeMarketing(!!checked)}
                           className="mt-0.5 border-white/20 data-[state=checked]:bg-primary"
                         />
-                        <div className="flex flex-col gap-1">
-                          <Label htmlFor="agreeMarketing" className="text-xs text-slate-300 font-semibold cursor-pointer">
-                            Receive Marketing Information (Optional)
-                          </Label>
-                          <span className="text-[10px] text-slate-500">Get updates about new events, promotions, and game news</span>
-                        </div>
+                        <Label htmlFor="agreeMarketing" className="text-xs text-slate-300 cursor-pointer leading-relaxed">
+                          (Required) I acknowledge that I have read and understood the Privacy Policy.
+                        </Label>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setShowMarketingModal(true)}
+                      <a
+                        href="https://raguniverse-izcifhmz.manus.space/privacy-policy"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline"
                       >
-                        View Details
-                      </button>
+                        Read more
+                      </a>
                     </div>
                   </div>
 
