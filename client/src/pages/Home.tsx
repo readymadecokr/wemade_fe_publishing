@@ -227,8 +227,8 @@ export default function Home() {
             </button>
           </section>
 
-          {/* GAME START Button — overlaps banner bottom 30% */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[30%] z-30">
+          {/* GAME START Button — overlaps banner top 30% from bottom, i.e. button top is 70% down the banner */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[70%] z-30">
             <style>{`
               @keyframes spin-ring {
                 from { transform: rotate(0deg); }
@@ -274,21 +274,13 @@ export default function Home() {
               className="game-start-btn group relative w-32 h-32 md:w-44 md:h-44 rounded-full shadow-2xl transition-all duration-300 active:scale-95 focus:outline-none overflow-visible"
               title="Game Start"
             >
-              {/* Sky background circle */}
-              <div className="absolute inset-0 rounded-full overflow-hidden border-4 border-white/80 shadow-xl">
+              {/* GAME START button image */}
+              <div className="absolute inset-0 rounded-full overflow-hidden">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663723000641/izcifHmzBa4gqYqn3Mqkpb/game-start-sky-bg-ALQkcpu2LKks3vyppsJE8L.webp"
-                  alt=""
-                  className="game-start-img w-full h-full object-cover transition-transform duration-500"
+                  src={`${ASSET_BASE_URL}/manus-storage/GAMESTART_btn_ac83fc9b.png`}
+                  alt="Game Start"
+                  className="game-start-img w-full h-full object-contain transition-transform duration-500"
                 />
-                {/* Dark overlay for text readability */}
-                <div className="absolute inset-0 bg-black/20 rounded-full" />
-                {/* GAME START text */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-white font-black text-sm md:text-lg leading-tight tracking-widest drop-shadow-lg text-center" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(99,179,237,0.6)' }}>
-                    GAME<br />START
-                  </span>
-                </div>
               </div>
               {/* Rotating rings (shown on hover via CSS) */}
               <span className="game-start-ring" />
@@ -297,8 +289,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Spacer for the overlapping button */}
-        <div className="h-16 md:h-24 bg-background" />
+        {/* Spacer for the overlapping button (70% of button height below banner) */}
+        <div className="h-24 md:h-32 bg-background" />
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background border-b border-border">
