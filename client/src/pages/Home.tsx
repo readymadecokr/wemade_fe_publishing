@@ -230,56 +230,114 @@ export default function Home() {
           {/* GAME START Button — responsive size based on banner width (1900:600 ratio, button ~22% of banner height) */}
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[70%] z-30">
             <style>{`
-              /* Button size: banner height = vw * 600/1900 ≈ 31.6vw, button = 22% of banner height ≈ 6.95vw, min 120px max 320px */
               .game-start-btn-wrap {
                 width: clamp(120px, 22vw, 320px);
                 height: clamp(120px, 22vw, 320px);
               }
-              @keyframes spin-ring {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
+              /* Fire orbit ring */
+              @keyframes fire-orbit {
+                0%   { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
               }
-              .game-start-ring {
+              /* Lightning flicker */
+              @keyframes lightning-flicker {
+                0%, 100% { opacity: 0; }
+                5%        { opacity: 1; }
+                10%       { opacity: 0.3; }
+                15%       { opacity: 1; }
+                20%       { opacity: 0; }
+                60%       { opacity: 0; }
+                65%       { opacity: 0.9; }
+                70%       { opacity: 0; }
+              }
+              /* Pulsing outer glow */
+              @keyframes glow-pulse {
+                0%, 100% { box-shadow: 0 0 30px 8px rgba(255,120,0,0.5), 0 0 60px 20px rgba(255,60,0,0.25); }
+                50%       { box-shadow: 0 0 60px 20px rgba(255,200,0,0.7), 0 0 100px 40px rgba(255,80,0,0.4); }
+              }
+              /* Comet particles orbiting */
+              @keyframes comet-orbit {
+                from { transform: rotate(0deg) translateX(calc(clamp(60px, 11vw, 160px))) rotate(0deg); }
+                to   { transform: rotate(360deg) translateX(calc(clamp(60px, 11vw, 160px))) rotate(-360deg); }
+              }
+              @keyframes comet-orbit-rev {
+                from { transform: rotate(0deg) translateX(calc(clamp(60px, 11vw, 160px))) rotate(0deg); }
+                to   { transform: rotate(-360deg) translateX(calc(clamp(60px, 11vw, 160px))) rotate(360deg); }
+              }
+
+              /* Fire ring — thick gradient arc */
+              .gs-fire-ring {
                 position: absolute;
-                inset: -8px;
+                inset: -10px;
                 border-radius: 9999px;
-                border: 3px solid transparent;
-                border-top-color: rgba(255,255,255,0.9);
-                border-right-color: rgba(255,255,255,0.5);
+                border: 4px solid transparent;
+                background: conic-gradient(from 0deg, #ff4500, #ff8c00, #ffd700, #ff4500) border-box;
+                -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: destination-out;
+                mask-composite: exclude;
+                opacity: 0;
+                transition: opacity 0.4s;
+              }
+              /* Lightning ring */
+              .gs-lightning-ring {
+                position: absolute;
+                inset: -18px;
+                border-radius: 9999px;
+                border: 3px dashed rgba(180,220,255,0.0);
                 opacity: 0;
                 transition: opacity 0.3s;
               }
-              .game-start-ring-2 {
+              /* Comet dots */
+              .gs-comet {
                 position: absolute;
-                inset: -14px;
+                top: 50%; left: 50%;
+                width: 10px; height: 10px;
+                margin: -5px 0 0 -5px;
                 border-radius: 9999px;
-                border: 2px solid transparent;
-                border-bottom-color: rgba(99,179,237,0.8);
-                border-left-color: rgba(99,179,237,0.4);
                 opacity: 0;
-                transition: opacity 0.3s;
+                transition: opacity 0.4s;
               }
-              .game-start-btn:hover .game-start-ring {
+              .gs-comet-1 { background: radial-gradient(circle, #fff 0%, #ff8c00 60%, transparent 100%); }
+              .gs-comet-2 { background: radial-gradient(circle, #fff 0%, #ffe066 60%, transparent 100%); }
+              .gs-comet-3 { background: radial-gradient(circle, #fff 0%, #7ec8ff 60%, transparent 100%); }
+
+              .game-start-btn:hover .gs-fire-ring {
                 opacity: 1;
-                animation: spin-ring 1.2s linear infinite;
+                animation: fire-orbit 1s linear infinite;
               }
-              .game-start-btn:hover .game-start-ring-2 {
+              .game-start-btn:hover .gs-lightning-ring {
                 opacity: 1;
-                animation: spin-ring 2s linear infinite reverse;
+                border-color: rgba(180,220,255,0.8);
+                animation: lightning-flicker 2.5s ease-in-out infinite, fire-orbit 3s linear infinite reverse;
+              }
+              .game-start-btn:hover .gs-comet {
+                opacity: 1;
+              }
+              .game-start-btn:hover .gs-comet-1 {
+                animation: comet-orbit 1.4s linear infinite;
+              }
+              .game-start-btn:hover .gs-comet-2 {
+                animation: comet-orbit-rev 1.8s linear infinite;
+                animation-delay: -0.6s;
+              }
+              .game-start-btn:hover .gs-comet-3 {
+                animation: comet-orbit 2.2s linear infinite;
+                animation-delay: -1.1s;
               }
               .game-start-btn:hover .game-start-img {
-                transform: scale(1.08);
+                transform: scale(1.06);
               }
               .game-start-btn:hover {
-                box-shadow: 0 0 40px rgba(99,179,237,0.7), 0 0 80px rgba(99,179,237,0.3);
+                animation: glow-pulse 1.2s ease-in-out infinite;
               }
             `}</style>
             <button
               onClick={() => setShowTTKeyDialog(true)}
-              className="game-start-btn game-start-btn-wrap group relative rounded-full shadow-2xl transition-all duration-300 active:scale-95 focus:outline-none overflow-visible"
+              className="game-start-btn game-start-btn-wrap group relative rounded-full transition-all duration-300 active:scale-95 focus:outline-none overflow-visible"
+              style={{ boxShadow: 'none' }}
               title="Game Start"
             >
-              {/* GAME START button image */}
+              {/* GAME START button image — no border */}
               <div className="absolute inset-0 rounded-full overflow-hidden">
                 <img
                   src={`${ASSET_BASE_URL}/manus-storage/GAMESTART_btn_ac83fc9b.png`}
@@ -287,9 +345,14 @@ export default function Home() {
                   className="game-start-img w-full h-full object-contain transition-transform duration-500"
                 />
               </div>
-              {/* Rotating rings (shown on hover via CSS) */}
-              <span className="game-start-ring" />
-              <span className="game-start-ring-2" />
+              {/* Fire orbit ring */}
+              <span className="gs-fire-ring" />
+              {/* Lightning ring */}
+              <span className="gs-lightning-ring" />
+              {/* Comet particles */}
+              <span className="gs-comet gs-comet-1" />
+              <span className="gs-comet gs-comet-2" />
+              <span className="gs-comet gs-comet-3" />
             </button>
           </div>
         </div>
