@@ -240,12 +240,12 @@ export default function Home() {
             </button>
           </section>
 
-          {/* GAME START Button — responsive size based on banner width (1900:600 ratio, button ~22% of banner height) */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[70%] z-30">
+          {/* GAME START Button — responsive size, grows downward (translate-y[80%] = only 20% overlaps banner) */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[80%] z-30">
             <style>{`
               .game-start-btn-wrap {
-                width: clamp(120px, 22vw, 320px);
-                height: clamp(120px, 22vw, 320px);
+                width: clamp(144px, 26.4vw, 384px);
+                height: clamp(144px, 26.4vw, 384px);
               }
               /* Fire orbit ring */
               @keyframes fire-orbit {
@@ -370,8 +370,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Spacer: 70% of button height below banner — responsive using clamp */}
-        <div className="bg-background" style={{ height: 'clamp(84px, 15.4vw, 224px)' }} />
+        {/* Spacer: 80% of button height below banner — responsive using clamp */}
+        <div className="bg-background" style={{ height: 'clamp(115px, 21.1vw, 307px)' }} />
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background border-b border-border">
