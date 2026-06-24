@@ -426,6 +426,10 @@ export default function MyPage() {
 
                   {/* Terms Agreement */}
                   <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50">
+                    {/* Agreed date — shown above Terms Agreement title */}
+                    {agreedDate && (
+                      <p className="text-xs text-black/50 dark:text-white/50 mb-2">{agreedDate}</p>
+                    )}
                     <h4 className="text-black dark:text-white font-bold text-sm mb-4 flex items-center gap-2">
                       <CheckCircle2 size={18} />
                       Terms Agreement
@@ -437,10 +441,7 @@ export default function MyPage() {
                               <CheckCircle2 size={15} className="text-green-600 shrink-0" />
                               <span className="text-sm text-black dark:text-white">Terms of Service</span>
                             </div>
-                            <div className="flex flex-col items-end gap-0.5 ml-2 shrink-0">
-                              <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
-                              {agreedDate && <span className="text-[10px] text-black/40 dark:text-white/40">{agreedDate}</span>}
-                            </div>
+                            <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full shrink-0 ml-2">Agreed</span>
                           </div>
 
                           {/* Privacy Policy */}
@@ -449,10 +450,7 @@ export default function MyPage() {
                               <CheckCircle2 size={15} className="text-green-600 shrink-0" />
                               <span className="text-sm text-black dark:text-white">Privacy Policy</span>
                             </div>
-                            <div className="flex flex-col items-end gap-0.5 ml-2 shrink-0">
-                              <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
-                              {agreedDate && <span className="text-[10px] text-black/40 dark:text-white/40">{agreedDate}</span>}
-                            </div>
+                            <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full shrink-0 ml-2">Agreed</span>
                           </div>
 
                           {/* Age Verification */}
@@ -461,10 +459,7 @@ export default function MyPage() {
                               <CheckCircle2 size={15} className="text-green-600 shrink-0" />
                               <span className="text-sm text-black dark:text-white">Age Verification</span>
                             </div>
-                            <div className="flex flex-col items-end gap-0.5 ml-2 shrink-0">
-                              <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
-                              {agreedDate && <span className="text-[10px] text-black/40 dark:text-white/40">{agreedDate}</span>}
-                            </div>
+                            <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full shrink-0 ml-2">Agreed</span>
                           </div>
 
                           {/* Marketing Consent — user-controllable toggle */}
