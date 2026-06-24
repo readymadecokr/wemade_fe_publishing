@@ -22,10 +22,12 @@ export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [showTTKeyDialog, setShowTTKeyDialog] = useState(false);
+  const [showSignInDialog, setShowSignInDialog] = useState(false);
   const [ttKeyInput, setTTKeyInput] = useState("");
   const [ttKeyError, setTTKeyError] = useState("");
 
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
+  const isTTKeyVerified = localStorage.getItem("rou_ttkey_verified") === "true";
 
   // Banner images carousel
   const bannerImages = [
@@ -122,22 +124,32 @@ export default function Home() {
 
   const handleGameStart = () => {
     if (!isLoggedIn) {
-      toast.info("Please sign in to start the game.");
-      setLocation("/login");
+      // 1. 비로그인 → Sign In 팝업
+      setShowSignInDialog(true);
       return;
     }
+    if (isTTKeyVerified) {
+      // 3. TT Key 인증 완료 → 바로 게임 실행
+      toast.success("Launching game...");
+      window.open("https://discord.gg/yVWJkWdkAU", "_blank");
+      return;
+    }
+    // 2. 로그인 O, TT Key 미인증 → TT Key 팝업
     setShowTTKeyDialog(true);
   };
 
   const handleTTKeySubmit = () => {
     if (!ttKeyInput.trim()) {
-      setTTKeyError("Please enter a valid TT Key");
+      setTTKeyError("Please enter a valid Technical Test Key");
       return;
     }
-    toast.success("TT Key verified! Starting game...");
+    // Save verified state
+    localStorage.setItem("rou_ttkey_verified", "true");
+    toast.success("Technical Test Key verified! Launching game...");
     setShowTTKeyDialog(false);
     setTTKeyInput("");
     setTTKeyError("");
+    window.open("https://discord.gg/yVWJkWdkAU", "_blank");
   };
 
   // Notice data
@@ -332,7 +344,7 @@ export default function Home() {
               }
             `}</style>
             <button
-              onClick={() => setShowTTKeyDialog(true)}
+              onClick={handleGameStart}
               className="game-start-btn game-start-btn-wrap group relative rounded-full transition-all duration-300 active:scale-95 focus:outline-none overflow-visible"
               style={{ boxShadow: 'none' }}
               title="Game Start"
@@ -447,6 +459,41 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Sign In Dialog — shown when not logged in */}
+        {showSignInDialog && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-background border border-border rounded-2xl p-6 md:p-8 max-w-sm w-full shadow-2xl">
+              <div className="flex justify-between items-center mb-5">
+                <h3 className="text-lg font-black text-foreground">Sign In Required</h3>
+                <button
+                  onClick={() => setShowSignInDialog(false)}
+                  className="text-foreground/60 hover:text-foreground transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+              <p className="text-foreground/70 text-sm mb-6">
+                Please sign in to play Ragnarok Universe.
+              </p>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setShowSignInDialog(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold"
+                  onClick={() => { setShowSignInDialog(false); setLocation("/login"); }}
+                >
+                  Sign In
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* TT Key Dialog */}
         {showTTKeyDialog && (
