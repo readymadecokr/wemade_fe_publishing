@@ -1,4 +1,5 @@
 import { ChevronRight, ChevronLeft, ArrowRight, X } from "lucide-react";
+import SignInPanel from "@/components/SignInPanel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -460,36 +461,21 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Sign In Dialog — shown when not logged in */}
+        {/* Sign In Modal — full login panel as popup */}
         {showSignInDialog && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-background border border-border rounded-2xl p-6 md:p-8 max-w-sm w-full shadow-2xl">
-              <div className="flex justify-between items-center mb-5">
-                <h3 className="text-lg font-black text-foreground">Sign In Required</h3>
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+            <div className="relative w-full max-w-md">
+              {/* Decorative blur */}
+              <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-primary to-accent opacity-20 blur-xl pointer-events-none"></div>
+              <div className="relative rounded-3xl border border-white/10 p-8 shadow-2xl bg-slate-900/90 backdrop-blur-2xl">
+                {/* Close button */}
                 <button
                   onClick={() => setShowSignInDialog(false)}
-                  className="text-foreground/60 hover:text-foreground transition-colors"
+                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-10"
                 >
-                  <X size={24} />
+                  <X size={22} />
                 </button>
-              </div>
-              <p className="text-foreground/70 text-sm mb-6">
-                Please sign in to play Ragnarok Universe.
-              </p>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setShowSignInDialog(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold"
-                  onClick={() => { setShowSignInDialog(false); setLocation("/login"); }}
-                >
-                  Sign In
-                </Button>
+                <SignInPanel onLoginSuccess={() => setShowSignInDialog(false)} />
               </div>
             </div>
           </div>
