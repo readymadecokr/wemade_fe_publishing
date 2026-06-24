@@ -308,7 +308,6 @@ export default function MyPage() {
                         <TableHeader>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-transparent">
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Name</TableHead>
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Email Address</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Provider</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Registration Date</TableHead>
                           </TableRow>
@@ -316,7 +315,6 @@ export default function MyPage() {
                         <TableBody>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5">
                             <TableCell className="text-black dark:text-white font-medium">{userNickname}</TableCell>
-                            <TableCell className="text-black/70 dark:text-white/70">{socialProvider === "Guest" ? "—" : "user@example.com"}</TableCell>
                             <TableCell>
                               {socialProvider === "Google" ? (
                                 <span className="inline-flex items-center gap-1 text-black dark:text-white">
@@ -346,10 +344,6 @@ export default function MyPage() {
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Name</p>
                         <p className="text-sm text-black dark:text-white font-medium">{userNickname}</p>
-                      </div>
-                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Email Address</p>
-                        <p className="text-sm text-black dark:text-white">{socialProvider === "Guest" ? "—" : "user@example.com"}</p>
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Provider</p>
