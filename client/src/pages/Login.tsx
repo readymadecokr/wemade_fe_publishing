@@ -199,7 +199,20 @@ export default function Login() {
                   >
                     GUEST MODE (Try as Guest)
                   </Button>
-                  
+
+                  {/* Cloudflare Turnstile */}
+                  <div className="bg-white/5 border border-white/10 p-3 rounded-xl flex items-center justify-between mt-1">
+                    <div className="flex items-center gap-3">
+                      <Shield size={16} className="text-emerald-400 animate-pulse shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-slate-300">Cloudflare Turnstile</span>
+                        <span className="text-[10px] text-slate-500">Automatic verification - no action required</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold shrink-0">
+                      <CheckCircle2 size={14} /> Verified
+                    </div>
+                  </div>
 
                 </div>
               </div>
@@ -297,23 +310,7 @@ export default function Login() {
                     </div>
                   </div>
 
-                  {/* Cloudflare Turnstile Automatic Verification (PPTX 기획안 2번 슬라이드) */}
-                  <div className="flex flex-col gap-2 mt-2">
-                    <Label className="text-xs text-slate-300 font-semibold">Security Verification (Auto)</Label>
-                    <div className="bg-white/5 border border-white/10 p-4 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Shield size={18} className="text-emerald-400 animate-pulse" />
-                        <div className="flex flex-col">
-                          <span className="text-xs font-semibold text-slate-300">Cloudflare Turnstile</span>
-                          <span className="text-[10px] text-slate-500">Automatic verification - no action required</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold">
-                        <CheckCircle2 size={16} /> Verified
-                      </div>
-                    </div>
-                  </div>
+
                 </div>
 
                 <div className="flex gap-3 mt-2">
