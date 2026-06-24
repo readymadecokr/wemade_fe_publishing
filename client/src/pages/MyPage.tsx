@@ -237,12 +237,12 @@ export default function MyPage() {
                     <LogOut size={12} className="mr-1" /> Logout
                   </Button>
 
-                  <Button
+                    <Button
                     variant="outline"
                     onClick={() => setShowWithdrawDialog(true)}
                     className="w-full text-xs border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                   >
-                    <ShieldAlert size={12} className="mr-1" /> Withdraw Account
+                    <ShieldAlert size={12} className="mr-1" /> Account Deletion
                   </Button>
 
                 </div>
@@ -254,12 +254,12 @@ export default function MyPage() {
               {showWithdrawDialog ? (
                 // Withdrawal Dialog
                 <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50">
-                  <h3 className="text-lg font-bold text-black dark:text-white mb-4 flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-black dark:text-white mb-4 flex items-center gap-2">
                     <ShieldAlert size={20} className="text-red-600" />
-                    Withdraw Account
+                    Account Deletion
                   </h3>
                   <p className="text-sm text-black/70 dark:text-white/70 mb-4">
-                    This action is permanent and cannot be undone. All your data will be deleted.
+                    This action is permanent and cannot be undone. All of your data will be deleted.
                   </p>
                   <form onSubmit={handleWithdraw} className="space-y-4">
                     <div className="flex items-center space-x-2">
@@ -270,7 +270,7 @@ export default function MyPage() {
                         className="border-2 border-black dark:border-white data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
                       />
                       <Label htmlFor="withdraw-agree" className="text-sm text-black dark:text-white cursor-pointer">
-                        I understand and agree to withdraw my account permanently.
+                        I understand that my account will be permanently deleted.
                       </Label>
                     </div>
                     <div className="flex gap-3 justify-end">
@@ -287,7 +287,7 @@ export default function MyPage() {
                         disabled={isWithdrawing}
                         className="bg-red-600 hover:bg-red-500 text-white font-bold text-xs px-8 py-4 rounded-xl cursor-pointer"
                       >
-                        {isWithdrawing ? "Processing..." : "Complete Withdrawal"}
+                        {isWithdrawing ? "Processing..." : "Delete Account"}
                       </Button>
                     </div>
                   </form>
