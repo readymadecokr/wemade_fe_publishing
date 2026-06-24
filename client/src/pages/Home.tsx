@@ -227,9 +227,14 @@ export default function Home() {
             </button>
           </section>
 
-          {/* GAME START Button — overlaps banner top 30% from bottom, i.e. button top is 70% down the banner */}
+          {/* GAME START Button — responsive size based on banner width (1900:600 ratio, button ~22% of banner height) */}
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[70%] z-30">
             <style>{`
+              /* Button size: banner height = vw * 600/1900 ≈ 31.6vw, button = 22% of banner height ≈ 6.95vw, min 120px max 320px */
+              .game-start-btn-wrap {
+                width: clamp(120px, 22vw, 320px);
+                height: clamp(120px, 22vw, 320px);
+              }
               @keyframes spin-ring {
                 from { transform: rotate(0deg); }
                 to { transform: rotate(360deg); }
@@ -271,7 +276,7 @@ export default function Home() {
             `}</style>
             <button
               onClick={() => setShowTTKeyDialog(true)}
-              className="game-start-btn group relative w-[205px] h-[205px] md:w-[282px] md:h-[282px] rounded-full shadow-2xl transition-all duration-300 active:scale-95 focus:outline-none overflow-visible"
+              className="game-start-btn game-start-btn-wrap group relative rounded-full shadow-2xl transition-all duration-300 active:scale-95 focus:outline-none overflow-visible"
               title="Game Start"
             >
               {/* GAME START button image */}
@@ -289,8 +294,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Spacer: 70% of button height below banner (205px * 70% = 143px) */}
-        <div className="bg-background" style={{ height: '143px' }} />
+        {/* Spacer: 70% of button height below banner — responsive using clamp */}
+        <div className="bg-background" style={{ height: 'clamp(84px, 15.4vw, 224px)' }} />
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background border-b border-border">
