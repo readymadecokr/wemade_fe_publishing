@@ -486,24 +486,7 @@ export default function MyPage() {
                             />
                           </div>
 
-                          {/* Last updated timestamp */}
-                          {localStorage.getItem("rou_marketing_consent_updated_at") && (
-                            <p className="text-xs text-black/40 dark:text-white/40 px-1">
-                              Last updated:{" "}
-                              {(() => {
-                                const d = new Date(localStorage.getItem("rou_marketing_consent_updated_at")!);
-                                const mm = String(d.getMonth() + 1).padStart(2, '0');
-                                const dd = String(d.getDate()).padStart(2, '0');
-                                const yyyy = d.getFullYear();
-                                const hours = d.getHours();
-                                const minutes = String(d.getMinutes()).padStart(2, '0');
-                                const ampm = hours >= 12 ? 'AM' : 'AM';
-                                const h12 = hours % 12 || 12;
-                                const ap = hours >= 12 ? 'PM' : 'AM';
-                                return `${mm}/${dd}/${yyyy} • ${h12}:${minutes} ${ap}`;
-                              })()}
-                            </p>
-                          )}
+
                     </div>
                   </div>
                 </div>
