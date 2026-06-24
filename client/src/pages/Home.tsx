@@ -271,7 +271,7 @@ export default function Home() {
             `}</style>
             <button
               onClick={() => setShowTTKeyDialog(true)}
-              className="game-start-btn group relative w-64 h-64 md:w-[22rem] md:h-[22rem] rounded-full shadow-2xl transition-all duration-300 active:scale-95 focus:outline-none overflow-visible"
+              className="game-start-btn group relative w-[205px] h-[205px] md:w-[282px] md:h-[282px] rounded-full shadow-2xl transition-all duration-300 active:scale-95 focus:outline-none overflow-visible"
               title="Game Start"
             >
               {/* GAME START button image */}
@@ -289,8 +289,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Spacer: 70% of button height below banner (w-64=256px * 70% ≈ 179px) */}
-        <div className="bg-background" style={{ height: '180px' }} />
+        {/* Spacer: 70% of button height below banner (205px * 70% = 143px) */}
+        <div className="bg-background" style={{ height: '143px' }} />
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background border-b border-border">
