@@ -247,26 +247,101 @@ export default function Home() {
                 width: clamp(144px, 26.4vw, 384px);
                 height: clamp(144px, 26.4vw, 384px);
               }
-              /* Poring jump animation */
-              @keyframes poring-jump {
-                0%   { transform: translateY(0) scaleY(1) scaleX(1); }
-                20%  { transform: translateY(0) scaleY(0.8) scaleX(1.2); }
-                40%  { transform: translateY(-28%) scaleY(1.1) scaleX(0.95); }
-                60%  { transform: translateY(-28%) scaleY(1.1) scaleX(0.95); }
-                80%  { transform: translateY(0) scaleY(0.85) scaleX(1.15); }
-                100% { transform: translateY(0) scaleY(1) scaleX(1); }
+              /* Fire orbit ring */
+              @keyframes fire-orbit {
+                0%   { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
               }
-              /* Soft glow pulse on hover */
-              @keyframes poring-glow {
-                0%, 100% { box-shadow: 0 0 20px 6px rgba(255,182,193,0.5), 0 0 40px 15px rgba(255,105,180,0.2); }
-                50%       { box-shadow: 0 0 35px 12px rgba(255,182,193,0.8), 0 0 70px 25px rgba(255,105,180,0.4); }
+              /* Lightning flicker */
+              @keyframes lightning-flicker {
+                0%, 100% { opacity: 0; }
+                5%        { opacity: 1; }
+                10%       { opacity: 0.3; }
+                15%       { opacity: 1; }
+                20%       { opacity: 0; }
+                60%       { opacity: 0; }
+                65%       { opacity: 0.9; }
+                70%       { opacity: 0; }
               }
-              .game-start-btn:hover {
-                animation: poring-glow 1.5s ease-in-out infinite;
+              /* Pulsing outer glow */
+              @keyframes glow-pulse {
+                0%, 100% { box-shadow: 0 0 30px 8px rgba(255,120,0,0.5), 0 0 60px 20px rgba(255,60,0,0.25); }
+                50%       { box-shadow: 0 0 60px 20px rgba(255,200,0,0.7), 0 0 100px 40px rgba(255,80,0,0.4); }
+              }
+              /* Comet particles orbiting */
+              @keyframes comet-orbit {
+                from { transform: rotate(0deg) translateX(calc(clamp(72px, 13.2vw, 192px))) rotate(0deg); }
+                to   { transform: rotate(360deg) translateX(calc(clamp(72px, 13.2vw, 192px))) rotate(-360deg); }
+              }
+              @keyframes comet-orbit-rev {
+                from { transform: rotate(0deg) translateX(calc(clamp(72px, 13.2vw, 192px))) rotate(0deg); }
+                to   { transform: rotate(-360deg) translateX(calc(clamp(72px, 13.2vw, 192px))) rotate(360deg); }
+              }
+
+              /* Fire ring — thick gradient arc */
+              .gs-fire-ring {
+                position: absolute;
+                inset: -10px;
+                border-radius: 9999px;
+                border: 4px solid transparent;
+                background: conic-gradient(from 0deg, #ff4500, #ff8c00, #ffd700, #ff4500) border-box;
+                -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: destination-out;
+                mask-composite: exclude;
+                opacity: 0;
+                transition: opacity 0.4s;
+              }
+              /* Lightning ring */
+              .gs-lightning-ring {
+                position: absolute;
+                inset: -18px;
+                border-radius: 9999px;
+                border: 3px dashed rgba(180,220,255,0.0);
+                opacity: 0;
+                transition: opacity 0.3s;
+              }
+              /* Comet dots */
+              .gs-comet {
+                position: absolute;
+                top: 50%; left: 50%;
+                width: 10px; height: 10px;
+                margin: -5px 0 0 -5px;
+                border-radius: 9999px;
+                opacity: 0;
+                transition: opacity 0.4s;
+              }
+              .gs-comet-1 { background: radial-gradient(circle, #fff 0%, #ff8c00 60%, transparent 100%); }
+              .gs-comet-2 { background: radial-gradient(circle, #fff 0%, #ffe066 60%, transparent 100%); }
+              .gs-comet-3 { background: radial-gradient(circle, #fff 0%, #7ec8ff 60%, transparent 100%); }
+
+              .game-start-btn:hover .gs-fire-ring {
+                opacity: 1;
+                animation: fire-orbit 1s linear infinite;
+              }
+              .game-start-btn:hover .gs-lightning-ring {
+                opacity: 1;
+                border-color: rgba(180,220,255,0.8);
+                animation: lightning-flicker 2.5s ease-in-out infinite, fire-orbit 3s linear infinite reverse;
+              }
+              .game-start-btn:hover .gs-comet {
+                opacity: 1;
+              }
+              .game-start-btn:hover .gs-comet-1 {
+                animation: comet-orbit 1.4s linear infinite;
+              }
+              .game-start-btn:hover .gs-comet-2 {
+                animation: comet-orbit-rev 1.8s linear infinite;
+                animation-delay: -0.6s;
+              }
+              .game-start-btn:hover .gs-comet-3 {
+                animation: comet-orbit 2.2s linear infinite;
+                animation-delay: -1.1s;
               }
               .game-start-btn:hover .game-start-img {
-                animation: poring-jump 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
-                transform-origin: bottom center;
+                transform: scale(1.04);
+              }
+              .game-start-btn:hover {
+                animation: glow-pulse 1.2s ease-in-out infinite;
               }
             `}</style>
             <button
@@ -275,7 +350,7 @@ export default function Home() {
               style={{ boxShadow: 'none' }}
               title="Game Start"
             >
-              {/* GAME START button image — no border */}
+              {/* GAME START button image */}
               <div className="absolute inset-0 rounded-full overflow-hidden">
                 <img
                   src={`${ASSET_BASE_URL}/manus-storage/GAMESTART_btn2_e83288c0.png`}
@@ -283,7 +358,14 @@ export default function Home() {
                   className="game-start-img w-full h-full object-contain transition-transform duration-500"
                 />
               </div>
-
+              {/* Fire orbit ring */}
+              <span className="gs-fire-ring" />
+              {/* Lightning ring */}
+              <span className="gs-lightning-ring" />
+              {/* Comet particles */}
+              <span className="gs-comet gs-comet-1" />
+              <span className="gs-comet gs-comet-2" />
+              <span className="gs-comet gs-comet-3" />
             </button>
           </div>
         </div>
