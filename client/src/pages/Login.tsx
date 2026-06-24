@@ -110,6 +110,8 @@ export default function Login() {
     localStorage.setItem("rou_nickname", randomNickname);
     localStorage.setItem("rou_guest_mode", "true");
     localStorage.setItem("rou_marketing_consent", agreeMarketing ? "true" : "false");
+    // Save agreement timestamp
+    localStorage.setItem("rou_agreed_at", new Date().toISOString());
     toast.success(`Welcome, ${randomNickname}! You are now in guest mode.`);
     setStep("register_success");
   };
@@ -144,6 +146,8 @@ export default function Login() {
       localStorage.setItem("rou_nickname", defaultNickname);
       localStorage.setItem("rou_social_provider", socialProvider);
       localStorage.setItem("rou_marketing_consent", agreeMarketing ? "true" : "false");
+      // Save agreement timestamp
+      localStorage.setItem("rou_agreed_at", new Date().toISOString());
       
       toast.dismiss();
       setStep("register_success");

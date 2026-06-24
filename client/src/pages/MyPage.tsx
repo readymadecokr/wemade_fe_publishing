@@ -418,20 +418,50 @@ export default function MyPage() {
                     <div className="space-y-3">
                       {/* Terms of Service — read-only */}
                       <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl">
-                        <div className="flex items-center gap-2">
-                          <CheckCircle2 size={15} className="text-green-600 shrink-0" />
-                          <span className="text-sm text-black dark:text-white">Terms of Service</span>
+                        <div className="flex flex-col gap-0.5">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 size={15} className="text-green-600 shrink-0" />
+                            <span className="text-sm text-black dark:text-white">Terms of Service</span>
+                          </div>
+                          {localStorage.getItem("rou_agreed_at") && (
+                            <span className="text-[10px] text-black/40 dark:text-white/40 pl-5">
+                              {new Date(localStorage.getItem("rou_agreed_at")!).toLocaleString()}
+                            </span>
+                          )}
                         </div>
-                        <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
+                        <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full shrink-0 ml-2">Agreed</span>
                       </div>
 
                       {/* Privacy Policy — read-only */}
                       <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl">
-                        <div className="flex items-center gap-2">
-                          <CheckCircle2 size={15} className="text-green-600 shrink-0" />
-                          <span className="text-sm text-black dark:text-white">Privacy Policy</span>
+                        <div className="flex flex-col gap-0.5">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 size={15} className="text-green-600 shrink-0" />
+                            <span className="text-sm text-black dark:text-white">Privacy Policy</span>
+                          </div>
+                          {localStorage.getItem("rou_agreed_at") && (
+                            <span className="text-[10px] text-black/40 dark:text-white/40 pl-5">
+                              {new Date(localStorage.getItem("rou_agreed_at")!).toLocaleString()}
+                            </span>
+                          )}
                         </div>
-                        <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
+                        <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full shrink-0 ml-2">Agreed</span>
+                      </div>
+
+                      {/* Age Verification — read-only */}
+                      <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl">
+                        <div className="flex flex-col gap-0.5">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 size={15} className="text-green-600 shrink-0" />
+                            <span className="text-sm text-black dark:text-white">Age Verification</span>
+                          </div>
+                          {localStorage.getItem("rou_agreed_at") && (
+                            <span className="text-[10px] text-black/40 dark:text-white/40 pl-5">
+                              {new Date(localStorage.getItem("rou_agreed_at")!).toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full shrink-0 ml-2">Agreed</span>
                       </div>
 
                       {/* Marketing Consent — user-controllable toggle */}
