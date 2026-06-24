@@ -252,6 +252,7 @@ export default function MyPage() {
                         id="withdraw-agree"
                         checked={agreeWithdrawTerms}
                         onCheckedChange={(checked) => setBgAgreeWithdrawTerms(checked as boolean)}
+                        className="border-2 border-black dark:border-white data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
                       />
                       <Label htmlFor="withdraw-agree" className="text-sm text-black dark:text-white cursor-pointer">
                         I understand and agree to withdraw my account permanently.
