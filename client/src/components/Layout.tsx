@@ -251,8 +251,6 @@ export default function Layout({ children }: LayoutProps) {
             <span className="text-slate-300 dark:text-slate-600">|</span>
             <button onClick={() => setShowPrivacySettings(true)} className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">Privacy Settings</button>
             <span className="text-slate-300 dark:text-slate-600">|</span>
-            <Link href="/cookie-policy" className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Cookie Policy</Link>
-            <span className="text-slate-300 dark:text-slate-600">|</span>
             <div className="flex items-center gap-2">
               <Disc size={16} className="text-blue-600 dark:text-blue-400" />
               <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Discord</a>
