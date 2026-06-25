@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
+import { trpc } from "@/lib/trpc";
 import { Shield, Check, Info, User, CheckCircle2, AlertTriangle, HelpCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,6 +95,8 @@ export default function Login() {
     setStep("register_guest");
   };
 
+  const guestRegisterMutation = trpc.guest.register.useMutation();
+
   // Complete Guest Registration after Verify & Accept
   const handleGuestRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,14 +109,31 @@ export default function Login() {
       return;
     }
     const randomNickname = generateRandomNickname();
-    localStorage.setItem("rou_logged_in", "true");
-    localStorage.setItem("rou_nickname", randomNickname);
-    localStorage.setItem("rou_guest_mode", "true");
-    localStorage.setItem("rou_marketing_consent", agreeMarketing ? "true" : "false");
-    // Save agreement timestamp
-    localStorage.setItem("rou_agreed_at", new Date().toISOString());
-    toast.success(`Welcome, ${randomNickname}! You are now in guest mode.`);
-    setStep("register_success");
+    // DB에 게스트 회원 저장
+    guestRegisterMutation.mutate(
+      { nickname: randomNickname },
+      {
+        onSuccess: () => {
+          localStorage.setItem("rou_logged_in", "true");
+          localStorage.setItem("rou_nickname", randomNickname);
+          localStorage.setItem("rou_guest_mode", "true");
+          localStorage.setItem("rou_marketing_consent", agreeMarketing ? "true" : "false");
+          localStorage.setItem("rou_agreed_at", new Date().toISOString());
+          toast.success(`Welcome, ${randomNickname}! You are now in guest mode.`);
+          setStep("register_success");
+        },
+        onError: () => {
+          // DB 저장 실패해도 로칼에는 저장
+          localStorage.setItem("rou_logged_in", "true");
+          localStorage.setItem("rou_nickname", randomNickname);
+          localStorage.setItem("rou_guest_mode", "true");
+          localStorage.setItem("rou_marketing_consent", agreeMarketing ? "true" : "false");
+          localStorage.setItem("rou_agreed_at", new Date().toISOString());
+          toast.success(`Welcome, ${randomNickname}! You are now in guest mode.`);
+          setStep("register_success");
+        },
+      }
+    );
   };
 
   // Handle Social Register (PPTX 기획안 2번, 7번 슬라이드)
