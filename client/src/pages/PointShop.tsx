@@ -27,7 +27,7 @@ export default function PointShop() {
       name: "Premium Character Skin",
       price: 9900,
       category: "cosmetics",
-      image: `${ASSET_BASE_URL}/manus-storage/20241220_ROMC_PC_Banner_1c1329c9.jpg`,
+      image: `${ASSET_BASE_URL}/manus-storage/20241220_ROMC_PC_Banner_1c1329c9_9464f63e.jpg`,
       popular: true,
     },
     {
@@ -35,7 +35,7 @@ export default function PointShop() {
       name: "Exclusive Pet",
       price: 4900,
       category: "pets",
-      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d.png`,
+      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d_340f09e8.png`,
       discount: 20,
     },
     {
@@ -43,7 +43,7 @@ export default function PointShop() {
       name: "Weapon Enhancement Pack",
       price: 14900,
       category: "items",
-      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d.png`,
+      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d_340f09e8.png`,
       popular: true,
     },
     {
@@ -51,14 +51,14 @@ export default function PointShop() {
       name: "Mount Costume",
       price: 7900,
       category: "cosmetics",
-      image: `${ASSET_BASE_URL}/manus-storage/20241220_ROMC_PC_Banner_1c1329c9.jpg`,
+      image: `${ASSET_BASE_URL}/manus-storage/20241220_ROMC_PC_Banner_1c1329c9_9464f63e.jpg`,
     },
     {
       id: 5,
       name: "Battle Pass",
       price: 9900,
       category: "battle-pass",
-      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d.png`,
+      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d_340f09e8.png`,
       discount: 10,
     },
     {
@@ -66,7 +66,7 @@ export default function PointShop() {
       name: "Rare Wings",
       price: 19900,
       category: "cosmetics",
-      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d.png`,
+      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d_340f09e8.png`,
       popular: true,
     },
     {
@@ -74,14 +74,14 @@ export default function PointShop() {
       name: "Experience Booster (7 Days)",
       price: 4900,
       category: "items",
-      image: `${ASSET_BASE_URL}/manus-storage/20241220_ROMC_PC_Banner_1c1329c9.jpg`,
+      image: `${ASSET_BASE_URL}/manus-storage/20241220_ROMC_PC_Banner_1c1329c9_9464f63e.jpg`,
     },
     {
       id: 8,
       name: "Legendary Armor Set",
       price: 24900,
       category: "items",
-      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d.png`,
+      image: `${ASSET_BASE_URL}/manus-storage/BannerWarpportaldesktop_v2_0a88c48d_340f09e8.png`,
       discount: 15,
     },
   ];

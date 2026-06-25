@@ -68,10 +68,10 @@ export default function Home() {
       link: "/game-info",
     },
     {
-      id: 6,
-      url: `${ASSET_BASE_URL}/manus-storage/banner_03_f49c3526.webp`,
-      title: "TT Announcement",
-      subtitle: "Ragnarok Universe TT(Technical Test) Announcement",
+      id: 7,
+      url: `${ASSET_BASE_URL}/manus-storage/banner_04_4c64cc00.jpg`,
+      title: "Enter The Ragnarok Universe",
+      subtitle: "TT (Technical Test) Announcement",
       link: "/news",
     },
   ];
