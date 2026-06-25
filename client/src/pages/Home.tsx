@@ -74,6 +74,13 @@ export default function Home() {
       subtitle: "Ragnarok Universe TT(Technical Test) Announcement",
       link: "/news",
     },
+    {
+      id: 7,
+      url: `${ASSET_BASE_URL}/manus-storage/banner_04_4c64cc00.jpg`,
+      title: "Enter The Ragnarok Universe",
+      subtitle: "TT (Technical Test) Announcement",
+      link: "/news",
+    },
   ];
 
   const nextBanner = () => {
