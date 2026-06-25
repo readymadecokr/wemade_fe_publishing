@@ -35,6 +35,26 @@ import {
 } from "@/components/ui/table";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
+import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import superjson from "superjson";
+import type { AppRouter } from "../../../server/routers";
+
+// AdminPage 전용 직접 API 호출 함수 (x-admin-key 헤더 주입)
+function createAdminClient(adminKey: string) {
+  return createTRPCProxyClient<AppRouter>({
+    links: [
+      httpBatchLink({
+        url: "/api/trpc",
+        transformer: superjson,
+        headers: () => ({ "x-admin-key": adminKey }),
+        fetch(input, init) {
+          return globalThis.fetch(input, { ...(init ?? {}), credentials: "include" });
+        },
+      }),
+    ],
+  });
+}
 import {
   Activity,
   ArrowUpDown,
@@ -49,7 +69,8 @@ import {
   UserCheck,
   Users,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 type SortBy = "id" | "name" | "email" | "createdAt" | "lastSignedIn" | "role";
@@ -287,7 +308,17 @@ export default function AdminPage() {
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
-  const { data: stats, refetch: refetchStats } = trpc.admin.stats.useQuery(undefined, {
+  // adminLoggedIn 기반 adminClient 생성
+  const adminKey = adminLoggedIn
+    ? `${adminLoggedIn}:${localStorage.getItem(`admin_pw_${adminLoggedIn}`) ?? "0000"}`
+    : "";
+  const adminClient = useMemo(() => adminKey ? createAdminClient(adminKey) : null, [adminKey]);
+  const qc = useQueryClient();
+
+  const { data: stats, refetch: refetchStats } = useQuery({
+    queryKey: ["admin", "stats", adminKey],
+    queryFn: () => adminClient!.admin.stats.query(),
+    enabled: !!adminClient,
     retry: false,
   });
 
@@ -295,18 +326,21 @@ export default function AdminPage() {
     data: usersData,
     isLoading: usersLoading,
     refetch: refetchUsers,
-  } = trpc.admin.listUsers.useQuery(
-    { page, pageSize, search, sortBy, sortOrder, roleFilter },
-    { retry: false }
-  );
+  } = useQuery({
+    queryKey: ["admin", "listUsers", adminKey, page, pageSize, search, sortBy, sortOrder, roleFilter],
+    queryFn: () => adminClient!.admin.listUsers.query({ page, pageSize, search, sortBy, sortOrder, roleFilter }),
+    enabled: !!adminClient,
+    retry: false,
+  });
 
-  const updateRoleMutation = trpc.admin.updateUserRole.useMutation({
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ id, role }: { id: number; role: "user" | "admin" }) =>
+      adminClient!.admin.updateUserRole.mutate({ id, role }),
     onSuccess: () => {
       toast.success("역할이 변경되었습니다.");
-      refetchUsers();
-      refetchStats();
+      qc.invalidateQueries({ queryKey: ["admin"] });
     },
-    onError: (err) => {
+    onError: (err: Error) => {
       toast.error(`역할 변경 실패: ${err.message}`);
     },
   });

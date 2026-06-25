@@ -43,3 +43,23 @@ export const adminProcedure = t.procedure.use(
     });
   }),
 );
+
+// ID/PW 기반 관리자 인증 — x-admin-key 헤더로 인증
+const ADMIN_ACCOUNTS: Record<string, string> = {
+  cyanima: "0000",
+  blue0246: "0000",
+};
+
+export const adminKeyProcedure = t.procedure.use(
+  t.middleware(async opts => {
+    const { ctx, next } = opts;
+    const adminKey = (ctx.req as { headers?: Record<string, string> }).headers?.["x-admin-key"] ?? "";
+    // adminKey 형식: "id:pw"
+    const [id, pw] = adminKey.split(":");
+    const validPw = ADMIN_ACCOUNTS[id];
+    if (!validPw || pw !== validPw) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Invalid admin credentials" });
+    }
+    return next({ ctx });
+  }),
+);

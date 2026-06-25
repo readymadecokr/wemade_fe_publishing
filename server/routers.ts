@@ -1,7 +1,7 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { adminProcedure, publicProcedure, router } from "./_core/trpc";
+import { adminKeyProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import { users } from "../drizzle/schema";
 import { asc, desc, eq, like, or, sql } from "drizzle-orm";
@@ -50,7 +50,7 @@ export const appRouter = router({
 
   admin: router({
     // 회원 목록 조회 (페이지네이션, 검색, 정렬)
-    listUsers: adminProcedure
+    listUsers: adminKeyProcedure
       .input(
         z.object({
           page: z.number().int().min(1).default(1),
@@ -142,7 +142,7 @@ export const appRouter = router({
       }),
 
     // 회원 상세 조회
-    getUser: adminProcedure
+    getUser: adminKeyProcedure
       .input(z.object({ id: z.number().int() }))
       .query(async ({ input }) => {
         const db = await getDb();
@@ -159,7 +159,7 @@ export const appRouter = router({
       }),
 
     // 회원 역할 변경
-    updateUserRole: adminProcedure
+    updateUserRole: adminKeyProcedure
       .input(
         z.object({
           id: z.number().int(),
@@ -179,7 +179,7 @@ export const appRouter = router({
       }),
 
     // 통계 정보
-    stats: adminProcedure.query(async () => {
+    stats: adminKeyProcedure.query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
