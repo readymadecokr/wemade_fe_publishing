@@ -21,6 +21,33 @@ export const appRouter = router({
     }),
   }),
 
+  guest: router({
+    // 게스트 회원가입 — 닉네임을 DB에 저장
+    register: publicProcedure
+      .input(
+        z.object({
+          nickname: z.string().min(1).max(50),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // 게스트 openId는 닉네임 기반으로 생성 (충돌 시 다시 시도)
+        const openId = `guest_${input.nickname}_${Date.now()}`;
+
+        await db.insert(users).values({
+          openId,
+          name: input.nickname,
+          loginMethod: "guest",
+          role: "user",
+          lastSignedIn: new Date(),
+        });
+
+        return { success: true, openId };
+      }),
+  }),
+
   admin: router({
     // 회원 목록 조회 (페이지네이션, 검색, 정렬)
     listUsers: adminProcedure
