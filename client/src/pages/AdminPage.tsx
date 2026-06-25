@@ -135,10 +135,8 @@ function UserDetailModal({
               </AvatarFallback>
             </Avatar>
             <div>
-              <div className="font-semibold">{user.name ?? "(이름 없음)"}</div>
-              <div className="text-sm text-muted-foreground font-normal">
-                {user.email ?? "-"}
-              </div>
+              <div className="font-semibold">{user.name ?? "-"}</div>
+              <div className="text-sm text-muted-foreground font-normal">{user.loginMethod ?? "-"}</div>
             </div>
           </DialogTitle>
           <DialogDescription>회원 상세 정보</DialogDescription>
@@ -553,29 +551,11 @@ export default function AdminPage() {
                 <TableHeader>
                   <TableRow className="bg-muted/30">
                     <TableHead
-                      className="cursor-pointer hover:bg-muted/50 transition-colors select-none w-16"
-                      onClick={() => handleSort("id")}
-                    >
-                      <div className="flex items-center gap-1">
-                        ID
-                        <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                    </TableHead>
-                    <TableHead
                       className="cursor-pointer hover:bg-muted/50 transition-colors select-none"
                       onClick={() => handleSort("name")}
                     >
                       <div className="flex items-center gap-1">
-                        이름
-                        <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      className="cursor-pointer hover:bg-muted/50 transition-colors select-none hidden md:table-cell"
-                      onClick={() => handleSort("email")}
-                    >
-                      <div className="flex items-center gap-1">
-                        이메일
+                        Nickname
                         <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                       </div>
                     </TableHead>
@@ -614,7 +594,7 @@ export default function AdminPage() {
                   {usersLoading ? (
                     Array.from({ length: 5 }).map((_, i) => (
                       <TableRow key={i}>
-                        {Array.from({ length: 8 }).map((_, j) => (
+                        {Array.from({ length: 6 }).map((_, j) => (
                           <TableCell key={j}>
                             <div className="h-4 bg-muted animate-pulse rounded" />
                           </TableCell>
@@ -623,7 +603,7 @@ export default function AdminPage() {
                     ))
                   ) : usersData?.data.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">
+                      <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
                         <div className="flex flex-col items-center gap-2">
                           <Users className="h-8 w-8 opacity-30" />
                           <p>검색 결과가 없습니다.</p>
@@ -640,9 +620,6 @@ export default function AdminPage() {
                           setDetailOpen(true);
                         }}
                       >
-                        <TableCell className="font-mono text-sm text-muted-foreground">
-                          {u.id}
-                        </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Avatar className="h-7 w-7 shrink-0">
@@ -650,13 +627,10 @@ export default function AdminPage() {
                                 {u.name?.charAt(0).toUpperCase() ?? "?"}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="font-medium truncate max-w-[120px]">
-                              {u.name ?? <span className="text-muted-foreground italic">없음</span>}
+                            <span className="font-medium truncate max-w-[160px]">
+                              {u.name ?? <span className="text-muted-foreground italic">-</span>}
                             </span>
                           </div>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-[200px]">
-                          {u.email ?? "-"}
                         </TableCell>
                         <TableCell className="hidden lg:table-cell">
                           {u.loginMethod ? (
