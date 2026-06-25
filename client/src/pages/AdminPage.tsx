@@ -177,17 +177,6 @@ function UserDetailModal({
             <span className="col-span-2">{user.loginMethod ?? "-"}</span>
           </div>
           <div className="grid grid-cols-3 gap-2 text-sm">
-            <span className="text-muted-foreground font-medium">역할</span>
-            <span className="col-span-2">
-              <Badge
-                variant={user.role === "admin" ? "default" : "secondary"}
-                className={user.role === "admin" ? "bg-amber-500 hover:bg-amber-600" : ""}
-              >
-                {user.role === "admin" ? "관리자" : "일반 회원"}
-              </Badge>
-            </span>
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-sm">
             <span className="text-muted-foreground font-medium">가입일</span>
             <span className="col-span-2">{formatDate(user.createdAt)}</span>
           </div>
@@ -218,36 +207,7 @@ function UserDetailModal({
           </div>
         </div>
 
-        <DialogFooter className="flex gap-2 sm:justify-between">
-          <div className="flex gap-2">
-            {user.role === "user" ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-amber-300 text-amber-700 hover:bg-amber-50"
-                onClick={() => {
-                  onRoleChange(user.id, "admin");
-                  onClose();
-                }}
-              >
-                <Shield className="h-4 w-4 mr-1" />
-                관리자로 변경
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-slate-300 text-slate-700 hover:bg-slate-50"
-                onClick={() => {
-                  onRoleChange(user.id, "user");
-                  onClose();
-                }}
-              >
-                <User className="h-4 w-4 mr-1" />
-                일반 회원으로 변경
-              </Button>
-            )}
-          </div>
+        <DialogFooter>
           <Button variant="ghost" size="sm" onClick={onClose}>
             닫기
           </Button>
@@ -553,7 +513,7 @@ export default function AdminPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="이름, 이메일, Open ID로 검색..."
+                  placeholder="닉네임, Open ID로 검색..."
                   value={searchInput}
                   onChange={e => setSearchInput(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -629,14 +589,14 @@ export default function AdminPage() {
                         <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                       </div>
                     </TableHead>
-                    <TableHead className="text-right">Terms Agreement</TableHead>
+
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {usersLoading ? (
                     Array.from({ length: 5 }).map((_, i) => (
                       <TableRow key={i}>
-                        {Array.from({ length: 6 }).map((_, j) => (
+                        {Array.from({ length: 5 }).map((_, j) => (
                           <TableCell key={j}>
                             <div className="h-4 bg-muted animate-pulse rounded" />
                           </TableCell>
@@ -645,7 +605,7 @@ export default function AdminPage() {
                     ))
                   ) : usersData?.data.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
+                      <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
                         <div className="flex flex-col items-center gap-2">
                           <Users className="h-8 w-8 opacity-30" />
                           <p>검색 결과가 없습니다.</p>
@@ -700,25 +660,7 @@ export default function AdminPage() {
                         <TableCell className="hidden xl:table-cell text-sm text-muted-foreground">
                           {formatDate(u.lastSignedIn)}
                         </TableCell>
-                        <TableCell className="text-right" onClick={e => e.stopPropagation()}>
-                          <div className="flex flex-col items-end gap-0.5">
-                            <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
-                            <span className="text-[10px] text-muted-foreground">
-                              {(() => {
-                                const d = u.createdAt ? new Date(u.createdAt) : null;
-                                if (!d) return "-";
-                                const mm = String(d.getMonth() + 1).padStart(2, '0');
-                                const dd = String(d.getDate()).padStart(2, '0');
-                                const yyyy = d.getFullYear();
-                                const h = d.getHours();
-                                const min = String(d.getMinutes()).padStart(2, '0');
-                                const ap = h >= 12 ? 'PM' : 'AM';
-                                const h12 = h % 12 || 12;
-                                return `${mm}/${dd}/${yyyy} ${h12}:${min} ${ap}`;
-                              })()}
-                            </span>
-                          </div>
-                        </TableCell>
+
                       </TableRow>
                     ))
                   )}
