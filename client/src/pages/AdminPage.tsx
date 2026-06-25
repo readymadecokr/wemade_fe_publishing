@@ -224,19 +224,59 @@ function UserDetailModal({
 export default function AdminPage() {
   const { user, loading, logout } = useAuth();
 
+  // 하드코딩 관리자 계정 (기본 PW, 변경 시 localStorage에 저장)
+  const ADMIN_ACCOUNTS: Record<string, string> = {
+    cyanima: localStorage.getItem("admin_pw_cyanima") ?? "0000",
+    blue0246: localStorage.getItem("admin_pw_blue0246") ?? "0000",
+  };
+
   const [adminId, setAdminId] = useState("");
   const [adminPw, setAdminPw] = useState("");
   const [adminLoginError, setAdminLoginError] = useState("");
+  const [adminLoggedIn, setAdminLoggedIn] = useState<string | null>(
+    () => sessionStorage.getItem("admin_session")
+  );
+
+  // 비밀번호 변경 상태
+  const [showChangePw, setShowChangePw] = useState(false);
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [changePwError, setChangePwError] = useState("");
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // 실제 인증은 서버 연동 시 교체 — 현재는 Manus OAuth 로그인 페이지로 이동
     if (!adminId.trim() || !adminPw.trim()) {
       setAdminLoginError("ID와 Password를 입력해 주세요.");
       return;
     }
+    const storedPw = localStorage.getItem(`admin_pw_${adminId}`) ?? (adminId === "cyanima" || adminId === "blue0246" ? "0000" : null);
+    if (!storedPw || adminPw !== storedPw) {
+      setAdminLoginError("ID 또는 Password가 올바르지 않습니다.");
+      return;
+    }
     setAdminLoginError("");
-    window.location.href = getLoginUrl();
+    sessionStorage.setItem("admin_session", adminId);
+    setAdminLoggedIn(adminId);
+  };
+
+  const handleAdminLogout = () => {
+    sessionStorage.removeItem("admin_session");
+    setAdminLoggedIn(null);
+    setAdminId("");
+    setAdminPw("");
+  };
+
+  const handleChangePw = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPw.trim()) { setChangePwError("새 비밀번호를 입력해 주세요."); return; }
+    if (newPw !== confirmPw) { setChangePwError("비밀번호가 일치하지 않습니다."); return; }
+    if (newPw.length < 4) { setChangePwError("비밀번호는 4자 이상이어야 합니다."); return; }
+    localStorage.setItem(`admin_pw_${adminLoggedIn}`, newPw);
+    setChangePwError("");
+    setNewPw("");
+    setConfirmPw("");
+    setShowChangePw(false);
+    toast.success("비밀번호가 변경되었습니다.");
   };
 
   const [page, setPage] = useState(1);
@@ -306,15 +346,8 @@ export default function AdminPage() {
     setPage(1);
   }, [roleFilter]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
-    );
-  }
-
-  if (!user) {
+  // adminLoggedIn 세션이 없으면 항상 로그인 화면 표시
+  if (!adminLoggedIn) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="flex flex-col items-center gap-6 p-8 max-w-md w-full">
@@ -362,40 +395,7 @@ export default function AdminPage() {
     );
   }
 
-  if (user.role !== "admin") {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="flex flex-col items-center gap-6 p-8 max-w-md w-full text-center">
-          <div className="p-4 bg-destructive/10 rounded-full">
-            <Shield className="h-10 w-10 text-destructive" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">접근 권한 없음</h1>
-            <p className="text-muted-foreground mt-2 text-sm">
-              관리자 권한이 있는 계정으로 로그인해야 합니다.
-            </p>
-          </div>
-          <div className="flex gap-3 w-full">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={() => (window.location.href = "/")}
-            >
-              홈으로
-            </Button>
-            <Button
-              variant="destructive"
-              className="flex-1"
-              onClick={logout}
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              로그아웃
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+
 
   const totalPages = usersData?.totalPages ?? 1;
 
@@ -417,12 +417,20 @@ export default function AdminPage() {
             <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
               <Avatar className="h-7 w-7">
                 <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                  {user.name?.charAt(0).toUpperCase() ?? "A"}
+                  {adminLoggedIn?.charAt(0).toUpperCase() ?? "A"}
                 </AvatarFallback>
               </Avatar>
-              <span className="font-medium text-foreground">{user.name}</span>
+              <span className="font-medium text-foreground">{adminLoggedIn}</span>
               <Badge className="bg-amber-500 hover:bg-amber-600 text-xs">관리자</Badge>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowChangePw(true)}
+              className="text-muted-foreground text-xs"
+            >
+              PW 변경
+            </Button>
             <Button
               variant="ghost"
               size="sm"
@@ -431,7 +439,7 @@ export default function AdminPage() {
             >
               홈으로
             </Button>
-            <Button variant="ghost" size="sm" onClick={logout} className="text-muted-foreground">
+            <Button variant="ghost" size="sm" onClick={handleAdminLogout} className="text-muted-foreground">
               <LogOut className="h-4 w-4" />
             </Button>
           </div>
@@ -776,6 +784,41 @@ export default function AdminPage() {
           </CardContent>
         </Card>
       </main>
+
+      {/* 비밀번호 변경 다이얼로그 */}
+      <Dialog open={showChangePw} onOpenChange={setShowChangePw}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Password 변경</DialogTitle>
+            <DialogDescription>{adminLoggedIn} 계정의 비밀번호를 변경합니다.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleChangePw} className="flex flex-col gap-3 py-2">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium">새 Password</label>
+              <Input
+                type="password"
+                placeholder="새 비밀번호 (4자 이상)"
+                value={newPw}
+                onChange={(e) => setNewPw(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium">비밀번호 확인</label>
+              <Input
+                type="password"
+                placeholder="비밀번호 다시 입력"
+                value={confirmPw}
+                onChange={(e) => setConfirmPw(e.target.value)}
+              />
+            </div>
+            {changePwError && <p className="text-sm text-destructive">{changePwError}</p>}
+            <DialogFooter className="mt-2">
+              <Button type="button" variant="ghost" onClick={() => { setShowChangePw(false); setNewPw(""); setConfirmPw(""); setChangePwError(""); }}>취소</Button>
+              <Button type="submit">변경</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* 회원 상세 모달 */}
       <UserDetailModal
