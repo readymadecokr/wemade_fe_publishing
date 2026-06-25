@@ -559,22 +559,13 @@ export default function AdminPage() {
                         <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                       </div>
                     </TableHead>
-                    <TableHead className="hidden lg:table-cell">로그인 방식</TableHead>
-                    <TableHead
-                      className="cursor-pointer hover:bg-muted/50 transition-colors select-none"
-                      onClick={() => handleSort("role")}
-                    >
-                      <div className="flex items-center gap-1">
-                        역할
-                        <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                    </TableHead>
+                    <TableHead className="hidden lg:table-cell">Provider</TableHead>
                     <TableHead
                       className="cursor-pointer hover:bg-muted/50 transition-colors select-none hidden sm:table-cell"
                       onClick={() => handleSort("createdAt")}
                     >
                       <div className="flex items-center gap-1">
-                        가입일
+                        Registration Date
                         <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                       </div>
                     </TableHead>
@@ -583,11 +574,11 @@ export default function AdminPage() {
                       onClick={() => handleSort("lastSignedIn")}
                     >
                       <div className="flex items-center gap-1">
-                        마지막 로그인
+                        Last Account Activity
                         <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                       </div>
                     </TableHead>
-                    <TableHead className="w-12 text-right">작업</TableHead>
+                    <TableHead className="text-right">Terms Agreement</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -641,18 +632,6 @@ export default function AdminPage() {
                             <span className="text-muted-foreground text-sm">-</span>
                           )}
                         </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={u.role === "admin" ? "default" : "secondary"}
-                            className={
-                              u.role === "admin"
-                                ? "bg-amber-500 hover:bg-amber-600 text-xs"
-                                : "text-xs"
-                            }
-                          >
-                            {u.role === "admin" ? "관리자" : "회원"}
-                          </Badge>
-                        </TableCell>
                         <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                           {formatDate(u.createdAt)}
                         </TableCell>
@@ -660,40 +639,23 @@ export default function AdminPage() {
                           {formatDate(u.lastSignedIn)}
                         </TableCell>
                         <TableCell className="text-right" onClick={e => e.stopPropagation()}>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setSelectedUser(u as UserRow);
-                                  setDetailOpen(true);
-                                }}
-                              >
-                                <User className="h-4 w-4 mr-2" />
-                                상세 보기
-                              </DropdownMenuItem>
-                              {u.role === "user" ? (
-                                <DropdownMenuItem
-                                  onClick={() => handleRoleChange(u.id, "admin")}
-                                  className="text-amber-600 focus:text-amber-600"
-                                >
-                                  <Shield className="h-4 w-4 mr-2" />
-                                  관리자로 변경
-                                </DropdownMenuItem>
-                              ) : (
-                                <DropdownMenuItem
-                                  onClick={() => handleRoleChange(u.id, "user")}
-                                >
-                                  <User className="h-4 w-4 mr-2" />
-                                  일반 회원으로 변경
-                                </DropdownMenuItem>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                          <div className="flex flex-col items-end gap-0.5">
+                            <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
+                            <span className="text-[10px] text-muted-foreground">
+                              {(() => {
+                                const d = u.createdAt ? new Date(u.createdAt) : null;
+                                if (!d) return "-";
+                                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                                const dd = String(d.getDate()).padStart(2, '0');
+                                const yyyy = d.getFullYear();
+                                const h = d.getHours();
+                                const min = String(d.getMinutes()).padStart(2, '0');
+                                const ap = h >= 12 ? 'PM' : 'AM';
+                                const h12 = h % 12 || 12;
+                                return `${mm}/${dd}/${yyyy} ${h12}:${min} ${ap}`;
+                              })()}
+                            </span>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))
