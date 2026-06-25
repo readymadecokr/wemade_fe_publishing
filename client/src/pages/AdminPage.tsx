@@ -224,6 +224,21 @@ function UserDetailModal({
 export default function AdminPage() {
   const { user, loading, logout } = useAuth();
 
+  const [adminId, setAdminId] = useState("");
+  const [adminPw, setAdminPw] = useState("");
+  const [adminLoginError, setAdminLoginError] = useState("");
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // 실제 인증은 서버 연동 시 교체 — 현재는 Manus OAuth 로그인 페이지로 이동
+    if (!adminId.trim() || !adminPw.trim()) {
+      setAdminLoginError("ID와 Password를 입력해 주세요.");
+      return;
+    }
+    setAdminLoginError("");
+    window.location.href = getLoginUrl();
+  };
+
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [search, setSearch] = useState("");
@@ -302,25 +317,46 @@ export default function AdminPage() {
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="flex flex-col items-center gap-6 p-8 max-w-md w-full text-center">
-          <div className="p-4 bg-primary/10 rounded-full">
-            <Shield className="h-10 w-10 text-primary" />
-          </div>
-          <div>
+        <div className="flex flex-col items-center gap-6 p-8 max-w-md w-full">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="p-4 bg-primary/10 rounded-full">
+              <Shield className="h-10 w-10 text-primary" />
+            </div>
             <h1 className="text-2xl font-bold tracking-tight">관리자 로그인 필요</h1>
-            <p className="text-muted-foreground mt-2 text-sm">
+            <p className="text-muted-foreground text-sm">
               관리자 페이지에 접근하려면 로그인이 필요합니다.
             </p>
           </div>
-          <Button
-            size="lg"
-            className="w-full"
-            onClick={() => {
-              window.location.href = getLoginUrl();
-            }}
-          >
-            로그인하기
-          </Button>
+          <form onSubmit={handleAdminLogin} className="w-full flex flex-col gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-foreground">ID</label>
+              <Input
+                type="text"
+                placeholder="관리자 ID를 입력하세요"
+                value={adminId}
+                onChange={(e) => setAdminId(e.target.value)}
+                className="w-full"
+                autoComplete="username"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-foreground">Password</label>
+              <Input
+                type="password"
+                placeholder="비밀번호를 입력하세요"
+                value={adminPw}
+                onChange={(e) => setAdminPw(e.target.value)}
+                className="w-full"
+                autoComplete="current-password"
+              />
+            </div>
+            {adminLoginError && (
+              <p className="text-sm text-destructive">{adminLoginError}</p>
+            )}
+            <Button type="submit" size="lg" className="w-full mt-1">
+              OK
+            </Button>
+          </form>
         </div>
       </div>
     );
