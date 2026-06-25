@@ -139,7 +139,7 @@ export default function Home() {
     if (isTTKeyVerified) {
       // 3. TT Key 인증 완료 → 바로 게임 실행
       toast.success("Launching game...");
-      window.open("https://discord.gg/NeUU9DaKZj", "_blank");
+      window.open("https://discord.gg/yVWJkWdkAU", "_blank");
       return;
     }
     // 2. 로그인 O, TT Key 미인증 → TT Key 팝업
@@ -157,7 +157,7 @@ export default function Home() {
     setShowTTKeyDialog(false);
     setTTKeyInput("");
     setTTKeyError("");
-    window.open("https://discord.gg/NeUU9DaKZj", "_blank");
+    window.open("https://discord.gg/yVWJkWdkAU", "_blank");
   };
 
   // Notice data
@@ -531,7 +531,7 @@ export default function Home() {
                     Check the "Technical Test Key" on our official Discord.
                   </p>
                   <a
-                    href="https://discord.gg/NeUU9DaKZj"
+                    href="https://discord.gg/yVWJkWdkAU"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="shrink-0 w-9 h-9 flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
