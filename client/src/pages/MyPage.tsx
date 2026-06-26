@@ -63,9 +63,19 @@ export default function MyPage() {
     return `${mm}/${dd}/${yyyy} at ${h12}:${min} ${ap}`;
   };
 
-  const registrationDate = formatRegistrationDate(
-    meData?.createdAt ? (meData.createdAt instanceof Date ? meData.createdAt : new Date(meData.createdAt as unknown as string)) : undefined
-  );
+  // DB createdAt 우선, 없으면 localStorage rou_agreed_at fallback
+  const registrationDate = (() => {
+    if (meData?.createdAt) {
+      const d = meData.createdAt instanceof Date ? meData.createdAt : new Date(meData.createdAt as unknown as string);
+      if (!isNaN(d.getTime())) return formatRegistrationDate(d);
+    }
+    const raw = localStorage.getItem("rou_agreed_at");
+    if (raw) {
+      const d = new Date(raw);
+      if (!isNaN(d.getTime())) return formatRegistrationDate(d);
+    }
+    return "-";
+  })();
 
   // Format agreed_at as "Agreed on: MM/DD/YYYY H:MM AM/PM"
   const agreedDateStr = (() => {
