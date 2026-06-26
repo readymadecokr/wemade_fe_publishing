@@ -105,20 +105,6 @@ function GameInfoPageContent() {
           </div>
         </section>
 
-        {/* Game Features */}
-        <section className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-4">Game Features</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {gameFeatures.map((feature) => (
-              <div key={feature.id} className="bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
-                <div className="text-4xl mb-3">{feature.icon}</div>
-                <h3 className="text-xl font-bold text-foreground mb-2">{feature.title}</h3>
-                <p className="text-foreground/70">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* Gameplay Trailer */}
         <section className="mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-4">Gameplay Trailer</h2>
@@ -133,6 +119,20 @@ function GameInfoPageContent() {
                 allowFullScreen
               />
             </div>
+          </div>
+        </section>
+
+        {/* Game Features */}
+        <section className="mb-8">
+          <h2 className="text-3xl font-bold text-foreground mb-4">Game Features</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {gameFeatures.map((feature) => (
+              <div key={feature.id} className="bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
+                <div className="text-4xl mb-3">{feature.icon}</div>
+                <h3 className="text-xl font-bold text-foreground mb-2">{feature.title}</h3>
+                <p className="text-foreground/70">{feature.description}</p>
+              </div>
+            ))}
           </div>
         </section>
 
