@@ -121,7 +121,7 @@ export default function Layout({ children }: LayoutProps) {
             {/* Language and Theme */}
             <div className="flex items-center gap-3">
               <div className="relative">
-                <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="hover:text-blue-600 transition-colors flex items-center gap-1 cursor-pointer font-bold text-slate-600 dark:text-white hover:text-slate-900 dark:hover:text-slate-100">
+                <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="hover:text-blue-600 transition-colors flex items-center gap-1 cursor-pointer font-bold text-slate-600 dark:text-white hover:text-slate-900 dark:hover:text-slate-100" style={{display: 'none'}}>
                   <Globe size={14} /> {lang}
                 </button>
                 {langDropdownOpen && (
