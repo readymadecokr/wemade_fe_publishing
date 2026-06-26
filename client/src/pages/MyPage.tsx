@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
+import { trpc } from "@/lib/trpc";
 
 export default function MyPage() {
   const [, setLocation] = useLocation();
@@ -168,6 +169,8 @@ export default function MyPage() {
     setLocation("/");
   };
 
+  const withdrawMutation = trpc.user.withdraw.useMutation();
+
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreeWithdrawTerms) {
@@ -175,14 +178,18 @@ export default function MyPage() {
       return;
     }
     setIsWithdrawing(true);
-    setTimeout(() => {
-      localStorage.removeItem("rou_logged_in");
-      localStorage.removeItem("rou_nickname");
-      localStorage.removeItem("rou_guest_mode");
-      localStorage.removeItem("rou_social_provider");
-      toast.success("Account withdrawn successfully.");
-      setLocation("/");
-    }, 2000);
+    // 서버에 withdrawnAt 저장
+    withdrawMutation.mutate(undefined, {
+      onSettled: () => {
+        localStorage.removeItem("rou_logged_in");
+        localStorage.removeItem("rou_nickname");
+        localStorage.removeItem("rou_guest_mode");
+        localStorage.removeItem("rou_social_provider");
+        localStorage.removeItem("rou_open_id");
+        toast.success("Account withdrawn successfully.");
+        setLocation("/");
+      },
+    });
   };
 
   return (

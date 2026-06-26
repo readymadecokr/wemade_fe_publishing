@@ -6,7 +6,8 @@ import { ENV } from './_core/env';
 let _db: ReturnType<typeof drizzle> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
-export async function getDb() {
+export { getDb };  // re-export for use in oauth.ts
+async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
       _db = drizzle(process.env.DATABASE_URL);
@@ -18,7 +19,7 @@ export async function getDb() {
   return _db;
 }
 
-export async function upsertUser(user: InsertUser): Promise<void> {
+export async function upsertUser(user: InsertUser, resetCreatedAt?: boolean): Promise<void> {
   if (!user.openId) {
     throw new Error("User openId is required for upsert");
   }
@@ -66,6 +67,11 @@ export async function upsertUser(user: InsertUser): Promise<void> {
 
     if (Object.keys(updateSet).length === 0) {
       updateSet.lastSignedIn = new Date();
+    }
+
+    // 탈퇴 후 재가입 시 createdAt을 현재 시각으로 갱신
+    if (resetCreatedAt) {
+      updateSet.createdAt = new Date();
     }
 
     await db.insert(users).values(values).onDuplicateKeyUpdate({
