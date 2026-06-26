@@ -50,9 +50,9 @@ export default function MyPage() {
   // DB에서 실제 createdAt 가져오기
   const { data: meData } = trpc.auth.me.useQuery();
 
-  const formatRegistrationDate = (date: Date | null | undefined): string => {
+  const formatRegistrationDate = (date: Date | string | null | undefined): string => {
     if (!date) return "-";
-    const d = new Date(date);
+    const d = new Date(date as string | Date);
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const dd = String(d.getDate()).padStart(2, '0');
     const yyyy = d.getFullYear();
@@ -63,7 +63,9 @@ export default function MyPage() {
     return `${mm}/${dd}/${yyyy} at ${h12}:${min} ${ap}`;
   };
 
-  const registrationDate = formatRegistrationDate(meData?.createdAt);
+  const registrationDate = formatRegistrationDate(
+    meData?.createdAt ? (meData.createdAt instanceof Date ? meData.createdAt : new Date(meData.createdAt as unknown as string)) : undefined
+  );
 
   // Format agreed_at as "Agreed on: MM/DD/YYYY H:MM AM/PM"
   const agreedDateStr = (() => {
