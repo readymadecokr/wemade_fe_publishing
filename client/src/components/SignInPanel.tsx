@@ -69,7 +69,7 @@ export default function SignInPanel({ onLoginSuccess }: SignInPanelProps) {
 
         <Button
           onClick={() => handleSocialClick("Apple")}
-          className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98"
+          className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98" style={{display: 'none'}}
         >
           <img src={`${ASSET_BASE_URL}/manus-storage/icon_apple_ascii_ae22901e_e0e901f2.png`} alt="Apple" className="w-5 h-5" />
           Sign In with Apple
@@ -77,7 +77,7 @@ export default function SignInPanel({ onLoginSuccess }: SignInPanelProps) {
 
         <Button
           onClick={() => handleSocialClick("Facebook")}
-          className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98"
+          className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98" style={{display: 'none'}}
         >
           <img src={`${ASSET_BASE_URL}/manus-storage/icon_fb_ascii_315f83e7_ea4d87ad.png`} alt="Facebook" className="w-5 h-5" />
           Sign In with Facebook
@@ -93,7 +93,7 @@ export default function SignInPanel({ onLoginSuccess }: SignInPanelProps) {
       <div className="flex flex-col gap-3">
         <Button
           onClick={handleGuestMode}
-          className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98"
+          className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98" style={{display: 'none'}}
         >
           GUEST MODE (Try as Guest)
         </Button>
