@@ -465,6 +465,23 @@ export default function Home() {
                 </Link>
               </div>
             </div>
+
+            {/* Gameplay Trailer */}
+            <div className="mt-12">
+              <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight">Gameplay Trailer</h3>
+              <div className="rounded-2xl overflow-hidden shadow-lg border border-border">
+                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                  <iframe
+                    className="absolute inset-0 w-full h-full"
+                    src="https://www.youtube.com/embed/LB4l4orKv18"
+                    title="Ragnarok Universe Gameplay Trailer"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
