@@ -30,7 +30,20 @@ export default function PrivacySettingsDialog({ isOpen, onClose }: PrivacySettin
     setMarketing(true);
     setFunctional(true);
     setEssential(true);
+    localStorage.setItem("rou_cookie_consent", "all");
     toast.success("All cookies accepted");
+    onClose();
+  };
+
+  const handleSaveAndClose = () => {
+    localStorage.setItem("rou_cookie_consent", "essential");
+    handleSaveSettings();
+  };
+
+  const handleDenyAndClose = () => {
+    localStorage.setItem("rou_cookie_consent", "denied");
+    handleDenyAll();
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -174,14 +187,14 @@ export default function PrivacySettingsDialog({ isOpen, onClose }: PrivacySettin
           {/* Footer */}
           <div className="flex gap-3 justify-center pt-6 border-t border-gray-200 dark:border-slate-700">
             <Button
-              onClick={handleDenyAll}
+              onClick={handleDenyAndClose}
               variant="outline"
               className="px-6 py-2 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold"
             >
               Deny all
             </Button>
             <Button
-              onClick={handleSaveSettings}
+              onClick={handleSaveAndClose}
               className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
             >
               Save Settings
