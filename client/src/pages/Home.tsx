@@ -34,7 +34,7 @@ export default function Home() {
   const bannerImages = [
     {
       id: 1,
-      url: `${ASSET_BASE_URL}/manus-storage/ChatGPT-Image-Play-With-Discord_f803e1b3_988b3aeb.webp`,
+      url: `${ASSET_BASE_URL}/manus-storage/banner01_07940bb2.webp`,
       title: "PLAY WITH DISCORD",
       subtitle: "Please visit our official Discord channel for more information",
       link: "/game-info",

@@ -16,7 +16,7 @@ function NoticePageContent() {
       id: 1,
       title: "Ragnarok Online: Patch Update วันที่ 17 มิถุนายน 2569",
       date: "6/17/2026 10:38 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/ChatGPT-Image-Play-With-Discord_f803e1b3_988b3aeb.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/banner01_07940bb2.webp`,
     },
     {
       id: 2,
@@ -46,7 +46,7 @@ function NoticePageContent() {
       id: 6,
       title: "Ragnarok Online: ประกาศรายชื่อ Music Contest",
       date: "5/22/2026 2:03:43 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/ChatGPT-Image-Play-With-Discord_f803e1b3_988b3aeb.webp`,
+      image: `${ASSET_BASE_URL}/manus-storage/banner01_07940bb2.webp`,
     },
   ];
 
