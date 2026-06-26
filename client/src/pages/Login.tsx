@@ -235,7 +235,7 @@ export default function Login() {
                   </Button>
                 </div>
 
-                <div className="relative flex py-2 items-center">
+                <div className="relative flex py-2 items-center" style={{display: 'none'}}>
                   <div className="flex-grow border-t border-white/5"></div>
                   <span className="flex-shrink mx-4 text-[10px] text-slate-500 uppercase tracking-widest">or</span>
                   <div className="flex-grow border-t border-white/5"></div>
