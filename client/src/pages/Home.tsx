@@ -34,17 +34,18 @@ export default function Home() {
   const bannerImages = [
     {
       id: 1,
-      url: `${ASSET_BASE_URL}/manus-storage/banner01_07940bb2.webp`,
+      url: `${ASSET_BASE_URL}/manus-storage/mainbanner_01_3c77a2c4.jpg`,
       title: "PLAY WITH DISCORD",
       subtitle: "Please visit our official Discord channel for more information",
-      link: "/game-info",
+      link: "https://discord.com/invite/yVWJkWdkAU",
+      external: true,
     },
     {
       id: 2,
-      url: `${ASSET_BASE_URL}/manus-storage/banner_04_4c64cc00.jpg`,
+      url: `${ASSET_BASE_URL}/manus-storage/mainbanner_02_e759d77c.jpg`,
       title: "Enter The Ragnarok Universe",
       subtitle: "TT (Technical Test) Announcement",
-      link: "/news",
+      link: "game-start",
     },
   ];
 
@@ -198,8 +199,11 @@ export default function Home() {
               src={bannerImages[currentBannerIndex].url}
               alt={bannerImages[currentBannerIndex].title}
               onClick={() => {
-                if (bannerImages[currentBannerIndex].id === 1) {
-                  setShowTTKeyDialog(true);
+                const banner = bannerImages[currentBannerIndex];
+                if (banner.external && banner.link) {
+                  window.open(banner.link, '_blank');
+                } else if (banner.link === 'game-start') {
+                  handleGameStart();
                 }
               }}
               className="h-full w-full object-cover cursor-pointer"
