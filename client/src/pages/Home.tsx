@@ -378,7 +378,7 @@ export default function Home() {
         </div>
 
         {/* Spacer: 80% of button height minus News top padding to minimize gap */}
-        <div className="bg-background" style={{ height: '68px' }} />
+        <div className="bg-background" style={{ height: '114px' }} />
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background border-b border-border" style={{display: 'none'}}>
