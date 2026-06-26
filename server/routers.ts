@@ -21,6 +21,17 @@ export const appRouter = router({
     }),
   }),
 
+  user: router({
+    // 탈퇴 처리 — withdrawnAt 저장
+    withdraw: publicProcedure.mutation(async ({ ctx }) => {
+      if (!ctx.user) throw new Error("Not authenticated");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      await db.update(users).set({ withdrawnAt: new Date() }).where(eq(users.openId, ctx.user.openId));
+      return { success: true };
+    }),
+  }),
+
   guest: router({
     // 게스트 회원가입 — 닉네임을 DB에 저장
     register: publicProcedure

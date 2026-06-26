@@ -28,13 +28,27 @@ export function registerOAuthRoutes(app: Express) {
         return;
       }
 
+      // 탈퇴 후 재가입 여부 확인
+      const existingUser = await db.getUserByOpenId(userInfo.openId);
+      const isRejoining = !!(existingUser?.withdrawnAt);
+
       await db.upsertUser({
         openId: userInfo.openId,
         name: userInfo.name || null,
         email: userInfo.email ?? null,
         loginMethod: userInfo.loginMethod ?? userInfo.platform ?? null,
         lastSignedIn: new Date(),
-      });
+      }, isRejoining);
+
+      // 재가입 시 withdrawnAt 초기화
+      if (isRejoining) {
+        const dbConn = await db.getDb();
+        if (dbConn) {
+          const { users } = await import("../../drizzle/schema");
+          const { eq } = await import("drizzle-orm");
+          await dbConn.update(users).set({ withdrawnAt: null }).where(eq(users.openId, userInfo.openId));
+        }
+      }
 
       const sessionToken = await sdk.createSessionToken(userInfo.openId, {
         name: userInfo.name || "",

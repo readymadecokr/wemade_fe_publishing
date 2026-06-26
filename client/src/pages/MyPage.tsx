@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
+import { trpc } from "@/lib/trpc";
 
 export default function MyPage() {
   const [, setLocation] = useLocation();
@@ -45,6 +46,36 @@ export default function MyPage() {
   };
 
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
+
+  // DB에서 실제 createdAt 가져오기
+  const { data: meData } = trpc.auth.me.useQuery();
+
+  const formatRegistrationDate = (date: Date | string | null | undefined): string => {
+    if (!date) return "-";
+    const d = new Date(date as string | Date);
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    const h = d.getHours();
+    const min = String(d.getMinutes()).padStart(2, '0');
+    const ap = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return `${mm}/${dd}/${yyyy} at ${h12}:${min} ${ap}`;
+  };
+
+  // DB createdAt 우선, 없으면 localStorage rou_agreed_at fallback
+  const registrationDate = (() => {
+    if (meData?.createdAt) {
+      const d = meData.createdAt instanceof Date ? meData.createdAt : new Date(meData.createdAt as unknown as string);
+      if (!isNaN(d.getTime())) return formatRegistrationDate(d);
+    }
+    const raw = localStorage.getItem("rou_agreed_at");
+    if (raw) {
+      const d = new Date(raw);
+      if (!isNaN(d.getTime())) return formatRegistrationDate(d);
+    }
+    return "-";
+  })();
 
   // Format agreed_at as "Agreed on: MM/DD/YYYY H:MM AM/PM"
   const agreedDateStr = (() => {
@@ -168,6 +199,8 @@ export default function MyPage() {
     setLocation("/");
   };
 
+  const withdrawMutation = trpc.user.withdraw.useMutation();
+
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreeWithdrawTerms) {
@@ -175,14 +208,18 @@ export default function MyPage() {
       return;
     }
     setIsWithdrawing(true);
-    setTimeout(() => {
-      localStorage.removeItem("rou_logged_in");
-      localStorage.removeItem("rou_nickname");
-      localStorage.removeItem("rou_guest_mode");
-      localStorage.removeItem("rou_social_provider");
-      toast.success("Account withdrawn successfully.");
-      setLocation("/");
-    }, 2000);
+    // 서버에 withdrawnAt 저장
+    withdrawMutation.mutate(undefined, {
+      onSettled: () => {
+        localStorage.removeItem("rou_logged_in");
+        localStorage.removeItem("rou_nickname");
+        localStorage.removeItem("rou_guest_mode");
+        localStorage.removeItem("rou_social_provider");
+        localStorage.removeItem("rou_open_id");
+        toast.success("Account withdrawn successfully.");
+        setLocation("/");
+      },
+    });
   };
 
   return (
@@ -336,7 +373,7 @@ export default function MyPage() {
                                 </span>
                               )}
                             </TableCell>
-                            <TableCell className="text-black/70 dark:text-white/70">06/19/2026 at 5:14 AM</TableCell>
+                            <TableCell className="text-black/70 dark:text-white/70">{registrationDate}</TableCell>
                             <TableCell className="text-black/70 dark:text-white/70">South Korea • 06/19/2026 • 05:49 AM</TableCell>
                           </TableRow>
                         </TableBody>
@@ -372,7 +409,7 @@ export default function MyPage() {
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Registration Date</p>
-                        <p className="text-sm text-black dark:text-white">06/19/2026 at 5:14 AM</p>
+                        <p className="text-sm text-black dark:text-white">{registrationDate}</p>
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Last Account Activity</p>
