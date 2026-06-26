@@ -80,7 +80,7 @@ export default function Layout({ children }: LayoutProps) {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8" style={{display: 'none'}}>
             <Link href="/" className={`hover:text-blue-600 transition-colors cursor-pointer ${location === "/" ? "text-blue-600 font-bold" : "text-slate-600 dark:text-white"}`}>
               Home
             </Link>

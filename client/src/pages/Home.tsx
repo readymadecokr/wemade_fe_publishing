@@ -34,45 +34,18 @@ export default function Home() {
   const bannerImages = [
     {
       id: 1,
-      url: `${ASSET_BASE_URL}/manus-storage/ChatGPT-Image-Play-With-Discord_f803e1b3_988b3aeb.webp`,
+      url: `${ASSET_BASE_URL}/manus-storage/mainbanner_01_3c77a2c4.jpg`,
       title: "PLAY WITH DISCORD",
       subtitle: "Please visit our official Discord channel for more information",
-      link: "/game-info",
+      link: "https://discord.com/invite/yVWJkWdkAU",
+      external: true,
     },
     {
       id: 2,
-      url: `${ASSET_BASE_URL}/manus-storage/TRO-Championship-2026_c417f04e_848eb2d9.webp`,
-      title: "RAGNAROK CHAMPIONSHIP",
-      subtitle: "The Ragnarok Sea Championship 2026",
-      link: "/game-info",
-    },
-    {
-      id: 3,
-      url: `${ASSET_BASE_URL}/manus-storage/2-1-Gnjoysidebanner-1900x60006112025_9eb2918f_10d96d95.webp`,
-      title: "RAGNAROK ABYSS",
-      subtitle: "Light Up The New Gen - Pre-Register Now",
-      link: "/game-info",
-    },
-    {
-      id: 4,
-      url: `${ASSET_BASE_URL}/manus-storage/6th-Anniversary-Sunset-of-Ayothaya-1900x600_ad2ad494_1cd501ef.webp`,
-      title: "SUNSET OF AYOTHAYA",
-      subtitle: "6th Anniversary Celebration",
-      link: "/game-info",
-    },
-    {
-      id: 5,
-      url: `${ASSET_BASE_URL}/manus-storage/ROS-Thailand-2026-1900x600_509eb9c7_7491dd69.webp`,
-      title: "RAGNAROK STARS",
-      subtitle: "Thailand Championship 2026",
-      link: "/game-info",
-    },
-    {
-      id: 7,
-      url: `${ASSET_BASE_URL}/manus-storage/banner_04_4c64cc00.jpg`,
+      url: `${ASSET_BASE_URL}/manus-storage/mainbanner_02_e759d77c.jpg`,
       title: "Enter The Ragnarok Universe",
       subtitle: "TT (Technical Test) Announcement",
-      link: "/news",
+      link: "game-start",
     },
   ];
 
@@ -226,8 +199,11 @@ export default function Home() {
               src={bannerImages[currentBannerIndex].url}
               alt={bannerImages[currentBannerIndex].title}
               onClick={() => {
-                if (bannerImages[currentBannerIndex].id === 1) {
-                  setShowTTKeyDialog(true);
+                const banner = bannerImages[currentBannerIndex];
+                if (banner.external && banner.link) {
+                  window.open(banner.link, '_blank');
+                } else if (banner.link === 'game-start') {
+                  handleGameStart();
                 }
               }}
               className="h-full w-full object-cover cursor-pointer"
@@ -378,10 +354,10 @@ export default function Home() {
         </div>
 
         {/* Spacer: 80% of button height minus News top padding to minimize gap */}
-        <div className="bg-background" style={{ height: 'clamp(103px, 20vw, 295px)' }} />
+        <div className="bg-background" style={{ height: '114px' }} />
 
         {/* NEWS SECTION - Unified layout */}
-        <section id="news" className="py-0 bg-background border-b border-border">
+        <section id="news" className="py-0 bg-background border-b border-border" style={{display: 'none'}}>
           <div className="container pt-3 md:pt-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
@@ -412,14 +388,14 @@ export default function Home() {
           <div className="container">
             {/* Header */}
             <div className="mb-12">
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight" style={{display: 'none'}}>
                 About Ragnarok Universe
               </h2>
-              <p className="text-lg text-foreground/60">Discover the world of Ragnarok</p>
+              <p className="text-lg text-foreground/60" style={{display: 'none'}}>Discover the world of Ragnarok</p>
             </div>
 
             {/* Game Info Card */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 items-center" style={{display: 'none'}}>
               {/* Game Image */}
               <div className="rounded-2xl overflow-hidden shadow-lg">
                 <img
@@ -463,6 +439,23 @@ export default function Home() {
                     Learn More <ArrowRight size={16} className="ml-2" />
                   </Button>
                 </Link>
+              </div>
+            </div>
+
+            {/* Gameplay Trailer */}
+            <div className="mt-12">
+              <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight">Media</h3>
+              <div className="rounded-2xl overflow-hidden shadow-lg border border-border">
+                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                  <iframe
+                    className="absolute inset-0 w-full h-full"
+                    src="https://www.youtube.com/embed/LB4l4orKv18"
+                    title="Ragnarok Universe Gameplay Trailer"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
               </div>
             </div>
           </div>

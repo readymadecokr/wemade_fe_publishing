@@ -105,6 +105,23 @@ function GameInfoPageContent() {
           </div>
         </section>
 
+        {/* Gameplay Trailer */}
+        <section className="mb-8">
+          <h2 className="text-3xl font-bold text-foreground mb-4">Gameplay Trailer</h2>
+          <div className="bg-card border border-border rounded-lg overflow-hidden">
+            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src="https://www.youtube.com/embed/LB4l4orKv18"
+                title="Ragnarok Universe Gameplay Trailer"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </section>
+
         {/* Game Features */}
         <section className="mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-4">Game Features</h2>
