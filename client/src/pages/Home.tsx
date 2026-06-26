@@ -378,10 +378,10 @@ export default function Home() {
         </div>
 
         {/* Spacer: 80% of button height minus News top padding to minimize gap */}
-        <div className="bg-background" style={{ height: 'clamp(103px, 20vw, 295px)' }} />
+        <div className="bg-background" style={{ height: '68px' }} />
 
         {/* NEWS SECTION - Unified layout */}
-        <section id="news" className="py-0 bg-background border-b border-border">
+        <section id="news" className="py-0 bg-background border-b border-border" style={{display: 'none'}}>
           <div className="container pt-3 md:pt-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
@@ -412,14 +412,14 @@ export default function Home() {
           <div className="container">
             {/* Header */}
             <div className="mb-12">
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight" style={{display: 'none'}}>
                 About Ragnarok Universe
               </h2>
-              <p className="text-lg text-foreground/60">Discover the world of Ragnarok</p>
+              <p className="text-lg text-foreground/60" style={{display: 'none'}}>Discover the world of Ragnarok</p>
             </div>
 
             {/* Game Info Card */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 items-center" style={{display: 'none'}}>
               {/* Game Image */}
               <div className="rounded-2xl overflow-hidden shadow-lg">
                 <img
@@ -468,7 +468,7 @@ export default function Home() {
 
             {/* Gameplay Trailer */}
             <div className="mt-12">
-              <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight">Gameplay Trailer</h3>
+              <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight">Media</h3>
               <div className="rounded-2xl overflow-hidden shadow-lg border border-border">
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                   <iframe
