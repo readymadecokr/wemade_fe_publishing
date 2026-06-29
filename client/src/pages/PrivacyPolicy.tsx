@@ -1,6 +1,8 @@
 import Layout from "@/components/Layout";
+import { useEffect } from "react";
 
 export default function PrivacyPolicy() {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <Layout>
       <div className="min-h-screen bg-white dark:bg-[#0a0a0a]">
