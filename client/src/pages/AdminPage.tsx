@@ -740,22 +740,19 @@ export default function AdminPage() {
                 ) : (
                   <div className="space-y-3">
                     {bannersData.map((banner) => (
-                      <div
-                        key={banner.id}
-                        className="cursor-pointer border rounded-lg overflow-hidden hover:border-primary hover:shadow-md transition-all"
-                        onClick={() => setBannerForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive })}
-                      >
-                        {/* 배너 이미지 1900x600 비율 */}
-                        <div className="w-full bg-slate-100" style={{ aspectRatio: '1900/600' }}>
+                      <div key={banner.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 transition-colors cursor-pointer" onClick={() => setBannerForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive })}>
+                        {/* 순서 */}
+                        <span className="text-xs text-muted-foreground w-5 text-center font-mono">{banner.sortOrder + 1}</span>
+                        {/* 썸네일 */}
+                        <div className="w-24 h-14 rounded overflow-hidden bg-slate-100 shrink-0">
                           <img src={banner.imageUrl} alt={banner.title} className="w-full h-full object-cover" />
                         </div>
-                        {/* 하단 정보 바 */}
-                        <div className="flex items-center justify-between px-3 py-2 bg-white dark:bg-slate-900 border-t">
-                          <div className="flex items-center gap-3">
-                            <span className="text-xs text-muted-foreground font-mono w-4">{banner.sortOrder + 1}</span>
-                            <p className="font-medium text-sm">{banner.title}</p>
+                        {/* 정보 */}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm truncate">{banner.title}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
                             {banner.actionType === "url" ? (
-                              <span className="flex items-center gap-1 text-xs text-blue-600"><Link className="h-3 w-3" /> URL</span>
+                              <span className="flex items-center gap-1 text-xs text-blue-600"><Link className="h-3 w-3" /> URL 연결</span>
                             ) : (
                               <span className="flex items-center gap-1 text-xs text-green-600"><Pencil className="h-3 w-3" /> 콘텐츠</span>
                             )}
@@ -763,14 +760,21 @@ export default function AdminPage() {
                               {banner.isActive ? "활성" : "비활성"}
                             </span>
                           </div>
-                          <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-                            <Button variant="ghost" size="sm" onClick={() => setBannerPreview(banner as BannerRow)} title="미리보기">
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm" onClick={() => { if (confirm(`"${banner.title}" 배너를 삭제하시겠습니까?`)) deleteBannerMutation.mutate(banner.id); }} title="삭제" className="text-red-500 hover:text-red-600">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
+                        </div>
+                        {/* 버튼 */}
+                        <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                          <Button variant="ghost" size="sm" onClick={() => setBannerPreview(banner as BannerRow)} title="미리보기">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => setBannerForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive })} title="수정">
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => { if (confirm(`"${banner.title}" 배너를 삭제하시겠습니까?`)) deleteBannerMutation.mutate(banner.id); }} title="삭제" className="text-red-500 hover:text-red-600">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => updateBannerMutation.mutate({ id: banner.id, isActive: banner.isActive ? 0 : 1 })} title="활성/비활성 토글">
+                            {banner.isActive ? <ToggleRight className="h-4 w-4 text-green-500" /> : <ToggleLeft className="h-4 w-4 text-slate-400" />}
+                          </Button>
                         </div>
                       </div>
                     ))}
