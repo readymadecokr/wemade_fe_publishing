@@ -318,6 +318,10 @@ export default function AdminPage() {
   const [bannerPreview, setBannerPreview] = useState<BannerRow | null>(null);
   const [bannerImageFile, setBannerImageFile] = useState<File | null>(null);
   const [bannerUploading, setBannerUploading] = useState(false);
+  const [bannerSearch, setBannerSearch] = useState("");
+  const [bannerSearchInput, setBannerSearchInput] = useState("");
+  const [bannerPageSize, setBannerPageSize] = useState(10);
+  const [bannerPage, setBannerPage] = useState(1);
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -715,31 +719,82 @@ export default function AdminPage() {
             {/* 헤더 */}
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold">Main Banner 관리</h2>
-                <p className="text-sm text-muted-foreground mt-0.5">메인 페이지 상단 캐러셀 배너를 관리합니다.</p>
+                <h2 className="text-xl font-bold">
+                  {bannerForm ? (
+                    <button onClick={() => setBannerForm(null)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-base font-normal mr-2">
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                  ) : null}
+                  {bannerForm ? (bannerForm.id ? "배너 수정" : "배너 등록") : "Main Banner 관리"}
+                </h2>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {bannerForm ? "배너 정보를 수정하고 저장하세요." : "메인 페이지 상단 캐러셀 배너를 관리합니다."}
+                </p>
               </div>
-              <Button onClick={() => setBannerForm({ title: "", imageUrl: "", actionType: "url", actionUrl: "", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (bannersData?.length ?? 0), isActive: 1 })}>
-                <Plus className="h-4 w-4 mr-2" /> 배너 등록
-              </Button>
+              {!bannerForm && (
+                <Button onClick={() => setBannerForm({ title: "", imageUrl: "", actionType: "url", actionUrl: "", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (bannersData?.length ?? 0), isActive: 1 })}>
+                  <Plus className="h-4 w-4 mr-2" /> 배너 등록
+                </Button>
+              )}
+              {bannerForm && (
+                <Button variant="outline" onClick={() => setBannerForm(null)}>
+                  <ChevronLeft className="h-4 w-4 mr-1" /> 목록으로
+                </Button>
+              )}
             </div>
 
-            {/* 배너 목록 */}
-            <Card>
+            {/* 배너 목록 - bannerForm 없을 때만 표시 */}
+            {!bannerForm && <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Image className="h-4 w-4" />
-                  등록된 배너 ({bannersData?.length ?? 0}개)
-                  <Button variant="ghost" size="sm" onClick={() => refetchBanners()} className="ml-auto">
-                    <RefreshCw className="h-3.5 w-3.5" />
-                  </Button>
-                </CardTitle>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Image className="h-4 w-4" />
+                    등록된 배너 ({(() => {
+                      const filtered = (bannersData ?? []).filter(b => !bannerSearch || b.title.toLowerCase().includes(bannerSearch.toLowerCase()));
+                      return filtered.length;
+                    })()}개)
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                      <Input
+                        placeholder="배너 제목 검색..."
+                        value={bannerSearchInput}
+                        onChange={e => setBannerSearchInput(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter') { setBannerSearch(bannerSearchInput); setBannerPage(1); } }}
+                        className="pl-8 h-8 w-48 text-sm"
+                      />
+                    </div>
+                    <Button size="sm" onClick={() => { setBannerSearch(bannerSearchInput); setBannerPage(1); }} className="h-8">검색</Button>
+                    <Select value={String(bannerPageSize)} onValueChange={v => { setBannerPageSize(Number(v)); setBannerPage(1); }}>
+                      <SelectTrigger className="w-24 h-8 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="10">10개씩</SelectItem>
+                        <SelectItem value="20">20개씩</SelectItem>
+                        <SelectItem value="50">50개씩</SelectItem>
+                        <SelectItem value="100">100개씩</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button variant="ghost" size="sm" onClick={() => refetchBanners()} className="h-8">
+                      <RefreshCw className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                {!bannersData || bannersData.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground text-sm">등록된 배너가 없습니다.</div>
-                ) : (
-                  <div className="space-y-3">
-                    {bannersData.map((banner) => (
+                {(() => {
+                  const filtered = (bannersData ?? []).filter(b => !bannerSearch || b.title.toLowerCase().includes(bannerSearch.toLowerCase()));
+                  const totalBannerPages = Math.ceil(filtered.length / bannerPageSize);
+                  const paged = filtered.slice((bannerPage - 1) * bannerPageSize, bannerPage * bannerPageSize);
+                  return (
+                    <>
+                      {filtered.length === 0 ? (
+                        <div className="text-center py-8 text-muted-foreground text-sm">{bannerSearch ? `"${bannerSearch}" 검색 결과가 없습니다.` : "등록된 배너가 없습니다."}</div>
+                      ) : (
+                        <div className="space-y-3">
+                          {paged.map((banner) => (
                       <div key={banner.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 transition-colors cursor-pointer" onClick={() => setBannerForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive })}>
                         {/* 순서 */}
                         <span className="text-xs text-muted-foreground w-5 text-center font-mono">{banner.sortOrder + 1}</span>
@@ -777,13 +832,29 @@ export default function AdminPage() {
                           </Button>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
+                          ))}
+                          {/* end paged.map */}
+                        </div>
+                      )}
+                      {/* 페이지네이션 */}
+                      {totalBannerPages > 1 && (
+                        <div className="flex items-center justify-center gap-2 pt-4">
+                          <Button variant="outline" size="sm" onClick={() => setBannerPage(p => Math.max(1, p - 1))} disabled={bannerPage === 1}>
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <span className="text-sm text-muted-foreground">{bannerPage} / {totalBannerPages}</span>
+                          <Button variant="outline" size="sm" onClick={() => setBannerPage(p => Math.min(totalBannerPages, p + 1))} disabled={bannerPage === totalBannerPages}>
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </CardContent>
-            </Card>
+            </Card>}
 
-            {/* 배너 등록/수정 폼 */}
+            {/* 배너 등록/수정 폼 - 상세 페이지 */}
             {bannerForm && (
               <Card>
                 <CardHeader className="pb-3">
