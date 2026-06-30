@@ -723,24 +723,6 @@ export default function AdminPage() {
               </Button>
             </div>
 
-            {/* 이미지 업로드 가이드 */}
-            <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950/20">
-              <CardContent className="pt-4 pb-3">
-                <div className="flex items-start gap-3">
-                  <Image className="h-5 w-5 text-blue-500 mt-0.5 shrink-0" />
-                  <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                    <p className="font-semibold">배너 이미지 업로드 가이드</p>
-                    <ul className="list-disc list-inside space-y-0.5 text-xs">
-                      <li>권장 사이즈: <strong>1900 × 600px</strong></li>
-                      <li>최대 파일 용량: <strong>500KB 미만</strong></li>
-                      <li>지원 확장자: <strong>JPG, WebP, PNG</strong></li>
-                      <li>이미지는 manus-storage에 업로드 후 URL을 입력하세요.</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* 배너 목록 */}
             <Card>
               <CardHeader className="pb-3">
@@ -758,19 +740,22 @@ export default function AdminPage() {
                 ) : (
                   <div className="space-y-3">
                     {bannersData.map((banner) => (
-                      <div key={banner.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 transition-colors">
-                        {/* 주문 번호 */}
-                        <span className="text-xs text-muted-foreground w-5 text-center font-mono">{banner.sortOrder + 1}</span>
-                        {/* 썸네일 */}
-                        <div className="w-24 h-14 rounded overflow-hidden bg-slate-100 shrink-0">
+                      <div
+                        key={banner.id}
+                        className="cursor-pointer border rounded-lg overflow-hidden hover:border-primary hover:shadow-md transition-all"
+                        onClick={() => setBannerForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive })}
+                      >
+                        {/* 배너 이미지 1900x600 비율 */}
+                        <div className="w-full bg-slate-100" style={{ aspectRatio: '1900/600' }}>
                           <img src={banner.imageUrl} alt={banner.title} className="w-full h-full object-cover" />
                         </div>
-                        {/* 정보 */}
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm truncate">{banner.title}</p>
-                          <div className="flex items-center gap-2 mt-0.5">
+                        {/* 하단 정보 바 */}
+                        <div className="flex items-center justify-between px-3 py-2 bg-white dark:bg-slate-900 border-t">
+                          <div className="flex items-center gap-3">
+                            <span className="text-xs text-muted-foreground font-mono w-4">{banner.sortOrder + 1}</span>
+                            <p className="font-medium text-sm">{banner.title}</p>
                             {banner.actionType === "url" ? (
-                              <span className="flex items-center gap-1 text-xs text-blue-600"><Link className="h-3 w-3" /> URL 연결</span>
+                              <span className="flex items-center gap-1 text-xs text-blue-600"><Link className="h-3 w-3" /> URL</span>
                             ) : (
                               <span className="flex items-center gap-1 text-xs text-green-600"><Pencil className="h-3 w-3" /> 콘텐츠</span>
                             )}
@@ -778,21 +763,14 @@ export default function AdminPage() {
                               {banner.isActive ? "활성" : "비활성"}
                             </span>
                           </div>
-                        </div>
-                        {/* 버튼 */}
-                        <div className="flex items-center gap-1 shrink-0">
-                          <Button variant="ghost" size="sm" onClick={() => setBannerPreview(banner as BannerRow)} title="미리보기">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => setBannerForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive })} title="수정">
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => { if (confirm(`"${banner.title}" 배너를 삭제하시겠습니까?`)) deleteBannerMutation.mutate(banner.id); }} title="삭제" className="text-red-500 hover:text-red-600">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => updateBannerMutation.mutate({ id: banner.id, isActive: banner.isActive ? 0 : 1 })} title="활성/비활성 토글">
-                            {banner.isActive ? <ToggleRight className="h-4 w-4 text-green-500" /> : <ToggleLeft className="h-4 w-4 text-slate-400" />}
-                          </Button>
+                          <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                            <Button variant="ghost" size="sm" onClick={() => setBannerPreview(banner as BannerRow)} title="미리보기">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => { if (confirm(`"${banner.title}" 배너를 삭제하시겠습니까?`)) deleteBannerMutation.mutate(banner.id); }} title="삭제" className="text-red-500 hover:text-red-600">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -814,13 +792,48 @@ export default function AdminPage() {
                     <Input value={bannerForm.title} onChange={e => setBannerForm(f => f && ({ ...f, title: e.target.value }))} placeholder="배너 제목 입력" />
                   </div>
 
-                  {/* 이미지 URL */}
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium">이미지 URL <span className="text-red-500">*</span></label>
-                    <Input value={bannerForm.imageUrl} onChange={e => setBannerForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/banner_image.jpg" />
-                    <p className="text-xs text-muted-foreground">권장 사이즈: 1900xd7600px | 용량: 500KB 미만 | 확장자: JPG, WebP, PNG</p>
+                  {/* 이미지 등록 */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">이미지 등록 <span className="text-red-500">*</span></label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={bannerForm.imageUrl}
+                        onChange={e => setBannerForm(f => f && ({ ...f, imageUrl: e.target.value }))}
+                        placeholder="/manus-storage/banner_image.jpg"
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/jpeg,image/webp,image/png';
+                          input.onchange = (e) => {
+                            const file = (e.target as HTMLInputElement).files?.[0];
+                            if (!file) return;
+                            if (file.size > 500 * 1024) {
+                              toast.error('파일 용량이 500KB를 초과합니다.');
+                              return;
+                            }
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                              const dataUrl = ev.target?.result as string;
+                              setBannerForm(f => f && ({ ...f, imageUrl: dataUrl }));
+                              toast.info('이미지가 선택되었습니다. 실제 배포 시 manus-storage URL로 교체해 주세요.');
+                            };
+                            reader.readAsDataURL(file);
+                          };
+                          input.click();
+                        }}
+                        className="shrink-0"
+                      >
+                        PC에서 찾아보기
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground">권장: 1900×600px | 500KB 미만 | JPG, WebP, PNG</p>
                     {bannerForm.imageUrl && (
-                      <div className="mt-2 rounded overflow-hidden border h-24 bg-slate-100">
+                      <div className="mt-2 rounded overflow-hidden border bg-slate-100" style={{ aspectRatio: '1900/600' }}>
                         <img src={bannerForm.imageUrl} alt="preview" className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                       </div>
                     )}
