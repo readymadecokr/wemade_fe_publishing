@@ -60,11 +60,19 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  Image,
+  Link,
   LogOut,
   MoreHorizontal,
+  Pencil,
+  Plus,
   RefreshCw,
   Search,
   Shield,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
   User,
   UserCheck,
   Users,
@@ -76,6 +84,22 @@ import { toast } from "sonner";
 type SortBy = "id" | "name" | "email" | "createdAt" | "lastSignedIn" | "role";
 type SortOrder = "asc" | "desc";
 type RoleFilter = "all" | "user" | "admin";
+
+type BannerRow = {
+  id: number;
+  title: string;
+  imageUrl: string;
+  imageKey: string | null;
+  actionType: "url" | "content";
+  actionUrl: string | null;
+  contentTitle: string | null;
+  contentDate: string | null;
+  contentBody: string | null;
+  sortOrder: number;
+  isActive: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 type UserRow = {
   id: number;
@@ -278,6 +302,23 @@ export default function AdminPage() {
   // 사이드바 메뉴 상태
   const [activeMenu, setActiveMenu] = useState("dashboard");
 
+  // 배너 관리 상태
+  const [bannerForm, setBannerForm] = useState<{
+    id?: number;
+    title: string;
+    imageUrl: string;
+    actionType: "url" | "content";
+    actionUrl: string;
+    contentTitle: string;
+    contentDate: string;
+    contentBody: string;
+    sortOrder: number;
+    isActive: number;
+  } | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<BannerRow | null>(null);
+  const [bannerImageFile, setBannerImageFile] = useState<File | null>(null);
+  const [bannerUploading, setBannerUploading] = useState(false);
+
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [search, setSearch] = useState("");
@@ -312,6 +353,56 @@ export default function AdminPage() {
     enabled: !!adminClient,
     retry: false,
   });
+
+  // 배너 목록 query
+  const { data: bannersData, refetch: refetchBanners } = useQuery({
+    queryKey: ["admin", "listBanners", adminKey],
+    queryFn: () => adminClient!.admin.listBanners.query(),
+    enabled: !!adminClient,
+    retry: false,
+  });
+
+  const createBannerMutation = useMutation({
+    mutationFn: (input: { title: string; imageUrl: string; actionType: "url" | "content"; actionUrl?: string; contentTitle?: string; contentDate?: string; contentBody?: string; sortOrder?: number; isActive?: number; }) =>
+      adminClient!.admin.createBanner.mutate(input),
+    onSuccess: () => { toast.success("배너가 등록되었습니다."); qc.invalidateQueries({ queryKey: ["admin", "listBanners"] }); setBannerForm(null); },
+    onError: (err: Error) => toast.error(`등록 실패: ${err.message}`),
+  });
+
+  const updateBannerMutation = useMutation({
+    mutationFn: (input: { id: number; title?: string; imageUrl?: string; actionType?: "url" | "content"; actionUrl?: string | null; contentTitle?: string | null; contentDate?: string | null; contentBody?: string | null; sortOrder?: number; isActive?: number; }) =>
+      adminClient!.admin.updateBanner.mutate(input),
+    onSuccess: () => { toast.success("배너가 수정되었습니다."); qc.invalidateQueries({ queryKey: ["admin", "listBanners"] }); setBannerForm(null); },
+    onError: (err: Error) => toast.error(`수정 실패: ${err.message}`),
+  });
+
+  const deleteBannerMutation = useMutation({
+    mutationFn: (id: number) => adminClient!.admin.deleteBanner.mutate({ id }),
+    onSuccess: () => { toast.success("배너가 삭제되었습니다."); qc.invalidateQueries({ queryKey: ["admin", "listBanners"] }); },
+    onError: (err: Error) => toast.error(`삭제 실패: ${err.message}`),
+  });
+
+  const handleBannerSubmit = async () => {
+    if (!bannerForm) return;
+    if (!bannerForm.title.trim()) { toast.error("배너 제목을 입력하세요."); return; }
+    if (!bannerForm.imageUrl.trim()) { toast.error("이미지 URL을 입력하세요."); return; }
+    const payload = {
+      title: bannerForm.title,
+      imageUrl: bannerForm.imageUrl,
+      actionType: bannerForm.actionType,
+      actionUrl: bannerForm.actionUrl || undefined,
+      contentTitle: bannerForm.contentTitle || undefined,
+      contentDate: bannerForm.contentDate || undefined,
+      contentBody: bannerForm.contentBody || undefined,
+      sortOrder: bannerForm.sortOrder,
+      isActive: bannerForm.isActive,
+    };
+    if (bannerForm.id) {
+      updateBannerMutation.mutate({ id: bannerForm.id, ...payload });
+    } else {
+      createBannerMutation.mutate(payload);
+    }
+  };
 
   const updateRoleMutation = useMutation({
     mutationFn: ({ id, role }: { id: number; role: "user" | "admin" }) =>
@@ -618,8 +709,235 @@ export default function AdminPage() {
       </aside>
 
       <main className="flex-1 px-4 sm:px-6 py-8 space-y-8 overflow-auto">
+        {/* Main Banner 관리 UI */}
+        {activeMenu === "main-banner" && (
+          <div className="space-y-6">
+            {/* 헤더 */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold">Main Banner 관리</h2>
+                <p className="text-sm text-muted-foreground mt-0.5">메인 페이지 상단 캐러셀 배너를 관리합니다.</p>
+              </div>
+              <Button onClick={() => setBannerForm({ title: "", imageUrl: "", actionType: "url", actionUrl: "", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (bannersData?.length ?? 0), isActive: 1 })}>
+                <Plus className="h-4 w-4 mr-2" /> 배너 등록
+              </Button>
+            </div>
+
+            {/* 이미지 업로드 가이드 */}
+            <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950/20">
+              <CardContent className="pt-4 pb-3">
+                <div className="flex items-start gap-3">
+                  <Image className="h-5 w-5 text-blue-500 mt-0.5 shrink-0" />
+                  <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                    <p className="font-semibold">배너 이미지 업로드 가이드</p>
+                    <ul className="list-disc list-inside space-y-0.5 text-xs">
+                      <li>권장 사이즈: <strong>1900 × 600px</strong></li>
+                      <li>최대 파일 용량: <strong>500KB 미만</strong></li>
+                      <li>지원 확장자: <strong>JPG, WebP, PNG</strong></li>
+                      <li>이미지는 manus-storage에 업로드 후 URL을 입력하세요.</li>
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 배너 목록 */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Image className="h-4 w-4" />
+                  등록된 배너 ({bannersData?.length ?? 0}개)
+                  <Button variant="ghost" size="sm" onClick={() => refetchBanners()} className="ml-auto">
+                    <RefreshCw className="h-3.5 w-3.5" />
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {!bannersData || bannersData.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground text-sm">등록된 배너가 없습니다.</div>
+                ) : (
+                  <div className="space-y-3">
+                    {bannersData.map((banner) => (
+                      <div key={banner.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 transition-colors">
+                        {/* 주문 번호 */}
+                        <span className="text-xs text-muted-foreground w-5 text-center font-mono">{banner.sortOrder + 1}</span>
+                        {/* 썸네일 */}
+                        <div className="w-24 h-14 rounded overflow-hidden bg-slate-100 shrink-0">
+                          <img src={banner.imageUrl} alt={banner.title} className="w-full h-full object-cover" />
+                        </div>
+                        {/* 정보 */}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm truncate">{banner.title}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            {banner.actionType === "url" ? (
+                              <span className="flex items-center gap-1 text-xs text-blue-600"><Link className="h-3 w-3" /> URL 연결</span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-xs text-green-600"><Pencil className="h-3 w-3" /> 콘텐츠</span>
+                            )}
+                            <span className={`text-xs px-1.5 py-0.5 rounded-full ${banner.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>
+                              {banner.isActive ? "활성" : "비활성"}
+                            </span>
+                          </div>
+                        </div>
+                        {/* 버튼 */}
+                        <div className="flex items-center gap-1 shrink-0">
+                          <Button variant="ghost" size="sm" onClick={() => setBannerPreview(banner as BannerRow)} title="미리보기">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => setBannerForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive })} title="수정">
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => { if (confirm(`"${banner.title}" 배너를 삭제하시겠습니까?`)) deleteBannerMutation.mutate(banner.id); }} title="삭제" className="text-red-500 hover:text-red-600">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => updateBannerMutation.mutate({ id: banner.id, isActive: banner.isActive ? 0 : 1 })} title="활성/비활성 토글">
+                            {banner.isActive ? <ToggleRight className="h-4 w-4 text-green-500" /> : <ToggleLeft className="h-4 w-4 text-slate-400" />}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* 배너 등록/수정 폼 */}
+            {bannerForm && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">{bannerForm.id ? "배너 수정" : "배너 등록"}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* 배너 제목 */}
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">배너 제목 <span className="text-red-500">*</span></label>
+                    <Input value={bannerForm.title} onChange={e => setBannerForm(f => f && ({ ...f, title: e.target.value }))} placeholder="배너 제목 입력" />
+                  </div>
+
+                  {/* 이미지 URL */}
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">이미지 URL <span className="text-red-500">*</span></label>
+                    <Input value={bannerForm.imageUrl} onChange={e => setBannerForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/banner_image.jpg" />
+                    <p className="text-xs text-muted-foreground">권장 사이즈: 1900xd7600px | 용량: 500KB 미만 | 확장자: JPG, WebP, PNG</p>
+                    {bannerForm.imageUrl && (
+                      <div className="mt-2 rounded overflow-hidden border h-24 bg-slate-100">
+                        <img src={bannerForm.imageUrl} alt="preview" className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 클릭 액션 타입 */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">클릭 시 동작</label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="actionType" value="url" checked={bannerForm.actionType === "url"} onChange={() => setBannerForm(f => f && ({ ...f, actionType: "url" }))} />
+                        <Link className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm">URL 이동</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="actionType" value="content" checked={bannerForm.actionType === "content"} onChange={() => setBannerForm(f => f && ({ ...f, actionType: "content" }))} />
+                        <Pencil className="h-4 w-4 text-green-500" />
+                        <span className="text-sm">콘텐츠 표시</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* URL 입력 */}
+                  {bannerForm.actionType === "url" && (
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium">이동 URL</label>
+                      <Input value={bannerForm.actionUrl} onChange={e => setBannerForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="https://discord.gg/..." />
+                    </div>
+                  )}
+
+                  {/* 콘텐츠 입력 */}
+                  {bannerForm.actionType === "content" && (
+                    <div className="space-y-3 border rounded-lg p-4 bg-slate-50 dark:bg-slate-900">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase">콘텐츠 작성</p>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium">제목</label>
+                        <Input value={bannerForm.contentTitle} onChange={e => setBannerForm(f => f && ({ ...f, contentTitle: e.target.value }))} placeholder="콘텐츠 제목" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium">날짜</label>
+                        <Input value={bannerForm.contentDate} onChange={e => setBannerForm(f => f && ({ ...f, contentDate: e.target.value }))} placeholder="2026-07-01" type="date" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium">내용</label>
+                        <textarea
+                          value={bannerForm.contentBody}
+                          onChange={e => setBannerForm(f => f && ({ ...f, contentBody: e.target.value }))}
+                          placeholder="콘텐츠 내용을 입력하세요..."
+                          rows={6}
+                          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 정렬 순서 및 활성 */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium">순서</label>
+                      <Input type="number" value={bannerForm.sortOrder} onChange={e => setBannerForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} min={0} />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium">활성 상태</label>
+                      <div className="flex items-center gap-2 h-10">
+                        <button onClick={() => setBannerForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
+                          {bannerForm.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
+                          <span className="text-sm">{bannerForm.isActive ? "활성" : "비활성"}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 버튼 */}
+                  <div className="flex gap-2 pt-2">
+                    <Button onClick={handleBannerSubmit} disabled={createBannerMutation.isPending || updateBannerMutation.isPending}>
+                      {bannerForm.id ? "수정 저장" : "배너 등록"}
+                    </Button>
+                    <Button variant="outline" onClick={() => setBannerForm(null)}>취소</Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* 미리보기 다이얼로그 */}
+            <Dialog open={!!bannerPreview} onOpenChange={() => setBannerPreview(null)}>
+              <DialogContent className="max-w-4xl">
+                <DialogHeader>
+                  <DialogTitle>배너 미리보기: {bannerPreview?.title}</DialogTitle>
+                </DialogHeader>
+                {bannerPreview && (
+                  <div className="space-y-3">
+                    <div className="rounded-lg overflow-hidden border">
+                      <img src={bannerPreview.imageUrl} alt={bannerPreview.title} className="w-full object-cover" style={{ aspectRatio: '1900/600' }} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div><span className="text-muted-foreground">클릭 액션:</span> {bannerPreview.actionType === "url" ? `URL 이동 → ${bannerPreview.actionUrl}` : "콘텐츠 표시"}</div>
+                      <div><span className="text-muted-foreground">상태:</span> {bannerPreview.isActive ? "활성" : "비활성"}</div>
+                    </div>
+                    {bannerPreview.actionType === "content" && bannerPreview.contentTitle && (
+                      <div className="border rounded-lg p-4 space-y-2">
+                        <p className="font-semibold">{bannerPreview.contentTitle}</p>
+                        {bannerPreview.contentDate && <p className="text-xs text-muted-foreground">{bannerPreview.contentDate}</p>}
+                        {bannerPreview.contentBody && <p className="text-sm whitespace-pre-wrap">{bannerPreview.contentBody}</p>}
+                      </div>
+                    )}
+                  </div>
+                )}
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setBannerPreview(null)}>닫기</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
+
         {/* 메뉴별 안내 (미구현 메뉴) */}
-        {activeMenu !== "dashboard" && activeMenu !== "members" && (
+        {activeMenu !== "dashboard" && activeMenu !== "members" && activeMenu !== "main-banner" && (
           <div className="flex flex-col items-center justify-center h-64 gap-4 text-muted-foreground">
             <div className="text-5xl">
               {activeMenu === "main-banner" && "🖼️"}

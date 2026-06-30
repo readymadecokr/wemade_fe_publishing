@@ -3,7 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminKeyProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { users } from "../drizzle/schema";
+import { users, banners } from "../drizzle/schema";
 import { asc, desc, eq, like, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -18,6 +18,20 @@ export const appRouter = router({
       return {
         success: true,
       } as const;
+    }),
+  }),
+
+  // 공개 배너 목록 (Home.tsx에서 사용)
+  banner: router({
+    list: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      const result = await db
+        .select()
+        .from(banners)
+        .where(eq(banners.isActive, 1))
+        .orderBy(asc(banners.sortOrder), asc(banners.id));
+      return result;
     }),
   }),
 
@@ -186,6 +200,68 @@ export const appRouter = router({
           .set({ role: input.role, updatedAt: new Date() })
           .where(eq(users.id, input.id));
 
+        return { success: true };
+      }),
+
+    // 배너 목록 조회
+    listBanners: adminKeyProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const result = await db.select().from(banners).orderBy(asc(banners.sortOrder), asc(banners.id));
+      return result;
+    }),
+
+    // 배너 생성
+    createBanner: adminKeyProcedure
+      .input(z.object({
+        title: z.string().min(1).max(255),
+        imageUrl: z.string().min(1),
+        imageKey: z.string().optional(),
+        actionType: z.enum(["url", "content"]),
+        actionUrl: z.string().optional(),
+        contentTitle: z.string().optional(),
+        contentDate: z.string().optional(),
+        contentBody: z.string().optional(),
+        sortOrder: z.number().int().default(0),
+        isActive: z.number().int().default(1),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        await db.insert(banners).values(input);
+        return { success: true };
+      }),
+
+    // 배너 수정
+    updateBanner: adminKeyProcedure
+      .input(z.object({
+        id: z.number().int(),
+        title: z.string().min(1).max(255).optional(),
+        imageUrl: z.string().optional(),
+        imageKey: z.string().optional(),
+        actionType: z.enum(["url", "content"]).optional(),
+        actionUrl: z.string().optional().nullable(),
+        contentTitle: z.string().optional().nullable(),
+        contentDate: z.string().optional().nullable(),
+        contentBody: z.string().optional().nullable(),
+        sortOrder: z.number().int().optional(),
+        isActive: z.number().int().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        const { id, ...rest } = input;
+        await db.update(banners).set({ ...rest, updatedAt: new Date() }).where(eq(banners.id, id));
+        return { success: true };
+      }),
+
+    // 배너 삭제
+    deleteBanner: adminKeyProcedure
+      .input(z.object({ id: z.number().int() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        await db.delete(banners).where(eq(banners.id, input.id));
         return { success: true };
       }),
 

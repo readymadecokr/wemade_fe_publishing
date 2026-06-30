@@ -44,3 +44,26 @@ export const files = mysqlTable("files", {
 
 export type File = typeof files.$inferSelect;
 export type InsertFile = typeof files.$inferInsert;
+
+/**
+ * Banners table for main banner carousel management
+ */
+export const banners = mysqlTable("banners", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  imageUrl: text("imageUrl").notNull(),
+  imageKey: varchar("imageKey", { length: 512 }),
+  /** 'url' = 외부 URL 이동, 'content' = 내부 콘텐츠 표시 */
+  actionType: mysqlEnum("actionType", ["url", "content"]).default("url").notNull(),
+  actionUrl: text("actionUrl"),
+  contentTitle: varchar("contentTitle", { length: 255 }),
+  contentDate: varchar("contentDate", { length: 50 }),
+  contentBody: text("contentBody"),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  isActive: int("isActive").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Banner = typeof banners.$inferSelect;
+export type InsertBanner = typeof banners.$inferInsert;

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -30,24 +31,38 @@ export default function Home() {
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
   const isTTKeyVerified = localStorage.getItem("rou_ttkey_verified") === "true";
 
-  // Banner images carousel
-  const bannerImages = [
+  // DB에서 배너 데이터 가져오기 (fallback: 하드코딩 배너)
+  const { data: dbBanners } = trpc.banner.list.useQuery(undefined, { retry: false });
+
+  const fallbackBanners = [
     {
       id: 1,
-      url: `${ASSET_BASE_URL}/manus-storage/mainbanner_01_new_1c67868c.jpg`,
+      imageUrl: `${ASSET_BASE_URL}/manus-storage/mainbanner_01_new_1c67868c.jpg`,
       title: "PLAY WITH DISCORD",
-      subtitle: "Please visit our official Discord channel for more information",
-      link: "https://discord.com/invite/yVWJkWdkAU",
-      external: true,
+      actionType: "url" as const,
+      actionUrl: "https://discord.com/invite/yVWJkWdkAU",
+      contentTitle: null, contentDate: null, contentBody: null,
     },
     {
       id: 2,
-      url: `${ASSET_BASE_URL}/manus-storage/mainbanner_02_e759d77c.jpg`,
+      imageUrl: `${ASSET_BASE_URL}/manus-storage/mainbanner_02_e759d77c.jpg`,
       title: "Enter The Ragnarok Universe",
-      subtitle: "TT (Technical Test) Announcement",
-      link: "game-start",
+      actionType: "url" as const,
+      actionUrl: "game-start",
+      contentTitle: null, contentDate: null, contentBody: null,
     },
   ];
+
+  const bannerImages = (dbBanners && dbBanners.length > 0 ? dbBanners : fallbackBanners).map(b => ({
+    id: b.id,
+    url: b.imageUrl,
+    title: b.title,
+    actionType: b.actionType,
+    actionUrl: b.actionUrl ?? "",
+    contentTitle: b.contentTitle,
+    contentDate: b.contentDate,
+    contentBody: b.contentBody,
+  }));
 
   const nextBanner = () => {
     setCurrentBannerIndex((prev) => (prev + 1) % bannerImages.length);
@@ -200,10 +215,15 @@ export default function Home() {
               alt={bannerImages[currentBannerIndex].title}
               onClick={() => {
                 const banner = bannerImages[currentBannerIndex];
-                if (banner.external && banner.link) {
-                  window.open(banner.link, '_blank');
-                } else if (banner.link === 'game-start') {
-                  handleGameStart();
+                if (banner.actionType === "url") {
+                  if (banner.actionUrl === "game-start") {
+                    handleGameStart();
+                  } else if (banner.actionUrl) {
+                    window.open(banner.actionUrl, '_blank');
+                  }
+                } else if (banner.actionType === "content") {
+                  // 콘텐츠 모달 표시 (TODO: 콘텐츠 모달 구현)
+                  toast.info(banner.contentTitle ?? banner.title);
                 }
               }}
               className="h-full w-full object-cover cursor-pointer"
