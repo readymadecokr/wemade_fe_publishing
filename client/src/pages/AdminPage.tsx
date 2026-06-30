@@ -459,33 +459,130 @@ export default function AdminPage() {
       </header>
 
       <div className="flex min-h-[calc(100vh-64px)]">
-      {/* 왼쪽 사이드바 */}
-      <aside className="w-56 shrink-0 border-r bg-card flex flex-col">
-        <nav className="flex flex-col gap-1 p-3 flex-1">
-          {[
-            { key: "dashboard", label: "Dashboard", icon: "📊" },
-            { key: "members", label: "회원 관리", icon: "👥" },
-            { key: "main-banner", label: "Main Banner", icon: "🖼️" },
-            { key: "news", label: "News", icon: "📰" },
-            { key: "media", label: "Media", icon: "🎬" },
-            { key: "point-shop", label: "Point Shop", icon: "🛒" },
-            { key: "policy", label: "정책 변경", icon: "📋" },
-          ].map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setActiveMenu(item.key)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left w-full ${
-                activeMenu === item.key
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              }`}
-            >
-              <span className="text-base">{item.icon}</span>
-              {item.label}
-            </button>
-          ))}
-          {activeMenu === "policy" && (
-            <div className="ml-6 flex flex-col gap-1 mt-1">
+      {/* 왼쪽 사이드바 - EDUMIN 스타일 */}
+      <aside className="w-60 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 flex flex-col shadow-sm">
+        {/* MAIN MENU 섹션 */}
+        <div className="px-4 pt-5 pb-2">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Main Menu</p>
+        </div>
+        <nav className="flex flex-col px-2 pb-4">
+          {/* Dashboard */}
+          <button
+            onClick={() => setActiveMenu("dashboard")}
+            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full group ${
+              activeMenu === "dashboard"
+                ? "bg-primary text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Activity className={`h-4 w-4 ${activeMenu === "dashboard" ? "text-white" : "text-slate-400"}`} />
+              Dashboard
+            </div>
+            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "dashboard" ? "text-white" : ""}`} />
+          </button>
+
+          {/* 회원 관리 */}
+          <button
+            onClick={() => setActiveMenu("members")}
+            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
+              activeMenu === "members"
+                ? "bg-primary text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Users className={`h-4 w-4 ${activeMenu === "members" ? "text-white" : "text-slate-400"}`} />
+              회원 관리
+            </div>
+            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "members" ? "text-white" : ""}`} />
+          </button>
+
+          {/* Main Banner */}
+          <button
+            onClick={() => setActiveMenu("main-banner")}
+            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
+              activeMenu === "main-banner"
+                ? "bg-primary text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <RefreshCw className={`h-4 w-4 ${activeMenu === "main-banner" ? "text-white" : "text-slate-400"}`} />
+              Main Banner
+            </div>
+            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "main-banner" ? "text-white" : ""}`} />
+          </button>
+
+          {/* News */}
+          <button
+            onClick={() => setActiveMenu("news")}
+            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
+              activeMenu === "news"
+                ? "bg-primary text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Search className={`h-4 w-4 ${activeMenu === "news" ? "text-white" : "text-slate-400"}`} />
+              News
+            </div>
+            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "news" ? "text-white" : ""}`} />
+          </button>
+
+          {/* Media */}
+          <button
+            onClick={() => setActiveMenu("media")}
+            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
+              activeMenu === "media"
+                ? "bg-primary text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <UserCheck className={`h-4 w-4 ${activeMenu === "media" ? "text-white" : "text-slate-400"}`} />
+              Media
+            </div>
+            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "media" ? "text-white" : ""}`} />
+          </button>
+
+          {/* Point Shop */}
+          <button
+            onClick={() => setActiveMenu("point-shop")}
+            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
+              activeMenu === "point-shop"
+                ? "bg-primary text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <MoreHorizontal className={`h-4 w-4 ${activeMenu === "point-shop" ? "text-white" : "text-slate-400"}`} />
+              Point Shop
+            </div>
+            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "point-shop" ? "text-white" : ""}`} />
+          </button>
+
+          {/* 정책 변경 (서브메뉴 포함) */}
+          <button
+            onClick={() => setActiveMenu(activeMenu === "policy" || activeMenu.startsWith("policy-") ? "dashboard" : "policy")}
+            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
+              activeMenu === "policy" || activeMenu.startsWith("policy-")
+                ? "bg-primary text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Shield className={`h-4 w-4 ${activeMenu === "policy" || activeMenu.startsWith("policy-") ? "text-white" : "text-slate-400"}`} />
+              정책 변경
+            </div>
+            <ChevronRight className={`h-3.5 w-3.5 transition-transform opacity-50 ${
+              activeMenu === "policy" || activeMenu.startsWith("policy-") ? "rotate-90 text-white" : ""
+            }`} />
+          </button>
+
+          {/* 정책 변경 서브메뉴 */}
+          {(activeMenu === "policy" || activeMenu.startsWith("policy-")) && (
+            <div className="ml-4 mt-1 flex flex-col gap-0.5 border-l-2 border-primary/30 pl-3">
               {[
                 { key: "policy-privacy", label: "Privacy Policy" },
                 { key: "policy-terms", label: "Terms of Service" },
@@ -494,18 +591,30 @@ export default function AdminPage() {
                 <button
                   key={sub.key}
                   onClick={() => setActiveMenu(sub.key)}
-                  className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-xs font-medium transition-colors text-left w-full ${
+                  className={`flex items-center gap-2 px-2 py-2 rounded-md text-xs font-medium transition-colors text-left w-full ${
                     activeMenu === sub.key
-                      ? "bg-primary/20 text-primary"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      ? "text-primary font-semibold"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
+                  <span className={`w-1.5 h-1.5 rounded-full ${activeMenu === sub.key ? "bg-primary" : "bg-slate-300"}`} />
                   {sub.label}
                 </button>
               ))}
             </div>
           )}
         </nav>
+
+        {/* 하단 로그아웃 */}
+        <div className="mt-auto p-3 border-t border-slate-200 dark:border-slate-700">
+          <button
+            onClick={handleAdminLogout}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full"
+          >
+            <LogOut className="h-4 w-4" />
+            로그아웃
+          </button>
+        </div>
       </aside>
 
       <main className="flex-1 px-4 sm:px-6 py-8 space-y-8 overflow-auto">
