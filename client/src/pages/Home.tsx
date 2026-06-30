@@ -34,7 +34,7 @@ export default function Home() {
   const bannerImages = [
     {
       id: 1,
-      url: `${ASSET_BASE_URL}/manus-storage/mainbanner_01_3c77a2c4.jpg`,
+      url: `${ASSET_BASE_URL}/manus-storage/mainbanner_01_new_1c67868c.jpg`,
       title: "PLAY WITH DISCORD",
       subtitle: "Please visit our official Discord channel for more information",
       link: "https://discord.com/invite/yVWJkWdkAU",
