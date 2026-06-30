@@ -880,30 +880,43 @@ export default function AdminPage() {
                       <Button
                         type="button"
                         variant="outline"
+                        disabled={bannerUploading}
                         onClick={() => {
                           const input = document.createElement('input');
                           input.type = 'file';
                           input.accept = 'image/jpeg,image/webp,image/png';
-                          input.onchange = (e) => {
+                          input.onchange = async (e) => {
                             const file = (e.target as HTMLInputElement).files?.[0];
                             if (!file) return;
                             if (file.size > 500 * 1024) {
                               toast.error('파일 용량이 500KB를 초과합니다.');
                               return;
                             }
-                            const reader = new FileReader();
-                            reader.onload = (ev) => {
-                              const dataUrl = ev.target?.result as string;
-                              setBannerForm(f => f && ({ ...f, imageUrl: dataUrl }));
-                              toast.info('이미지가 선택되었습니다. 실제 배포 시 manus-storage URL로 교체해 주세요.');
-                            };
-                            reader.readAsDataURL(file);
+                            setBannerUploading(true);
+                            try {
+                              const reader = new FileReader();
+                              const base64 = await new Promise<string>((resolve) => {
+                                reader.onload = (ev) => resolve(ev.target?.result as string);
+                                reader.readAsDataURL(file);
+                              });
+                              // 서버에 업로드하여 manus-storage URL 획득
+                              const result = await adminClient!.admin.uploadBannerImage.mutate({
+                                base64,
+                                filename: file.name,
+                              });
+                              setBannerForm(f => f && ({ ...f, imageUrl: result.url }));
+                              toast.success('이미지가 업로드되었습니다.');
+                            } catch (err: unknown) {
+                              toast.error(`업로드 실패: ${(err as Error).message}`);
+                            } finally {
+                              setBannerUploading(false);
+                            }
                           };
                           input.click();
                         }}
                         className="shrink-0"
                       >
-                        PC에서 찾아보기
+                        {bannerUploading ? '업로드 중...' : 'PC에서 찾아보기'}
                       </Button>
                     </div>
                     <p className="text-xs text-muted-foreground">권장: 1900×600px | 500KB 미만 | JPG, WebP, PNG</p>

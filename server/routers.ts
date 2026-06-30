@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { adminKeyProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import { users, banners } from "../drizzle/schema";
+import { storagePut } from "./storage";
 import { asc, desc, eq, like, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -201,6 +202,24 @@ export const appRouter = router({
           .where(eq(users.id, input.id));
 
         return { success: true };
+      }),
+
+    // 배너 이미지 업로드 (base64 → S3)
+    uploadBannerImage: adminKeyProcedure
+      .input(z.object({
+        base64: z.string(), // data:image/...;base64,...
+        filename: z.string().default("banner.jpg"),
+      }))
+      .mutation(async ({ input }) => {
+        const { base64, filename } = input;
+        // base64 데이터 파싱
+        const matches = base64.match(/^data:([^;]+);base64,(.+)$/);
+        if (!matches) throw new Error("Invalid base64 image data");
+        const contentType = matches[1];
+        const buffer = Buffer.from(matches[2], "base64");
+        if (buffer.length > 500 * 1024) throw new Error("파일 용량이 500KB를 초과합니다.");
+        const { url } = await storagePut(`banners/${filename}`, buffer, contentType);
+        return { url };
       }),
 
     // 배너 목록 조회
