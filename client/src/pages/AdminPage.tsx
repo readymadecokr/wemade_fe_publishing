@@ -275,6 +275,9 @@ export default function AdminPage() {
     toast.success("비밀번호가 변경되었습니다.");
   };
 
+  // 사이드바 메뉴 상태
+  const [activeMenu, setActiveMenu] = useState("dashboard");
+
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [search, setSearch] = useState("");
@@ -455,9 +458,82 @@ export default function AdminPage() {
         </div>
       </header>
 
-      <main className="max-w-screen-xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-        {/* 통계 카드 */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="flex min-h-[calc(100vh-64px)]">
+      {/* 왼쪽 사이드바 */}
+      <aside className="w-56 shrink-0 border-r bg-card flex flex-col">
+        <nav className="flex flex-col gap-1 p-3 flex-1">
+          {[
+            { key: "dashboard", label: "Dashboard", icon: "📊" },
+            { key: "members", label: "회원 관리", icon: "👥" },
+            { key: "main-banner", label: "Main Banner", icon: "🖼️" },
+            { key: "news", label: "News", icon: "📰" },
+            { key: "media", label: "Media", icon: "🎬" },
+            { key: "point-shop", label: "Point Shop", icon: "🛒" },
+            { key: "policy", label: "정책 변경", icon: "📋" },
+          ].map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setActiveMenu(item.key)}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left w-full ${
+                activeMenu === item.key
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              }`}
+            >
+              <span className="text-base">{item.icon}</span>
+              {item.label}
+            </button>
+          ))}
+          {activeMenu === "policy" && (
+            <div className="ml-6 flex flex-col gap-1 mt-1">
+              {[
+                { key: "policy-privacy", label: "Privacy Policy" },
+                { key: "policy-terms", label: "Terms of Service" },
+                { key: "policy-cookie", label: "Privacy Settings" },
+              ].map((sub) => (
+                <button
+                  key={sub.key}
+                  onClick={() => setActiveMenu(sub.key)}
+                  className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-xs font-medium transition-colors text-left w-full ${
+                    activeMenu === sub.key
+                      ? "bg-primary/20 text-primary"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  }`}
+                >
+                  {sub.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </nav>
+      </aside>
+
+      <main className="flex-1 px-4 sm:px-6 py-8 space-y-8 overflow-auto">
+        {/* 메뉴별 안내 (미구현 메뉴) */}
+        {activeMenu !== "dashboard" && activeMenu !== "members" && (
+          <div className="flex flex-col items-center justify-center h-64 gap-4 text-muted-foreground">
+            <div className="text-5xl">
+              {activeMenu === "main-banner" && "🖼️"}
+              {activeMenu === "news" && "📰"}
+              {activeMenu === "media" && "🎬"}
+              {activeMenu === "point-shop" && "🛒"}
+              {(activeMenu === "policy" || activeMenu.startsWith("policy-")) && "📋"}
+            </div>
+            <p className="text-lg font-semibold">
+              {activeMenu === "main-banner" && "Main Banner 관리"}
+              {activeMenu === "news" && "News 관리"}
+              {activeMenu === "media" && "Media 관리"}
+              {activeMenu === "point-shop" && "Point Shop 관리"}
+              {activeMenu === "policy" && "정책 변경"}
+              {activeMenu === "policy-privacy" && "Privacy Policy 관리"}
+              {activeMenu === "policy-terms" && "Terms of Service 관리"}
+              {activeMenu === "policy-cookie" && "Privacy Settings 관리"}
+            </p>
+            <p className="text-sm">준비 중입니다.</p>
+          </div>
+        )}
+        {/* Dashboard: 통계 카드 */}
+        {(activeMenu === "dashboard" || activeMenu === "members") && <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="전체 회원"
             value={stats?.total}
@@ -482,10 +558,10 @@ export default function AdminPage() {
             icon={Activity}
             color="bg-purple-500"
           />
-        </div>
+        </div>}
 
         {/* 회원 목록 */}
-        <Card>
+        {(activeMenu === "dashboard" || activeMenu === "members") && <Card>
           <CardHeader className="pb-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <CardTitle className="flex items-center gap-2">
@@ -722,8 +798,9 @@ export default function AdminPage() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </Card>}
       </main>
+      </div>
 
       {/* 비밀번호 변경 다이얼로그 */}
       <Dialog open={showChangePw} onOpenChange={setShowChangePw}>
