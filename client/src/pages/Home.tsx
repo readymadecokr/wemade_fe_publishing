@@ -356,7 +356,7 @@ export default function Home() {
               {/* GAME START button image */}
               <div className="absolute inset-0 rounded-full overflow-hidden">
                 <img
-                  src={`${ASSET_BASE_URL}/manus-storage/GAMESTART_btn2_e83288c0.png`}
+                  src={`${ASSET_BASE_URL}/manus-storage/gamestart_BTN_8b7d5365.png`}
                   alt="Game Start"
                   className="game-start-img w-full h-full object-contain transition-transform duration-500"
                 />
