@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -30,24 +31,38 @@ export default function Home() {
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
   const isTTKeyVerified = localStorage.getItem("rou_ttkey_verified") === "true";
 
-  // Banner images carousel
-  const bannerImages = [
+  // DB에서 배너 데이터 가져오기 (fallback: 하드코딩 배너)
+  const { data: dbBanners } = trpc.banner.list.useQuery(undefined, { retry: false });
+
+  const fallbackBanners = [
     {
       id: 1,
-      url: `${ASSET_BASE_URL}/manus-storage/mainbanner_01_3c77a2c4.jpg`,
+      imageUrl: `${ASSET_BASE_URL}/manus-storage/mainbanner_01_new_1c67868c.jpg`,
       title: "PLAY WITH DISCORD",
-      subtitle: "Please visit our official Discord channel for more information",
-      link: "https://discord.com/invite/yVWJkWdkAU",
-      external: true,
+      actionType: "url" as const,
+      actionUrl: "https://discord.com/invite/yVWJkWdkAU",
+      contentTitle: null, contentDate: null, contentBody: null,
     },
     {
       id: 2,
-      url: `${ASSET_BASE_URL}/manus-storage/mainbanner_02_e759d77c.jpg`,
+      imageUrl: `${ASSET_BASE_URL}/manus-storage/mainbanner_02_e759d77c.jpg`,
       title: "Enter The Ragnarok Universe",
-      subtitle: "TT (Technical Test) Announcement",
-      link: "game-start",
+      actionType: "url" as const,
+      actionUrl: "game-start",
+      contentTitle: null, contentDate: null, contentBody: null,
     },
   ];
+
+  const bannerImages = (dbBanners && dbBanners.length > 0 ? dbBanners : fallbackBanners).map(b => ({
+    id: b.id,
+    url: b.imageUrl,
+    title: b.title,
+    actionType: b.actionType,
+    actionUrl: b.actionUrl ?? "",
+    contentTitle: b.contentTitle,
+    contentDate: b.contentDate,
+    contentBody: b.contentBody,
+  }));
 
   const nextBanner = () => {
     setCurrentBannerIndex((prev) => (prev + 1) % bannerImages.length);
@@ -189,7 +204,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-background">
+      <div className="bg-background">
         {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
         <div className="relative w-full">
           {/* BANNER SECTION */}
@@ -200,10 +215,15 @@ export default function Home() {
               alt={bannerImages[currentBannerIndex].title}
               onClick={() => {
                 const banner = bannerImages[currentBannerIndex];
-                if (banner.external && banner.link) {
-                  window.open(banner.link, '_blank');
-                } else if (banner.link === 'game-start') {
-                  handleGameStart();
+                if (banner.actionType === "url") {
+                  if (banner.actionUrl === "game-start") {
+                    handleGameStart();
+                  } else if (banner.actionUrl) {
+                    window.open(banner.actionUrl, '_blank');
+                  }
+                } else if (banner.actionType === "content") {
+                  // 콘텐츠 모달 표시 (TODO: 콘텐츠 모달 구현)
+                  toast.info(banner.contentTitle ?? banner.title);
                 }
               }}
               className="h-full w-full object-cover cursor-pointer"
@@ -223,138 +243,34 @@ export default function Home() {
             </button>
           </section>
 
-          {/* GAME START Button — responsive size, grows downward (translate-y[80%] = only 20% overlaps banner) */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[80%] z-30">
+          {/* GAME START Button — 배너 하단 중앙, 절반 걸치기 */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[50%] z-30">
             <style>{`
               .game-start-btn-wrap {
-                width: clamp(144px, 26.4vw, 384px);
-                height: clamp(144px, 26.4vw, 384px);
-              }
-              /* Fire orbit ring */
-              @keyframes fire-orbit {
-                0%   { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-              }
-              /* Lightning flicker */
-              @keyframes lightning-flicker {
-                0%, 100% { opacity: 0; }
-                5%        { opacity: 1; }
-                10%       { opacity: 0.3; }
-                15%       { opacity: 1; }
-                20%       { opacity: 0; }
-                60%       { opacity: 0; }
-                65%       { opacity: 0.9; }
-                70%       { opacity: 0; }
-              }
-              /* Pulsing outer glow */
-              @keyframes glow-pulse {
-                0%, 100% { box-shadow: 0 0 30px 8px rgba(255,120,0,0.5), 0 0 60px 20px rgba(255,60,0,0.25); }
-                50%       { box-shadow: 0 0 60px 20px rgba(255,200,0,0.7), 0 0 100px 40px rgba(255,80,0,0.4); }
-              }
-              /* Comet particles orbiting */
-              @keyframes comet-orbit {
-                from { transform: rotate(0deg) translateX(calc(clamp(72px, 13.2vw, 192px))) rotate(0deg); }
-                to   { transform: rotate(360deg) translateX(calc(clamp(72px, 13.2vw, 192px))) rotate(-360deg); }
-              }
-              @keyframes comet-orbit-rev {
-                from { transform: rotate(0deg) translateX(calc(clamp(72px, 13.2vw, 192px))) rotate(0deg); }
-                to   { transform: rotate(-360deg) translateX(calc(clamp(72px, 13.2vw, 192px))) rotate(360deg); }
-              }
-
-              /* Fire ring — thick gradient arc */
-              .gs-fire-ring {
-                position: absolute;
-                inset: -10px;
-                border-radius: 9999px;
-                border: 4px solid transparent;
-                background: conic-gradient(from 0deg, #ff4500, #ff8c00, #ffd700, #ff4500) border-box;
-                -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-                -webkit-mask-composite: destination-out;
-                mask-composite: exclude;
-                opacity: 0;
-                transition: opacity 0.4s;
-              }
-              /* Lightning ring */
-              .gs-lightning-ring {
-                position: absolute;
-                inset: -18px;
-                border-radius: 9999px;
-                border: 3px dashed rgba(180,220,255,0.0);
-                opacity: 0;
-                transition: opacity 0.3s;
-              }
-              /* Comet dots */
-              .gs-comet {
-                position: absolute;
-                top: 50%; left: 50%;
-                width: 10px; height: 10px;
-                margin: -5px 0 0 -5px;
-                border-radius: 9999px;
-                opacity: 0;
-                transition: opacity 0.4s;
-              }
-              .gs-comet-1 { background: radial-gradient(circle, #fff 0%, #ff8c00 60%, transparent 100%); }
-              .gs-comet-2 { background: radial-gradient(circle, #fff 0%, #ffe066 60%, transparent 100%); }
-              .gs-comet-3 { background: radial-gradient(circle, #fff 0%, #7ec8ff 60%, transparent 100%); }
-
-              .game-start-btn:hover .gs-fire-ring {
-                opacity: 1;
-                animation: fire-orbit 1s linear infinite;
-              }
-              .game-start-btn:hover .gs-lightning-ring {
-                opacity: 1;
-                border-color: rgba(180,220,255,0.8);
-                animation: lightning-flicker 2.5s ease-in-out infinite, fire-orbit 3s linear infinite reverse;
-              }
-              .game-start-btn:hover .gs-comet {
-                opacity: 1;
-              }
-              .game-start-btn:hover .gs-comet-1 {
-                animation: comet-orbit 1.4s linear infinite;
-              }
-              .game-start-btn:hover .gs-comet-2 {
-                animation: comet-orbit-rev 1.8s linear infinite;
-                animation-delay: -0.6s;
-              }
-              .game-start-btn:hover .gs-comet-3 {
-                animation: comet-orbit 2.2s linear infinite;
-                animation-delay: -1.1s;
+                width: clamp(154px, 32vw, 520px);
+                height: auto;
               }
               .game-start-btn:hover .game-start-img {
                 transform: scale(1.04);
               }
-              .game-start-btn:hover {
-                animation: glow-pulse 1.2s ease-in-out infinite;
-              }
             `}</style>
             <button
               onClick={handleGameStart}
-              className="game-start-btn game-start-btn-wrap group relative rounded-full transition-all duration-300 active:scale-95 focus:outline-none overflow-visible"
-              style={{ boxShadow: 'none' }}
+              className="game-start-btn game-start-btn-wrap group relative transition-all duration-300 active:scale-95 focus:outline-none block"
+
               title="Game Start"
             >
-              {/* GAME START button image */}
-              <div className="absolute inset-0 rounded-full overflow-hidden">
-                <img
-                  src={`${ASSET_BASE_URL}/manus-storage/GAMESTART_btn2_e83288c0.png`}
-                  alt="Game Start"
-                  className="game-start-img w-full h-full object-contain transition-transform duration-500"
-                />
-              </div>
-              {/* Fire orbit ring */}
-              <span className="gs-fire-ring" />
-              {/* Lightning ring */}
-              <span className="gs-lightning-ring" />
-              {/* Comet particles */}
-              <span className="gs-comet gs-comet-1" />
-              <span className="gs-comet gs-comet-2" />
-              <span className="gs-comet gs-comet-3" />
+              <img
+                src={`${ASSET_BASE_URL}/manus-storage/gamestart_BTN2_cdf3e7b7.png`}
+                alt="Game Start"
+                className="game-start-img w-full h-auto object-contain transition-transform duration-300"
+              />
             </button>
           </div>
         </div>
 
-        {/* Spacer: 80% of button height minus News top padding to minimize gap */}
-        <div className="bg-background" style={{ height: '114px' }} />
+        {/* Spacer: 버튼 높이의 50% (translate-y[50%] 기준) */}
+        <div className="bg-background" style={{ height: 'clamp(60px, 8vw, 130px)', display: 'none' }} />
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background border-b border-border" style={{display: 'none'}}>
@@ -384,10 +300,10 @@ export default function Home() {
 
 
         {/* GAME INFO SECTION */}
-        <section id="game-info" className="py-12 md:py-16 bg-background border-b border-border">
-          <div className="container">
+        <section id="game-info" className="py-0 bg-background">
+          <div className="container py-0">
             {/* Header */}
-            <div className="mb-12">
+            <div>
               <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight" style={{display: 'none'}}>
                 About Ragnarok Universe
               </h2>
@@ -442,22 +358,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Gameplay Trailer */}
-            <div className="mt-12">
-              <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight">Media</h3>
-              <div className="rounded-2xl overflow-hidden shadow-lg border border-border">
-                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src="https://www.youtube.com/embed/LB4l4orKv18"
-                    title="Ragnarok Universe Gameplay Trailer"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  />
-                </div>
-              </div>
-            </div>
+            {/* Gameplay Trailer - DB 기반 */}
+            <MediaSection />
           </div>
         </section>
 
@@ -539,5 +441,45 @@ export default function Home() {
         )}
       </div>
     </Layout>
+  );
+}
+
+// Media 섹션 컴포넌트 - DB에서 활성 상태인 영상만 표시
+function MediaSection() {
+  const { data: mediaList } = trpc.publicMedia.list.useQuery();
+
+  // 활성 영상이 없으면 섹션 자체를 숨김
+  if (!mediaList || mediaList.length === 0) return null;
+
+  // YouTube URL에서 embed ID 추출
+  const getYoutubeEmbedUrl = (url: string) => {
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^&?/\s]+)/);
+    return m ? `https://www.youtube.com/embed/${m[1]}` : null;
+  };
+
+  return (
+    <>
+      {mediaList.map((item) => {
+        const embedUrl = getYoutubeEmbedUrl(item.youtubeUrl);
+        if (!embedUrl) return null;
+        return (
+          <div key={item.id} style={{ paddingTop: '30px' }}>
+            <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight">Media</h3>
+            <div className="rounded-2xl overflow-hidden shadow-lg">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src={embedUrl}
+                  title={item.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </>
   );
 }
