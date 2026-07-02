@@ -247,7 +247,7 @@ export default function Home() {
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[50%] z-30">
             <style>{`
               .game-start-btn-wrap {
-                width: clamp(220px, 32vw, 520px);
+                width: clamp(154px, 32vw, 520px);
                 height: auto;
               }
               .game-start-btn:hover .game-start-img {
