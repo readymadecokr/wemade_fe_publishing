@@ -3,7 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminKeyProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { users, banners } from "../drizzle/schema";
+import { users, banners, news, media, products, payments, pointLogs, coupons, couponUses, admins, statsEvents } from "../drizzle/schema";
 import { storagePut } from "./storage";
 import { asc, desc, eq, like, or, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -307,6 +307,300 @@ export const appRouter = router({
         activeMonth: Number(activeResult[0]?.count ?? 0),
       };
     }),
+  }),
+
+  // ===== NEWS =====
+  news: router({
+    list: adminKeyProcedure
+      .input(z.object({ search: z.string().optional(), page: z.number().default(1), pageSize: z.number().default(20) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { items: [], total: 0 };
+        const offset = (input.page - 1) * input.pageSize;
+        let q = db.select().from(news).$dynamic();
+        if (input.search) q = q.where(or(like(news.title, `%${input.search}%`), like(news.content ?? news.title, `%${input.search}%`)));
+        const items = await q.orderBy(desc(news.createdAt)).limit(input.pageSize).offset(offset);
+        const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(news);
+        return { items, total: Number(count) };
+      }),
+    create: adminKeyProcedure
+      .input(z.object({ title: z.string(), category: z.string().default('Update'), summary: z.string().optional(), content: z.string().optional(), imageUrl: z.string().optional(), isActive: z.number().default(1), publishedAt: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const result = await db.insert(news).values({ ...input, publishedAt: input.publishedAt ? new Date(input.publishedAt) : new Date() });
+        return { id: (result as any).insertId };
+      }),
+    update: adminKeyProcedure
+      .input(z.object({ id: z.number(), title: z.string().optional(), category: z.string().optional(), summary: z.string().optional(), content: z.string().optional(), imageUrl: z.string().optional(), isActive: z.number().optional(), publishedAt: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const { id, publishedAt, ...rest } = input;
+        const updateData: Record<string, unknown> = { ...rest };
+        if (publishedAt) updateData.publishedAt = new Date(publishedAt);
+        await db.update(news).set(updateData).where(eq(news.id, id));
+        return { success: true };
+      }),
+    delete: adminKeyProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.delete(news).where(eq(news.id, input.id));
+        return { success: true };
+      }),
+  }),
+
+  // ===== MEDIA =====
+  mediaAdmin: router({
+    list: adminKeyProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(media).orderBy(asc(media.sortOrder), asc(media.id));
+    }),
+    create: adminKeyProcedure
+      .input(z.object({ title: z.string(), youtubeUrl: z.string(), description: z.string().optional(), sortOrder: z.number().default(0), isActive: z.number().default(1) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const result = await db.insert(media).values(input);
+        return { id: (result as any).insertId };
+      }),
+    update: adminKeyProcedure
+      .input(z.object({ id: z.number(), title: z.string().optional(), youtubeUrl: z.string().optional(), description: z.string().optional(), sortOrder: z.number().optional(), isActive: z.number().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const { id, ...rest } = input;
+        await db.update(media).set(rest).where(eq(media.id, id));
+        return { success: true };
+      }),
+    delete: adminKeyProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.delete(media).where(eq(media.id, input.id));
+        return { success: true };
+      }),
+  }),
+
+  // ===== PRODUCTS (인앱상품) =====
+  products: router({
+    list: adminKeyProcedure
+      .input(z.object({ search: z.string().optional(), page: z.number().default(1), pageSize: z.number().default(20) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { items: [], total: 0 };
+        const offset = (input.page - 1) * input.pageSize;
+        let q = db.select().from(products).$dynamic();
+        if (input.search) q = q.where(like(products.name, `%${input.search}%`));
+        const items = await q.orderBy(asc(products.sortOrder), asc(products.id)).limit(input.pageSize).offset(offset);
+        const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(products);
+        return { items, total: Number(count) };
+      }),
+    create: adminKeyProcedure
+      .input(z.object({ name: z.string(), description: z.string().optional(), price: z.string(), currency: z.string().default('USD'), pointAmount: z.number().default(0), imageUrl: z.string().optional(), isActive: z.number().default(1), sortOrder: z.number().default(0) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const result = await db.insert(products).values(input as any);
+        return { id: (result as any).insertId };
+      }),
+    update: adminKeyProcedure
+      .input(z.object({ id: z.number(), name: z.string().optional(), description: z.string().optional(), price: z.string().optional(), currency: z.string().optional(), pointAmount: z.number().optional(), imageUrl: z.string().optional(), isActive: z.number().optional(), sortOrder: z.number().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const { id, ...rest } = input;
+        await db.update(products).set(rest as any).where(eq(products.id, id));
+        return { success: true };
+      }),
+    delete: adminKeyProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.delete(products).where(eq(products.id, input.id));
+        return { success: true };
+      }),
+  }),
+
+  // ===== PAYMENTS & POINTS =====
+  payments: router({
+    list: adminKeyProcedure
+      .input(z.object({ search: z.string().optional(), status: z.string().optional(), page: z.number().default(1), pageSize: z.number().default(20) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { items: [], total: 0 };
+        const offset = (input.page - 1) * input.pageSize;
+        const items = await db.select({ payment: payments, user: { id: users.id, name: users.name, openId: users.openId } })
+          .from(payments).leftJoin(users, eq(payments.userId, users.id))
+          .orderBy(desc(payments.createdAt)).limit(input.pageSize).offset(offset);
+        const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(payments);
+        return { items, total: Number(count) };
+      }),
+    refund: adminKeyProcedure
+      .input(z.object({ id: z.number(), reason: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.update(payments).set({ status: 'refunded', refundReason: input.reason ?? '' }).where(eq(payments.id, input.id));
+        return { success: true };
+      }),
+    pointList: adminKeyProcedure
+      .input(z.object({ userId: z.number().optional(), page: z.number().default(1), pageSize: z.number().default(20) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { items: [], total: 0 };
+        const offset = (input.page - 1) * input.pageSize;
+        let q = db.select().from(pointLogs).$dynamic();
+        if (input.userId) q = q.where(eq(pointLogs.userId, input.userId));
+        const items = await q.orderBy(desc(pointLogs.createdAt)).limit(input.pageSize).offset(offset);
+        const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(pointLogs);
+        return { items, total: Number(count) };
+      }),
+    grantPoint: adminKeyProcedure
+      .input(z.object({ userId: z.number(), type: z.enum(['paid', 'free']), amount: z.number(), reason: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.insert(pointLogs).values(input);
+        return { success: true };
+      }),
+  }),
+
+  // ===== COUPONS =====
+  coupons: router({
+    list: adminKeyProcedure
+      .input(z.object({ search: z.string().optional(), page: z.number().default(1), pageSize: z.number().default(20) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { items: [], total: 0 };
+        const offset = (input.page - 1) * input.pageSize;
+        let q = db.select().from(coupons).$dynamic();
+        if (input.search) q = q.where(like(coupons.name, `%${input.search}%`));
+        const items = await q.orderBy(desc(coupons.createdAt)).limit(input.pageSize).offset(offset);
+        const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(coupons);
+        return { items, total: Number(count) };
+      }),
+    create: adminKeyProcedure
+      .input(z.object({ code: z.string(), name: z.string(), benefitType: z.enum(['point', 'product']).default('point'), benefitValue: z.number().default(0), maxUses: z.number().default(1), expiresAt: z.string().optional(), isActive: z.number().default(1) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const result = await db.insert(coupons).values({ ...input, expiresAt: input.expiresAt ? new Date(input.expiresAt) : undefined });
+        return { id: (result as any).insertId };
+      }),
+    update: adminKeyProcedure
+      .input(z.object({ id: z.number(), name: z.string().optional(), maxUses: z.number().optional(), expiresAt: z.string().optional(), isActive: z.number().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const { id, expiresAt, ...rest } = input;
+        const updateData: Record<string, unknown> = { ...rest };
+        if (expiresAt) updateData.expiresAt = new Date(expiresAt);
+        await db.update(coupons).set(updateData).where(eq(coupons.id, id));
+        return { success: true };
+      }),
+    delete: adminKeyProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.delete(coupons).where(eq(coupons.id, input.id));
+        return { success: true };
+      }),
+    usageList: adminKeyProcedure
+      .input(z.object({ couponId: z.number().optional(), used: z.boolean().optional(), page: z.number().default(1), pageSize: z.number().default(20) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { items: [], total: 0 };
+        const offset = (input.page - 1) * input.pageSize;
+        if (input.used === false) {
+          // 미사용 쿠폰 = 발행된 쿠폰 중 usedCount < maxUses
+          const items = await db.select().from(coupons).where(sql`${coupons.usedCount} < ${coupons.maxUses}`).limit(input.pageSize).offset(offset);
+          const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(coupons).where(sql`${coupons.usedCount} < ${coupons.maxUses}`);
+          return { items, total: Number(count) };
+        }
+        const items = await db.select({ use: couponUses, user: { id: users.id, name: users.name }, coupon: { name: coupons.name, code: coupons.code } })
+          .from(couponUses).leftJoin(users, eq(couponUses.userId, users.id)).leftJoin(coupons, eq(couponUses.couponId, coupons.id))
+          .orderBy(desc(couponUses.usedAt)).limit(input.pageSize).offset(offset);
+        const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(couponUses);
+        return { items, total: Number(count) };
+      }),
+  }),
+
+  // ===== STATS =====
+  stats: router({
+    summary: adminKeyProcedure
+      .input(z.object({ eventType: z.string(), startDate: z.string().optional(), endDate: z.string().optional() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+        let q = db.select({ date: sql<string>`DATE(${statsEvents.createdAt})`, count: sql<number>`count(*)` })
+          .from(statsEvents).where(eq(statsEvents.eventType, input.eventType)).$dynamic();
+        if (input.startDate) q = q.where(sql`${statsEvents.createdAt} >= ${input.startDate}`);
+        if (input.endDate) q = q.where(sql`${statsEvents.createdAt} <= ${input.endDate}`);
+        return q.groupBy(sql`DATE(${statsEvents.createdAt})`).orderBy(sql`DATE(${statsEvents.createdAt})`);
+      }),
+    totalByType: adminKeyProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select({ eventType: statsEvents.eventType, count: sql<number>`count(*)` })
+        .from(statsEvents).groupBy(statsEvents.eventType);
+    }),
+  }),
+
+  // ===== ADMIN ACCOUNTS =====
+  adminAccounts: router({
+    list: adminKeyProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select({ id: admins.id, username: admins.username, displayName: admins.displayName, permissions: admins.permissions, isActive: admins.isActive, createdAt: admins.createdAt, lastLoginAt: admins.lastLoginAt }).from(admins).orderBy(asc(admins.id));
+    }),
+    create: adminKeyProcedure
+      .input(z.object({ username: z.string(), password: z.string(), displayName: z.string().optional(), permissions: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        // simple hash for demo — in production use bcrypt
+        const passwordHash = Buffer.from(input.password).toString('base64');
+        const result = await db.insert(admins).values({ username: input.username, passwordHash, displayName: input.displayName, permissions: input.permissions });
+        return { id: (result as any).insertId };
+      }),
+    update: adminKeyProcedure
+      .input(z.object({ id: z.number(), displayName: z.string().optional(), permissions: z.string().optional(), isActive: z.number().optional(), password: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const { id, password, ...rest } = input;
+        const updateData: Record<string, unknown> = { ...rest };
+        if (password) updateData.passwordHash = Buffer.from(password).toString('base64');
+        await db.update(admins).set(updateData).where(eq(admins.id, id));
+        return { success: true };
+      }),
+    delete: adminKeyProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.delete(admins).where(eq(admins.id, input.id));
+        return { success: true };
+      }),
+  }),
+
+  // ===== MEMBER MANAGEMENT (확장) =====
+  memberAdmin: router({
+    suspend: adminKeyProcedure
+      .input(z.object({ userId: z.number(), status: z.enum(['active', 'suspended', 'banned']), suspendedUntil: z.string().optional(), reason: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.update(users).set({ status: input.status, suspendedUntil: input.suspendedUntil ? new Date(input.suspendedUntil) : null, suspendReason: input.reason ?? null }).where(eq(users.id, input.userId));
+        return { success: true };
+      }),
   }),
 });
 

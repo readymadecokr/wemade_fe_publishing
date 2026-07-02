@@ -58,8 +58,10 @@ function createAdminClient(adminKey: string) {
 import {
   Activity,
   ArrowUpDown,
+  BarChart2,
   ChevronLeft,
   ChevronRight,
+  CreditCard,
   Eye,
   Image,
   Link,
@@ -70,12 +72,16 @@ import {
   RefreshCw,
   Search,
   Shield,
+  ShoppingCart,
+  Tag,
   Trash2,
   ToggleLeft,
   ToggleRight,
   User,
   UserCheck,
+  UserCog,
   Users,
+  X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -560,136 +566,61 @@ export default function AdminPage() {
         <div className="px-4 pt-5 pb-2">
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Main Menu</p>
         </div>
-        <nav className="flex flex-col px-2 pb-4">
-          {/* Dashboard */}
-          <button
-            onClick={() => setActiveMenu("dashboard")}
-            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full group ${
-              activeMenu === "dashboard"
-                ? "bg-primary text-white shadow-sm"
-                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <Activity className={`h-4 w-4 ${activeMenu === "dashboard" ? "text-white" : "text-slate-400"}`} />
-              Dashboard
-            </div>
-            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "dashboard" ? "text-white" : ""}`} />
-          </button>
+        <nav className="flex flex-col px-2 pb-4 gap-0.5 overflow-y-auto">
+          {[
+            { key: "dashboard", label: "Dashboard", icon: Activity },
+            { key: "members", label: "회원 관리", icon: Users },
+            { key: "main-banner", label: "Main Banner", icon: RefreshCw },
+            { key: "news", label: "News", icon: Search },
+            { key: "media", label: "Media", icon: UserCheck },
+            { key: "products", label: "인앱상품", icon: ShoppingCart },
+            { key: "payments", label: "결제", icon: CreditCard },
+            { key: "stats", label: "통계", icon: BarChart2 },
+            { key: "coupons", label: "쿠폰 관리", icon: Tag },
+            { key: "admin-accounts", label: "관리자 관리", icon: UserCog },
+          ].map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              onClick={() => setActiveMenu(key)}
+              className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
+                activeMenu === key
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Icon className={`h-4 w-4 ${activeMenu === key ? "text-white" : "text-slate-400"}`} />
+                {label}
+              </div>
+              <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === key ? "text-white" : ""}`} />
+            </button>
+          ))}
 
-          {/* 회원 관리 */}
+          {/* 정책 변경 (서브메뉴) */}
           <button
-            onClick={() => setActiveMenu("members")}
+            onClick={() => setActiveMenu(activeMenu.startsWith("policy") ? "dashboard" : "policy-terms")}
             className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
-              activeMenu === "members"
+              activeMenu.startsWith("policy")
                 ? "bg-primary text-white shadow-sm"
                 : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
             }`}
           >
             <div className="flex items-center gap-3">
-              <Users className={`h-4 w-4 ${activeMenu === "members" ? "text-white" : "text-slate-400"}`} />
-              회원 관리
+              <Shield className={`h-4 w-4 ${activeMenu.startsWith("policy") ? "text-white" : "text-slate-400"}`} />
+              운영정책
             </div>
-            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "members" ? "text-white" : ""}`} />
+            <ChevronRight className={`h-3.5 w-3.5 transition-transform opacity-50 ${activeMenu.startsWith("policy") ? "rotate-90 text-white" : ""}`} />
           </button>
-
-          {/* Main Banner */}
-          <button
-            onClick={() => setActiveMenu("main-banner")}
-            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
-              activeMenu === "main-banner"
-                ? "bg-primary text-white shadow-sm"
-                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <RefreshCw className={`h-4 w-4 ${activeMenu === "main-banner" ? "text-white" : "text-slate-400"}`} />
-              Main Banner
-            </div>
-            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "main-banner" ? "text-white" : ""}`} />
-          </button>
-
-          {/* News */}
-          <button
-            onClick={() => setActiveMenu("news")}
-            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
-              activeMenu === "news"
-                ? "bg-primary text-white shadow-sm"
-                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <Search className={`h-4 w-4 ${activeMenu === "news" ? "text-white" : "text-slate-400"}`} />
-              News
-            </div>
-            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "news" ? "text-white" : ""}`} />
-          </button>
-
-          {/* Media */}
-          <button
-            onClick={() => setActiveMenu("media")}
-            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
-              activeMenu === "media"
-                ? "bg-primary text-white shadow-sm"
-                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <UserCheck className={`h-4 w-4 ${activeMenu === "media" ? "text-white" : "text-slate-400"}`} />
-              Media
-            </div>
-            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "media" ? "text-white" : ""}`} />
-          </button>
-
-          {/* Point Shop */}
-          <button
-            onClick={() => setActiveMenu("point-shop")}
-            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
-              activeMenu === "point-shop"
-                ? "bg-primary text-white shadow-sm"
-                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <MoreHorizontal className={`h-4 w-4 ${activeMenu === "point-shop" ? "text-white" : "text-slate-400"}`} />
-              Point Shop
-            </div>
-            <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === "point-shop" ? "text-white" : ""}`} />
-          </button>
-
-          {/* 정책 변경 (서브메뉴 포함) */}
-          <button
-            onClick={() => setActiveMenu(activeMenu === "policy" || activeMenu.startsWith("policy-") ? "dashboard" : "policy")}
-            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
-              activeMenu === "policy" || activeMenu.startsWith("policy-")
-                ? "bg-primary text-white shadow-sm"
-                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <Shield className={`h-4 w-4 ${activeMenu === "policy" || activeMenu.startsWith("policy-") ? "text-white" : "text-slate-400"}`} />
-              정책 변경
-            </div>
-            <ChevronRight className={`h-3.5 w-3.5 transition-transform opacity-50 ${
-              activeMenu === "policy" || activeMenu.startsWith("policy-") ? "rotate-90 text-white" : ""
-            }`} />
-          </button>
-
-          {/* 정책 변경 서브메뉴 */}
-          {(activeMenu === "policy" || activeMenu.startsWith("policy-")) && (
-            <div className="ml-4 mt-1 flex flex-col gap-0.5 border-l-2 border-primary/30 pl-3">
+          {activeMenu.startsWith("policy") && (
+            <div className="ml-4 flex flex-col gap-0.5 border-l-2 border-primary/30 pl-3">
               {[
-                { key: "policy-privacy", label: "Privacy Policy" },
                 { key: "policy-terms", label: "Terms of Service" },
-                { key: "policy-cookie", label: "Privacy Settings" },
+                { key: "policy-privacy", label: "Privacy Policy" },
+                { key: "policy-settings", label: "Privacy Settings" },
               ].map((sub) => (
-                <button
-                  key={sub.key}
-                  onClick={() => setActiveMenu(sub.key)}
-                  className={`flex items-center gap-2 px-2 py-2 rounded-md text-xs font-medium transition-colors text-left w-full ${
-                    activeMenu === sub.key
-                      ? "text-primary font-semibold"
-                      : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+                <button key={sub.key} onClick={() => setActiveMenu(sub.key)}
+                  className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-xs font-medium transition-colors text-left w-full ${
+                    activeMenu === sub.key ? "text-primary font-semibold" : "text-slate-500 dark:text-slate-400 hover:text-slate-800"
                   }`}
                 >
                   <span className={`w-1.5 h-1.5 rounded-full ${activeMenu === sub.key ? "bg-primary" : "bg-slate-300"}`} />
@@ -1327,6 +1258,30 @@ export default function AdminPage() {
             )}
           </CardContent>
         </Card>}
+        {/* ===== NEWS ===== */}
+        {activeMenu === "news" && <AdminNewsSection adminClient={adminClient} />}
+
+        {/* ===== MEDIA ===== */}
+        {activeMenu === "media" && <AdminMediaSection adminClient={adminClient} />}
+
+        {/* ===== PRODUCTS ===== */}
+        {activeMenu === "products" && <AdminProductsSection adminClient={adminClient} />}
+
+        {/* ===== PAYMENTS ===== */}
+        {activeMenu === "payments" && <AdminPaymentsSection adminClient={adminClient} />}
+
+        {/* ===== STATS ===== */}
+        {activeMenu === "stats" && <AdminStatsSection adminClient={adminClient} />}
+
+        {/* ===== COUPONS ===== */}
+        {activeMenu === "coupons" && <AdminCouponsSection adminClient={adminClient} />}
+
+        {/* ===== ADMIN ACCOUNTS ===== */}
+        {activeMenu === "admin-accounts" && <AdminAccountsSection adminClient={adminClient} />}
+
+        {/* ===== POLICY ===== */}
+        {activeMenu.startsWith("policy") && <AdminPolicySection activeMenu={activeMenu} />}
+
       </main>
       </div>
 
@@ -1372,6 +1327,969 @@ export default function AdminPage() {
         onClose={() => setDetailOpen(false)}
         onRoleChange={handleRoleChange}
       />
+    </div>
+  );
+}
+
+// ===== NEWS SECTION =====
+function AdminNewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [form, setForm] = useState<null | { id?: number; title: string; category: string; summary: string; content: string; imageUrl: string; isActive: number; publishedAt: string }>(null);
+  const qc = useQueryClient();
+
+  const { data, refetch } = useQuery({
+    queryKey: ["admin-news", search, page, pageSize],
+    queryFn: () => adminClient!.news.list.query({ search, page, pageSize }),
+    enabled: !!adminClient,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.news.create.mutate(input),
+    onSuccess: () => { toast.success("뉴스가 등록되었습니다."); setForm(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const updateMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.news.update.mutate(input),
+    onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => adminClient!.news.delete.mutate({ id }),
+    onSuccess: () => { toast.success("삭제되었습니다."); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+
+  const handleSubmit = () => {
+    if (!form) return;
+    if (!form.title) { toast.error("제목을 입력하세요."); return; }
+    if (form.id) updateMutation.mutate({ id: form.id, title: form.title, category: form.category, summary: form.summary, content: form.content, imageUrl: form.imageUrl, isActive: form.isActive, publishedAt: form.publishedAt });
+    else createMutation.mutate({ title: form.title, category: form.category, summary: form.summary, content: form.content, imageUrl: form.imageUrl, isActive: form.isActive, publishedAt: form.publishedAt });
+  };
+
+  const emptyForm = { title: "", category: "Update", summary: "", content: "", imageUrl: "", isActive: 1, publishedAt: new Date().toISOString().slice(0, 10) };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold">{form ? (form.id ? "뉴스 수정" : "뉴스 등록") : "News 관리"}</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">{form ? "카드 뉴스 / 알림 콘텐츠를 작성합니다." : "카드 뉴스 및 알림 콘텐츠를 관리합니다."}</p>
+        </div>
+        {!form ? (
+          <Button onClick={() => setForm(emptyForm)}><Plus className="h-4 w-4 mr-2" />뉴스 등록</Button>
+        ) : (
+          <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>
+        )}
+      </div>
+
+      {!form ? (
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <Input placeholder="제목 또는 내용 검색..." value={searchInput} onChange={e => setSearchInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { setSearch(searchInput); setPage(1); } }} className="pl-8 h-8 text-sm" />
+              </div>
+              <Button size="sm" onClick={() => { setSearch(searchInput); setPage(1); }} className="h-8">검색</Button>
+              <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {!data || data.items.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">등록된 뉴스가 없습니다.</div>
+            ) : (
+              <div className="space-y-2">
+                {data.items.map(item => (
+                  <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 10) : "" })}>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{item.title}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-xs text-muted-foreground">{item.category}</span>
+                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${item.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>{item.isActive ? "활성" : "비활성"}</span>
+                        <span className="text-xs text-muted-foreground">{item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : ""}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 10) : "" })}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 뉴스를 삭제하시겠습니까?`)) deleteMutation.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="pt-6 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1 col-span-2">
+                <label className="text-sm font-medium">제목 <span className="text-red-500">*</span></label>
+                <Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="뉴스 제목" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">카테고리</label>
+                <Input value={form.category} onChange={e => setForm(f => f && ({ ...f, category: e.target.value }))} placeholder="Update / Event / Interview" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">발행일</label>
+                <Input type="date" value={form.publishedAt} onChange={e => setForm(f => f && ({ ...f, publishedAt: e.target.value }))} />
+              </div>
+              <div className="space-y-1 col-span-2">
+                <label className="text-sm font-medium">요약</label>
+                <Input value={form.summary} onChange={e => setForm(f => f && ({ ...f, summary: e.target.value }))} placeholder="짧은 요약 (선택)" />
+              </div>
+              <div className="space-y-1 col-span-2">
+                <label className="text-sm font-medium">본문</label>
+                <textarea className="w-full border rounded-md p-2 text-sm min-h-[120px]" value={form.content} onChange={e => setForm(f => f && ({ ...f, content: e.target.value }))} placeholder="뉴스 본문 내용" />
+              </div>
+              <div className="space-y-1 col-span-2">
+                <label className="text-sm font-medium">이미지 URL</label>
+                <Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">활성 상태</label>
+                <div className="flex items-center gap-2 h-10">
+                  <button onClick={() => setForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
+                    {form.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
+                    <span className="text-sm">{form.isActive ? "활성" : "비활성"}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>{form.id ? "수정 저장" : "뉴스 등록"}</Button>
+              <Button variant="outline" onClick={() => setForm(null)}>취소</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ===== MEDIA SECTION =====
+function AdminMediaSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [form, setForm] = useState<null | { id?: number; title: string; youtubeUrl: string; description: string; sortOrder: number; isActive: number }>(null);
+  const { data, refetch } = useQuery({
+    queryKey: ["admin-media"],
+    queryFn: () => adminClient!.mediaAdmin.list.query(),
+    enabled: !!adminClient,
+  });
+  const createMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.mediaAdmin.create.mutate(input),
+    onSuccess: () => { toast.success("등록되었습니다."); setForm(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const updateMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.mediaAdmin.update.mutate(input),
+    onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => adminClient!.mediaAdmin.delete.mutate({ id }),
+    onSuccess: () => { toast.success("삭제되었습니다."); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+
+  const getYoutubeId = (url: string) => {
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^&?/\s]+)/);
+    return m ? m[1] : null;
+  };
+
+  const handleSubmit = () => {
+    if (!form) return;
+    if (!form.title || !form.youtubeUrl) { toast.error("제목과 YouTube URL을 입력하세요."); return; }
+    if (form.id) updateMutation.mutate({ id: form.id, title: form.title, youtubeUrl: form.youtubeUrl, description: form.description, sortOrder: form.sortOrder, isActive: form.isActive });
+    else createMutation.mutate({ title: form.title, youtubeUrl: form.youtubeUrl, description: form.description, sortOrder: form.sortOrder, isActive: form.isActive });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold">{form ? (form.id ? "동영상 수정" : "동영상 등록") : "Media 관리"}</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">YouTube 영상 링크를 등록·수정합니다.</p>
+        </div>
+        {!form ? (
+          <Button onClick={() => setForm({ title: "", youtubeUrl: "", description: "", sortOrder: (data?.length ?? 0), isActive: 1 })}><Plus className="h-4 w-4 mr-2" />동영상 등록</Button>
+        ) : (
+          <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>
+        )}
+      </div>
+
+      {!form ? (
+        <Card>
+          <CardContent className="pt-4">
+            {!data || data.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">등록된 동영상이 없습니다.</div>
+            ) : (
+              <div className="space-y-3">
+                {data.map(item => {
+                  const ytId = getYoutubeId(item.youtubeUrl);
+                  return (
+                    <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: item.id, title: item.title, youtubeUrl: item.youtubeUrl, description: item.description ?? "", sortOrder: item.sortOrder, isActive: item.isActive })}>
+                      {ytId && <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt={item.title} className="w-24 h-14 object-cover rounded shrink-0" />}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{item.title}</p>
+                        <p className="text-xs text-muted-foreground truncate">{item.youtubeUrl}</p>
+                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${item.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>{item.isActive ? "활성" : "비활성"}</span>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                        <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, youtubeUrl: item.youtubeUrl, description: item.description ?? "", sortOrder: item.sortOrder, isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 동영상을 삭제하시겠습니까?`)) deleteMutation.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="pt-6 space-y-4">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">제목 <span className="text-red-500">*</span></label>
+              <Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="동영상 제목" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">YouTube URL <span className="text-red-500">*</span></label>
+              <Input value={form.youtubeUrl} onChange={e => setForm(f => f && ({ ...f, youtubeUrl: e.target.value }))} placeholder="https://youtu.be/..." />
+            </div>
+            {form.youtubeUrl && getYoutubeId(form.youtubeUrl) && (
+              <div className="rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                <iframe className="w-full h-full" src={`https://www.youtube.com/embed/${getYoutubeId(form.youtubeUrl)}`} title="preview" frameBorder="0" allowFullScreen />
+              </div>
+            )}
+            <div className="space-y-1">
+              <label className="text-sm font-medium">설명</label>
+              <Input value={form.description} onChange={e => setForm(f => f && ({ ...f, description: e.target.value }))} placeholder="동영상 설명 (선택)" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-sm font-medium">순서</label>
+                <Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} min={0} />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">활성 상태</label>
+                <div className="flex items-center gap-2 h-10">
+                  <button onClick={() => setForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
+                    {form.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
+                    <span className="text-sm">{form.isActive ? "활성" : "비활성"}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>{form.id ? "수정 저장" : "동영상 등록"}</Button>
+              <Button variant="outline" onClick={() => setForm(null)}>취소</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ===== PRODUCTS SECTION =====
+function AdminProductsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [page, setPage] = useState(1);
+  const [form, setForm] = useState<null | { id?: number; name: string; description: string; price: string; currency: string; pointAmount: number; imageUrl: string; isActive: number; sortOrder: number }>(null);
+
+  const { data, refetch } = useQuery({
+    queryKey: ["admin-products", search, page],
+    queryFn: () => adminClient!.products.list.query({ search, page, pageSize: 20 }),
+    enabled: !!adminClient,
+  });
+  const createMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.products.create.mutate(input),
+    onSuccess: () => { toast.success("상품이 등록되었습니다."); setForm(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const updateMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.products.update.mutate(input),
+    onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => adminClient!.products.delete.mutate({ id }),
+    onSuccess: () => { toast.success("삭제되었습니다."); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+
+  const handleSubmit = () => {
+    if (!form) return;
+    if (!form.name || !form.price) { toast.error("상품명과 가격을 입력하세요."); return; }
+    if (form.id) updateMutation.mutate({ id: form.id, name: form.name, description: form.description, price: form.price, currency: form.currency, pointAmount: form.pointAmount, imageUrl: form.imageUrl, isActive: form.isActive, sortOrder: form.sortOrder });
+    else createMutation.mutate({ name: form.name, description: form.description, price: form.price, currency: form.currency, pointAmount: form.pointAmount, imageUrl: form.imageUrl, isActive: form.isActive, sortOrder: form.sortOrder });
+  };
+
+  const emptyForm = { name: "", description: "", price: "0.00", currency: "USD", pointAmount: 0, imageUrl: "", isActive: 1, sortOrder: 0 };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold">{form ? (form.id ? "상품 수정" : "상품 등록") : "인앱상품 관리"}</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">판매 중인 인앱 상품을 관리합니다.</p>
+        </div>
+        {!form ? (
+          <Button onClick={() => setForm(emptyForm)}><Plus className="h-4 w-4 mr-2" />상품 등록</Button>
+        ) : (
+          <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>
+        )}
+      </div>
+
+      {!form ? (
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <Input placeholder="상품명 검색..." value={searchInput} onChange={e => setSearchInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { setSearch(searchInput); setPage(1); } }} className="pl-8 h-8 text-sm" />
+              </div>
+              <Button size="sm" onClick={() => { setSearch(searchInput); setPage(1); }} className="h-8">검색</Button>
+              <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {!data || data.items.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">등록된 상품이 없습니다.</div>
+            ) : (
+              <div className="space-y-2">
+                {data.items.map(item => (
+                  <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: item.id, name: item.name, description: item.description ?? "", price: String(item.price), currency: item.currency, pointAmount: item.pointAmount, imageUrl: item.imageUrl ?? "", isActive: item.isActive, sortOrder: item.sortOrder })}>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{item.name}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-xs text-muted-foreground">{item.price} {item.currency}</span>
+                        <span className="text-xs text-blue-600">{item.pointAmount.toLocaleString()} pts</span>
+                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${item.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>{item.isActive ? "판매중" : "비활성"}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, name: item.name, description: item.description ?? "", price: String(item.price), currency: item.currency, pointAmount: item.pointAmount, imageUrl: item.imageUrl ?? "", isActive: item.isActive, sortOrder: item.sortOrder })}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.name}" 상품을 삭제하시겠습니까?`)) deleteMutation.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="pt-6 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1 col-span-2">
+                <label className="text-sm font-medium">상품명 <span className="text-red-500">*</span></label>
+                <Input value={form.name} onChange={e => setForm(f => f && ({ ...f, name: e.target.value }))} placeholder="상품명" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">가격 <span className="text-red-500">*</span></label>
+                <Input type="number" step="0.01" value={form.price} onChange={e => setForm(f => f && ({ ...f, price: e.target.value }))} placeholder="0.00" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">통화</label>
+                <Input value={form.currency} onChange={e => setForm(f => f && ({ ...f, currency: e.target.value }))} placeholder="USD" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">지급 포인트</label>
+                <Input type="number" value={form.pointAmount} onChange={e => setForm(f => f && ({ ...f, pointAmount: parseInt(e.target.value) || 0 }))} placeholder="0" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">순서</label>
+                <Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} min={0} />
+              </div>
+              <div className="space-y-1 col-span-2">
+                <label className="text-sm font-medium">설명</label>
+                <Input value={form.description} onChange={e => setForm(f => f && ({ ...f, description: e.target.value }))} placeholder="상품 설명 (선택)" />
+              </div>
+              <div className="space-y-1 col-span-2">
+                <label className="text-sm font-medium">이미지 URL</label>
+                <Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">활성 상태</label>
+                <div className="flex items-center gap-2 h-10">
+                  <button onClick={() => setForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
+                    {form.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
+                    <span className="text-sm">{form.isActive ? "판매중" : "비활성"}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>{form.id ? "수정 저장" : "상품 등록"}</Button>
+              <Button variant="outline" onClick={() => setForm(null)}>취소</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ===== PAYMENTS SECTION =====
+function AdminPaymentsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [tab, setTab] = useState<"payments" | "points">("payments");
+  const [page, setPage] = useState(1);
+  const [grantForm, setGrantForm] = useState<{ userId: string; type: "paid" | "free"; amount: string; reason: string } | null>(null);
+
+  const { data: paymentsData, refetch: refetchPayments } = useQuery({
+    queryKey: ["admin-payments", page],
+    queryFn: () => adminClient!.payments.list.query({ page, pageSize: 20 }),
+    enabled: !!adminClient && tab === "payments",
+  });
+  const { data: pointsData, refetch: refetchPoints } = useQuery({
+    queryKey: ["admin-points", page],
+    queryFn: () => adminClient!.payments.pointList.query({ page, pageSize: 20 }),
+    enabled: !!adminClient && tab === "points",
+  });
+  const refundMutation = useMutation({
+    mutationFn: (input: { id: number; reason?: string }) => adminClient!.payments.refund.mutate(input),
+    onSuccess: () => { toast.success("환불 처리되었습니다."); refetchPayments(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const grantMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.payments.grantPoint.mutate(input),
+    onSuccess: () => { toast.success("포인트가 지급되었습니다."); setGrantForm(null); refetchPoints(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold">결제 관리</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">결제 내역 및 포인트를 관리합니다.</p>
+        </div>
+        {tab === "points" && (
+          <Button onClick={() => setGrantForm({ userId: "", type: "free", amount: "", reason: "" })}><Plus className="h-4 w-4 mr-2" />포인트 지급</Button>
+        )}
+      </div>
+
+      <div className="flex gap-2 border-b">
+        {(["payments", "points"] as const).map(t => (
+          <button key={t} onClick={() => { setTab(t); setPage(1); }} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+            {t === "payments" ? "결제 내역" : "포인트 내역"}
+          </button>
+        ))}
+      </div>
+
+      {tab === "payments" && (
+        <Card>
+          <CardContent className="pt-4">
+            {!paymentsData || paymentsData.items.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">결제 내역이 없습니다.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead><tr className="border-b text-muted-foreground"><th className="text-left p-2">ID</th><th className="text-left p-2">회원</th><th className="text-left p-2">금액</th><th className="text-left p-2">상태</th><th className="text-left p-2">일시</th><th className="text-left p-2">처리</th></tr></thead>
+                  <tbody>
+                    {paymentsData.items.map(({ payment, user }) => (
+                      <tr key={payment.id} className="border-b hover:bg-accent/20">
+                        <td className="p-2">{payment.id}</td>
+                        <td className="p-2">{user?.name ?? user?.openId ?? "-"}</td>
+                        <td className="p-2">{payment.amount} {payment.currency}</td>
+                        <td className="p-2"><span className={`px-1.5 py-0.5 rounded-full text-xs ${payment.status === "completed" ? "bg-green-100 text-green-700" : payment.status === "refunded" ? "bg-orange-100 text-orange-700" : "bg-slate-100 text-slate-500"}`}>{payment.status}</span></td>
+                        <td className="p-2 text-xs text-muted-foreground">{new Date(payment.createdAt).toLocaleDateString()}</td>
+                        <td className="p-2">
+                          {payment.status === "completed" && (
+                            <Button variant="ghost" size="sm" className="text-orange-500 h-7 text-xs" onClick={() => { if (confirm("환불 처리하시겠습니까?")) refundMutation.mutate({ id: payment.id }); }}>환불</Button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {tab === "points" && (
+        <>
+          {grantForm && (
+            <Card>
+              <CardContent className="pt-6 space-y-4">
+                <h3 className="font-semibold">포인트 지급/회수</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">회원 ID <span className="text-red-500">*</span></label>
+                    <Input type="number" value={grantForm.userId} onChange={e => setGrantForm(f => f && ({ ...f, userId: e.target.value }))} placeholder="회원 ID" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">포인트 유형</label>
+                    <select className="w-full border rounded-md p-2 text-sm h-10" value={grantForm.type} onChange={e => setGrantForm(f => f && ({ ...f, type: e.target.value as "paid" | "free" }))}>
+                      <option value="free">무료 포인트</option>
+                      <option value="paid">유료 포인트</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">수량 (음수=회수) <span className="text-red-500">*</span></label>
+                    <Input type="number" value={grantForm.amount} onChange={e => setGrantForm(f => f && ({ ...f, amount: e.target.value }))} placeholder="100 또는 -100" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">사유</label>
+                    <Input value={grantForm.reason} onChange={e => setGrantForm(f => f && ({ ...f, reason: e.target.value }))} placeholder="지급 사유" />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button onClick={() => { if (!grantForm.userId || !grantForm.amount) { toast.error("회원 ID와 수량을 입력하세요."); return; } grantMutation.mutate({ userId: parseInt(grantForm.userId), type: grantForm.type, amount: parseInt(grantForm.amount), reason: grantForm.reason }); }} disabled={grantMutation.isPending}>지급/회수</Button>
+                  <Button variant="outline" onClick={() => setGrantForm(null)}>취소</Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          <Card>
+            <CardContent className="pt-4">
+              {!pointsData || pointsData.items.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground text-sm">포인트 내역이 없습니다.</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground"><th className="text-left p-2">ID</th><th className="text-left p-2">회원 ID</th><th className="text-left p-2">유형</th><th className="text-left p-2">수량</th><th className="text-left p-2">사유</th><th className="text-left p-2">일시</th></tr></thead>
+                    <tbody>
+                      {pointsData.items.map(item => (
+                        <tr key={item.id} className="border-b hover:bg-accent/20">
+                          <td className="p-2">{item.id}</td>
+                          <td className="p-2">{item.userId}</td>
+                          <td className="p-2"><span className={`px-1.5 py-0.5 rounded-full text-xs ${item.type === "paid" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"}`}>{item.type}</span></td>
+                          <td className="p-2 font-mono">{item.amount > 0 ? `+${item.amount}` : item.amount}</td>
+                          <td className="p-2 text-muted-foreground">{item.reason ?? "-"}</td>
+                          <td className="p-2 text-xs text-muted-foreground">{new Date(item.createdAt).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ===== STATS SECTION =====
+function AdminStatsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [activeEvent, setActiveEvent] = useState("signup");
+  const eventTypes = [
+    { key: "signup", label: "회원가입" },
+    { key: "login", label: "로그인" },
+    { key: "logout", label: "로그아웃" },
+    { key: "withdraw", label: "회원탈퇴" },
+    { key: "game_start", label: "게임실행" },
+    { key: "page_visit", label: "페이지 방문" },
+    { key: "purchase", label: "구매" },
+    { key: "refund", label: "환불" },
+  ];
+
+  const { data: totalData } = useQuery({
+    queryKey: ["admin-stats-total"],
+    queryFn: () => adminClient!.stats.totalByType.query(),
+    enabled: !!adminClient,
+  });
+  const { data: chartData } = useQuery({
+    queryKey: ["admin-stats-chart", activeEvent],
+    queryFn: () => adminClient!.stats.summary.query({ eventType: activeEvent }),
+    enabled: !!adminClient,
+  });
+
+  const getTotal = (type: string) => {
+    const found = totalData?.find(d => d.eventType === type);
+    return found ? Number(found.count) : 0;
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-bold">통계</h2>
+        <p className="text-sm text-muted-foreground mt-0.5">수집된 이벤트 데이터를 조회합니다.</p>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {eventTypes.map(({ key, label }) => (
+          <Card key={key} className={`cursor-pointer transition-all ${activeEvent === key ? "ring-2 ring-primary" : "hover:shadow-md"}`} onClick={() => setActiveEvent(key)}>
+            <CardContent className="pt-4 pb-3">
+              <p className="text-xs text-muted-foreground">{label}</p>
+              <p className="text-2xl font-bold mt-1">{getTotal(key).toLocaleString()}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">{eventTypes.find(e => e.key === activeEvent)?.label} 일별 현황</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!chartData || chartData.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground text-sm">데이터가 없습니다.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead><tr className="border-b text-muted-foreground"><th className="text-left p-2">날짜</th><th className="text-right p-2">건수</th></tr></thead>
+                <tbody>
+                  {chartData.map((row, i) => (
+                    <tr key={i} className="border-b hover:bg-accent/20">
+                      <td className="p-2">{row.date}</td>
+                      <td className="p-2 text-right font-mono">{Number(row.count).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ===== COUPONS SECTION =====
+function AdminCouponsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [tab, setTab] = useState<"list" | "used" | "unused">("list");
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [page, setPage] = useState(1);
+  const [form, setForm] = useState<null | { id?: number; code: string; name: string; benefitType: "point" | "product"; benefitValue: number; maxUses: number; expiresAt: string; isActive: number }>(null);
+
+  const { data, refetch } = useQuery({
+    queryKey: ["admin-coupons", search, page, tab],
+    queryFn: () => {
+      if (tab === "used") return adminClient!.coupons.usageList.query({ used: true, page, pageSize: 20 });
+      if (tab === "unused") return adminClient!.coupons.usageList.query({ used: false, page, pageSize: 20 });
+      return adminClient!.coupons.list.query({ search, page, pageSize: 20 });
+    },
+    enabled: !!adminClient,
+  });
+  const createMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.coupons.create.mutate(input),
+    onSuccess: () => { toast.success("쿠폰이 생성되었습니다."); setForm(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const updateMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.coupons.update.mutate(input),
+    onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => adminClient!.coupons.delete.mutate({ id }),
+    onSuccess: () => { toast.success("삭제되었습니다."); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+
+  const handleSubmit = () => {
+    if (!form) return;
+    if (!form.code || !form.name) { toast.error("쿠폰 코드와 이름을 입력하세요."); return; }
+    if (form.id) updateMutation.mutate({ id: form.id, name: form.name, maxUses: form.maxUses, expiresAt: form.expiresAt || undefined, isActive: form.isActive });
+    else createMutation.mutate({ code: form.code, name: form.name, benefitType: form.benefitType, benefitValue: form.benefitValue, maxUses: form.maxUses, expiresAt: form.expiresAt || undefined, isActive: form.isActive });
+  };
+
+  const emptyForm = { code: "", name: "", benefitType: "point" as const, benefitValue: 0, maxUses: 1, expiresAt: "", isActive: 1 };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold">{form ? (form.id ? "쿠폰 수정" : "쿠폰 생성") : "쿠폰 관리"}</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">쿠폰을 생성·조회·수정합니다.</p>
+        </div>
+        {!form ? (
+          <Button onClick={() => setForm(emptyForm)}><Plus className="h-4 w-4 mr-2" />쿠폰 생성</Button>
+        ) : (
+          <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>
+        )}
+      </div>
+
+      {!form && (
+        <>
+          <div className="flex gap-2 border-b">
+            {(["list", "used", "unused"] as const).map(t => (
+              <button key={t} onClick={() => { setTab(t); setPage(1); }} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+                {t === "list" ? "전체 쿠폰" : t === "used" ? "사용 쿠폰" : "미사용 쿠폰"}
+              </button>
+            ))}
+          </div>
+
+          <Card>
+            {tab === "list" && (
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                    <Input placeholder="쿠폰명 검색..." value={searchInput} onChange={e => setSearchInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { setSearch(searchInput); setPage(1); } }} className="pl-8 h-8 text-sm" />
+                  </div>
+                  <Button size="sm" onClick={() => { setSearch(searchInput); setPage(1); }} className="h-8">검색</Button>
+                  <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button>
+                </div>
+              </CardHeader>
+            )}
+            <CardContent className={tab !== "list" ? "pt-4" : ""}>
+              {!data || (Array.isArray(data) ? data.length === 0 : (data as { items: unknown[] }).items?.length === 0) ? (
+                <div className="text-center py-8 text-muted-foreground text-sm">데이터가 없습니다.</div>
+              ) : tab === "list" ? (
+                <div className="space-y-2">
+                  {((data as { items: { id: number; code: string; name: string; benefitType: string; benefitValue: number; maxUses: number; usedCount: number; expiresAt: Date | null; isActive: number }[] }).items ?? []).map(item => (
+                    <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: item.id, code: item.code, name: item.name, benefitType: item.benefitType as "point" | "product", benefitValue: item.benefitValue, maxUses: item.maxUses, expiresAt: item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0, 10) : "", isActive: item.isActive })}>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm">{item.name} <span className="font-mono text-xs text-muted-foreground">({item.code})</span></p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-xs text-blue-600">{item.benefitType === "point" ? `${item.benefitValue.toLocaleString()} pts` : `상품 ID: ${item.benefitValue}`}</span>
+                          <span className="text-xs text-muted-foreground">{item.usedCount}/{item.maxUses} 사용</span>
+                          {item.expiresAt && <span className="text-xs text-muted-foreground">~{new Date(item.expiresAt).toLocaleDateString()}</span>}
+                          <span className={`text-xs px-1.5 py-0.5 rounded-full ${item.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>{item.isActive ? "활성" : "비활성"}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                        <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, code: item.code, name: item.name, benefitType: item.benefitType as "point" | "product", benefitValue: item.benefitValue, maxUses: item.maxUses, expiresAt: item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0, 10) : "", isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.name}" 쿠폰을 삭제하시겠습니까?`)) deleteMutation.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground">{tab === "used" ? <><th className="text-left p-2">쿠폰명</th><th className="text-left p-2">코드</th><th className="text-left p-2">사용자</th><th className="text-left p-2">사용일시</th></> : <><th className="text-left p-2">쿠폰명</th><th className="text-left p-2">코드</th><th className="text-left p-2">남은 수량</th><th className="text-left p-2">만료일</th></>}</tr></thead>
+                    <tbody>
+                      {(Array.isArray(data) ? data : []).map((item: Record<string, unknown>, i: number) => (
+                        <tr key={i} className="border-b hover:bg-accent/20">
+                          {tab === "used" ? (
+                            <><td className="p-2">{(item.coupon as Record<string, unknown>)?.name as string ?? "-"}</td><td className="p-2 font-mono text-xs">{(item.coupon as Record<string, unknown>)?.code as string ?? "-"}</td><td className="p-2">{(item.user as Record<string, unknown>)?.name as string ?? "-"}</td><td className="p-2 text-xs text-muted-foreground">{item.use ? new Date((item.use as Record<string, unknown>).usedAt as string).toLocaleDateString() : "-"}</td></>
+                          ) : (
+                            <><td className="p-2">{item.name as string}</td><td className="p-2 font-mono text-xs">{item.code as string}</td><td className="p-2">{(item.maxUses as number) - (item.usedCount as number)}</td><td className="p-2 text-xs text-muted-foreground">{item.expiresAt ? new Date(item.expiresAt as string).toLocaleDateString() : "무제한"}</td></>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </>
+      )}
+
+      {form && (
+        <Card>
+          <CardContent className="pt-6 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-sm font-medium">쿠폰 코드 <span className="text-red-500">*</span></label>
+                <Input value={form.code} onChange={e => setForm(f => f && ({ ...f, code: e.target.value }))} placeholder="COUPON2024" disabled={!!form.id} />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">쿠폰명 <span className="text-red-500">*</span></label>
+                <Input value={form.name} onChange={e => setForm(f => f && ({ ...f, name: e.target.value }))} placeholder="쿠폰 이름" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">혜택 유형</label>
+                <select className="w-full border rounded-md p-2 text-sm h-10" value={form.benefitType} onChange={e => setForm(f => f && ({ ...f, benefitType: e.target.value as "point" | "product" }))} disabled={!!form.id}>
+                  <option value="point">포인트</option>
+                  <option value="product">상품</option>
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">혜택 값</label>
+                <Input type="number" value={form.benefitValue} onChange={e => setForm(f => f && ({ ...f, benefitValue: parseInt(e.target.value) || 0 }))} placeholder="포인트 수량 또는 상품 ID" disabled={!!form.id} />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">발행 수량</label>
+                <Input type="number" value={form.maxUses} onChange={e => setForm(f => f && ({ ...f, maxUses: parseInt(e.target.value) || 1 }))} min={1} />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">만료일</label>
+                <Input type="date" value={form.expiresAt} onChange={e => setForm(f => f && ({ ...f, expiresAt: e.target.value }))} />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">활성 상태</label>
+                <div className="flex items-center gap-2 h-10">
+                  <button onClick={() => setForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
+                    {form.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
+                    <span className="text-sm">{form.isActive ? "활성" : "비활성"}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>{form.id ? "수정 저장" : "쿠폰 생성"}</Button>
+              <Button variant="outline" onClick={() => setForm(null)}>취소</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ===== ADMIN ACCOUNTS SECTION =====
+function AdminAccountsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [form, setForm] = useState<null | { id?: number; username: string; password: string; displayName: string; permissions: string; isActive: number }>(null);
+
+  const { data, refetch } = useQuery({
+    queryKey: ["admin-accounts"],
+    queryFn: () => adminClient!.adminAccounts.list.query(),
+    enabled: !!adminClient,
+  });
+  const createMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.adminAccounts.create.mutate(input),
+    onSuccess: () => { toast.success("관리자가 생성되었습니다."); setForm(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const updateMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.adminAccounts.update.mutate(input),
+    onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => adminClient!.adminAccounts.delete.mutate({ id }),
+    onSuccess: () => { toast.success("삭제되었습니다."); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+
+  const handleSubmit = () => {
+    if (!form) return;
+    if (form.id) {
+      updateMutation.mutate({ id: form.id, displayName: form.displayName, permissions: form.permissions, isActive: form.isActive, password: form.password || undefined });
+    } else {
+      if (!form.username || !form.password) { toast.error("아이디와 비밀번호를 입력하세요."); return; }
+      createMutation.mutate({ username: form.username, password: form.password, displayName: form.displayName, permissions: form.permissions });
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold">{form ? (form.id ? "관리자 수정" : "관리자 생성") : "관리자 관리"}</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">관리자 계정을 조회·생성·수정합니다.</p>
+        </div>
+        {!form ? (
+          <Button onClick={() => setForm({ username: "", password: "", displayName: "", permissions: "", isActive: 1 })}><Plus className="h-4 w-4 mr-2" />관리자 생성</Button>
+        ) : (
+          <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>
+        )}
+      </div>
+
+      {!form ? (
+        <Card>
+          <CardContent className="pt-4">
+            {!data || data.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">등록된 관리자가 없습니다.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead><tr className="border-b text-muted-foreground"><th className="text-left p-2">ID</th><th className="text-left p-2">아이디</th><th className="text-left p-2">이름</th><th className="text-left p-2">상태</th><th className="text-left p-2">마지막 로그인</th><th className="text-left p-2">등록일</th><th className="text-left p-2">처리</th></tr></thead>
+                  <tbody>
+                    {data.map(item => (
+                      <tr key={item.id} className="border-b hover:bg-accent/20">
+                        <td className="p-2">{item.id}</td>
+                        <td className="p-2 font-medium">{item.username}</td>
+                        <td className="p-2">{item.displayName ?? "-"}</td>
+                        <td className="p-2"><span className={`px-1.5 py-0.5 rounded-full text-xs ${item.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>{item.isActive ? "활성" : "비활성"}</span></td>
+                        <td className="p-2 text-xs text-muted-foreground">{item.lastLoginAt ? new Date(item.lastLoginAt).toLocaleDateString() : "-"}</td>
+                        <td className="p-2 text-xs text-muted-foreground">{new Date(item.createdAt).toLocaleDateString()}</td>
+                        <td className="p-2">
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, username: item.username, password: "", displayName: item.displayName ?? "", permissions: item.permissions ?? "", isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.username}" 관리자를 삭제하시겠습니까?`)) deleteMutation.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="pt-6 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-sm font-medium">아이디 <span className="text-red-500">*</span></label>
+                <Input value={form.username} onChange={e => setForm(f => f && ({ ...f, username: e.target.value }))} placeholder="관리자 아이디" disabled={!!form.id} />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">{form.id ? "새 비밀번호 (변경 시만 입력)" : "비밀번호 *"}</label>
+                <Input type="password" value={form.password} onChange={e => setForm(f => f && ({ ...f, password: e.target.value }))} placeholder="비밀번호" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">표시 이름</label>
+                <Input value={form.displayName} onChange={e => setForm(f => f && ({ ...f, displayName: e.target.value }))} placeholder="관리자 이름" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">권한 (JSON 배열)</label>
+                <Input value={form.permissions} onChange={e => setForm(f => f && ({ ...f, permissions: e.target.value }))} placeholder='["dashboard","members"]' />
+              </div>
+              {form.id && (
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">활성 상태</label>
+                  <div className="flex items-center gap-2 h-10">
+                    <button onClick={() => setForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
+                      {form.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
+                      <span className="text-sm">{form.isActive ? "활성" : "비활성"}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>{form.id ? "수정 저장" : "관리자 생성"}</Button>
+              <Button variant="outline" onClick={() => setForm(null)}>취소</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ===== POLICY SECTION =====
+function AdminPolicySection({ activeMenu }: { activeMenu: string }) {
+  const policyMap: Record<string, { title: string; url: string; description: string }> = {
+    "policy-terms": { title: "Terms of Service", url: "/terms-of-service", description: "서비스 이용약관 내용을 수정합니다. 변경 사항은 Terms of Service 페이지에 즉시 반영됩니다." },
+    "policy-privacy": { title: "Privacy Policy", url: "/privacy-policy", description: "개인정보 처리방침 내용을 수정합니다. 변경 사항은 Privacy Policy 페이지에 즉시 반영됩니다." },
+    "policy-settings": { title: "Privacy Settings", url: "/", description: "Privacy Settings 팝업 내용을 수정합니다." },
+  };
+  const current = policyMap[activeMenu];
+  if (!current) return null;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-bold">{current.title}</h2>
+        <p className="text-sm text-muted-foreground mt-0.5">{current.description}</p>
+      </div>
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col items-center gap-4 py-8">
+            <Shield className="h-12 w-12 text-muted-foreground" />
+            <p className="text-muted-foreground text-sm text-center">
+              정책 페이지 내용은 개발자가 소스 코드에서 직접 수정합니다.<br />
+              아래 버튼을 클릭하면 해당 페이지를 미리볼 수 있습니다.
+            </p>
+            <a href={current.url} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline">
+                <Eye className="h-4 w-4 mr-2" />
+                {current.title} 페이지 보기
+              </Button>
+            </a>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
