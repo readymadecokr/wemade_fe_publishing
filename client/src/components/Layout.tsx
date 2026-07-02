@@ -206,7 +206,7 @@ export default function Layout({ children }: LayoutProps) {
 
 
       {/* Footer */}
-      <footer className="w-full bg-background border-t border-blue-100 mt-auto">
+      <footer className="w-full bg-background mt-auto">
         <div className="container py-12">
           {/* Footer Top: Company Logos */}
           <div className="flex justify-center items-center gap-6 text-xs font-semibold text-slate-600 dark:text-white mb-8">
