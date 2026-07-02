@@ -365,7 +365,7 @@ export default function Home() {
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                   <iframe
                     className="absolute inset-0 w-full h-full"
-                    src="https://www.youtube.com/embed/LB4l4orKv18"
+                    src="https://www.youtube.com/embed/cf4tnVeYCKk"
                     title="Ragnarok Universe Gameplay Trailer"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
