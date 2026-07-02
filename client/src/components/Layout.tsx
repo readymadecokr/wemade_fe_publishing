@@ -207,7 +207,7 @@ export default function Layout({ children }: LayoutProps) {
 
       {/* Footer */}
       <footer className="w-full bg-background mt-auto">
-        <div className="container py-12" style={{paddingTop: '20px', paddingBottom: '48px'}}>
+        <div className="container py-12">
           {/* Footer Top: Company Logos */}
           <div className="flex justify-center items-center gap-6 text-xs font-semibold text-slate-600 dark:text-white mb-8">
             <span>GRAVITY</span>
@@ -232,7 +232,7 @@ export default function Layout({ children }: LayoutProps) {
           </div>
 
           {/* Footer Bottom: Copyright with Logo */}
-          <div style={{paddingTop: '0px'}}>
+          <div className="pt-8">
             <div className="flex items-center justify-center gap-4 mb-4">
               <img
                 src={theme === "dark" ? `${ASSET_BASE_URL}/manus-storage/gravity_logo_white_5424057b_66bab3ca.webp` : `${ASSET_BASE_URL}/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png`}
