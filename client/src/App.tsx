@@ -16,7 +16,6 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
 import PointShop from "./pages/PointShop";
-import AdminPage from "./pages/AdminPage";
 
 function Router() {
   return (
@@ -33,7 +32,6 @@ function Router() {
       <Route path="/terms-of-service" component={TermsOfService} />
       <Route path="/cookie-policy" component={CookiePolicy} />
       <Route path="/point-shop" component={PointShop} />
-      <Route path="/admin" component={AdminPage} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
