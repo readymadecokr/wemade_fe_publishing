@@ -219,9 +219,9 @@ export default function Layout({ children }: LayoutProps) {
 
           {/* Footer Middle: Links and Discord */}
           <div className="flex justify-center items-center gap-2 text-sm mb-8 flex-wrap">
-            <Link href="/privacy-policy" className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Privacy Policy</Link>
-            <span className="text-slate-300 dark:text-slate-600">|</span>
             <Link href="/terms-of-service" className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Terms of Service</Link>
+            <span className="text-slate-300 dark:text-slate-600">|</span>
+            <Link href="/privacy-policy" className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Privacy Policy</Link>
             <span className="text-slate-300 dark:text-slate-600">|</span>
             <button onClick={() => setShowPrivacySettings(true)} className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">Privacy Settings</button>
             <span className="text-slate-300 dark:text-slate-600">|</span>
