@@ -22,6 +22,15 @@ export const appRouter = router({
     }),
   }),
 
+  // 공개 미디어 목록 (Home.tsx에서 사용)
+  publicMedia: router({
+    list: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(media).where(eq(media.isActive, 1)).orderBy(asc(media.sortOrder), asc(media.id));
+    }),
+  }),
+
   // 공개 배너 목록 (Home.tsx에서 사용)
   banner: router({
     list: publicProcedure.query(async () => {

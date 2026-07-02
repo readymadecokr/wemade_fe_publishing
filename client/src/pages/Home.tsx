@@ -358,22 +358,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Gameplay Trailer */}
-            <div style={{paddingTop: '30px'}}>
-              <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight">Media</h3>
-              <div className="rounded-2xl overflow-hidden shadow-lg">
-                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src="https://www.youtube.com/embed/cf4tnVeYCKk"
-                    title="Ragnarok Universe Gameplay Trailer"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  />
-                </div>
-              </div>
-            </div>
+            {/* Gameplay Trailer - DB 기반 */}
+            <MediaSection />
           </div>
         </section>
 
@@ -455,5 +441,45 @@ export default function Home() {
         )}
       </div>
     </Layout>
+  );
+}
+
+// Media 섹션 컴포넌트 - DB에서 활성 상태인 영상만 표시
+function MediaSection() {
+  const { data: mediaList } = trpc.publicMedia.list.useQuery();
+
+  // 활성 영상이 없으면 섹션 자체를 숨김
+  if (!mediaList || mediaList.length === 0) return null;
+
+  // YouTube URL에서 embed ID 추출
+  const getYoutubeEmbedUrl = (url: string) => {
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^&?/\s]+)/);
+    return m ? `https://www.youtube.com/embed/${m[1]}` : null;
+  };
+
+  return (
+    <>
+      {mediaList.map((item) => {
+        const embedUrl = getYoutubeEmbedUrl(item.youtubeUrl);
+        if (!embedUrl) return null;
+        return (
+          <div key={item.id} style={{ paddingTop: '30px' }}>
+            <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight">Media</h3>
+            <div className="rounded-2xl overflow-hidden shadow-lg">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src={embedUrl}
+                  title={item.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </>
   );
 }
