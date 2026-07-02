@@ -204,7 +204,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background" style={{marginBottom: '-274px'}}>
         {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
         <div className="relative w-full">
           {/* BANNER SECTION */}
