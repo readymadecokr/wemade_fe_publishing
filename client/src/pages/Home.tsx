@@ -361,7 +361,7 @@ export default function Home() {
             {/* Gameplay Trailer */}
             <div className="mt-12">
               <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight">Media</h3>
-              <div className="rounded-2xl overflow-hidden shadow-lg border border-border">
+              <div className="rounded-2xl overflow-hidden shadow-lg">
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                   <iframe
                     className="absolute inset-0 w-full h-full"
