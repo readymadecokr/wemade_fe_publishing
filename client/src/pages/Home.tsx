@@ -301,9 +301,9 @@ export default function Home() {
 
         {/* GAME INFO SECTION */}
         <section id="game-info" className="py-0 bg-background">
-          <div className="container">
+          <div className="container py-0">
             {/* Header */}
-            <div className="mb-12">
+            <div>
               <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight" style={{display: 'none'}}>
                 About Ragnarok Universe
               </h2>
@@ -359,7 +359,7 @@ export default function Home() {
             </div>
 
             {/* Gameplay Trailer */}
-            <div className="mt-12">
+            <div>
               <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight">Media</h3>
               <div className="rounded-2xl overflow-hidden shadow-lg">
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
