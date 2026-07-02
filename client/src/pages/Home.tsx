@@ -257,13 +257,11 @@ export default function Home() {
             <button
               onClick={handleGameStart}
               className="game-start-btn game-start-btn-wrap group relative transition-all duration-300 active:scale-95 focus:outline-none block"
-              style={{
-                filter: 'drop-shadow(0 8px 24px rgba(80,140,255,0.55)) drop-shadow(0 2px 8px rgba(0,0,0,0.35))',
-              }}
+
               title="Game Start"
             >
               <img
-                src={`${ASSET_BASE_URL}/manus-storage/gamestart_BTN_8b7d5365.png`}
+                src={`${ASSET_BASE_URL}/manus-storage/gamestart_BTN2_cdf3e7b7.png`}
                 alt="Game Start"
                 className="game-start-img w-full h-auto object-contain transition-transform duration-300"
               />
