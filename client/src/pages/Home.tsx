@@ -270,7 +270,7 @@ export default function Home() {
         </div>
 
         {/* Spacer: 버튼 높이의 50% (translate-y[50%] 기준) */}
-        <div className="bg-background" style={{ height: 'clamp(60px, 8vw, 130px)' }} />
+        <div className="bg-background" style={{ height: 'clamp(60px, 8vw, 130px)', display: 'none' }} />
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background border-b border-border" style={{display: 'none'}}>
@@ -300,7 +300,7 @@ export default function Home() {
 
 
         {/* GAME INFO SECTION */}
-        <section id="game-info" className="py-12 md:py-16 bg-background border-b border-border">
+        <section id="game-info" className="py-0 bg-background border-b border-border">
           <div className="container">
             {/* Header */}
             <div className="mb-12">
