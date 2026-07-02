@@ -3,7 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminKeyProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { users, banners, news, media, products, payments, pointLogs, coupons, couponUses, admins, statsEvents } from "../drizzle/schema";
+import { users, banners, news, media, products, payments, pointLogs, coupons, couponUses, admins, statsEvents, games } from "../drizzle/schema";
 import { storagePut } from "./storage";
 import { asc, desc, eq, like, or, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -600,6 +600,93 @@ export const appRouter = router({
         if (!db) throw new Error('DB unavailable');
         await db.update(users).set({ status: input.status, suspendedUntil: input.suspendedUntil ? new Date(input.suspendedUntil) : null, suspendReason: input.reason ?? null }).where(eq(users.id, input.userId));
         return { success: true };
+      }),
+    updateNickname: adminKeyProcedure
+      .input(z.object({ userId: z.number(), name: z.string() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.update(users).set({ name: input.name }).where(eq(users.id, input.userId));
+        return { success: true };
+      }),
+  }),
+
+  // ===== GAMES =====
+  games: router({
+    list: adminKeyProcedure
+      .input(z.object({ search: z.string().optional(), page: z.number().default(1), pageSize: z.number().default(20) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { items: [], total: 0 };
+        const offset = (input.page - 1) * input.pageSize;
+        let q = db.select().from(games).$dynamic();
+        if (input.search) q = q.where(like(games.name, `%${input.search}%`));
+        const items = await q.orderBy(asc(games.sortOrder), asc(games.id)).limit(input.pageSize).offset(offset);
+        const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(games);
+        return { items, total: Number(count) };
+      }),
+    create: adminKeyProcedure
+      .input(z.object({ name: z.string(), description: z.string().optional(), imageUrl: z.string().optional(), genre: z.string().optional(), platform: z.string().optional(), status: z.enum(['active','beta','maintenance','inactive']).default('active'), sortOrder: z.number().default(0) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const result = await db.insert(games).values(input);
+        return { id: (result as any).insertId };
+      }),
+    update: adminKeyProcedure
+      .input(z.object({ id: z.number(), name: z.string().optional(), description: z.string().optional(), imageUrl: z.string().optional(), genre: z.string().optional(), platform: z.string().optional(), status: z.enum(['active','beta','maintenance','inactive']).optional(), sortOrder: z.number().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const { id, ...rest } = input;
+        await db.update(games).set(rest).where(eq(games.id, id));
+        return { success: true };
+      }),
+    delete: adminKeyProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.delete(games).where(eq(games.id, input.id));
+        return { success: true };
+      }),
+  }),
+
+  // ===== COUPON GRANT/REVOKE =====
+  couponGrant: router({
+    grant: adminKeyProcedure
+      .input(z.object({ couponId: z.number(), userId: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        // 쿠폰 사용 처리
+        await db.insert(couponUses).values({ couponId: input.couponId, userId: input.userId });
+        await db.update(coupons).set({ usedCount: sql`${coupons.usedCount} + 1` }).where(eq(coupons.id, input.couponId));
+        return { success: true };
+      }),
+    revoke: adminKeyProcedure
+      .input(z.object({ couponUseId: z.number(), couponId: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.delete(couponUses).where(eq(couponUses.id, input.couponUseId));
+        await db.update(coupons).set({ usedCount: sql`GREATEST(0, ${coupons.usedCount} - 1)` }).where(eq(coupons.id, input.couponId));
+        return { success: true };
+      }),
+  }),
+
+  // ===== PRODUCT GRANT/REVOKE =====
+  productGrant: router({
+    grant: adminKeyProcedure
+      .input(z.object({ productId: z.number(), userId: z.number(), reason: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        // 상품 지급 = 포인트 지급으로 처리 (상품의 pointAmount 조회 후 지급)
+        const [product] = await db.select().from(products).where(eq(products.id, input.productId)).limit(1);
+        if (!product) throw new Error('상품을 찾을 수 없습니다.');
+        await db.insert(pointLogs).values({ userId: input.userId, type: 'free', amount: product.pointAmount, reason: input.reason ?? `상품 지급: ${product.name}` });
+        return { success: true, pointAmount: product.pointAmount };
       }),
   }),
 });

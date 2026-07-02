@@ -1,1779 +1,728 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { getLoginUrl } from "@/const";
-import { trpc } from "@/lib/trpc";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import superjson from "superjson";
 import type { AppRouter } from "../../../server/routers";
-
-// AdminPage 전용 직접 API 호출 함수 (x-admin-key 헤더 주입)
-function createAdminClient(adminKey: string) {
-  return createTRPCProxyClient<AppRouter>({
-    links: [
-      httpBatchLink({
-        url: "/api/trpc",
-        transformer: superjson,
-        headers: () => ({ "x-admin-key": adminKey }),
-        fetch(input, init) {
-          return globalThis.fetch(input, { ...(init ?? {}), credentials: "include" });
-        },
-      }),
-    ],
-  });
-}
 import {
-  Activity,
-  ArrowUpDown,
-  BarChart2,
-  ChevronLeft,
-  ChevronRight,
-  CreditCard,
-  Eye,
-  Image,
-  Link,
-  LogOut,
-  MoreHorizontal,
-  Pencil,
-  Plus,
-  RefreshCw,
-  Search,
-  Shield,
-  ShoppingCart,
-  Tag,
-  Trash2,
-  ToggleLeft,
-  ToggleRight,
-  User,
-  UserCheck,
-  UserCog,
-  Users,
-  X,
+  Activity, BarChart2, ChevronLeft, ChevronRight, CreditCard, Eye, Gamepad2,
+  Image, Link, LogOut, Pencil, Plus, RefreshCw, Search, Shield, ShoppingCart,
+  Tag, Trash2, ToggleLeft, ToggleRight, UserCheck, UserCog, Users, X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-type SortBy = "id" | "name" | "email" | "createdAt" | "lastSignedIn" | "role";
-type SortOrder = "asc" | "desc";
-type RoleFilter = "all" | "user" | "admin";
-
-type BannerRow = {
-  id: number;
-  title: string;
-  imageUrl: string;
-  imageKey: string | null;
-  actionType: "url" | "content";
-  actionUrl: string | null;
-  contentTitle: string | null;
-  contentDate: string | null;
-  contentBody: string | null;
-  sortOrder: number;
-  isActive: number;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-type UserRow = {
-  id: number;
-  openId: string;
-  name: string | null;
-  email: string | null;
-  loginMethod: string | null;
-  role: "user" | "admin";
-  createdAt: Date;
-  updatedAt: Date;
-  lastSignedIn: Date;
-};
-
-function formatDate(date: Date | null | undefined): string {
-  if (!date) return "-";
-  return new Date(date).toLocaleString("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
+// ─── Admin tRPC client ────────────────────────────────────────────────────────
+function createAdminClient(adminKey: string) {
+  return createTRPCProxyClient<AppRouter>({
+    links: [httpBatchLink({
+      url: "/api/trpc",
+      transformer: superjson,
+      headers: () => ({ "x-admin-key": adminKey }),
+      fetch: (input, init) => globalThis.fetch(input, { ...(init ?? {}), credentials: "include" }),
+    })],
   });
 }
 
-function StatCard({
-  title,
-  value,
-  icon: Icon,
-  color,
-}: {
-  title: string;
-  value: number | undefined;
-  icon: React.ElementType;
-  color: string;
-}) {
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function fmt(d: Date | string | null | undefined) {
+  if (!d) return "-";
+  return new Date(d).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+}
+
+function SectionHeader({ title, desc, action }: { title: string; desc?: string; action?: React.ReactNode }) {
   return (
-    <Card>
-      <CardContent className="flex items-center gap-4 p-6">
-        <div className={`p-3 rounded-xl ${color}`}>
-          <Icon className="h-6 w-6 text-white" />
-        </div>
-        <div>
-          <p className="text-sm text-muted-foreground">{title}</p>
-          <p className="text-2xl font-bold">
-            {value === undefined ? (
-              <span className="text-muted-foreground text-base">로딩 중...</span>
-            ) : (
-              value.toLocaleString()
-            )}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex items-center justify-between">
+      <div>
+        <h2 className="text-xl font-bold">{title}</h2>
+        {desc && <p className="text-sm text-muted-foreground mt-0.5">{desc}</p>}
+      </div>
+      {action}
+    </div>
   );
 }
 
-function UserDetailModal({
-  user,
-  open,
-  onClose,
-  onRoleChange,
-}: {
-  user: UserRow | null;
-  open: boolean;
-  onClose: () => void;
-  onRoleChange: (id: number, role: "user" | "admin") => void;
-}) {
-  if (!user) return null;
-
+function SearchBar({ value, onChange, onSearch, placeholder = "검색..." }: { value: string; onChange: (v: string) => void; onSearch: () => void; placeholder?: string }) {
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                {user.name?.charAt(0).toUpperCase() ?? "?"}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <div className="font-semibold">{user.name ?? "-"}</div>
-              <div className="text-sm text-muted-foreground font-normal">{user.loginMethod ?? "-"}</div>
-            </div>
-          </DialogTitle>
-          <DialogDescription>회원 상세 정보</DialogDescription>
-        </DialogHeader>
-
-        <div className="grid gap-3 py-2">
-          <div className="grid grid-cols-3 gap-2 text-sm">
-            <span className="text-muted-foreground font-medium">ID</span>
-            <span className="col-span-2 font-mono">{user.id}</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-sm">
-            <span className="text-muted-foreground font-medium">Open ID</span>
-            <span className="col-span-2 font-mono text-xs break-all">{user.openId}</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-sm">
-            <span className="text-muted-foreground font-medium">로그인 방식</span>
-            <span className="col-span-2">{user.loginMethod ?? "-"}</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-sm">
-            <span className="text-muted-foreground font-medium">가입일</span>
-            <span className="col-span-2">{formatDate(user.createdAt)}</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-sm">
-            <span className="text-muted-foreground font-medium">마지막 로그인</span>
-            <span className="col-span-2">{formatDate(user.lastSignedIn)}</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-sm">
-            <span className="text-muted-foreground font-medium">정보 수정일</span>
-            <span className="col-span-2">{formatDate(user.updatedAt)}</span>
-          </div>
-
-          {/* Terms Agreement */}
-          <div className="border-t pt-3 mt-1">
-            <p className="text-xs font-semibold text-muted-foreground mb-2">Terms Agreement</p>
-            <div className="flex flex-col gap-1.5">
-              {[
-                "Terms of Service",
-                "Privacy Policy",
-                "Age Verification",
-              ].map((term) => (
-                <div key={term} className="flex items-center justify-between text-sm">
-                  <span className="text-foreground">{term}</span>
-                  <span className="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Agreed</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            닫기
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <div className="flex items-center gap-2">
+      <div className="relative flex-1">
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+        <Input placeholder={placeholder} value={value} onChange={e => onChange(e.target.value)} onKeyDown={e => e.key === "Enter" && onSearch()} className="pl-8 h-8 text-sm" />
+      </div>
+      <Button size="sm" onClick={onSearch} className="h-8">검색</Button>
+    </div>
   );
 }
 
-export default function AdminPage() {
-  const { user, loading, logout } = useAuth();
-
-  // 하드코딩 관리자 계정 (기본 PW, 변경 시 localStorage에 저장)
-  const ADMIN_ACCOUNTS: Record<string, string> = {
-    cyanima: localStorage.getItem("admin_pw_cyanima") ?? "0000",
-    blue0246: localStorage.getItem("admin_pw_blue0246") ?? "0000",
-  };
-
-  const [adminId, setAdminId] = useState("");
-  const [adminPw, setAdminPw] = useState("");
-  const [adminLoginError, setAdminLoginError] = useState("");
-  const [adminLoggedIn, setAdminLoggedIn] = useState<string | null>(
-    () => sessionStorage.getItem("admin_session")
+function Pagination({ page, total, pageSize, onChange }: { page: number; total: number; pageSize: number; onChange: (p: number) => void }) {
+  const totalPages = Math.ceil(total / pageSize);
+  if (totalPages <= 1) return null;
+  return (
+    <div className="flex items-center justify-center gap-2 pt-4">
+      <Button variant="outline" size="sm" onClick={() => onChange(Math.max(1, page - 1))} disabled={page === 1}><ChevronLeft className="h-4 w-4" /></Button>
+      <span className="text-sm text-muted-foreground">{page} / {totalPages}</span>
+      <Button variant="outline" size="sm" onClick={() => onChange(Math.min(totalPages, page + 1))} disabled={page === totalPages}><ChevronRight className="h-4 w-4" /></Button>
+    </div>
   );
+}
 
-  // 비밀번호 변경 상태
-  const [showChangePw, setShowChangePw] = useState(false);
-  const [newPw, setNewPw] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
-  const [changePwError, setChangePwError] = useState("");
+function StatusBadge({ active }: { active: boolean | number }) {
+  const on = active === true || active === 1;
+  return <span className={`text-xs px-1.5 py-0.5 rounded-full ${on ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>{on ? "활성" : "비활성"}</span>;
+}
 
-  const handleAdminLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!adminId.trim() || !adminPw.trim()) {
-      setAdminLoginError("ID와 Password를 입력해 주세요.");
-      return;
-    }
-    const storedPw = localStorage.getItem(`admin_pw_${adminId}`) ?? (adminId === "cyanima" || adminId === "blue0246" ? "0000" : null);
-    if (!storedPw || adminPw !== storedPw) {
-      setAdminLoginError("ID 또는 Password가 올바르지 않습니다.");
-      return;
-    }
-    setAdminLoginError("");
-    sessionStorage.setItem("admin_session", adminId);
-    setAdminLoggedIn(adminId);
-  };
+function ToggleBtn({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  return (
+    <button onClick={() => onChange(value ? 0 : 1)} className="flex items-center gap-2">
+      {value ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
+      <span className="text-sm">{value ? "활성" : "비활성"}</span>
+    </button>
+  );
+}
 
-  const handleAdminLogout = () => {
-    sessionStorage.removeItem("admin_session");
-    setAdminLoggedIn(null);
-    setAdminId("");
-    setAdminPw("");
-  };
+// ─── Menu sidebar item ────────────────────────────────────────────────────────
+function MenuItem({ id, label, icon: Icon, active, onClick }: { id: string; label: string; icon: React.ElementType; active: boolean; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${active ? "bg-primary text-white shadow-sm" : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"}`}>
+      <div className="flex items-center gap-3">
+        <Icon className={`h-4 w-4 ${active ? "text-white" : "text-slate-400"}`} />
+        {label}
+      </div>
+      <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${active ? "text-white" : ""}`} />
+    </button>
+  );
+}
 
-  const handleChangePw = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newPw.trim()) { setChangePwError("새 비밀번호를 입력해 주세요."); return; }
-    if (newPw !== confirmPw) { setChangePwError("비밀번호가 일치하지 않습니다."); return; }
-    if (newPw.length < 4) { setChangePwError("비밀번호는 4자 이상이어야 합니다."); return; }
-    localStorage.setItem(`admin_pw_${adminLoggedIn}`, newPw);
-    setChangePwError("");
-    setNewPw("");
-    setConfirmPw("");
-    setShowChangePw(false);
-    toast.success("비밀번호가 변경되었습니다.");
-  };
+// ─── MEMBERS SECTION ──────────────────────────────────────────────────────────
+type UserRow = { id: number; openId: string; name: string | null; email: string | null; loginMethod: string | null; role: "user" | "admin"; status?: string; suspendedUntil?: Date | null; suspendReason?: string | null; createdAt: Date; updatedAt: Date; lastSignedIn: Date };
 
-  // 사이드바 메뉴 상태
-  const [activeMenu, setActiveMenu] = useState("dashboard");
-
-  // 배너 관리 상태
-  const [bannerForm, setBannerForm] = useState<{
-    id?: number;
-    title: string;
-    imageUrl: string;
-    actionType: "url" | "content";
-    actionUrl: string;
-    contentTitle: string;
-    contentDate: string;
-    contentBody: string;
-    sortOrder: number;
-    isActive: number;
-  } | null>(null);
-  const [bannerPreview, setBannerPreview] = useState<BannerRow | null>(null);
-  const [bannerImageFile, setBannerImageFile] = useState<File | null>(null);
-  const [bannerUploading, setBannerUploading] = useState(false);
-  const [bannerSearch, setBannerSearch] = useState("");
-  const [bannerSearchInput, setBannerSearchInput] = useState("");
-  const [bannerPageSize, setBannerPageSize] = useState(10);
-  const [bannerPage, setBannerPage] = useState(1);
-
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-  const [sortBy, setSortBy] = useState<SortBy>("createdAt");
-  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
-  const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
+function MembersSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
+  const [page, setPage] = useState(1); const [pageSize, setPageSize] = useState(20);
+  const [sortBy, setSortBy] = useState("createdAt"); const [sortOrder, setSortOrder] = useState("desc");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
-  const [detailOpen, setDetailOpen] = useState(false);
-
-  // adminLoggedIn 기반 adminClient 생성
-  const adminKey = adminLoggedIn
-    ? `${adminLoggedIn}:${localStorage.getItem(`admin_pw_${adminLoggedIn}`) ?? "0000"}`
-    : "";
-  const adminClient = useMemo(() => adminKey ? createAdminClient(adminKey) : null, [adminKey]);
+  const [editForm, setEditForm] = useState<{ name: string } | null>(null);
+  const [suspendForm, setSuspendForm] = useState<{ status: string; reason: string; until: string } | null>(null);
   const qc = useQueryClient();
 
-  const { data: stats, refetch: refetchStats } = useQuery({
-    queryKey: ["admin", "stats", adminKey],
-    queryFn: () => adminClient!.admin.stats.query(),
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["admin-members", search, page, pageSize, sortBy, sortOrder, roleFilter],
+    queryFn: () => adminClient!.admin.listUsers.query({ page, pageSize, search, sortBy: sortBy as any, sortOrder: sortOrder as any, roleFilter: roleFilter as any }),
     enabled: !!adminClient,
-    retry: false,
   });
 
-  const {
-    data: usersData,
-    isLoading: usersLoading,
-    refetch: refetchUsers,
-  } = useQuery({
-    queryKey: ["admin", "listUsers", adminKey, page, pageSize, search, sortBy, sortOrder, roleFilter],
-    queryFn: () => adminClient!.admin.listUsers.query({ page, pageSize, search, sortBy, sortOrder, roleFilter }),
-    enabled: !!adminClient,
-    retry: false,
+  const updateNickMutation = useMutation({
+    mutationFn: (input: { userId: number; name: string }) => adminClient!.memberAdmin.updateNickname.mutate(input),
+    onSuccess: () => { toast.success("닉네임이 수정되었습니다."); setEditForm(null); setSelectedUser(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
+  });
+  const suspendMutation = useMutation({
+    mutationFn: (input: any) => adminClient!.memberAdmin.suspend.mutate(input),
+    onSuccess: () => { toast.success("제재 처리되었습니다."); setSuspendForm(null); setSelectedUser(null); refetch(); },
+    onError: (e: Error) => toast.error(`실패: ${e.message}`),
   });
 
-  // 배너 목록 query
-  const { data: bannersData, refetch: refetchBanners } = useQuery({
-    queryKey: ["admin", "listBanners", adminKey],
-    queryFn: () => adminClient!.admin.listBanners.query(),
-    enabled: !!adminClient,
-    retry: false,
-  });
-
-  const createBannerMutation = useMutation({
-    mutationFn: (input: { title: string; imageUrl: string; actionType: "url" | "content"; actionUrl?: string; contentTitle?: string; contentDate?: string; contentBody?: string; sortOrder?: number; isActive?: number; }) =>
-      adminClient!.admin.createBanner.mutate(input),
-    onSuccess: () => { toast.success("배너가 등록되었습니다."); qc.invalidateQueries({ queryKey: ["admin", "listBanners"] }); setBannerForm(null); },
-    onError: (err: Error) => toast.error(`등록 실패: ${err.message}`),
-  });
-
-  const updateBannerMutation = useMutation({
-    mutationFn: (input: { id: number; title?: string; imageUrl?: string; actionType?: "url" | "content"; actionUrl?: string | null; contentTitle?: string | null; contentDate?: string | null; contentBody?: string | null; sortOrder?: number; isActive?: number; }) =>
-      adminClient!.admin.updateBanner.mutate(input),
-    onSuccess: () => { toast.success("배너가 수정되었습니다."); qc.invalidateQueries({ queryKey: ["admin", "listBanners"] }); setBannerForm(null); },
-    onError: (err: Error) => toast.error(`수정 실패: ${err.message}`),
-  });
-
-  const deleteBannerMutation = useMutation({
-    mutationFn: (id: number) => adminClient!.admin.deleteBanner.mutate({ id }),
-    onSuccess: () => { toast.success("배너가 삭제되었습니다."); qc.invalidateQueries({ queryKey: ["admin", "listBanners"] }); },
-    onError: (err: Error) => toast.error(`삭제 실패: ${err.message}`),
-  });
-
-  const handleBannerSubmit = async () => {
-    if (!bannerForm) return;
-    if (!bannerForm.title.trim()) { toast.error("배너 제목을 입력하세요."); return; }
-    if (!bannerForm.imageUrl.trim()) { toast.error("이미지 URL을 입력하세요."); return; }
-    const payload = {
-      title: bannerForm.title,
-      imageUrl: bannerForm.imageUrl,
-      actionType: bannerForm.actionType,
-      actionUrl: bannerForm.actionUrl || undefined,
-      contentTitle: bannerForm.contentTitle || undefined,
-      contentDate: bannerForm.contentDate || undefined,
-      contentBody: bannerForm.contentBody || undefined,
-      sortOrder: bannerForm.sortOrder,
-      isActive: bannerForm.isActive,
-    };
-    if (bannerForm.id) {
-      updateBannerMutation.mutate({ id: bannerForm.id, ...payload });
-    } else {
-      createBannerMutation.mutate(payload);
-    }
-  };
-
-  const updateRoleMutation = useMutation({
-    mutationFn: ({ id, role }: { id: number; role: "user" | "admin" }) =>
-      adminClient!.admin.updateUserRole.mutate({ id, role }),
-    onSuccess: () => {
-      toast.success("역할이 변경되었습니다.");
-      qc.invalidateQueries({ queryKey: ["admin"] });
-    },
-    onError: (err: Error) => {
-      toast.error(`역할 변경 실패: ${err.message}`);
-    },
-  });
-
-  const handleSearch = useCallback(() => {
-    setSearch(searchInput);
-    setPage(1);
-  }, [searchInput]);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleSearch();
-  };
-
-  const handleSort = (column: SortBy) => {
-    if (sortBy === column) {
-      setSortOrder(prev => (prev === "asc" ? "desc" : "asc"));
-    } else {
-      setSortBy(column);
-      setSortOrder("desc");
-    }
-    setPage(1);
-  };
-
-  const handleRoleChange = (id: number, role: "user" | "admin") => {
-    updateRoleMutation.mutate({ id, role });
-  };
-
-  const handleRefresh = () => {
-    refetchUsers();
-    refetchStats();
-    toast.success("데이터를 새로고침했습니다.");
-  };
-
-  useEffect(() => {
-    setPage(1);
-  }, [roleFilter]);
-
-  // adminLoggedIn 세션이 없으면 항상 로그인 화면 표시
-  if (!adminLoggedIn) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="flex flex-col items-center gap-6 p-8 max-w-md w-full">
-          <div className="flex flex-col items-center gap-3 text-center">
-            <div className="p-4 bg-primary/10 rounded-full">
-              <Shield className="h-10 w-10 text-primary" />
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight">관리자 로그인 필요</h1>
-            <p className="text-muted-foreground text-sm">
-              관리자 페이지에 접근하려면 로그인이 필요합니다.
-            </p>
-          </div>
-          <form onSubmit={handleAdminLogin} className="w-full flex flex-col gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-foreground">ID</label>
-              <Input
-                type="text"
-                placeholder="관리자 ID를 입력하세요"
-                value={adminId}
-                onChange={(e) => setAdminId(e.target.value)}
-                className="w-full"
-                autoComplete="username"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-foreground">Password</label>
-              <Input
-                type="password"
-                placeholder="비밀번호를 입력하세요"
-                value={adminPw}
-                onChange={(e) => setAdminPw(e.target.value)}
-                className="w-full"
-                autoComplete="current-password"
-              />
-            </div>
-            {adminLoginError && (
-              <p className="text-sm text-destructive">{adminLoginError}</p>
-            )}
-            <Button type="submit" size="lg" className="w-full mt-1">
-              OK
-            </Button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-
-
-  const totalPages = usersData?.totalPages ?? 1;
+  const totalPages = data?.totalPages ?? 1;
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* 헤더 */}
-      <header className="border-b bg-card sticky top-0 z-40">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Shield className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h1 className="font-bold text-lg leading-none">관리자 페이지</h1>
-              <p className="text-xs text-muted-foreground mt-0.5">Ragnarok Universe Admin</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
-              <Avatar className="h-7 w-7">
-                <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                  {adminLoggedIn?.charAt(0).toUpperCase() ?? "A"}
-                </AvatarFallback>
-              </Avatar>
-              <span className="font-medium text-foreground">{adminLoggedIn}</span>
-              <Badge className="bg-amber-500 hover:bg-amber-600 text-xs">관리자</Badge>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowChangePw(true)}
-              className="text-muted-foreground text-xs"
-            >
-              PW 변경
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => (window.location.href = "/")}
-              className="text-muted-foreground"
-            >
-              홈으로
-            </Button>
-            <Button variant="ghost" size="sm" onClick={handleAdminLogout} className="text-muted-foreground">
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="space-y-6">
+      <SectionHeader title="회원 관리" desc="가입 회원 목록 조회, 정보 수정, 제재 처리" action={<Button variant="outline" size="sm" onClick={() => refetch()}><RefreshCw className="h-4 w-4 mr-1" />새로고침</Button>} />
 
-      <div className="flex min-h-[calc(100vh-64px)]">
-      {/* 왼쪽 사이드바 - EDUMIN 스타일 */}
-      <aside className="w-60 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 flex flex-col shadow-sm">
-        {/* MAIN MENU 섹션 */}
-        <div className="px-4 pt-5 pb-2">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Main Menu</p>
-        </div>
-        <nav className="flex flex-col px-2 pb-4 gap-0.5 overflow-y-auto">
-          {[
-            { key: "dashboard", label: "Dashboard", icon: Activity },
-            { key: "members", label: "회원 관리", icon: Users },
-            { key: "main-banner", label: "Main Banner", icon: RefreshCw },
-            { key: "news", label: "News", icon: Search },
-            { key: "media", label: "Media", icon: UserCheck },
-            { key: "products", label: "인앱상품", icon: ShoppingCart },
-            { key: "payments", label: "결제", icon: CreditCard },
-            { key: "stats", label: "통계", icon: BarChart2 },
-            { key: "coupons", label: "쿠폰 관리", icon: Tag },
-            { key: "admin-accounts", label: "관리자 관리", icon: UserCog },
-          ].map(({ key, label, icon: Icon }) => (
-            <button
-              key={key}
-              onClick={() => setActiveMenu(key)}
-              className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
-                activeMenu === key
-                  ? "bg-primary text-white shadow-sm"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Icon className={`h-4 w-4 ${activeMenu === key ? "text-white" : "text-slate-400"}`} />
-                {label}
-              </div>
-              <ChevronRight className={`h-3.5 w-3.5 opacity-50 ${activeMenu === key ? "text-white" : ""}`} />
-            </button>
-          ))}
-
-          {/* 정책 변경 (서브메뉴) */}
-          <button
-            onClick={() => setActiveMenu(activeMenu.startsWith("policy") ? "dashboard" : "policy-terms")}
-            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${
-              activeMenu.startsWith("policy")
-                ? "bg-primary text-white shadow-sm"
-                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <Shield className={`h-4 w-4 ${activeMenu.startsWith("policy") ? "text-white" : "text-slate-400"}`} />
-              운영정책
-            </div>
-            <ChevronRight className={`h-3.5 w-3.5 transition-transform opacity-50 ${activeMenu.startsWith("policy") ? "rotate-90 text-white" : ""}`} />
-          </button>
-          {activeMenu.startsWith("policy") && (
-            <div className="ml-4 flex flex-col gap-0.5 border-l-2 border-primary/30 pl-3">
-              {[
-                { key: "policy-terms", label: "Terms of Service" },
-                { key: "policy-privacy", label: "Privacy Policy" },
-                { key: "policy-settings", label: "Privacy Settings" },
-              ].map((sub) => (
-                <button key={sub.key} onClick={() => setActiveMenu(sub.key)}
-                  className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-xs font-medium transition-colors text-left w-full ${
-                    activeMenu === sub.key ? "text-primary font-semibold" : "text-slate-500 dark:text-slate-400 hover:text-slate-800"
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${activeMenu === sub.key ? "bg-primary" : "bg-slate-300"}`} />
-                  {sub.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </nav>
-
-        {/* 하단 로그아웃 */}
-        <div className="mt-auto p-3 border-t border-slate-200 dark:border-slate-700">
-          <button
-            onClick={handleAdminLogout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full"
-          >
-            <LogOut className="h-4 w-4" />
-            로그아웃
-          </button>
-        </div>
-      </aside>
-
-      <main className="flex-1 px-4 sm:px-6 py-8 space-y-8 overflow-auto">
-        {/* Main Banner 관리 UI */}
-        {activeMenu === "main-banner" && (
-          <div className="space-y-6">
-            {/* 헤더 */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">
-                  {bannerForm ? (
-                    <button onClick={() => setBannerForm(null)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-base font-normal mr-2">
-                      <ChevronLeft className="h-5 w-5" />
-                    </button>
-                  ) : null}
-                  {bannerForm ? (bannerForm.id ? "배너 수정" : "배너 등록") : "Main Banner 관리"}
-                </h2>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  {bannerForm ? "배너 정보를 수정하고 저장하세요." : "메인 페이지 상단 캐러셀 배너를 관리합니다."}
-                </p>
-              </div>
-              {!bannerForm && (
-                <Button onClick={() => setBannerForm({ title: "", imageUrl: "", actionType: "url", actionUrl: "", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (bannersData?.length ?? 0), isActive: 1 })}>
-                  <Plus className="h-4 w-4 mr-2" /> 배너 등록
-                </Button>
-              )}
-              {bannerForm && (
-                <Button variant="outline" onClick={() => setBannerForm(null)}>
-                  <ChevronLeft className="h-4 w-4 mr-1" /> 목록으로
-                </Button>
-              )}
-            </div>
-
-            {/* 배너 목록 - bannerForm 없을 때만 표시 */}
-            {!bannerForm && <Card>
-              <CardHeader className="pb-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Image className="h-4 w-4" />
-                    등록된 배너 ({(() => {
-                      const filtered = (bannersData ?? []).filter(b => !bannerSearch || b.title.toLowerCase().includes(bannerSearch.toLowerCase()));
-                      return filtered.length;
-                    })()}개)
-                  </CardTitle>
-                  <div className="flex items-center gap-2">
-                    <div className="relative">
-                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                      <Input
-                        placeholder="배너 제목 검색..."
-                        value={bannerSearchInput}
-                        onChange={e => setBannerSearchInput(e.target.value)}
-                        onKeyDown={e => { if (e.key === 'Enter') { setBannerSearch(bannerSearchInput); setBannerPage(1); } }}
-                        className="pl-8 h-8 w-48 text-sm"
-                      />
-                    </div>
-                    <Button size="sm" onClick={() => { setBannerSearch(bannerSearchInput); setBannerPage(1); }} className="h-8">검색</Button>
-                    <Select value={String(bannerPageSize)} onValueChange={v => { setBannerPageSize(Number(v)); setBannerPage(1); }}>
-                      <SelectTrigger className="w-24 h-8 text-sm">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="10">10개씩</SelectItem>
-                        <SelectItem value="20">20개씩</SelectItem>
-                        <SelectItem value="50">50개씩</SelectItem>
-                        <SelectItem value="100">100개씩</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button variant="ghost" size="sm" onClick={() => refetchBanners()} className="h-8">
-                      <RefreshCw className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {(() => {
-                  const filtered = (bannersData ?? []).filter(b => !bannerSearch || b.title.toLowerCase().includes(bannerSearch.toLowerCase()));
-                  const totalBannerPages = Math.ceil(filtered.length / bannerPageSize);
-                  const paged = filtered.slice((bannerPage - 1) * bannerPageSize, bannerPage * bannerPageSize);
-                  return (
-                    <>
-                      {filtered.length === 0 ? (
-                        <div className="text-center py-8 text-muted-foreground text-sm">{bannerSearch ? `"${bannerSearch}" 검색 결과가 없습니다.` : "등록된 배너가 없습니다."}</div>
-                      ) : (
-                        <div className="space-y-3">
-                          {paged.map((banner) => (
-                      <div key={banner.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 transition-colors cursor-pointer" onClick={() => setBannerForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive })}>
-                        {/* 순서 */}
-                        <span className="text-xs text-muted-foreground w-5 text-center font-mono">{banner.sortOrder + 1}</span>
-                        {/* 썸네일 */}
-                        <div className="w-24 h-14 rounded overflow-hidden bg-slate-100 shrink-0">
-                          <img src={banner.imageUrl} alt={banner.title} className="w-full h-full object-cover" />
-                        </div>
-                        {/* 정보 */}
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm truncate">{banner.title}</p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            {banner.actionType === "url" ? (
-                              <span className="flex items-center gap-1 text-xs text-blue-600"><Link className="h-3 w-3" /> URL 연결</span>
-                            ) : (
-                              <span className="flex items-center gap-1 text-xs text-green-600"><Pencil className="h-3 w-3" /> 콘텐츠</span>
-                            )}
-                            <span className={`text-xs px-1.5 py-0.5 rounded-full ${banner.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>
-                              {banner.isActive ? "활성" : "비활성"}
-                            </span>
-                          </div>
-                        </div>
-                        {/* 버튼 */}
-                        <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
-                          <Button variant="ghost" size="sm" onClick={() => setBannerPreview(banner as BannerRow)} title="미리보기">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => setBannerForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive })} title="수정">
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => { if (confirm(`"${banner.title}" 배너를 삭제하시겠습니까?`)) deleteBannerMutation.mutate(banner.id); }} title="삭제" className="text-red-500 hover:text-red-600">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => updateBannerMutation.mutate({ id: banner.id, isActive: banner.isActive ? 0 : 1 })} title="활성/비활성 토글">
-                            {banner.isActive ? <ToggleRight className="h-4 w-4 text-green-500" /> : <ToggleLeft className="h-4 w-4 text-slate-400" />}
-                          </Button>
-                        </div>
-                      </div>
-                          ))}
-                          {/* end paged.map */}
-                        </div>
-                      )}
-                      {/* 페이지네이션 */}
-                      {totalBannerPages > 1 && (
-                        <div className="flex items-center justify-center gap-2 pt-4">
-                          <Button variant="outline" size="sm" onClick={() => setBannerPage(p => Math.max(1, p - 1))} disabled={bannerPage === 1}>
-                            <ChevronLeft className="h-4 w-4" />
-                          </Button>
-                          <span className="text-sm text-muted-foreground">{bannerPage} / {totalBannerPages}</span>
-                          <Button variant="outline" size="sm" onClick={() => setBannerPage(p => Math.min(totalBannerPages, p + 1))} disabled={bannerPage === totalBannerPages}>
-                            <ChevronRight className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
-                    </>
-                  );
-                })()}
-              </CardContent>
-            </Card>}
-
-            {/* 배너 등록/수정 폼 - 상세 페이지 */}
-            {bannerForm && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base">{bannerForm.id ? "배너 수정" : "배너 등록"}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* 배너 제목 */}
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium">배너 제목 <span className="text-red-500">*</span></label>
-                    <Input value={bannerForm.title} onChange={e => setBannerForm(f => f && ({ ...f, title: e.target.value }))} placeholder="배너 제목 입력" />
-                  </div>
-
-                  {/* 이미지 등록 */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">이미지 등록 <span className="text-red-500">*</span></label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={bannerForm.imageUrl}
-                        onChange={e => setBannerForm(f => f && ({ ...f, imageUrl: e.target.value }))}
-                        placeholder="/manus-storage/banner_image.jpg"
-                        className="flex-1"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={bannerUploading}
-                        onClick={() => {
-                          const input = document.createElement('input');
-                          input.type = 'file';
-                          input.accept = 'image/jpeg,image/webp,image/png';
-                          input.onchange = async (e) => {
-                            const file = (e.target as HTMLInputElement).files?.[0];
-                            if (!file) return;
-                            if (file.size > 500 * 1024) {
-                              toast.error('파일 용량이 500KB를 초과합니다.');
-                              return;
-                            }
-                            setBannerUploading(true);
-                            try {
-                              const reader = new FileReader();
-                              const base64 = await new Promise<string>((resolve) => {
-                                reader.onload = (ev) => resolve(ev.target?.result as string);
-                                reader.readAsDataURL(file);
-                              });
-                              // 서버에 업로드하여 manus-storage URL 획득
-                              const result = await adminClient!.admin.uploadBannerImage.mutate({
-                                base64,
-                                filename: file.name,
-                              });
-                              setBannerForm(f => f && ({ ...f, imageUrl: result.url }));
-                              toast.success('이미지가 업로드되었습니다.');
-                            } catch (err: unknown) {
-                              toast.error(`업로드 실패: ${(err as Error).message}`);
-                            } finally {
-                              setBannerUploading(false);
-                            }
-                          };
-                          input.click();
-                        }}
-                        className="shrink-0"
-                      >
-                        {bannerUploading ? '업로드 중...' : 'PC에서 찾아보기'}
-                      </Button>
-                    </div>
-                    <p className="text-xs text-muted-foreground">권장: 1900×600px | 500KB 미만 | JPG, WebP, PNG</p>
-                    {bannerForm.imageUrl && (
-                      <div className="mt-2 rounded overflow-hidden border bg-slate-100" style={{ aspectRatio: '1900/600' }}>
-                        <img src={bannerForm.imageUrl} alt="preview" className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 클릭 액션 타입 */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">클릭 시 동작</label>
-                    <div className="flex gap-4">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="actionType" value="url" checked={bannerForm.actionType === "url"} onChange={() => setBannerForm(f => f && ({ ...f, actionType: "url" }))} />
-                        <Link className="h-4 w-4 text-blue-500" />
-                        <span className="text-sm">URL 이동</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="actionType" value="content" checked={bannerForm.actionType === "content"} onChange={() => setBannerForm(f => f && ({ ...f, actionType: "content" }))} />
-                        <Pencil className="h-4 w-4 text-green-500" />
-                        <span className="text-sm">콘텐츠 표시</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* URL 입력 */}
-                  {bannerForm.actionType === "url" && (
-                    <div className="space-y-1">
-                      <label className="text-sm font-medium">이동 URL</label>
-                      <Input value={bannerForm.actionUrl} onChange={e => setBannerForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="https://discord.gg/..." />
-                    </div>
-                  )}
-
-                  {/* 콘텐츠 입력 */}
-                  {bannerForm.actionType === "content" && (
-                    <div className="space-y-3 border rounded-lg p-4 bg-slate-50 dark:bg-slate-900">
-                      <p className="text-xs font-semibold text-muted-foreground uppercase">콘텐츠 작성</p>
-                      <div className="space-y-1">
-                        <label className="text-sm font-medium">제목</label>
-                        <Input value={bannerForm.contentTitle} onChange={e => setBannerForm(f => f && ({ ...f, contentTitle: e.target.value }))} placeholder="콘텐츠 제목" />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-sm font-medium">날짜</label>
-                        <Input value={bannerForm.contentDate} onChange={e => setBannerForm(f => f && ({ ...f, contentDate: e.target.value }))} placeholder="2026-07-01" type="date" />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-sm font-medium">내용</label>
-                        <textarea
-                          value={bannerForm.contentBody}
-                          onChange={e => setBannerForm(f => f && ({ ...f, contentBody: e.target.value }))}
-                          placeholder="콘텐츠 내용을 입력하세요..."
-                          rows={6}
-                          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 정렬 순서 및 활성 */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-sm font-medium">순서</label>
-                      <Input type="number" value={bannerForm.sortOrder} onChange={e => setBannerForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} min={0} />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-sm font-medium">활성 상태</label>
-                      <div className="flex items-center gap-2 h-10">
-                        <button onClick={() => setBannerForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
-                          {bannerForm.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
-                          <span className="text-sm">{bannerForm.isActive ? "활성" : "비활성"}</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 버튼 */}
-                  <div className="flex gap-2 pt-2">
-                    <Button onClick={handleBannerSubmit} disabled={createBannerMutation.isPending || updateBannerMutation.isPending}>
-                      {bannerForm.id ? "수정 저장" : "배너 등록"}
-                    </Button>
-                    <Button variant="outline" onClick={() => setBannerForm(null)}>취소</Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* 미리보기 다이얼로그 */}
-            <Dialog open={!!bannerPreview} onOpenChange={() => setBannerPreview(null)}>
-              <DialogContent className="max-w-4xl">
-                <DialogHeader>
-                  <DialogTitle>배너 미리보기: {bannerPreview?.title}</DialogTitle>
-                </DialogHeader>
-                {bannerPreview && (
-                  <div className="space-y-3">
-                    <div className="rounded-lg overflow-hidden border">
-                      <img src={bannerPreview.imageUrl} alt={bannerPreview.title} className="w-full object-cover" style={{ aspectRatio: '1900/600' }} />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div><span className="text-muted-foreground">클릭 액션:</span> {bannerPreview.actionType === "url" ? `URL 이동 → ${bannerPreview.actionUrl}` : "콘텐츠 표시"}</div>
-                      <div><span className="text-muted-foreground">상태:</span> {bannerPreview.isActive ? "활성" : "비활성"}</div>
-                    </div>
-                    {bannerPreview.actionType === "content" && bannerPreview.contentTitle && (
-                      <div className="border rounded-lg p-4 space-y-2">
-                        <p className="font-semibold">{bannerPreview.contentTitle}</p>
-                        {bannerPreview.contentDate && <p className="text-xs text-muted-foreground">{bannerPreview.contentDate}</p>}
-                        {bannerPreview.contentBody && <p className="text-sm whitespace-pre-wrap">{bannerPreview.contentBody}</p>}
-                      </div>
-                    )}
-                  </div>
-                )}
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setBannerPreview(null)}>닫기</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-        )}
-
-        {/* 메뉴별 안내 (미구현 메뉴) */}
-        {activeMenu !== "dashboard" && activeMenu !== "members" && activeMenu !== "main-banner" && (
-          <div className="flex flex-col items-center justify-center h-64 gap-4 text-muted-foreground">
-            <div className="text-5xl">
-              {activeMenu === "main-banner" && "🖼️"}
-              {activeMenu === "news" && "📰"}
-              {activeMenu === "media" && "🎬"}
-              {activeMenu === "point-shop" && "🛒"}
-              {(activeMenu === "policy" || activeMenu.startsWith("policy-")) && "📋"}
-            </div>
-            <p className="text-lg font-semibold">
-              {activeMenu === "main-banner" && "Main Banner 관리"}
-              {activeMenu === "news" && "News 관리"}
-              {activeMenu === "media" && "Media 관리"}
-              {activeMenu === "point-shop" && "Point Shop 관리"}
-              {activeMenu === "policy" && "정책 변경"}
-              {activeMenu === "policy-privacy" && "Privacy Policy 관리"}
-              {activeMenu === "policy-terms" && "Terms of Service 관리"}
-              {activeMenu === "policy-cookie" && "Privacy Settings 관리"}
-            </p>
-            <p className="text-sm">준비 중입니다.</p>
-          </div>
-        )}
-        {/* Dashboard: 통계 카드 */}
-        {(activeMenu === "dashboard" || activeMenu === "members") && <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="전체 회원"
-            value={stats?.total}
-            icon={Users}
-            color="bg-blue-500"
-          />
-          <StatCard
-            title="관리자"
-            value={stats?.admins}
-            icon={Shield}
-            color="bg-amber-500"
-          />
-          <StatCard
-            title="오늘 가입"
-            value={stats?.newToday}
-            icon={UserCheck}
-            color="bg-green-500"
-          />
-          <StatCard
-            title="30일 활성"
-            value={stats?.activeMonth}
-            icon={Activity}
-            color="bg-purple-500"
-          />
-        </div>}
-
-        {/* 회원 목록 */}
-        {(activeMenu === "dashboard" || activeMenu === "members") && <Card>
-          <CardHeader className="pb-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-muted-foreground" />
-                회원 목록
-                {usersData && (
-                  <span className="text-sm font-normal text-muted-foreground ml-1">
-                    (총 {usersData.total.toLocaleString()}명)
-                  </span>
-                )}
-              </CardTitle>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleRefresh}
-                className="self-start sm:self-auto"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                새로고침
-              </Button>
-            </div>
-
-            {/* 필터 영역 */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="닉네임, Open ID로 검색..."
-                  value={searchInput}
-                  onChange={e => setSearchInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className="pl-9"
-                />
-              </div>
-              <Button onClick={handleSearch} size="sm" className="shrink-0">
-                검색
-              </Button>
-              <Select
-                value={roleFilter}
-                onValueChange={v => setRoleFilter(v as RoleFilter)}
-              >
-                <SelectTrigger className="w-full sm:w-36">
-                  <SelectValue placeholder="역할 필터" />
-                </SelectTrigger>
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="닉네임, Open ID 검색..." />
+            <div className="flex gap-2">
+              <Select value={roleFilter} onValueChange={v => { setRoleFilter(v); setPage(1); }}>
+                <SelectTrigger className="w-28 h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">전체 역할</SelectItem>
                   <SelectItem value="user">일반 회원</SelectItem>
                   <SelectItem value="admin">관리자</SelectItem>
                 </SelectContent>
               </Select>
-              <Select
-                value={String(pageSize)}
-                onValueChange={v => {
-                  setPageSize(Number(v));
-                  setPage(1);
-                }}
-              >
-                <SelectTrigger className="w-full sm:w-28">
-                  <SelectValue />
-                </SelectTrigger>
+              <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1); }}>
+                <SelectTrigger className="w-20 h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="10">10개씩</SelectItem>
-                  <SelectItem value="20">20개씩</SelectItem>
-                  <SelectItem value="50">50개씩</SelectItem>
-                  <SelectItem value="100">100개씩</SelectItem>
+                  {[10, 20, 50, 100].map(n => <SelectItem key={n} value={String(n)}>{n}개씩</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
-          </CardHeader>
-
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/30">
-                    <TableHead
-                      className="cursor-pointer hover:bg-muted/50 transition-colors select-none"
-                      onClick={() => handleSort("name")}
-                    >
-                      <div className="flex items-center gap-1">
-                        Nickname
-                        <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                    </TableHead>
-                    <TableHead className="hidden lg:table-cell">Provider</TableHead>
-                    <TableHead
-                      className="cursor-pointer hover:bg-muted/50 transition-colors select-none hidden sm:table-cell"
-                      onClick={() => handleSort("createdAt")}
-                    >
-                      <div className="flex items-center gap-1">
-                        Registration Date
-                        <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      className="cursor-pointer hover:bg-muted/50 transition-colors select-none hidden xl:table-cell"
-                      onClick={() => handleSort("lastSignedIn")}
-                    >
-                      <div className="flex items-center gap-1">
-                        Last Account Activity
-                        <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                    </TableHead>
-
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {usersLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}>
-                        {Array.from({ length: 5 }).map((_, j) => (
-                          <TableCell key={j}>
-                            <div className="h-4 bg-muted animate-pulse rounded" />
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : usersData?.data.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
-                        <div className="flex flex-col items-center gap-2">
-                          <Users className="h-8 w-8 opacity-30" />
-                          <p>검색 결과가 없습니다.</p>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    usersData?.data.map(u => (
-                      <TableRow
-                        key={u.id}
-                        className="cursor-pointer hover:bg-muted/30 transition-colors"
-                        onClick={() => {
-                          setSelectedUser(u as UserRow);
-                          setDetailOpen(true);
-                        }}
-                      >
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-7 w-7 shrink-0">
-                              <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                                {u.name?.charAt(0).toUpperCase() ?? "?"}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="font-medium truncate max-w-[160px]">
-                              {u.name ?? <span className="text-muted-foreground italic">-</span>}
-                            </span>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? <div className="text-center py-8 text-muted-foreground text-sm">로딩 중...</div> : !data?.data?.length ? (
+            <div className="text-center py-8 text-muted-foreground text-sm">회원이 없습니다.</div>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead><tr className="border-b text-muted-foreground text-xs">
+                    <th className="text-left p-2">Nickname</th>
+                    <th className="text-left p-2">Provider</th>
+                    <th className="text-left p-2">Registration Date</th>
+                    <th className="text-left p-2">Last Activity</th>
+                    <th className="text-left p-2">상태</th>
+                    <th className="text-left p-2">처리</th>
+                  </tr></thead>
+                  <tbody>
+                    {(data?.data ?? []).map((u: UserRow) => (
+                      <tr key={u.id} className="border-b hover:bg-accent/20 cursor-pointer" onClick={() => setSelectedUser(u)}>
+                        <td className="p-2 font-medium">{u.name ?? "-"}</td>
+                        <td className="p-2 text-xs text-muted-foreground">{u.loginMethod ?? "-"}</td>
+                        <td className="p-2 text-xs text-muted-foreground">{fmt(u.createdAt)}</td>
+                        <td className="p-2 text-xs text-muted-foreground">{fmt(u.lastSignedIn)}</td>
+                        <td className="p-2">
+                          <span className={`text-xs px-1.5 py-0.5 rounded-full ${(u as any).status === "suspended" ? "bg-orange-100 text-orange-700" : (u as any).status === "banned" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
+                            {(u as any).status === "suspended" ? "정지" : (u as any).status === "banned" ? "차단" : "정상"}
+                          </span>
+                        </td>
+                        <td className="p-2" onClick={e => e.stopPropagation()}>
+                          <div className="flex gap-1">
+                            <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => { setSelectedUser(u); setEditForm({ name: u.name ?? "" }); }}>수정</Button>
+                            <Button variant="ghost" size="sm" className="h-7 text-xs text-orange-500" onClick={() => { setSelectedUser(u); setSuspendForm({ status: "suspended", reason: "", until: "" }); }}>제재</Button>
                           </div>
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell">
-                          {u.loginMethod ? (
-                            <div className="flex items-center gap-1.5">
-                              {u.loginMethod.toLowerCase() === "google" && (
-                                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                              )}
-                              {u.loginMethod.toLowerCase() === "facebook" && (
-                                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                              )}
-                              {u.loginMethod.toLowerCase() === "apple" && (
-                                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                              )}
-                              <Badge variant="outline" className="text-xs capitalize">
-                                {u.loginMethod}
-                              </Badge>
-                            </div>
-                          ) : (
-                            <span className="text-muted-foreground text-sm">-</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                          {formatDate(u.createdAt)}
-                        </TableCell>
-                        <TableCell className="hidden xl:table-cell text-sm text-muted-foreground">
-                          {formatDate(u.lastSignedIn)}
-                        </TableCell>
-
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* 페이지네이션 */}
-            {usersData && totalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-4 border-t">
-                <p className="text-sm text-muted-foreground">
-                  {((page - 1) * pageSize + 1).toLocaleString()} -{" "}
-                  {Math.min(page * pageSize, usersData.total).toLocaleString()} /{" "}
-                  {usersData.total.toLocaleString()}명
-                </p>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                      let pageNum: number;
-                      if (totalPages <= 5) {
-                        pageNum = i + 1;
-                      } else if (page <= 3) {
-                        pageNum = i + 1;
-                      } else if (page >= totalPages - 2) {
-                        pageNum = totalPages - 4 + i;
-                      } else {
-                        pageNum = page - 2 + i;
-                      }
-                      return (
-                        <Button
-                          key={pageNum}
-                          variant={page === pageNum ? "default" : "outline"}
-                          size="sm"
-                          className="w-9 h-9"
-                          onClick={() => setPage(pageNum)}
-                        >
-                          {pageNum}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            )}
-          </CardContent>
-        </Card>}
-        {/* ===== NEWS ===== */}
-        {activeMenu === "news" && <AdminNewsSection adminClient={adminClient} />}
+              <Pagination page={page} total={data.total} pageSize={pageSize} onChange={setPage} />
+            </>
+          )}
+        </CardContent>
+      </Card>
 
-        {/* ===== MEDIA ===== */}
-        {activeMenu === "media" && <AdminMediaSection adminClient={adminClient} />}
-
-        {/* ===== PRODUCTS ===== */}
-        {activeMenu === "products" && <AdminProductsSection adminClient={adminClient} />}
-
-        {/* ===== PAYMENTS ===== */}
-        {activeMenu === "payments" && <AdminPaymentsSection adminClient={adminClient} />}
-
-        {/* ===== STATS ===== */}
-        {activeMenu === "stats" && <AdminStatsSection adminClient={adminClient} />}
-
-        {/* ===== COUPONS ===== */}
-        {activeMenu === "coupons" && <AdminCouponsSection adminClient={adminClient} />}
-
-        {/* ===== ADMIN ACCOUNTS ===== */}
-        {activeMenu === "admin-accounts" && <AdminAccountsSection adminClient={adminClient} />}
-
-        {/* ===== POLICY ===== */}
-        {activeMenu.startsWith("policy") && <AdminPolicySection activeMenu={activeMenu} />}
-
-      </main>
-      </div>
-
-      {/* 비밀번호 변경 다이얼로그 */}
-      <Dialog open={showChangePw} onOpenChange={setShowChangePw}>
-        <DialogContent className="max-w-sm">
+      {/* 회원 상세 / 수정 모달 */}
+      <Dialog open={!!selectedUser && !editForm && !suspendForm} onOpenChange={() => setSelectedUser(null)}>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Password 변경</DialogTitle>
-            <DialogDescription>{adminLoggedIn} 계정의 비밀번호를 변경합니다.</DialogDescription>
+            <DialogTitle>회원 정보 조회</DialogTitle>
+            <DialogDescription>회원 상세 정보를 확인합니다.</DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleChangePw} className="flex flex-col gap-3 py-2">
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium">새 Password</label>
-              <Input
-                type="password"
-                placeholder="새 비밀번호 (4자 이상)"
-                value={newPw}
-                onChange={(e) => setNewPw(e.target.value)}
-              />
+          {selectedUser && (
+            <div className="space-y-3 text-sm">
+              {[["ID", selectedUser.id], ["Open ID", selectedUser.openId], ["Nickname", selectedUser.name ?? "-"], ["Provider", selectedUser.loginMethod ?? "-"], ["가입일", fmt(selectedUser.createdAt)], ["마지막 로그인", fmt(selectedUser.lastSignedIn)], ["상태", (selectedUser as any).status ?? "active"]].map(([k, v]) => (
+                <div key={String(k)} className="grid grid-cols-3 gap-2"><span className="text-muted-foreground font-medium">{k}</span><span className="col-span-2 font-mono break-all">{String(v)}</span></div>
+              ))}
+              {(selectedUser as any).suspendReason && <div className="grid grid-cols-3 gap-2"><span className="text-muted-foreground font-medium">제재 사유</span><span className="col-span-2">{(selectedUser as any).suspendReason}</span></div>}
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium">비밀번호 확인</label>
-              <Input
-                type="password"
-                placeholder="비밀번호 다시 입력"
-                value={confirmPw}
-                onChange={(e) => setConfirmPw(e.target.value)}
-              />
-            </div>
-            {changePwError && <p className="text-sm text-destructive">{changePwError}</p>}
-            <DialogFooter className="mt-2">
-              <Button type="button" variant="ghost" onClick={() => { setShowChangePw(false); setNewPw(""); setConfirmPw(""); setChangePwError(""); }}>취소</Button>
-              <Button type="submit">변경</Button>
-            </DialogFooter>
-          </form>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setEditForm({ name: selectedUser?.name ?? "" }); }}>정보 수정</Button>
+            <Button variant="outline" className="text-orange-500" onClick={() => setSuspendForm({ status: "suspended", reason: "", until: "" })}>제재</Button>
+            <Button variant="ghost" onClick={() => setSelectedUser(null)}>닫기</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* 회원 상세 모달 */}
-      <UserDetailModal
-        user={selectedUser}
-        open={detailOpen}
-        onClose={() => setDetailOpen(false)}
-        onRoleChange={handleRoleChange}
-      />
+      {/* 닉네임 수정 모달 */}
+      <Dialog open={!!editForm} onOpenChange={() => { setEditForm(null); }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>회원 정보 수정</DialogTitle></DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">닉네임</label>
+              <Input value={editForm?.name ?? ""} onChange={e => setEditForm(f => f && ({ ...f, name: e.target.value }))} placeholder="새 닉네임" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => { if (selectedUser && editForm) updateNickMutation.mutate({ userId: selectedUser.id, name: editForm.name }); }} disabled={updateNickMutation.isPending}>저장</Button>
+            <Button variant="ghost" onClick={() => setEditForm(null)}>취소</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 제재 모달 */}
+      <Dialog open={!!suspendForm} onOpenChange={() => setSuspendForm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>회원 제재</DialogTitle><DialogDescription>{selectedUser?.name} 회원에 대한 제재를 처리합니다.</DialogDescription></DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">제재 유형</label>
+              <Select value={suspendForm?.status ?? "suspended"} onValueChange={v => setSuspendForm(f => f && ({ ...f, status: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">제재 해제 (정상)</SelectItem>
+                  <SelectItem value="suspended">일시 정지</SelectItem>
+                  <SelectItem value="banned">영구 차단</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {suspendForm?.status === "suspended" && (
+              <div className="space-y-1">
+                <label className="text-sm font-medium">정지 해제일 (선택)</label>
+                <Input type="datetime-local" value={suspendForm.until} onChange={e => setSuspendForm(f => f && ({ ...f, until: e.target.value }))} />
+              </div>
+            )}
+            <div className="space-y-1">
+              <label className="text-sm font-medium">사유</label>
+              <Input value={suspendForm?.reason ?? ""} onChange={e => setSuspendForm(f => f && ({ ...f, reason: e.target.value }))} placeholder="제재 사유 입력" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => { if (selectedUser && suspendForm) suspendMutation.mutate({ userId: selectedUser.id, status: suspendForm.status as any, suspendedUntil: suspendForm.until || undefined, reason: suspendForm.reason || undefined }); }} disabled={suspendMutation.isPending}>처리</Button>
+            <Button variant="ghost" onClick={() => setSuspendForm(null)}>취소</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-// ===== NEWS SECTION =====
-function AdminNewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
-  const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState("");
+// ─── GAME SECTION ─────────────────────────────────────────────────────────────
+type GameForm = { id?: number; name: string; description: string; imageUrl: string; genre: string; platform: string; status: "active" | "beta" | "maintenance" | "inactive"; sortOrder: number };
+
+function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(20);
-  const [form, setForm] = useState<null | { id?: number; title: string; category: string; summary: string; content: string; imageUrl: string; isActive: number; publishedAt: string }>(null);
-  const qc = useQueryClient();
+  const [form, setForm] = useState<GameForm | null>(null);
 
-  const { data, refetch } = useQuery({
-    queryKey: ["admin-news", search, page, pageSize],
-    queryFn: () => adminClient!.news.list.query({ search, page, pageSize }),
-    enabled: !!adminClient,
-  });
+  const { data, refetch } = useQuery({ queryKey: ["admin-games", search, page], queryFn: () => adminClient!.games.list.query({ search, page, pageSize: 20 }), enabled: !!adminClient });
+  const createM = useMutation({ mutationFn: (input: any) => adminClient!.games.create.mutate(input), onSuccess: () => { toast.success("게임이 등록되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const updateM = useMutation({ mutationFn: (input: any) => adminClient!.games.update.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.games.delete.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
 
-  const createMutation = useMutation({
-    mutationFn: (input: any) => adminClient!.news.create.mutate(input),
-    onSuccess: () => { toast.success("뉴스가 등록되었습니다."); setForm(null); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-  const updateMutation = useMutation({
-    mutationFn: (input: any) => adminClient!.news.update.mutate(input),
-    onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => adminClient!.news.delete.mutate({ id }),
-    onSuccess: () => { toast.success("삭제되었습니다."); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-
-  const handleSubmit = () => {
-    if (!form) return;
-    if (!form.title) { toast.error("제목을 입력하세요."); return; }
-    if (form.id) updateMutation.mutate({ id: form.id, title: form.title, category: form.category, summary: form.summary, content: form.content, imageUrl: form.imageUrl, isActive: form.isActive, publishedAt: form.publishedAt });
-    else createMutation.mutate({ title: form.title, category: form.category, summary: form.summary, content: form.content, imageUrl: form.imageUrl, isActive: form.isActive, publishedAt: form.publishedAt });
-  };
-
-  const emptyForm = { title: "", category: "Update", summary: "", content: "", imageUrl: "", isActive: 1, publishedAt: new Date().toISOString().slice(0, 10) };
+  const empty: GameForm = { name: "", description: "", imageUrl: "", genre: "", platform: "", status: "active", sortOrder: 0 };
+  const submit = () => { if (!form?.name) { toast.error("게임명을 입력하세요."); return; } form.id ? updateM.mutate(form) : createM.mutate(form); };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold">{form ? (form.id ? "뉴스 수정" : "뉴스 등록") : "News 관리"}</h2>
-          <p className="text-sm text-muted-foreground mt-0.5">{form ? "카드 뉴스 / 알림 콘텐츠를 작성합니다." : "카드 뉴스 및 알림 콘텐츠를 관리합니다."}</p>
-        </div>
-        {!form ? (
-          <Button onClick={() => setForm(emptyForm)}><Plus className="h-4 w-4 mr-2" />뉴스 등록</Button>
-        ) : (
-          <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>
-        )}
-      </div>
+      <SectionHeader title={form ? (form.id ? "게임 수정" : "게임 등록") : "Game 관리"} desc="서비스에서 제공할 게임 정보를 관리합니다."
+        action={!form ? <Button onClick={() => setForm(empty)}><Plus className="h-4 w-4 mr-2" />게임 등록</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>} />
+
+      {!form ? (
+        <Card>
+          <CardHeader className="pb-3">
+            <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="게임명 검색..." />
+          </CardHeader>
+          <CardContent>
+            {!data?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 게임이 없습니다.</div> : (
+              <div className="space-y-2">
+                {data.items.map((g: any) => (
+                  <div key={g.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: g.id, name: g.name, description: g.description ?? "", imageUrl: g.imageUrl ?? "", genre: g.genre ?? "", platform: g.platform ?? "", status: g.status, sortOrder: g.sortOrder })}>
+                    {g.imageUrl && <img src={g.imageUrl} alt={g.name} className="w-16 h-10 object-cover rounded shrink-0" />}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm">{g.name}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        {g.genre && <span className="text-xs text-muted-foreground">{g.genre}</span>}
+                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${g.status === "active" ? "bg-green-100 text-green-700" : g.status === "beta" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500"}`}>{g.status}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: g.id, name: g.name, description: g.description ?? "", imageUrl: g.imageUrl ?? "", genre: g.genre ?? "", platform: g.platform ?? "", status: g.status, sortOrder: g.sortOrder })}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${g.name}" 게임을 삭제하시겠습니까?`)) deleteM.mutate(g.id); }}><Trash2 className="h-4 w-4" /></Button>
+                    </div>
+                  </div>
+                ))}
+                <Pagination page={page} total={data.total} pageSize={20} onChange={setPage} />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card><CardContent className="pt-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">게임명 *</label><Input value={form.name} onChange={e => setForm(f => f && ({ ...f, name: e.target.value }))} placeholder="게임명" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">장르</label><Input value={form.genre} onChange={e => setForm(f => f && ({ ...f, genre: e.target.value }))} placeholder="Fantasy MMORPG" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">플랫폼</label><Input value={form.platform} onChange={e => setForm(f => f && ({ ...f, platform: e.target.value }))} placeholder="Web Browser" /></div>
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">소개</label><textarea className="w-full border rounded-md p-2 text-sm min-h-[80px]" value={form.description} onChange={e => setForm(f => f && ({ ...f, description: e.target.value }))} placeholder="게임 소개" /></div>
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">이미지 URL</label><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">상태</label>
+              <Select value={form.status} onValueChange={v => setForm(f => f && ({ ...f, status: v as any }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="beta">Beta</SelectItem>
+                  <SelectItem value="maintenance">Maintenance</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} /></div>
+          </div>
+          <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "게임 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
+        </CardContent></Card>
+      )}
+    </div>
+  );
+}
+
+// ─── BANNER SECTION ───────────────────────────────────────────────────────────
+type BannerRow = { id: number; title: string; imageUrl: string; imageKey: string | null; actionType: "url" | "content"; actionUrl: string | null; contentTitle: string | null; contentDate: string | null; contentBody: string | null; sortOrder: number; isActive: number; createdAt: Date; updatedAt: Date };
+type BannerForm = { id?: number; title: string; imageUrl: string; actionType: "url" | "content"; actionUrl: string; contentTitle: string; contentDate: string; contentBody: string; sortOrder: number; isActive: number };
+
+function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [form, setForm] = useState<BannerForm | null>(null);
+  const [preview, setPreview] = useState<BannerRow | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
+  const [page, setPage] = useState(1); const [pageSize, setPageSize] = useState(10);
+
+  const { data, refetch } = useQuery({ queryKey: ["admin-banners"], queryFn: () => adminClient!.admin.listBanners.query(), enabled: !!adminClient });
+  const createM = useMutation({ mutationFn: (input: any) => adminClient!.admin.createBanner.mutate(input), onSuccess: () => { toast.success("배너가 등록되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const updateM = useMutation({ mutationFn: (input: any) => adminClient!.admin.updateBanner.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.admin.deleteBanner.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+
+  const empty: BannerForm = { title: "", imageUrl: "", actionType: "url", actionUrl: "", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (data?.length ?? 0), isActive: 1 };
+  const submit = () => {
+    if (!form?.title || !form?.imageUrl) { toast.error("제목과 이미지를 입력하세요."); return; }
+    const p = { title: form.title, imageUrl: form.imageUrl, actionType: form.actionType, actionUrl: form.actionUrl || undefined, contentTitle: form.contentTitle || undefined, contentDate: form.contentDate || undefined, contentBody: form.contentBody || undefined, sortOrder: form.sortOrder, isActive: form.isActive };
+    form.id ? updateM.mutate({ id: form.id, ...p }) : createM.mutate(p);
+  };
+
+  const handleFileSelect = async () => {
+    const input = document.createElement("input"); input.type = "file"; input.accept = "image/jpeg,image/webp,image/png";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]; if (!file) return;
+      if (file.size > 500 * 1024) { toast.error("500KB 초과"); return; }
+      setUploading(true);
+      try {
+        const reader = new FileReader();
+        const base64 = await new Promise<string>(r => { reader.onload = ev => r(ev.target?.result as string); reader.readAsDataURL(file); });
+        const result = await adminClient!.admin.uploadBannerImage.mutate({ base64, filename: file.name });
+        setForm(f => f && ({ ...f, imageUrl: result.url }));
+        toast.success("이미지 업로드 완료");
+      } catch (e: any) { toast.error(`업로드 실패: ${e.message}`); }
+      finally { setUploading(false); }
+    };
+    input.click();
+  };
+
+  const filtered = (data ?? []).filter(b => !search || b.title.toLowerCase().includes(search.toLowerCase()));
+  const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+  return (
+    <div className="space-y-6">
+      <SectionHeader title={form ? (form.id ? "배너 수정" : "배너 등록") : "Main Banner 관리"} desc="메인 화면 캐러셀 배너를 관리합니다."
+        action={!form ? <Button onClick={() => setForm(empty)}><Plus className="h-4 w-4 mr-2" />배너 등록</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>} />
 
       {!form ? (
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                <Input placeholder="제목 또는 내용 검색..." value={searchInput} onChange={e => setSearchInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { setSearch(searchInput); setPage(1); } }} className="pl-8 h-8 text-sm" />
-              </div>
-              <Button size="sm" onClick={() => { setSearch(searchInput); setPage(1); }} className="h-8">검색</Button>
+              <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="배너 제목 검색..." />
+              <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1); }}>
+                <SelectTrigger className="w-24 h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>{[10, 20, 50, 100].map(n => <SelectItem key={n} value={String(n)}>{n}개씩</SelectItem>)}</SelectContent>
+              </Select>
               <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button>
             </div>
           </CardHeader>
           <CardContent>
-            {!data || data.items.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground text-sm">등록된 뉴스가 없습니다.</div>
-            ) : (
+            {!paged.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 배너가 없습니다.</div> : (
               <div className="space-y-2">
-                {data.items.map(item => (
+                {paged.map(b => (
+                  <div key={b.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive })}>
+                    <span className="text-xs text-muted-foreground w-5 text-center">{b.sortOrder + 1}</span>
+                    <div className="w-24 h-14 rounded overflow-hidden bg-slate-100 shrink-0"><img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" /></div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{b.title}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-xs text-blue-600">{b.actionType === "url" ? "URL 연결" : "콘텐츠"}</span>
+                        <StatusBadge active={b.isActive} />
+                      </div>
+                    </div>
+                    <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                      <Button variant="ghost" size="sm" onClick={() => setPreview(b)}><Eye className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive })}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${b.title}" 배너를 삭제하시겠습니까?`)) deleteM.mutate(b.id); }}><Trash2 className="h-4 w-4" /></Button>
+                    </div>
+                  </div>
+                ))}
+                <Pagination page={page} total={filtered.length} pageSize={pageSize} onChange={setPage} />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card><CardContent className="pt-6 space-y-4">
+          <div className="space-y-1"><label className="text-sm font-medium">배너 제목 *</label><Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="배너 제목" /></div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium">이미지 등록 *</label>
+            <div className="flex gap-2"><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." className="flex-1" /><Button type="button" variant="outline" onClick={handleFileSelect} disabled={uploading}>{uploading ? "업로드 중..." : "PC에서 찾아보기"}</Button></div>
+            <p className="text-xs text-muted-foreground">권장: 1900×600px | 500KB 미만 | JPG, WebP, PNG</p>
+            {form.imageUrl && <div className="rounded overflow-hidden border bg-slate-100" style={{ aspectRatio: "1900/600" }}><img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" /></div>}
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium">클릭 시 동작</label>
+            <div className="flex gap-4">
+              {(["url", "content"] as const).map(t => <label key={t} className="flex items-center gap-2 cursor-pointer"><input type="radio" checked={form.actionType === t} onChange={() => setForm(f => f && ({ ...f, actionType: t }))} /><span className="text-sm">{t === "url" ? "URL 이동" : "콘텐츠 표시"}</span></label>)}
+            </div>
+          </div>
+          {form.actionType === "url" && <div className="space-y-1"><label className="text-sm font-medium">이동 URL</label><Input value={form.actionUrl} onChange={e => setForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="https://..." /></div>}
+          {form.actionType === "content" && (
+            <div className="space-y-3">
+              <div className="space-y-1"><label className="text-sm font-medium">제목</label><Input value={form.contentTitle} onChange={e => setForm(f => f && ({ ...f, contentTitle: e.target.value }))} /></div>
+              <div className="space-y-1"><label className="text-sm font-medium">날짜</label><Input value={form.contentDate} onChange={e => setForm(f => f && ({ ...f, contentDate: e.target.value }))} placeholder="2026-07-01" /></div>
+              <div className="space-y-1"><label className="text-sm font-medium">내용</label><textarea className="w-full border rounded-md p-2 text-sm min-h-[80px]" value={form.contentBody} onChange={e => setForm(f => f && ({ ...f, contentBody: e.target.value }))} /></div>
+            </div>
+          )}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
+          </div>
+          <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "배너 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
+        </CardContent></Card>
+      )}
+
+      {/* 미리보기 다이얼로그 */}
+      <Dialog open={!!preview} onOpenChange={() => setPreview(null)}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader><DialogTitle>배너 미리보기: {preview?.title}</DialogTitle></DialogHeader>
+          {preview && <div className="rounded-lg overflow-hidden border"><img src={preview.imageUrl} alt={preview.title} className="w-full object-cover" style={{ aspectRatio: "1900/600" }} /></div>}
+          <DialogFooter><Button variant="outline" onClick={() => setPreview(null)}>닫기</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+// ─── NEWS SECTION ─────────────────────────────────────────────────────────────
+type NewsForm = { id?: number; title: string; category: string; summary: string; content: string; imageUrl: string; isActive: number; publishedAt: string };
+
+function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
+  const [page, setPage] = useState(1);
+  const [form, setForm] = useState<NewsForm | null>(null);
+
+  const { data, refetch } = useQuery({ queryKey: ["admin-news", search, page], queryFn: () => adminClient!.news.list.query({ search, page, pageSize: 20 }), enabled: !!adminClient });
+  const createM = useMutation({ mutationFn: (input: any) => adminClient!.news.create.mutate(input), onSuccess: () => { toast.success("등록되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const updateM = useMutation({ mutationFn: (input: any) => adminClient!.news.update.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.news.delete.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+
+  const empty: NewsForm = { title: "", category: "Update", summary: "", content: "", imageUrl: "", isActive: 1, publishedAt: new Date().toISOString().slice(0, 10) };
+  const submit = () => {
+    if (!form?.title) { toast.error("제목을 입력하세요."); return; }
+    const p = { title: form.title, category: form.category, summary: form.summary || undefined, content: form.content || undefined, imageUrl: form.imageUrl || undefined, isActive: form.isActive, publishedAt: form.publishedAt || undefined };
+    form.id ? updateM.mutate({ id: form.id, ...p }) : createM.mutate(p);
+  };
+
+  return (
+    <div className="space-y-6">
+      <SectionHeader title={form ? (form.id ? "뉴스 수정" : "뉴스 등록") : "News 관리"} desc="카드 뉴스 및 알림 콘텐츠를 관리합니다."
+        action={!form ? <Button onClick={() => setForm(empty)}><Plus className="h-4 w-4 mr-2" />뉴스 등록</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>} />
+
+      {!form ? (
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex gap-2"><SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="제목 또는 내용 검색..." /><Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button></div>
+          </CardHeader>
+          <CardContent>
+            {!data?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 뉴스가 없습니다.</div> : (
+              <div className="space-y-2">
+                {data.items.map((item: any) => (
                   <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 10) : "" })}>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm truncate">{item.title}</p>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-xs text-muted-foreground">{item.category}</span>
-                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${item.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>{item.isActive ? "활성" : "비활성"}</span>
+                        <StatusBadge active={item.isActive} />
                         <span className="text-xs text-muted-foreground">{item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : ""}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                    <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
                       <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 10) : "" })}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 뉴스를 삭제하시겠습니까?`)) deleteMutation.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 뉴스를 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </div>
                 ))}
+                <Pagination page={page} total={data.total} pageSize={20} onChange={setPage} />
               </div>
             )}
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1 col-span-2">
-                <label className="text-sm font-medium">제목 <span className="text-red-500">*</span></label>
-                <Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="뉴스 제목" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">카테고리</label>
-                <Input value={form.category} onChange={e => setForm(f => f && ({ ...f, category: e.target.value }))} placeholder="Update / Event / Interview" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">발행일</label>
-                <Input type="date" value={form.publishedAt} onChange={e => setForm(f => f && ({ ...f, publishedAt: e.target.value }))} />
-              </div>
-              <div className="space-y-1 col-span-2">
-                <label className="text-sm font-medium">요약</label>
-                <Input value={form.summary} onChange={e => setForm(f => f && ({ ...f, summary: e.target.value }))} placeholder="짧은 요약 (선택)" />
-              </div>
-              <div className="space-y-1 col-span-2">
-                <label className="text-sm font-medium">본문</label>
-                <textarea className="w-full border rounded-md p-2 text-sm min-h-[120px]" value={form.content} onChange={e => setForm(f => f && ({ ...f, content: e.target.value }))} placeholder="뉴스 본문 내용" />
-              </div>
-              <div className="space-y-1 col-span-2">
-                <label className="text-sm font-medium">이미지 URL</label>
-                <Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">활성 상태</label>
-                <div className="flex items-center gap-2 h-10">
-                  <button onClick={() => setForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
-                    {form.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
-                    <span className="text-sm">{form.isActive ? "활성" : "비활성"}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-2 pt-2">
-              <Button onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>{form.id ? "수정 저장" : "뉴스 등록"}</Button>
-              <Button variant="outline" onClick={() => setForm(null)}>취소</Button>
-            </div>
-          </CardContent>
-        </Card>
+        <Card><CardContent className="pt-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">제목 *</label><Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="뉴스 제목" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">카테고리</label><Input value={form.category} onChange={e => setForm(f => f && ({ ...f, category: e.target.value }))} placeholder="Update / Event / Interview" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">발행일</label><Input type="date" value={form.publishedAt} onChange={e => setForm(f => f && ({ ...f, publishedAt: e.target.value }))} /></div>
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">요약</label><Input value={form.summary} onChange={e => setForm(f => f && ({ ...f, summary: e.target.value }))} placeholder="짧은 요약 (선택)" /></div>
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">본문</label><textarea className="w-full border rounded-md p-2 text-sm min-h-[120px]" value={form.content} onChange={e => setForm(f => f && ({ ...f, content: e.target.value }))} placeholder="뉴스 본문" /></div>
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">이미지 URL</label><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
+          </div>
+          <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "뉴스 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
+        </CardContent></Card>
       )}
     </div>
   );
 }
 
-// ===== MEDIA SECTION =====
-function AdminMediaSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
-  const [form, setForm] = useState<null | { id?: number; title: string; youtubeUrl: string; description: string; sortOrder: number; isActive: number }>(null);
-  const { data, refetch } = useQuery({
-    queryKey: ["admin-media"],
-    queryFn: () => adminClient!.mediaAdmin.list.query(),
-    enabled: !!adminClient,
-  });
-  const createMutation = useMutation({
-    mutationFn: (input: any) => adminClient!.mediaAdmin.create.mutate(input),
-    onSuccess: () => { toast.success("등록되었습니다."); setForm(null); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-  const updateMutation = useMutation({
-    mutationFn: (input: any) => adminClient!.mediaAdmin.update.mutate(input),
-    onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => adminClient!.mediaAdmin.delete.mutate({ id }),
-    onSuccess: () => { toast.success("삭제되었습니다."); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
+// ─── MEDIA SECTION ────────────────────────────────────────────────────────────
+type MediaForm = { id?: number; title: string; youtubeUrl: string; description: string; sortOrder: number; isActive: number };
 
-  const getYoutubeId = (url: string) => {
-    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^&?/\s]+)/);
-    return m ? m[1] : null;
-  };
+function MediaSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [form, setForm] = useState<MediaForm | null>(null);
+  const { data, refetch } = useQuery({ queryKey: ["admin-media"], queryFn: () => adminClient!.mediaAdmin.list.query(), enabled: !!adminClient });
+  const createM = useMutation({ mutationFn: (input: any) => adminClient!.mediaAdmin.create.mutate(input), onSuccess: () => { toast.success("등록되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const updateM = useMutation({ mutationFn: (input: any) => adminClient!.mediaAdmin.update.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.mediaAdmin.delete.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
 
-  const handleSubmit = () => {
-    if (!form) return;
-    if (!form.title || !form.youtubeUrl) { toast.error("제목과 YouTube URL을 입력하세요."); return; }
-    if (form.id) updateMutation.mutate({ id: form.id, title: form.title, youtubeUrl: form.youtubeUrl, description: form.description, sortOrder: form.sortOrder, isActive: form.isActive });
-    else createMutation.mutate({ title: form.title, youtubeUrl: form.youtubeUrl, description: form.description, sortOrder: form.sortOrder, isActive: form.isActive });
+  const getYtId = (url: string) => { const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^&?/\s]+)/); return m ? m[1] : null; };
+  const empty: MediaForm = { title: "", youtubeUrl: "", description: "", sortOrder: data?.length ?? 0, isActive: 1 };
+  const submit = () => {
+    if (!form?.title || !form?.youtubeUrl) { toast.error("제목과 YouTube URL을 입력하세요."); return; }
+    form.id ? updateM.mutate(form) : createM.mutate(form);
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold">{form ? (form.id ? "동영상 수정" : "동영상 등록") : "Media 관리"}</h2>
-          <p className="text-sm text-muted-foreground mt-0.5">YouTube 영상 링크를 등록·수정합니다.</p>
-        </div>
-        {!form ? (
-          <Button onClick={() => setForm({ title: "", youtubeUrl: "", description: "", sortOrder: (data?.length ?? 0), isActive: 1 })}><Plus className="h-4 w-4 mr-2" />동영상 등록</Button>
-        ) : (
-          <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>
-        )}
-      </div>
+      <SectionHeader title={form ? (form.id ? "동영상 수정" : "동영상 등록") : "Media 관리"} desc="YouTube 영상 링크를 등록·수정합니다."
+        action={!form ? <Button onClick={() => setForm(empty)}><Plus className="h-4 w-4 mr-2" />동영상 등록</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>} />
 
       {!form ? (
-        <Card>
-          <CardContent className="pt-4">
-            {!data || data.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground text-sm">등록된 동영상이 없습니다.</div>
-            ) : (
-              <div className="space-y-3">
-                {data.map(item => {
-                  const ytId = getYoutubeId(item.youtubeUrl);
-                  return (
-                    <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: item.id, title: item.title, youtubeUrl: item.youtubeUrl, description: item.description ?? "", sortOrder: item.sortOrder, isActive: item.isActive })}>
-                      {ytId && <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt={item.title} className="w-24 h-14 object-cover rounded shrink-0" />}
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{item.title}</p>
-                        <p className="text-xs text-muted-foreground truncate">{item.youtubeUrl}</p>
-                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${item.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>{item.isActive ? "활성" : "비활성"}</span>
-                      </div>
-                      <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
-                        <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, youtubeUrl: item.youtubeUrl, description: item.description ?? "", sortOrder: item.sortOrder, isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 동영상을 삭제하시겠습니까?`)) deleteMutation.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
-                      </div>
+        <Card><CardContent className="pt-4">
+          {!data?.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 동영상이 없습니다.</div> : (
+            <div className="space-y-3">
+              {data.map((item: any) => {
+                const ytId = getYtId(item.youtubeUrl);
+                return (
+                  <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: item.id, title: item.title, youtubeUrl: item.youtubeUrl, description: item.description ?? "", sortOrder: item.sortOrder, isActive: item.isActive })}>
+                    {ytId && <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt={item.title} className="w-24 h-14 object-cover rounded shrink-0" />}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{item.title}</p>
+                      <p className="text-xs text-muted-foreground truncate">{item.youtubeUrl}</p>
+                      <StatusBadge active={item.isActive} />
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, youtubeUrl: item.youtubeUrl, description: item.description ?? "", sortOrder: item.sortOrder, isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 동영상을 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent></Card>
       ) : (
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            <div className="space-y-1">
-              <label className="text-sm font-medium">제목 <span className="text-red-500">*</span></label>
-              <Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="동영상 제목" />
-            </div>
-            <div className="space-y-1">
-              <label className="text-sm font-medium">YouTube URL <span className="text-red-500">*</span></label>
-              <Input value={form.youtubeUrl} onChange={e => setForm(f => f && ({ ...f, youtubeUrl: e.target.value }))} placeholder="https://youtu.be/..." />
-            </div>
-            {form.youtubeUrl && getYoutubeId(form.youtubeUrl) && (
-              <div className="rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
-                <iframe className="w-full h-full" src={`https://www.youtube.com/embed/${getYoutubeId(form.youtubeUrl)}`} title="preview" frameBorder="0" allowFullScreen />
-              </div>
-            )}
-            <div className="space-y-1">
-              <label className="text-sm font-medium">설명</label>
-              <Input value={form.description} onChange={e => setForm(f => f && ({ ...f, description: e.target.value }))} placeholder="동영상 설명 (선택)" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-sm font-medium">순서</label>
-                <Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} min={0} />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">활성 상태</label>
-                <div className="flex items-center gap-2 h-10">
-                  <button onClick={() => setForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
-                    {form.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
-                    <span className="text-sm">{form.isActive ? "활성" : "비활성"}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-2 pt-2">
-              <Button onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>{form.id ? "수정 저장" : "동영상 등록"}</Button>
-              <Button variant="outline" onClick={() => setForm(null)}>취소</Button>
-            </div>
-          </CardContent>
-        </Card>
+        <Card><CardContent className="pt-6 space-y-4">
+          <div className="space-y-1"><label className="text-sm font-medium">제목 *</label><Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="동영상 제목" /></div>
+          <div className="space-y-1"><label className="text-sm font-medium">YouTube URL *</label><Input value={form.youtubeUrl} onChange={e => setForm(f => f && ({ ...f, youtubeUrl: e.target.value }))} placeholder="https://youtu.be/..." /></div>
+          {form.youtubeUrl && getYtId(form.youtubeUrl) && <div className="rounded-lg overflow-hidden" style={{ aspectRatio: "16/9" }}><iframe className="w-full h-full" src={`https://www.youtube.com/embed/${getYtId(form.youtubeUrl)}`} title="preview" frameBorder="0" allowFullScreen /></div>}
+          <div className="space-y-1"><label className="text-sm font-medium">설명</label><Input value={form.description} onChange={e => setForm(f => f && ({ ...f, description: e.target.value }))} placeholder="설명 (선택)" /></div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
+          </div>
+          <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "동영상 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
+        </CardContent></Card>
       )}
     </div>
   );
 }
 
-// ===== PRODUCTS SECTION =====
-function AdminProductsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
-  const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState("");
+// ─── PRODUCTS SECTION ─────────────────────────────────────────────────────────
+type ProductForm = { id?: number; name: string; description: string; price: string; currency: string; pointAmount: number; imageUrl: string; isActive: number; sortOrder: number };
+
+function ProductsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
-  const [form, setForm] = useState<null | { id?: number; name: string; description: string; price: string; currency: string; pointAmount: number; imageUrl: string; isActive: number; sortOrder: number }>(null);
+  const [form, setForm] = useState<ProductForm | null>(null);
+  const [grantForm, setGrantForm] = useState<{ productId: number; userId: string; reason: string } | null>(null);
 
-  const { data, refetch } = useQuery({
-    queryKey: ["admin-products", search, page],
-    queryFn: () => adminClient!.products.list.query({ search, page, pageSize: 20 }),
-    enabled: !!adminClient,
-  });
-  const createMutation = useMutation({
-    mutationFn: (input: any) => adminClient!.products.create.mutate(input),
-    onSuccess: () => { toast.success("상품이 등록되었습니다."); setForm(null); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-  const updateMutation = useMutation({
-    mutationFn: (input: any) => adminClient!.products.update.mutate(input),
-    onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => adminClient!.products.delete.mutate({ id }),
-    onSuccess: () => { toast.success("삭제되었습니다."); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
+  const { data, refetch } = useQuery({ queryKey: ["admin-products", search, page], queryFn: () => adminClient!.products.list.query({ search, page, pageSize: 20 }), enabled: !!adminClient });
+  const createM = useMutation({ mutationFn: (input: any) => adminClient!.products.create.mutate(input), onSuccess: () => { toast.success("등록되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const updateM = useMutation({ mutationFn: (input: any) => adminClient!.products.update.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.products.delete.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const grantM = useMutation({ mutationFn: (input: any) => adminClient!.productGrant.grant.mutate(input), onSuccess: (r: any) => { toast.success(`${r.pointAmount} 포인트가 지급되었습니다.`); setGrantForm(null); }, onError: (e: Error) => toast.error(e.message) });
 
-  const handleSubmit = () => {
-    if (!form) return;
-    if (!form.name || !form.price) { toast.error("상품명과 가격을 입력하세요."); return; }
-    if (form.id) updateMutation.mutate({ id: form.id, name: form.name, description: form.description, price: form.price, currency: form.currency, pointAmount: form.pointAmount, imageUrl: form.imageUrl, isActive: form.isActive, sortOrder: form.sortOrder });
-    else createMutation.mutate({ name: form.name, description: form.description, price: form.price, currency: form.currency, pointAmount: form.pointAmount, imageUrl: form.imageUrl, isActive: form.isActive, sortOrder: form.sortOrder });
+  const empty: ProductForm = { name: "", description: "", price: "0.00", currency: "USD", pointAmount: 0, imageUrl: "", isActive: 1, sortOrder: 0 };
+  const submit = () => {
+    if (!form?.name || !form?.price) { toast.error("상품명과 가격을 입력하세요."); return; }
+    form.id ? updateM.mutate(form) : createM.mutate(form);
   };
-
-  const emptyForm = { name: "", description: "", price: "0.00", currency: "USD", pointAmount: 0, imageUrl: "", isActive: 1, sortOrder: 0 };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold">{form ? (form.id ? "상품 수정" : "상품 등록") : "인앱상품 관리"}</h2>
-          <p className="text-sm text-muted-foreground mt-0.5">판매 중인 인앱 상품을 관리합니다.</p>
-        </div>
-        {!form ? (
-          <Button onClick={() => setForm(emptyForm)}><Plus className="h-4 w-4 mr-2" />상품 등록</Button>
-        ) : (
-          <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>
-        )}
-      </div>
+      <SectionHeader title={form ? (form.id ? "상품 수정" : "상품 등록") : "인앱상품 관리"} desc="판매 중인 인앱 상품을 관리합니다."
+        action={!form ? <Button onClick={() => setForm(empty)}><Plus className="h-4 w-4 mr-2" />상품 등록</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>} />
 
       {!form ? (
         <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                <Input placeholder="상품명 검색..." value={searchInput} onChange={e => setSearchInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { setSearch(searchInput); setPage(1); } }} className="pl-8 h-8 text-sm" />
-              </div>
-              <Button size="sm" onClick={() => { setSearch(searchInput); setPage(1); }} className="h-8">검색</Button>
-              <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button>
-            </div>
-          </CardHeader>
+          <CardHeader className="pb-3"><div className="flex gap-2"><SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="상품명 검색..." /><Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button></div></CardHeader>
           <CardContent>
-            {!data || data.items.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground text-sm">등록된 상품이 없습니다.</div>
-            ) : (
+            {!data?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 상품이 없습니다.</div> : (
               <div className="space-y-2">
-                {data.items.map(item => (
+                {data.items.map((item: any) => (
                   <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: item.id, name: item.name, description: item.description ?? "", price: String(item.price), currency: item.currency, pointAmount: item.pointAmount, imageUrl: item.imageUrl ?? "", isActive: item.isActive, sortOrder: item.sortOrder })}>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm truncate">{item.name}</p>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-xs text-muted-foreground">{item.price} {item.currency}</span>
                         <span className="text-xs text-blue-600">{item.pointAmount.toLocaleString()} pts</span>
-                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${item.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>{item.isActive ? "판매중" : "비활성"}</span>
+                        <StatusBadge active={item.isActive} />
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                    <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                      <Button variant="ghost" size="sm" className="text-green-600 text-xs h-7" onClick={() => setGrantForm({ productId: item.id, userId: "", reason: "" })}>지급</Button>
                       <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, name: item.name, description: item.description ?? "", price: String(item.price), currency: item.currency, pointAmount: item.pointAmount, imageUrl: item.imageUrl ?? "", isActive: item.isActive, sortOrder: item.sortOrder })}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.name}" 상품을 삭제하시겠습니까?`)) deleteMutation.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.name}" 상품을 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </div>
                 ))}
+                <Pagination page={page} total={data.total} pageSize={20} onChange={setPage} />
               </div>
             )}
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1 col-span-2">
-                <label className="text-sm font-medium">상품명 <span className="text-red-500">*</span></label>
-                <Input value={form.name} onChange={e => setForm(f => f && ({ ...f, name: e.target.value }))} placeholder="상품명" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">가격 <span className="text-red-500">*</span></label>
-                <Input type="number" step="0.01" value={form.price} onChange={e => setForm(f => f && ({ ...f, price: e.target.value }))} placeholder="0.00" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">통화</label>
-                <Input value={form.currency} onChange={e => setForm(f => f && ({ ...f, currency: e.target.value }))} placeholder="USD" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">지급 포인트</label>
-                <Input type="number" value={form.pointAmount} onChange={e => setForm(f => f && ({ ...f, pointAmount: parseInt(e.target.value) || 0 }))} placeholder="0" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">순서</label>
-                <Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} min={0} />
-              </div>
-              <div className="space-y-1 col-span-2">
-                <label className="text-sm font-medium">설명</label>
-                <Input value={form.description} onChange={e => setForm(f => f && ({ ...f, description: e.target.value }))} placeholder="상품 설명 (선택)" />
-              </div>
-              <div className="space-y-1 col-span-2">
-                <label className="text-sm font-medium">이미지 URL</label>
-                <Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">활성 상태</label>
-                <div className="flex items-center gap-2 h-10">
-                  <button onClick={() => setForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
-                    {form.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
-                    <span className="text-sm">{form.isActive ? "판매중" : "비활성"}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-2 pt-2">
-              <Button onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>{form.id ? "수정 저장" : "상품 등록"}</Button>
-              <Button variant="outline" onClick={() => setForm(null)}>취소</Button>
-            </div>
-          </CardContent>
-        </Card>
+        <Card><CardContent className="pt-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">상품명 *</label><Input value={form.name} onChange={e => setForm(f => f && ({ ...f, name: e.target.value }))} placeholder="상품명" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">가격 *</label><Input type="number" step="0.01" value={form.price} onChange={e => setForm(f => f && ({ ...f, price: e.target.value }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">통화</label><Input value={form.currency} onChange={e => setForm(f => f && ({ ...f, currency: e.target.value }))} placeholder="USD" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">지급 포인트</label><Input type="number" value={form.pointAmount} onChange={e => setForm(f => f && ({ ...f, pointAmount: parseInt(e.target.value) || 0 }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} /></div>
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">설명</label><Input value={form.description} onChange={e => setForm(f => f && ({ ...f, description: e.target.value }))} /></div>
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">이미지 URL</label><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
+          </div>
+          <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "상품 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
+        </CardContent></Card>
       )}
+
+      {/* 상품 지급 모달 */}
+      <Dialog open={!!grantForm} onOpenChange={() => setGrantForm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>상품 지급</DialogTitle><DialogDescription>회원에게 상품을 지급합니다.</DialogDescription></DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="space-y-1"><label className="text-sm font-medium">회원 ID *</label><Input type="number" value={grantForm?.userId ?? ""} onChange={e => setGrantForm(f => f && ({ ...f, userId: e.target.value }))} placeholder="회원 ID" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">사유</label><Input value={grantForm?.reason ?? ""} onChange={e => setGrantForm(f => f && ({ ...f, reason: e.target.value }))} placeholder="지급 사유" /></div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => { if (!grantForm?.userId) { toast.error("회원 ID를 입력하세요."); return; } grantM.mutate({ productId: grantForm.productId, userId: parseInt(grantForm.userId), reason: grantForm.reason || undefined }); }} disabled={grantM.isPending}>지급</Button>
+            <Button variant="ghost" onClick={() => setGrantForm(null)}>취소</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-// ===== PAYMENTS SECTION =====
-function AdminPaymentsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+// ─── PAYMENTS SECTION ─────────────────────────────────────────────────────────
+function PaymentsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [tab, setTab] = useState<"payments" | "points">("payments");
   const [page, setPage] = useState(1);
   const [grantForm, setGrantForm] = useState<{ userId: string; type: "paid" | "free"; amount: string; reason: string } | null>(null);
 
-  const { data: paymentsData, refetch: refetchPayments } = useQuery({
-    queryKey: ["admin-payments", page],
-    queryFn: () => adminClient!.payments.list.query({ page, pageSize: 20 }),
-    enabled: !!adminClient && tab === "payments",
-  });
-  const { data: pointsData, refetch: refetchPoints } = useQuery({
-    queryKey: ["admin-points", page],
-    queryFn: () => adminClient!.payments.pointList.query({ page, pageSize: 20 }),
-    enabled: !!adminClient && tab === "points",
-  });
-  const refundMutation = useMutation({
-    mutationFn: (input: { id: number; reason?: string }) => adminClient!.payments.refund.mutate(input),
-    onSuccess: () => { toast.success("환불 처리되었습니다."); refetchPayments(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-  const grantMutation = useMutation({
-    mutationFn: (input: any) => adminClient!.payments.grantPoint.mutate(input),
-    onSuccess: () => { toast.success("포인트가 지급되었습니다."); setGrantForm(null); refetchPoints(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
+  const { data: paymentsData, refetch: refetchP } = useQuery({ queryKey: ["admin-payments", page], queryFn: () => adminClient!.payments.list.query({ page, pageSize: 20 }), enabled: !!adminClient && tab === "payments" });
+  const { data: pointsData, refetch: refetchPt } = useQuery({ queryKey: ["admin-points", page], queryFn: () => adminClient!.payments.pointList.query({ page, pageSize: 20 }), enabled: !!adminClient && tab === "points" });
+  const refundM = useMutation({ mutationFn: (input: any) => adminClient!.payments.refund.mutate(input), onSuccess: () => { toast.success("환불 처리되었습니다."); refetchP(); }, onError: (e: Error) => toast.error(e.message) });
+  const grantM = useMutation({ mutationFn: (input: any) => adminClient!.payments.grantPoint.mutate(input), onSuccess: () => { toast.success("처리되었습니다."); setGrantForm(null); refetchPt(); }, onError: (e: Error) => toast.error(e.message) });
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold">결제 관리</h2>
-          <p className="text-sm text-muted-foreground mt-0.5">결제 내역 및 포인트를 관리합니다.</p>
-        </div>
-        {tab === "points" && (
-          <Button onClick={() => setGrantForm({ userId: "", type: "free", amount: "", reason: "" })}><Plus className="h-4 w-4 mr-2" />포인트 지급</Button>
-        )}
-      </div>
+      <SectionHeader title="결제 관리" desc="결제 내역 및 포인트를 관리합니다."
+        action={tab === "points" ? <Button onClick={() => setGrantForm({ userId: "", type: "free", amount: "", reason: "" })}><Plus className="h-4 w-4 mr-2" />포인트 지급/회수</Button> : undefined} />
 
       <div className="flex gap-2 border-b">
         {(["payments", "points"] as const).map(t => (
@@ -1784,169 +733,114 @@ function AdminPaymentsSection({ adminClient }: { adminClient: ReturnType<typeof 
       </div>
 
       {tab === "payments" && (
-        <Card>
-          <CardContent className="pt-4">
-            {!paymentsData || paymentsData.items.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground text-sm">결제 내역이 없습니다.</div>
-            ) : (
+        <Card><CardContent className="pt-4">
+          {!paymentsData?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">결제 내역이 없습니다.</div> : (
+            <>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead><tr className="border-b text-muted-foreground"><th className="text-left p-2">ID</th><th className="text-left p-2">회원</th><th className="text-left p-2">금액</th><th className="text-left p-2">상태</th><th className="text-left p-2">일시</th><th className="text-left p-2">처리</th></tr></thead>
+                  <thead><tr className="border-b text-muted-foreground text-xs"><th className="text-left p-2">ID</th><th className="text-left p-2">회원</th><th className="text-left p-2">금액</th><th className="text-left p-2">상태</th><th className="text-left p-2">일시</th><th className="text-left p-2">처리</th></tr></thead>
                   <tbody>
-                    {paymentsData.items.map(({ payment, user }) => (
+                    {paymentsData.items.map(({ payment, user }: any) => (
                       <tr key={payment.id} className="border-b hover:bg-accent/20">
                         <td className="p-2">{payment.id}</td>
                         <td className="p-2">{user?.name ?? user?.openId ?? "-"}</td>
                         <td className="p-2">{payment.amount} {payment.currency}</td>
                         <td className="p-2"><span className={`px-1.5 py-0.5 rounded-full text-xs ${payment.status === "completed" ? "bg-green-100 text-green-700" : payment.status === "refunded" ? "bg-orange-100 text-orange-700" : "bg-slate-100 text-slate-500"}`}>{payment.status}</span></td>
-                        <td className="p-2 text-xs text-muted-foreground">{new Date(payment.createdAt).toLocaleDateString()}</td>
-                        <td className="p-2">
-                          {payment.status === "completed" && (
-                            <Button variant="ghost" size="sm" className="text-orange-500 h-7 text-xs" onClick={() => { if (confirm("환불 처리하시겠습니까?")) refundMutation.mutate({ id: payment.id }); }}>환불</Button>
-                          )}
-                        </td>
+                        <td className="p-2 text-xs text-muted-foreground">{fmt(payment.createdAt)}</td>
+                        <td className="p-2">{payment.status === "completed" && <Button variant="ghost" size="sm" className="text-orange-500 h-7 text-xs" onClick={() => { if (confirm("환불 처리하시겠습니까?")) refundM.mutate({ id: payment.id }); }}>환불</Button>}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-            )}
-          </CardContent>
-        </Card>
+              <Pagination page={page} total={paymentsData.total} pageSize={20} onChange={setPage} />
+            </>
+          )}
+        </CardContent></Card>
       )}
 
       {tab === "points" && (
-        <>
-          {grantForm && (
-            <Card>
-              <CardContent className="pt-6 space-y-4">
-                <h3 className="font-semibold">포인트 지급/회수</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium">회원 ID <span className="text-red-500">*</span></label>
-                    <Input type="number" value={grantForm.userId} onChange={e => setGrantForm(f => f && ({ ...f, userId: e.target.value }))} placeholder="회원 ID" />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium">포인트 유형</label>
-                    <select className="w-full border rounded-md p-2 text-sm h-10" value={grantForm.type} onChange={e => setGrantForm(f => f && ({ ...f, type: e.target.value as "paid" | "free" }))}>
-                      <option value="free">무료 포인트</option>
-                      <option value="paid">유료 포인트</option>
-                    </select>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium">수량 (음수=회수) <span className="text-red-500">*</span></label>
-                    <Input type="number" value={grantForm.amount} onChange={e => setGrantForm(f => f && ({ ...f, amount: e.target.value }))} placeholder="100 또는 -100" />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium">사유</label>
-                    <Input value={grantForm.reason} onChange={e => setGrantForm(f => f && ({ ...f, reason: e.target.value }))} placeholder="지급 사유" />
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button onClick={() => { if (!grantForm.userId || !grantForm.amount) { toast.error("회원 ID와 수량을 입력하세요."); return; } grantMutation.mutate({ userId: parseInt(grantForm.userId), type: grantForm.type, amount: parseInt(grantForm.amount), reason: grantForm.reason }); }} disabled={grantMutation.isPending}>지급/회수</Button>
-                  <Button variant="outline" onClick={() => setGrantForm(null)}>취소</Button>
-                </div>
-              </CardContent>
-            </Card>
+        <Card><CardContent className="pt-4">
+          {!pointsData?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">포인트 내역이 없습니다.</div> : (
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead><tr className="border-b text-muted-foreground text-xs"><th className="text-left p-2">ID</th><th className="text-left p-2">회원 ID</th><th className="text-left p-2">유형</th><th className="text-left p-2">수량</th><th className="text-left p-2">사유</th><th className="text-left p-2">일시</th></tr></thead>
+                  <tbody>
+                    {pointsData.items.map((item: any) => (
+                      <tr key={item.id} className="border-b hover:bg-accent/20">
+                        <td className="p-2">{item.id}</td>
+                        <td className="p-2">{item.userId}</td>
+                        <td className="p-2"><span className={`px-1.5 py-0.5 rounded-full text-xs ${item.type === "paid" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"}`}>{item.type}</span></td>
+                        <td className="p-2 font-mono">{item.amount > 0 ? `+${item.amount}` : item.amount}</td>
+                        <td className="p-2 text-muted-foreground">{item.reason ?? "-"}</td>
+                        <td className="p-2 text-xs text-muted-foreground">{fmt(item.createdAt)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Pagination page={page} total={pointsData.total} pageSize={20} onChange={setPage} />
+            </>
           )}
-          <Card>
-            <CardContent className="pt-4">
-              {!pointsData || pointsData.items.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground text-sm">포인트 내역이 없습니다.</div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead><tr className="border-b text-muted-foreground"><th className="text-left p-2">ID</th><th className="text-left p-2">회원 ID</th><th className="text-left p-2">유형</th><th className="text-left p-2">수량</th><th className="text-left p-2">사유</th><th className="text-left p-2">일시</th></tr></thead>
-                    <tbody>
-                      {pointsData.items.map(item => (
-                        <tr key={item.id} className="border-b hover:bg-accent/20">
-                          <td className="p-2">{item.id}</td>
-                          <td className="p-2">{item.userId}</td>
-                          <td className="p-2"><span className={`px-1.5 py-0.5 rounded-full text-xs ${item.type === "paid" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"}`}>{item.type}</span></td>
-                          <td className="p-2 font-mono">{item.amount > 0 ? `+${item.amount}` : item.amount}</td>
-                          <td className="p-2 text-muted-foreground">{item.reason ?? "-"}</td>
-                          <td className="p-2 text-xs text-muted-foreground">{new Date(item.createdAt).toLocaleDateString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </>
+        </CardContent></Card>
       )}
+
+      {/* 포인트 지급/회수 모달 */}
+      <Dialog open={!!grantForm} onOpenChange={() => setGrantForm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>포인트 지급/회수</DialogTitle><DialogDescription>음수 입력 시 회수됩니다.</DialogDescription></DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="space-y-1"><label className="text-sm font-medium">회원 ID *</label><Input type="number" value={grantForm?.userId ?? ""} onChange={e => setGrantForm(f => f && ({ ...f, userId: e.target.value }))} placeholder="회원 ID" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">포인트 유형</label>
+              <Select value={grantForm?.type ?? "free"} onValueChange={v => setGrantForm(f => f && ({ ...f, type: v as any }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent><SelectItem value="free">무료 포인트</SelectItem><SelectItem value="paid">유료 포인트</SelectItem></SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1"><label className="text-sm font-medium">수량 (음수=회수) *</label><Input type="number" value={grantForm?.amount ?? ""} onChange={e => setGrantForm(f => f && ({ ...f, amount: e.target.value }))} placeholder="100 또는 -100" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">사유</label><Input value={grantForm?.reason ?? ""} onChange={e => setGrantForm(f => f && ({ ...f, reason: e.target.value }))} placeholder="지급/회수 사유" /></div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => { if (!grantForm?.userId || !grantForm?.amount) { toast.error("회원 ID와 수량을 입력하세요."); return; } grantM.mutate({ userId: parseInt(grantForm.userId), type: grantForm.type, amount: parseInt(grantForm.amount), reason: grantForm.reason || undefined }); }} disabled={grantM.isPending}>처리</Button>
+            <Button variant="ghost" onClick={() => setGrantForm(null)}>취소</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-// ===== STATS SECTION =====
-function AdminStatsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+// ─── STATS SECTION ────────────────────────────────────────────────────────────
+function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [activeEvent, setActiveEvent] = useState("signup");
   const eventTypes = [
-    { key: "signup", label: "회원가입" },
-    { key: "login", label: "로그인" },
-    { key: "logout", label: "로그아웃" },
-    { key: "withdraw", label: "회원탈퇴" },
-    { key: "game_start", label: "게임실행" },
-    { key: "page_visit", label: "페이지 방문" },
-    { key: "purchase", label: "구매" },
-    { key: "refund", label: "환불" },
+    { key: "signup", label: "회원가입" }, { key: "login", label: "로그인" }, { key: "logout", label: "로그아웃" },
+    { key: "withdraw", label: "회원탈퇴" }, { key: "game_start", label: "게임실행" }, { key: "page_visit", label: "페이지 방문" },
+    { key: "purchase", label: "구매" }, { key: "refund", label: "환불" },
   ];
-
-  const { data: totalData } = useQuery({
-    queryKey: ["admin-stats-total"],
-    queryFn: () => adminClient!.stats.totalByType.query(),
-    enabled: !!adminClient,
-  });
-  const { data: chartData } = useQuery({
-    queryKey: ["admin-stats-chart", activeEvent],
-    queryFn: () => adminClient!.stats.summary.query({ eventType: activeEvent }),
-    enabled: !!adminClient,
-  });
-
-  const getTotal = (type: string) => {
-    const found = totalData?.find(d => d.eventType === type);
-    return found ? Number(found.count) : 0;
-  };
+  const { data: totalData } = useQuery({ queryKey: ["admin-stats-total"], queryFn: () => adminClient!.stats.totalByType.query(), enabled: !!adminClient });
+  const { data: chartData } = useQuery({ queryKey: ["admin-stats-chart", activeEvent], queryFn: () => adminClient!.stats.summary.query({ eventType: activeEvent }), enabled: !!adminClient });
+  const getTotal = (type: string) => Number(totalData?.find((d: any) => d.eventType === type)?.count ?? 0);
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-bold">통계</h2>
-        <p className="text-sm text-muted-foreground mt-0.5">수집된 이벤트 데이터를 조회합니다.</p>
-      </div>
-
+      <SectionHeader title="통계" desc="수집된 이벤트 데이터를 기간별로 조회합니다." />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {eventTypes.map(({ key, label }) => (
           <Card key={key} className={`cursor-pointer transition-all ${activeEvent === key ? "ring-2 ring-primary" : "hover:shadow-md"}`} onClick={() => setActiveEvent(key)}>
-            <CardContent className="pt-4 pb-3">
-              <p className="text-xs text-muted-foreground">{label}</p>
-              <p className="text-2xl font-bold mt-1">{getTotal(key).toLocaleString()}</p>
-            </CardContent>
+            <CardContent className="pt-4 pb-3"><p className="text-xs text-muted-foreground">{label}</p><p className="text-2xl font-bold mt-1">{getTotal(key).toLocaleString()}</p></CardContent>
           </Card>
         ))}
       </div>
-
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">{eventTypes.find(e => e.key === activeEvent)?.label} 일별 현황</CardTitle>
-        </CardHeader>
+        <CardHeader className="pb-3"><CardTitle className="text-base">{eventTypes.find(e => e.key === activeEvent)?.label} 일별 현황</CardTitle></CardHeader>
         <CardContent>
-          {!chartData || chartData.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground text-sm">데이터가 없습니다.</div>
-          ) : (
+          {!chartData?.length ? <div className="text-center py-8 text-muted-foreground text-sm">데이터가 없습니다.</div> : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead><tr className="border-b text-muted-foreground"><th className="text-left p-2">날짜</th><th className="text-right p-2">건수</th></tr></thead>
-                <tbody>
-                  {chartData.map((row, i) => (
-                    <tr key={i} className="border-b hover:bg-accent/20">
-                      <td className="p-2">{row.date}</td>
-                      <td className="p-2 text-right font-mono">{Number(row.count).toLocaleString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
+                <tbody>{chartData.map((row: any, i: number) => <tr key={i} className="border-b hover:bg-accent/20"><td className="p-2">{row.date}</td><td className="p-2 text-right font-mono">{Number(row.count).toLocaleString()}</td></tr>)}</tbody>
               </table>
             </div>
           )}
@@ -1956,16 +850,18 @@ function AdminStatsSection({ adminClient }: { adminClient: ReturnType<typeof cre
   );
 }
 
-// ===== COUPONS SECTION =====
-function AdminCouponsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+// ─── COUPONS SECTION ──────────────────────────────────────────────────────────
+type CouponForm = { id?: number; code: string; name: string; benefitType: "point" | "product"; benefitValue: number; maxUses: number; expiresAt: string; isActive: number };
+
+function CouponsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [tab, setTab] = useState<"list" | "used" | "unused">("list");
-  const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
-  const [form, setForm] = useState<null | { id?: number; code: string; name: string; benefitType: "point" | "product"; benefitValue: number; maxUses: number; expiresAt: string; isActive: number }>(null);
+  const [form, setForm] = useState<CouponForm | null>(null);
+  const [grantForm, setGrantForm] = useState<{ couponId: number; userId: string } | null>(null);
 
   const { data, refetch } = useQuery({
-    queryKey: ["admin-coupons", search, page, tab],
+    queryKey: ["admin-coupons", tab, search, page],
     queryFn: () => {
       if (tab === "used") return adminClient!.coupons.usageList.query({ used: true, page, pageSize: 20 });
       if (tab === "unused") return adminClient!.coupons.usageList.query({ used: false, page, pageSize: 20 });
@@ -1973,44 +869,25 @@ function AdminCouponsSection({ adminClient }: { adminClient: ReturnType<typeof c
     },
     enabled: !!adminClient,
   });
-  const createMutation = useMutation({
-    mutationFn: (input: any) => adminClient!.coupons.create.mutate(input),
-    onSuccess: () => { toast.success("쿠폰이 생성되었습니다."); setForm(null); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-  const updateMutation = useMutation({
-    mutationFn: (input: any) => adminClient!.coupons.update.mutate(input),
-    onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => adminClient!.coupons.delete.mutate({ id }),
-    onSuccess: () => { toast.success("삭제되었습니다."); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
+  const createM = useMutation({ mutationFn: (input: any) => adminClient!.coupons.create.mutate(input), onSuccess: () => { toast.success("쿠폰이 생성되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const updateM = useMutation({ mutationFn: (input: any) => adminClient!.coupons.update.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.coupons.delete.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const grantM = useMutation({ mutationFn: (input: any) => adminClient!.couponGrant.grant.mutate(input), onSuccess: () => { toast.success("쿠폰이 지급되었습니다."); setGrantForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const revokeM = useMutation({ mutationFn: (input: any) => adminClient!.couponGrant.revoke.mutate(input), onSuccess: () => { toast.success("쿠폰이 회수되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
 
-  const handleSubmit = () => {
-    if (!form) return;
-    if (!form.code || !form.name) { toast.error("쿠폰 코드와 이름을 입력하세요."); return; }
-    if (form.id) updateMutation.mutate({ id: form.id, name: form.name, maxUses: form.maxUses, expiresAt: form.expiresAt || undefined, isActive: form.isActive });
-    else createMutation.mutate({ code: form.code, name: form.name, benefitType: form.benefitType, benefitValue: form.benefitValue, maxUses: form.maxUses, expiresAt: form.expiresAt || undefined, isActive: form.isActive });
+  const empty: CouponForm = { code: "", name: "", benefitType: "point", benefitValue: 0, maxUses: 1, expiresAt: "", isActive: 1 };
+  const submit = () => {
+    if (!form?.code || !form?.name) { toast.error("쿠폰 코드와 이름을 입력하세요."); return; }
+    if (form.id) updateM.mutate({ id: form.id, name: form.name, maxUses: form.maxUses, expiresAt: form.expiresAt || undefined, isActive: form.isActive });
+    else createM.mutate({ code: form.code, name: form.name, benefitType: form.benefitType, benefitValue: form.benefitValue, maxUses: form.maxUses, expiresAt: form.expiresAt || undefined, isActive: form.isActive });
   };
 
-  const emptyForm = { code: "", name: "", benefitType: "point" as const, benefitValue: 0, maxUses: 1, expiresAt: "", isActive: 1 };
+  const listItems = tab === "list" ? ((data as any)?.items ?? []) : (Array.isArray(data) ? data : []);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold">{form ? (form.id ? "쿠폰 수정" : "쿠폰 생성") : "쿠폰 관리"}</h2>
-          <p className="text-sm text-muted-foreground mt-0.5">쿠폰을 생성·조회·수정합니다.</p>
-        </div>
-        {!form ? (
-          <Button onClick={() => setForm(emptyForm)}><Plus className="h-4 w-4 mr-2" />쿠폰 생성</Button>
-        ) : (
-          <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>
-        )}
-      </div>
+      <SectionHeader title={form ? (form.id ? "쿠폰 수정" : "쿠폰 생성") : "쿠폰 관리"} desc="쿠폰을 생성·조회·지급·회수합니다."
+        action={!form ? <Button onClick={() => setForm(empty)}><Plus className="h-4 w-4 mr-2" />쿠폰 생성</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>} />
 
       {!form && (
         <>
@@ -2023,58 +900,69 @@ function AdminCouponsSection({ adminClient }: { adminClient: ReturnType<typeof c
           </div>
 
           <Card>
-            {tab === "list" && (
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                    <Input placeholder="쿠폰명 검색..." value={searchInput} onChange={e => setSearchInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { setSearch(searchInput); setPage(1); } }} className="pl-8 h-8 text-sm" />
-                  </div>
-                  <Button size="sm" onClick={() => { setSearch(searchInput); setPage(1); }} className="h-8">검색</Button>
-                  <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button>
-                </div>
-              </CardHeader>
-            )}
+            {tab === "list" && <CardHeader className="pb-3"><div className="flex gap-2"><SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="쿠폰명 검색..." /><Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button></div></CardHeader>}
             <CardContent className={tab !== "list" ? "pt-4" : ""}>
-              {!data || (Array.isArray(data) ? data.length === 0 : (data as { items: unknown[] }).items?.length === 0) ? (
-                <div className="text-center py-8 text-muted-foreground text-sm">데이터가 없습니다.</div>
-              ) : tab === "list" ? (
-                <div className="space-y-2">
-                  {((data as { items: { id: number; code: string; name: string; benefitType: string; benefitValue: number; maxUses: number; usedCount: number; expiresAt: Date | null; isActive: number }[] }).items ?? []).map(item => (
-                    <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: item.id, code: item.code, name: item.name, benefitType: item.benefitType as "point" | "product", benefitValue: item.benefitValue, maxUses: item.maxUses, expiresAt: item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0, 10) : "", isActive: item.isActive })}>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm">{item.name} <span className="font-mono text-xs text-muted-foreground">({item.code})</span></p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs text-blue-600">{item.benefitType === "point" ? `${item.benefitValue.toLocaleString()} pts` : `상품 ID: ${item.benefitValue}`}</span>
-                          <span className="text-xs text-muted-foreground">{item.usedCount}/{item.maxUses} 사용</span>
-                          {item.expiresAt && <span className="text-xs text-muted-foreground">~{new Date(item.expiresAt).toLocaleDateString()}</span>}
-                          <span className={`text-xs px-1.5 py-0.5 rounded-full ${item.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>{item.isActive ? "활성" : "비활성"}</span>
+              {!listItems.length ? <div className="text-center py-8 text-muted-foreground text-sm">데이터가 없습니다.</div> : (
+                <>
+                  {tab === "list" && (
+                    <div className="space-y-2">
+                      {listItems.map((item: any) => (
+                        <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: item.id, code: item.code, name: item.name, benefitType: item.benefitType, benefitValue: item.benefitValue, maxUses: item.maxUses, expiresAt: item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0, 10) : "", isActive: item.isActive })}>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm">{item.name} <span className="font-mono text-xs text-muted-foreground">({item.code})</span></p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-xs text-blue-600">{item.benefitType === "point" ? `${item.benefitValue.toLocaleString()} pts` : `상품 ID: ${item.benefitValue}`}</span>
+                              <span className="text-xs text-muted-foreground">{item.usedCount}/{item.maxUses} 사용</span>
+                              {item.expiresAt && <span className="text-xs text-muted-foreground">~{new Date(item.expiresAt).toLocaleDateString()}</span>}
+                              <StatusBadge active={item.isActive} />
+                            </div>
+                          </div>
+                          <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                            <Button variant="ghost" size="sm" className="text-green-600 text-xs h-7" onClick={() => setGrantForm({ couponId: item.id, userId: "" })}>지급</Button>
+                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, code: item.code, name: item.name, benefitType: item.benefitType, benefitValue: item.benefitValue, maxUses: item.maxUses, expiresAt: item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0, 10) : "", isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.name}" 쿠폰을 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
-                        <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, code: item.code, name: item.name, benefitType: item.benefitType as "point" | "product", benefitValue: item.benefitValue, maxUses: item.maxUses, expiresAt: item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0, 10) : "", isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.name}" 쿠폰을 삭제하시겠습니까?`)) deleteMutation.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead><tr className="border-b text-muted-foreground">{tab === "used" ? <><th className="text-left p-2">쿠폰명</th><th className="text-left p-2">코드</th><th className="text-left p-2">사용자</th><th className="text-left p-2">사용일시</th></> : <><th className="text-left p-2">쿠폰명</th><th className="text-left p-2">코드</th><th className="text-left p-2">남은 수량</th><th className="text-left p-2">만료일</th></>}</tr></thead>
-                    <tbody>
-                      {(Array.isArray(data) ? data : []).map((item: Record<string, unknown>, i: number) => (
-                        <tr key={i} className="border-b hover:bg-accent/20">
-                          {tab === "used" ? (
-                            <><td className="p-2">{(item.coupon as Record<string, unknown>)?.name as string ?? "-"}</td><td className="p-2 font-mono text-xs">{(item.coupon as Record<string, unknown>)?.code as string ?? "-"}</td><td className="p-2">{(item.user as Record<string, unknown>)?.name as string ?? "-"}</td><td className="p-2 text-xs text-muted-foreground">{item.use ? new Date((item.use as Record<string, unknown>).usedAt as string).toLocaleDateString() : "-"}</td></>
-                          ) : (
-                            <><td className="p-2">{item.name as string}</td><td className="p-2 font-mono text-xs">{item.code as string}</td><td className="p-2">{(item.maxUses as number) - (item.usedCount as number)}</td><td className="p-2 text-xs text-muted-foreground">{item.expiresAt ? new Date(item.expiresAt as string).toLocaleDateString() : "무제한"}</td></>
-                          )}
-                        </tr>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
+                    </div>
+                  )}
+                  {tab === "used" && (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead><tr className="border-b text-muted-foreground text-xs"><th className="text-left p-2">쿠폰명</th><th className="text-left p-2">코드</th><th className="text-left p-2">사용자</th><th className="text-left p-2">사용일시</th><th className="text-left p-2">처리</th></tr></thead>
+                        <tbody>
+                          {listItems.map((item: any, i: number) => (
+                            <tr key={i} className="border-b hover:bg-accent/20">
+                              <td className="p-2">{item.coupon?.name ?? "-"}</td>
+                              <td className="p-2 font-mono text-xs">{item.coupon?.code ?? "-"}</td>
+                              <td className="p-2">{item.user?.name ?? "-"}</td>
+                              <td className="p-2 text-xs text-muted-foreground">{fmt(item.use?.usedAt)}</td>
+                              <td className="p-2"><Button variant="ghost" size="sm" className="text-orange-500 h-7 text-xs" onClick={() => { if (confirm("쿠폰을 회수하시겠습니까?")) revokeM.mutate({ couponUseId: item.use?.id, couponId: item.use?.couponId }); }}>회수</Button></td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                  {tab === "unused" && (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead><tr className="border-b text-muted-foreground text-xs"><th className="text-left p-2">쿠폰명</th><th className="text-left p-2">코드</th><th className="text-left p-2">남은 수량</th><th className="text-left p-2">만료일</th></tr></thead>
+                        <tbody>
+                          {listItems.map((item: any, i: number) => (
+                            <tr key={i} className="border-b hover:bg-accent/20">
+                              <td className="p-2">{item.name}</td>
+                              <td className="p-2 font-mono text-xs">{item.code}</td>
+                              <td className="p-2">{item.maxUses - item.usedCount}</td>
+                              <td className="p-2 text-xs text-muted-foreground">{item.expiresAt ? new Date(item.expiresAt).toLocaleDateString() : "무제한"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                  <Pagination page={page} total={(data as any)?.total ?? listItems.length} pageSize={20} onChange={setPage} />
+                </>
               )}
             </CardContent>
           </Card>
@@ -2082,214 +970,302 @@ function AdminCouponsSection({ adminClient }: { adminClient: ReturnType<typeof c
       )}
 
       {form && (
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-sm font-medium">쿠폰 코드 <span className="text-red-500">*</span></label>
-                <Input value={form.code} onChange={e => setForm(f => f && ({ ...f, code: e.target.value }))} placeholder="COUPON2024" disabled={!!form.id} />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">쿠폰명 <span className="text-red-500">*</span></label>
-                <Input value={form.name} onChange={e => setForm(f => f && ({ ...f, name: e.target.value }))} placeholder="쿠폰 이름" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">혜택 유형</label>
-                <select className="w-full border rounded-md p-2 text-sm h-10" value={form.benefitType} onChange={e => setForm(f => f && ({ ...f, benefitType: e.target.value as "point" | "product" }))} disabled={!!form.id}>
-                  <option value="point">포인트</option>
-                  <option value="product">상품</option>
-                </select>
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">혜택 값</label>
-                <Input type="number" value={form.benefitValue} onChange={e => setForm(f => f && ({ ...f, benefitValue: parseInt(e.target.value) || 0 }))} placeholder="포인트 수량 또는 상품 ID" disabled={!!form.id} />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">발행 수량</label>
-                <Input type="number" value={form.maxUses} onChange={e => setForm(f => f && ({ ...f, maxUses: parseInt(e.target.value) || 1 }))} min={1} />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">만료일</label>
-                <Input type="date" value={form.expiresAt} onChange={e => setForm(f => f && ({ ...f, expiresAt: e.target.value }))} />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">활성 상태</label>
-                <div className="flex items-center gap-2 h-10">
-                  <button onClick={() => setForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
-                    {form.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
-                    <span className="text-sm">{form.isActive ? "활성" : "비활성"}</span>
-                  </button>
-                </div>
-              </div>
+        <Card><CardContent className="pt-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1"><label className="text-sm font-medium">쿠폰 코드 *</label><Input value={form.code} onChange={e => setForm(f => f && ({ ...f, code: e.target.value }))} placeholder="COUPON2024" disabled={!!form.id} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">쿠폰명 *</label><Input value={form.name} onChange={e => setForm(f => f && ({ ...f, name: e.target.value }))} placeholder="쿠폰 이름" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">혜택 유형</label>
+              <Select value={form.benefitType} onValueChange={v => setForm(f => f && ({ ...f, benefitType: v as any }))} disabled={!!form.id}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent><SelectItem value="point">포인트</SelectItem><SelectItem value="product">상품</SelectItem></SelectContent>
+              </Select>
             </div>
-            <div className="flex gap-2 pt-2">
-              <Button onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>{form.id ? "수정 저장" : "쿠폰 생성"}</Button>
-              <Button variant="outline" onClick={() => setForm(null)}>취소</Button>
-            </div>
-          </CardContent>
-        </Card>
+            <div className="space-y-1"><label className="text-sm font-medium">혜택 값</label><Input type="number" value={form.benefitValue} onChange={e => setForm(f => f && ({ ...f, benefitValue: parseInt(e.target.value) || 0 }))} disabled={!!form.id} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">발행 수량</label><Input type="number" value={form.maxUses} onChange={e => setForm(f => f && ({ ...f, maxUses: parseInt(e.target.value) || 1 }))} min={1} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">만료일</label><Input type="date" value={form.expiresAt} onChange={e => setForm(f => f && ({ ...f, expiresAt: e.target.value }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
+          </div>
+          <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "쿠폰 생성"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
+        </CardContent></Card>
       )}
+
+      {/* 쿠폰 지급 모달 */}
+      <Dialog open={!!grantForm} onOpenChange={() => setGrantForm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>쿠폰 지급</DialogTitle></DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="space-y-1"><label className="text-sm font-medium">회원 ID *</label><Input type="number" value={grantForm?.userId ?? ""} onChange={e => setGrantForm(f => f && ({ ...f, userId: e.target.value }))} placeholder="회원 ID" /></div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => { if (!grantForm?.userId) { toast.error("회원 ID를 입력하세요."); return; } grantM.mutate({ couponId: grantForm.couponId, userId: parseInt(grantForm.userId) }); }} disabled={grantM.isPending}>지급</Button>
+            <Button variant="ghost" onClick={() => setGrantForm(null)}>취소</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-// ===== ADMIN ACCOUNTS SECTION =====
+// ─── ADMIN ACCOUNTS SECTION ───────────────────────────────────────────────────
+type AdminAccForm = { id?: number; username: string; password: string; displayName: string; permissions: string; isActive: number };
+
 function AdminAccountsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
-  const [form, setForm] = useState<null | { id?: number; username: string; password: string; displayName: string; permissions: string; isActive: number }>(null);
+  const [form, setForm] = useState<AdminAccForm | null>(null);
+  const { data, refetch } = useQuery({ queryKey: ["admin-accounts"], queryFn: () => adminClient!.adminAccounts.list.query(), enabled: !!adminClient });
+  const createM = useMutation({ mutationFn: (input: any) => adminClient!.adminAccounts.create.mutate(input), onSuccess: () => { toast.success("생성되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const updateM = useMutation({ mutationFn: (input: any) => adminClient!.adminAccounts.update.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
+  const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.adminAccounts.delete.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
 
-  const { data, refetch } = useQuery({
-    queryKey: ["admin-accounts"],
-    queryFn: () => adminClient!.adminAccounts.list.query(),
-    enabled: !!adminClient,
-  });
-  const createMutation = useMutation({
-    mutationFn: (input: any) => adminClient!.adminAccounts.create.mutate(input),
-    onSuccess: () => { toast.success("관리자가 생성되었습니다."); setForm(null); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-  const updateMutation = useMutation({
-    mutationFn: (input: any) => adminClient!.adminAccounts.update.mutate(input),
-    onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => adminClient!.adminAccounts.delete.mutate({ id }),
-    onSuccess: () => { toast.success("삭제되었습니다."); refetch(); },
-    onError: (e: Error) => toast.error(`실패: ${e.message}`),
-  });
-
-  const handleSubmit = () => {
+  const empty: AdminAccForm = { username: "", password: "", displayName: "", permissions: "", isActive: 1 };
+  const submit = () => {
     if (!form) return;
-    if (form.id) {
-      updateMutation.mutate({ id: form.id, displayName: form.displayName, permissions: form.permissions, isActive: form.isActive, password: form.password || undefined });
-    } else {
-      if (!form.username || !form.password) { toast.error("아이디와 비밀번호를 입력하세요."); return; }
-      createMutation.mutate({ username: form.username, password: form.password, displayName: form.displayName, permissions: form.permissions });
-    }
+    if (form.id) updateM.mutate({ id: form.id, displayName: form.displayName, permissions: form.permissions, isActive: form.isActive, password: form.password || undefined });
+    else { if (!form.username || !form.password) { toast.error("아이디와 비밀번호를 입력하세요."); return; } createM.mutate({ username: form.username, password: form.password, displayName: form.displayName, permissions: form.permissions }); }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold">{form ? (form.id ? "관리자 수정" : "관리자 생성") : "관리자 관리"}</h2>
-          <p className="text-sm text-muted-foreground mt-0.5">관리자 계정을 조회·생성·수정합니다.</p>
-        </div>
-        {!form ? (
-          <Button onClick={() => setForm({ username: "", password: "", displayName: "", permissions: "", isActive: 1 })}><Plus className="h-4 w-4 mr-2" />관리자 생성</Button>
-        ) : (
-          <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>
-        )}
-      </div>
+      <SectionHeader title={form ? (form.id ? "관리자 수정" : "관리자 생성") : "관리자 관리"} desc="관리자 계정을 조회·생성·수정합니다."
+        action={!form ? <Button onClick={() => setForm(empty)}><Plus className="h-4 w-4 mr-2" />관리자 생성</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>} />
 
       {!form ? (
-        <Card>
-          <CardContent className="pt-4">
-            {!data || data.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground text-sm">등록된 관리자가 없습니다.</div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead><tr className="border-b text-muted-foreground"><th className="text-left p-2">ID</th><th className="text-left p-2">아이디</th><th className="text-left p-2">이름</th><th className="text-left p-2">상태</th><th className="text-left p-2">마지막 로그인</th><th className="text-left p-2">등록일</th><th className="text-left p-2">처리</th></tr></thead>
-                  <tbody>
-                    {data.map(item => (
-                      <tr key={item.id} className="border-b hover:bg-accent/20">
-                        <td className="p-2">{item.id}</td>
-                        <td className="p-2 font-medium">{item.username}</td>
-                        <td className="p-2">{item.displayName ?? "-"}</td>
-                        <td className="p-2"><span className={`px-1.5 py-0.5 rounded-full text-xs ${item.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>{item.isActive ? "활성" : "비활성"}</span></td>
-                        <td className="p-2 text-xs text-muted-foreground">{item.lastLoginAt ? new Date(item.lastLoginAt).toLocaleDateString() : "-"}</td>
-                        <td className="p-2 text-xs text-muted-foreground">{new Date(item.createdAt).toLocaleDateString()}</td>
-                        <td className="p-2">
-                          <div className="flex items-center gap-1">
-                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, username: item.username, password: "", displayName: item.displayName ?? "", permissions: item.permissions ?? "", isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.username}" 관리자를 삭제하시겠습니까?`)) deleteMutation.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <Card><CardContent className="pt-4">
+          {!data?.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 관리자가 없습니다.</div> : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead><tr className="border-b text-muted-foreground text-xs"><th className="text-left p-2">ID</th><th className="text-left p-2">아이디</th><th className="text-left p-2">이름</th><th className="text-left p-2">상태</th><th className="text-left p-2">마지막 로그인</th><th className="text-left p-2">등록일</th><th className="text-left p-2">처리</th></tr></thead>
+                <tbody>
+                  {data.map((item: any) => (
+                    <tr key={item.id} className="border-b hover:bg-accent/20">
+                      <td className="p-2">{item.id}</td>
+                      <td className="p-2 font-medium">{item.username}</td>
+                      <td className="p-2">{item.displayName ?? "-"}</td>
+                      <td className="p-2"><StatusBadge active={item.isActive} /></td>
+                      <td className="p-2 text-xs text-muted-foreground">{fmt(item.lastLoginAt)}</td>
+                      <td className="p-2 text-xs text-muted-foreground">{fmt(item.createdAt)}</td>
+                      <td className="p-2">
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, username: item.username, password: "", displayName: item.displayName ?? "", permissions: item.permissions ?? "", isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.username}" 관리자를 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent></Card>
       ) : (
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-sm font-medium">아이디 <span className="text-red-500">*</span></label>
-                <Input value={form.username} onChange={e => setForm(f => f && ({ ...f, username: e.target.value }))} placeholder="관리자 아이디" disabled={!!form.id} />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">{form.id ? "새 비밀번호 (변경 시만 입력)" : "비밀번호 *"}</label>
-                <Input type="password" value={form.password} onChange={e => setForm(f => f && ({ ...f, password: e.target.value }))} placeholder="비밀번호" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">표시 이름</label>
-                <Input value={form.displayName} onChange={e => setForm(f => f && ({ ...f, displayName: e.target.value }))} placeholder="관리자 이름" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium">권한 (JSON 배열)</label>
-                <Input value={form.permissions} onChange={e => setForm(f => f && ({ ...f, permissions: e.target.value }))} placeholder='["dashboard","members"]' />
-              </div>
-              {form.id && (
-                <div className="space-y-1">
-                  <label className="text-sm font-medium">활성 상태</label>
-                  <div className="flex items-center gap-2 h-10">
-                    <button onClick={() => setForm(f => f && ({ ...f, isActive: f.isActive ? 0 : 1 }))} className="flex items-center gap-2">
-                      {form.isActive ? <ToggleRight className="h-6 w-6 text-green-500" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
-                      <span className="text-sm">{form.isActive ? "활성" : "비활성"}</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="flex gap-2 pt-2">
-              <Button onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>{form.id ? "수정 저장" : "관리자 생성"}</Button>
-              <Button variant="outline" onClick={() => setForm(null)}>취소</Button>
-            </div>
-          </CardContent>
-        </Card>
+        <Card><CardContent className="pt-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1"><label className="text-sm font-medium">아이디 *</label><Input value={form.username} onChange={e => setForm(f => f && ({ ...f, username: e.target.value }))} disabled={!!form.id} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">{form.id ? "새 비밀번호 (변경 시만)" : "비밀번호 *"}</label><Input type="password" value={form.password} onChange={e => setForm(f => f && ({ ...f, password: e.target.value }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">표시 이름</label><Input value={form.displayName} onChange={e => setForm(f => f && ({ ...f, displayName: e.target.value }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">권한 (JSON)</label><Input value={form.permissions} onChange={e => setForm(f => f && ({ ...f, permissions: e.target.value }))} placeholder='["dashboard"]' /></div>
+            {form.id && <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>}
+          </div>
+          <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "관리자 생성"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
+        </CardContent></Card>
       )}
     </div>
   );
 }
 
-// ===== POLICY SECTION =====
-function AdminPolicySection({ activeMenu }: { activeMenu: string }) {
-  const policyMap: Record<string, { title: string; url: string; description: string }> = {
-    "policy-terms": { title: "Terms of Service", url: "/terms-of-service", description: "서비스 이용약관 내용을 수정합니다. 변경 사항은 Terms of Service 페이지에 즉시 반영됩니다." },
-    "policy-privacy": { title: "Privacy Policy", url: "/privacy-policy", description: "개인정보 처리방침 내용을 수정합니다. 변경 사항은 Privacy Policy 페이지에 즉시 반영됩니다." },
-    "policy-settings": { title: "Privacy Settings", url: "/", description: "Privacy Settings 팝업 내용을 수정합니다." },
+// ─── POLICY SECTION ───────────────────────────────────────────────────────────
+function PolicySection({ activeMenu }: { activeMenu: string }) {
+  const map: Record<string, { title: string; url: string; desc: string }> = {
+    "policy-terms": { title: "Terms of Service", url: "/terms-of-service", desc: "서비스 이용약관 내용을 수정합니다. 변경 사항은 Terms of Service 페이지에 즉시 반영됩니다." },
+    "policy-privacy": { title: "Privacy Policy", url: "/privacy-policy", desc: "개인정보 처리방침 내용을 수정합니다. 변경 사항은 Privacy Policy 페이지에 즉시 반영됩니다." },
+    "policy-settings": { title: "Privacy Settings", url: "/", desc: "Privacy Settings 팝업 내용을 수정합니다." },
   };
-  const current = policyMap[activeMenu];
-  if (!current) return null;
-
+  const cur = map[activeMenu]; if (!cur) return null;
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-bold">{current.title}</h2>
-        <p className="text-sm text-muted-foreground mt-0.5">{current.description}</p>
+      <SectionHeader title={cur.title} desc={cur.desc} />
+      <Card><CardContent className="pt-6">
+        <div className="flex flex-col items-center gap-4 py-8">
+          <Shield className="h-12 w-12 text-muted-foreground" />
+          <p className="text-muted-foreground text-sm text-center">정책 페이지 내용은 개발자가 소스 코드에서 직접 수정합니다.<br />아래 버튼을 클릭하면 해당 페이지를 미리볼 수 있습니다.</p>
+          <a href={cur.url} target="_blank" rel="noopener noreferrer"><Button variant="outline"><Eye className="h-4 w-4 mr-2" />{cur.title} 페이지 보기</Button></a>
+        </div>
+      </CardContent></Card>
+    </div>
+  );
+}
+
+// ─── DASHBOARD SECTION ────────────────────────────────────────────────────────
+function DashboardSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const { data: stats } = useQuery({ queryKey: ["admin-stats-kpi"], queryFn: () => adminClient!.admin.stats.query(), enabled: !!adminClient });
+  const kpis = [
+    { title: "전체 회원", value: stats?.total, color: "bg-blue-500", icon: Users },
+    { title: "관리자", value: stats?.admins, color: "bg-amber-500", icon: Shield },
+    { title: "오늘 가입", value: stats?.newToday, color: "bg-green-500", icon: UserCheck },
+    { title: "30일 활성", value: stats?.activeMonth, color: "bg-purple-500", icon: Activity },
+  ];
+  return (
+    <div className="space-y-6">
+      <SectionHeader title="Dashboard" desc="서비스 핵심 성과 지표(KPI)를 확인합니다." />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {kpis.map(({ title, value, color, icon: Icon }) => (
+          <Card key={title}><CardContent className="flex items-center gap-4 p-6">
+            <div className={`p-3 rounded-xl ${color}`}><Icon className="h-6 w-6 text-white" /></div>
+            <div><p className="text-sm text-muted-foreground">{title}</p><p className="text-2xl font-bold">{value === undefined ? <span className="text-base text-muted-foreground">-</span> : value.toLocaleString()}</p></div>
+          </CardContent></Card>
+        ))}
       </div>
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col items-center gap-4 py-8">
-            <Shield className="h-12 w-12 text-muted-foreground" />
-            <p className="text-muted-foreground text-sm text-center">
-              정책 페이지 내용은 개발자가 소스 코드에서 직접 수정합니다.<br />
-              아래 버튼을 클릭하면 해당 페이지를 미리볼 수 있습니다.
-            </p>
-            <a href={current.url} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline">
-                <Eye className="h-4 w-4 mr-2" />
-                {current.title} 페이지 보기
-              </Button>
-            </a>
-          </div>
-        </CardContent>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Users className="h-4 w-4" />최근 가입 회원</CardTitle></CardHeader>
+        <CardContent><p className="text-sm text-muted-foreground">회원 관리 메뉴에서 전체 회원 목록을 확인하세요.</p></CardContent>
       </Card>
+    </div>
+  );
+}
+
+// ─── MAIN AdminPage ────────────────────────────────────────────────────────────
+export default function AdminPage() {
+  const [adminId, setAdminId] = useState("");
+  const [adminPw, setAdminPw] = useState("");
+  const [adminLoginError, setAdminLoginError] = useState("");
+  const [adminLoggedIn, setAdminLoggedIn] = useState<string | null>(() => sessionStorage.getItem("admin_session"));
+  const [showChangePw, setShowChangePw] = useState(false);
+  const [newPw, setNewPw] = useState(""); const [confirmPw, setConfirmPw] = useState(""); const [changePwError, setChangePwError] = useState("");
+  const [activeMenu, setActiveMenu] = useState("dashboard");
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminId.trim() || !adminPw.trim()) { setAdminLoginError("ID와 Password를 입력해 주세요."); return; }
+    const storedPw = localStorage.getItem(`admin_pw_${adminId}`) ?? (adminId === "cyanima" || adminId === "blue0246" ? "0000" : null);
+    if (!storedPw || adminPw !== storedPw) { setAdminLoginError("ID 또는 Password가 올바르지 않습니다."); return; }
+    setAdminLoginError(""); sessionStorage.setItem("admin_session", adminId); setAdminLoggedIn(adminId);
+  };
+  const handleAdminLogout = () => { sessionStorage.removeItem("admin_session"); setAdminLoggedIn(null); setAdminId(""); setAdminPw(""); };
+  const handleChangePw = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPw.trim()) { setChangePwError("새 비밀번호를 입력해 주세요."); return; }
+    if (newPw !== confirmPw) { setChangePwError("비밀번호가 일치하지 않습니다."); return; }
+    if (newPw.length < 4) { setChangePwError("비밀번호는 4자 이상이어야 합니다."); return; }
+    localStorage.setItem(`admin_pw_${adminLoggedIn}`, newPw);
+    setChangePwError(""); setNewPw(""); setConfirmPw(""); setShowChangePw(false);
+    toast.success("비밀번호가 변경되었습니다.");
+  };
+
+  const adminKey = adminLoggedIn ? `${adminLoggedIn}:${localStorage.getItem(`admin_pw_${adminLoggedIn}`) ?? "0000"}` : "";
+  const adminClient = useMemo(() => adminKey ? createAdminClient(adminKey) : null, [adminKey]);
+
+  if (!adminLoggedIn) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="flex flex-col items-center gap-6 p-8 max-w-md w-full">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="p-4 bg-primary/10 rounded-full"><Shield className="h-10 w-10 text-primary" /></div>
+            <h1 className="text-2xl font-bold">관리자 로그인 필요</h1>
+            <p className="text-muted-foreground text-sm">관리자 페이지에 접근하려면 로그인이 필요합니다.</p>
+          </div>
+          <form onSubmit={handleAdminLogin} className="w-full flex flex-col gap-3">
+            <div className="flex flex-col gap-1"><label className="text-sm font-medium">ID</label><Input type="text" placeholder="관리자 ID를 입력하세요" value={adminId} onChange={e => setAdminId(e.target.value)} autoComplete="username" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm font-medium">Password</label><Input type="password" placeholder="비밀번호를 입력하세요" value={adminPw} onChange={e => setAdminPw(e.target.value)} autoComplete="current-password" /></div>
+            {adminLoginError && <p className="text-sm text-destructive">{adminLoginError}</p>}
+            <Button type="submit" size="lg" className="w-full mt-1">OK</Button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  const menus = [
+    { key: "dashboard", label: "Dashboard", icon: Activity },
+    { key: "members", label: "회원 관리", icon: Users },
+    { key: "game", label: "Game", icon: Gamepad2 },
+    { key: "main-banner", label: "Main Banner", icon: Image },
+    { key: "news", label: "News", icon: Search },
+    { key: "media", label: "Media", icon: UserCheck },
+    { key: "products", label: "인앱상품", icon: ShoppingCart },
+    { key: "payments", label: "결제", icon: CreditCard },
+    { key: "stats", label: "통계", icon: BarChart2 },
+    { key: "coupons", label: "쿠폰 관리", icon: Tag },
+    { key: "admin-accounts", label: "관리자 관리", icon: UserCog },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* 헤더 */}
+      <header className="border-b bg-card sticky top-0 z-40">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg"><Shield className="h-5 w-5 text-primary" /></div>
+            <div><h1 className="font-bold text-lg leading-none">관리자 페이지</h1><p className="text-xs text-muted-foreground mt-0.5">Ragnarok Universe Admin</p></div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
+              <Avatar className="h-7 w-7"><AvatarFallback className="text-xs bg-primary/10 text-primary">{adminLoggedIn?.charAt(0).toUpperCase() ?? "A"}</AvatarFallback></Avatar>
+              <span className="font-medium text-foreground">{adminLoggedIn}</span>
+              <Badge className="bg-amber-500 hover:bg-amber-600 text-xs">관리자</Badge>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => setShowChangePw(true)} className="text-muted-foreground text-xs">PW 변경</Button>
+            <Button variant="ghost" size="sm" onClick={() => (window.location.href = "/")} className="text-muted-foreground">홈으로</Button>
+            <Button variant="ghost" size="sm" onClick={handleAdminLogout} className="text-muted-foreground"><LogOut className="h-4 w-4" /></Button>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex min-h-[calc(100vh-64px)]">
+        {/* 사이드바 */}
+        <aside className="w-60 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 flex flex-col shadow-sm">
+          <div className="px-4 pt-5 pb-2"><p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Main Menu</p></div>
+          <nav className="flex flex-col px-2 pb-4 gap-0.5 overflow-y-auto flex-1">
+            {menus.map(m => <MenuItem key={m.key} id={m.key} label={m.label} icon={m.icon} active={activeMenu === m.key} onClick={() => setActiveMenu(m.key)} />)}
+            {/* 운영정책 서브메뉴 */}
+            <button onClick={() => setActiveMenu(activeMenu.startsWith("policy") ? "dashboard" : "policy-terms")} className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full ${activeMenu.startsWith("policy") ? "bg-primary text-white shadow-sm" : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"}`}>
+              <div className="flex items-center gap-3"><Shield className={`h-4 w-4 ${activeMenu.startsWith("policy") ? "text-white" : "text-slate-400"}`} />운영정책</div>
+              <ChevronRight className={`h-3.5 w-3.5 transition-transform opacity-50 ${activeMenu.startsWith("policy") ? "rotate-90 text-white" : ""}`} />
+            </button>
+            {activeMenu.startsWith("policy") && (
+              <div className="ml-4 flex flex-col gap-0.5 border-l-2 border-primary/30 pl-3">
+                {[{ key: "policy-terms", label: "Terms of Service" }, { key: "policy-privacy", label: "Privacy Policy" }, { key: "policy-settings", label: "Privacy Settings" }].map(sub => (
+                  <button key={sub.key} onClick={() => setActiveMenu(sub.key)} className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-xs font-medium transition-colors text-left w-full ${activeMenu === sub.key ? "text-primary font-semibold" : "text-slate-500 dark:text-slate-400 hover:text-slate-800"}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${activeMenu === sub.key ? "bg-primary" : "bg-slate-300"}`} />{sub.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </nav>
+          <div className="p-3 border-t border-slate-200 dark:border-slate-700">
+            <button onClick={handleAdminLogout} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full">
+              <LogOut className="h-4 w-4" />로그아웃
+            </button>
+          </div>
+        </aside>
+
+        {/* 메인 콘텐츠 */}
+        <main className="flex-1 px-4 sm:px-6 py-8 overflow-auto">
+          {activeMenu === "dashboard" && <DashboardSection adminClient={adminClient} />}
+          {activeMenu === "members" && <MembersSection adminClient={adminClient} />}
+          {activeMenu === "game" && <GameSection adminClient={adminClient} />}
+          {activeMenu === "main-banner" && <BannerSection adminClient={adminClient} />}
+          {activeMenu === "news" && <NewsSection adminClient={adminClient} />}
+          {activeMenu === "media" && <MediaSection adminClient={adminClient} />}
+          {activeMenu === "products" && <ProductsSection adminClient={adminClient} />}
+          {activeMenu === "payments" && <PaymentsSection adminClient={adminClient} />}
+          {activeMenu === "stats" && <StatsSection adminClient={adminClient} />}
+          {activeMenu === "coupons" && <CouponsSection adminClient={adminClient} />}
+          {activeMenu === "admin-accounts" && <AdminAccountsSection adminClient={adminClient} />}
+          {activeMenu.startsWith("policy") && <PolicySection activeMenu={activeMenu} />}
+        </main>
+      </div>
+
+      {/* 비밀번호 변경 다이얼로그 */}
+      <Dialog open={showChangePw} onOpenChange={setShowChangePw}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Password 변경</DialogTitle><DialogDescription>{adminLoggedIn} 계정의 비밀번호를 변경합니다.</DialogDescription></DialogHeader>
+          <form onSubmit={handleChangePw} className="flex flex-col gap-3 py-2">
+            <div className="flex flex-col gap-1"><label className="text-sm font-medium">새 Password</label><Input type="password" placeholder="새 비밀번호 (4자 이상)" value={newPw} onChange={e => setNewPw(e.target.value)} /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm font-medium">비밀번호 확인</label><Input type="password" placeholder="비밀번호 다시 입력" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} /></div>
+            {changePwError && <p className="text-sm text-destructive">{changePwError}</p>}
+            <div className="flex gap-2 mt-2"><Button type="submit">변경</Button><Button type="button" variant="ghost" onClick={() => { setShowChangePw(false); setNewPw(""); setConfirmPw(""); setChangePwError(""); }}>취소</Button></div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

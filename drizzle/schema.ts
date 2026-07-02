@@ -162,6 +162,21 @@ export const admins = mysqlTable("admins", {
 });
 export type Admin = typeof admins.$inferSelect;
 
+/** Games table */
+export const games = mysqlTable("games", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  imageUrl: text("imageUrl"),
+  genre: varchar("genre", { length: 128 }),
+  platform: varchar("platform", { length: 128 }),
+  status: mysqlEnum("status", ["active", "beta", "maintenance", "inactive"]).default("active").notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Game = typeof games.$inferSelect;
+
 /** Statistics event log */
 export const statsEvents = mysqlTable("statsEvents", {
   id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
