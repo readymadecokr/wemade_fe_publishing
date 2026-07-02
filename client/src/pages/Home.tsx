@@ -300,7 +300,7 @@ export default function Home() {
 
 
         {/* GAME INFO SECTION */}
-        <section id="game-info" className="py-0 bg-background border-b border-border">
+        <section id="game-info" className="py-0 bg-background">
           <div className="container">
             {/* Header */}
             <div className="mb-12">
