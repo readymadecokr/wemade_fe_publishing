@@ -463,7 +463,7 @@ function MediaSection() {
         const embedUrl = getYoutubeEmbedUrl(item.youtubeUrl);
         if (!embedUrl) return null;
         return (
-          <div key={item.id} style={{ paddingTop: '30px' }}>
+          <div key={item.id} style={{ paddingTop: '50px' }}>
             <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight">Media</h3>
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
