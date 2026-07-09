@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import SignInPanel from "@/components/SignInPanel";
+import { TermsContent, PrivacyContent } from "@/components/PolicyContent";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -63,6 +64,11 @@ export default function Login() {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showAgeModal, setShowAgeModal] = useState(false);
   const [showMarketingModal, setShowMarketingModal] = useState(false);
+
+  // California CCPA States
+  const [showCaliforniaModal, setShowCaliforniaModal] = useState(false);
+  const [isCalifornia, setIsCalifornia] = useState(false);
+  const [zipCode, setZipCode] = useState("");
 
   // Handle Social Login (Google 우선 진행)
   const handleSocialClick = (provider: "Google" | "Apple" | "Facebook") => {
@@ -326,14 +332,13 @@ export default function Login() {
                           (Required) I acknowledge that I have read and agree to the Terms of Service.
                         </Label>
                       </div>
-                      <a
-                        href="https://raguniverse-izcifhmz.manus.space/terms-of-service"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => setShowTermsModal(true)}
                         className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline"
                       >
                         Read more
-                      </a>
+                      </button>
                     </div>
 
                     {/* Privacy Policy */}
@@ -349,17 +354,51 @@ export default function Login() {
                           (Required) I acknowledge that I have read and understood the Privacy Policy.
                         </Label>
                       </div>
-                      <a
-                        href="https://raguniverse-izcifhmz.manus.space/privacy-policy"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => setShowMarketingModal(true)}
                         className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline"
                       >
                         Read more
-                      </a>
+                      </button>
                     </div>
                   </div>
 
+                {/* California CCPA */}
+                <div className="flex flex-col gap-3 mt-2">
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      id="isCalifornia"
+                      checked={isCalifornia}
+                      onCheckedChange={(checked) => setIsCalifornia(!!checked)}
+                      className="border-white/20 data-[state=checked]:bg-primary"
+                    />
+                    <Label htmlFor="isCalifornia" className="text-xs text-slate-300 cursor-pointer">
+                      Are you a resident of California, US?
+                    </Label>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Label className="text-xs text-slate-400">Zip code</Label>
+                    <Input
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value)}
+                      placeholder=""
+                      className="bg-white/5 border-white/10 text-white text-xs h-9"
+                      maxLength={10}
+                    />
+                  </div>
+                  <p className="text-xs text-slate-400">
+                    Please check{" "}
+                    <button
+                      type="button"
+                      onClick={() => setShowCaliforniaModal(true)}
+                      className="text-blue-400 hover:text-blue-300 underline"
+                    >
+                      California Privacy Statement
+                    </button>
+                    .
+                  </p>
+                </div>
 
                 </div>
 
@@ -439,7 +478,7 @@ export default function Login() {
                           (Required) I acknowledge that I have read and agree to the Terms of Service.
                         </Label>
                       </div>
-                      <a href="https://raguniverse-izcifhmz.manus.space/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline">Read more</a>
+                      <button type="button" onClick={() => setShowTermsModal(true)} className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline">Read more</button>
                     </div>
 
                     {/* Privacy */}
@@ -455,9 +494,46 @@ export default function Login() {
                           (Required) I acknowledge that I have read and understood the Privacy Policy.
                         </Label>
                       </div>
-                      <a href="https://raguniverse-izcifhmz.manus.space/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline">Read more</a>
+                      <button type="button" onClick={() => setShowMarketingModal(true)} className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline">Read more</button>
                     </div>
                   </div>
+
+                {/* California CCPA */}
+                <div className="flex flex-col gap-3 mt-2">
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      id="isCaliforniaGuest"
+                      checked={isCalifornia}
+                      onCheckedChange={(checked) => setIsCalifornia(!!checked)}
+                      className="border-white/20 data-[state=checked]:bg-primary"
+                    />
+                    <Label htmlFor="isCaliforniaGuest" className="text-xs text-slate-300 cursor-pointer">
+                      Are you a resident of California, US?
+                    </Label>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Label className="text-xs text-slate-400">Zip code</Label>
+                    <Input
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value)}
+                      placeholder=""
+                      className="bg-white/5 border-white/10 text-white text-xs h-9"
+                      maxLength={10}
+                    />
+                  </div>
+                  <p className="text-xs text-slate-400">
+                    Please check{" "}
+                    <button
+                      type="button"
+                      onClick={() => setShowCaliforniaModal(true)}
+                      className="text-blue-400 hover:text-blue-300 underline"
+                    >
+                      California Privacy Statement
+                    </button>
+                    .
+                  </p>
+                </div>
+
                 </div>
 
                 <div className="flex gap-3 mt-2">
@@ -589,77 +665,20 @@ export default function Login() {
       {/* Terms Modal */}
       {showTermsModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-white/10">
-            <div className="sticky top-0 bg-slate-900 border-b border-white/10 p-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">Terms of Service</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-slate-200 dark:border-white/10">
+            <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 p-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Terms of Service</h2>
               <button
                 onClick={() => setShowTermsModal(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
               >
                 <X size={24} />
               </button>
             </div>
-            <div className="p-6 text-slate-300 text-sm space-y-5">
-              <p className="text-slate-400 text-xs">Last updated: May 24, 2018</p>
+            <div className="p-6 text-slate-300 text-sm">
+              <p className="text-slate-400 dark:text-slate-500 text-xs mb-4">Effective Date: July 1, 2026</p>
+              <TermsContent />
 
-              <div className="bg-blue-500/10 border-l-4 border-blue-500 p-4 rounded">
-                <p className="font-semibold text-white mb-1">Accepting the Terms</p>
-                <p className="text-xs text-slate-300">If you reside outside of the Republic of Korea, the terms of this agreement govern the relationship between you and Wemade Connect regarding your play or use of, or participation in, Wemade Connect mobile games and related services.</p>
-              </div>
-
-              <div>
-                <p className="font-bold text-white mb-2">1. Parties</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">1.1.</strong> These Terms create a legally binding agreement between you ("User" or "you") and Wemade Connect in relation to the Services.</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">1.2.</strong> Natural persons as opposed to any kinds of legal entities shall have the right to create an account. By accessing, using and/or submitting content or messages to or through our Services, you represent and agree that you have the legal capacity to agree to accept the Terms of Service in the jurisdiction where you reside.</p>
-                <p className="text-xs text-slate-300"><strong className="text-slate-200">1.3.</strong> You agree to comply with the Terms of Service on behalf of yourself and, at your discretion, any minor children for whom you are the parent or legal guardian and whom you have authorized to use our Services using your account.</p>
-              </div>
-
-              <div>
-                <p className="font-bold text-white mb-2">2. About Accessing and Using Our Services</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">2.1 Limited License:</strong> Subject to your agreement and complete compliance with the Terms of Service, we grant you a non-exclusive, non-transferable, non-sublicensable, revocable limited license to access and use our Services for your own personal and non-commercial use.</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">2.2 Revocation of Limited License:</strong> We reserve the right to revoke the limited license granted to you in our sole and absolute discretion. We may also limit or terminate your right to access or use our Services or part thereof, maintain or delete your account and any items associated therewith, including but not limited to any Virtual Money or Virtual Goods, without any liability to you.</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">2.3 System Outage:</strong> There may be times when our Services or any part thereof are not available for technical or maintenance related reasons. You agree that Wemade Connect has no responsibility and is not liable for unavailability of the Services or any loss caused by such system outages.</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">2.4 Game Rules:</strong> The specific game rules, scoring rules, controls and guidelines for each Service form part of the Terms of Service and you agree that you shall comply with them.</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">2.5 Third Party Charges:</strong> You are responsible for the internet connection and/or mobile charges that you may incur for playing the Games or using the Services. We are not responsible or liable to you for any credit card or bank-related charges and fees related to your transactions.</p>
-                <p className="text-xs text-slate-300"><strong className="text-slate-200">2.6 Equipment/Internet:</strong> You are responsible for obtaining and maintaining your device, operating system, data connection or network environment, and any services necessary for using the Service under your own responsibility and at your own expense.</p>
-              </div>
-
-              <div>
-                <p className="font-bold text-white mb-2">3. Accounts</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">3.1 Guest Account:</strong> If you use the Services without creating a Wemade Connect account, we will create and assign to your device an identifier that is similar to an account number ("Guest Accounts"). Please note that you may not receive customer support or use Virtual Money or Virtual Goods if you change your mobile device without creating a Wemade Connect account.</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">3.2 SNS Account:</strong> You may allow our Services to interact with a third party social network or platform. If you choose to connect through a third-party social network such as Facebook, we may collect personal information from your profile on such third-party social networks, such as your name, username, and photograph.</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">3.3 Responsibility of Account User:</strong> You are solely and fully responsible for keeping your login details confidential and all uses of your account. You may not use anyone else's account or permit others to use your account at any time. You acknowledge and agree to accept full responsibility for all fees and purchases made through your account.</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">3.4 Termination of Inactive Account:</strong> We reserve the right to terminate your account without any notice if your account has not been accessed for more than 1 year since your last accessed time. Any Virtual Money and/or Virtual Goods associated with the terminated account will also be deleted, and no refund will be offered.</p>
-                <p className="text-xs text-slate-300"><strong className="text-slate-200">3.5 Effect of Account Termination:</strong> You understand that if you delete your account, or if we terminate and/or delete your account, you may lose access to any data previously associated with your account.</p>
-              </div>
-
-              <div>
-                <p className="font-bold text-white mb-2">4. Virtual Goods and Virtual Money</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">4.1:</strong> Our Services may include fictional currencies such as coins, gold coins and points ("Virtual Money") and virtual items or services for use with our Services ("Virtual Goods"). You can buy Virtual Money from us for real money if you are a legal adult in your country of residence.</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">4.2:</strong> You do not own Virtual Goods or Virtual Money but instead you purchase a limited personal revocable license to use Virtual Goods or Virtual Money exclusively within the Services. Virtual Money and Virtual Goods have no cash value and can never be exchanged for real money, goods or services from us or anyone else.</p>
-                <p className="text-xs text-slate-300 mb-2"><strong className="text-slate-200">4.3:</strong> You agree that all sales of Virtual Money and Virtual Goods are final and that we will not refund any transaction once it has been made. A license to use Virtual Goods or Virtual Money is granted immediately when your purchase is complete.</p>
-                <p className="text-xs text-slate-300"><strong className="text-slate-200">4.4:</strong> We reserve the right to control, regulate, change or remove any Virtual Money or Virtual Goods in our sole discretion and without any liability to you.</p>
-              </div>
-
-              <div>
-                <p className="font-bold text-white mb-2">Eligibility</p>
-                <p className="text-xs text-slate-300">By agreeing with these Terms, you represent that you are thirteen (13) years of age or older. If you are a minor, you represent that your legal guardian has reviewed and agreed to these Terms. Wemade Connect may amend any portion of these Terms at any time by posting or displaying the amended Terms within and/or on the Games, or any of the Websites.</p>
-              </div>
-
-              <div className="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 rounded">
-                <p className="text-xs text-slate-300"><strong className="text-yellow-300">Important:</strong> By downloading or playing the Game, accessing and/or using the Services, and/or creating a Wemade Connect account, you accept and agree to be bound by these Terms of Service, the Privacy Policy, and Wemade Connect's community standards.</p>
-              </div>
-
-              <div className="pt-4 border-t border-white/10">
-                <a
-                  href="https://raguniverse-izcifhmz.manus.space/terms-of-service"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 underline text-xs break-all"
-                >
-                  View full Terms of Service page →
-                </a>
-              </div>
             </div>
           </div>
         </div>
@@ -668,12 +687,12 @@ export default function Login() {
       {/* Age Verification Modal */}
       {showAgeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-white/10">
-            <div className="sticky top-0 bg-slate-900 border-b border-white/10 p-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">Age 20+ Verification</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-slate-200 dark:border-white/10">
+            <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 p-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Age 20+ Verification</h2>
               <button
                 onClick={() => setShowAgeModal(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
               >
                 <X size={24} />
               </button>
@@ -700,31 +719,39 @@ export default function Login() {
       {/* Marketing Information Modal */}
       {showMarketingModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-white/10">
-            <div className="sticky top-0 bg-slate-900 border-b border-white/10 p-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">Marketing Information</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-slate-200 dark:border-white/10">
+            <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 p-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Privacy Policy</h2>
               <button
                 onClick={() => setShowMarketingModal(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
               >
                 <X size={24} />
               </button>
             </div>
-            <div className="p-6 text-slate-300 text-sm space-y-4">
-              <p>This is an optional service. You can change your preference anytime in your account settings.</p>
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded p-4 text-blue-200">
-                <p className="font-semibold mb-2">What You'll Receive</p>
-                <ul className="list-disc list-inside space-y-2 text-xs">
-                  <li>Exclusive event announcements and special promotions</li>
-                  <li>Game updates and new content releases</li>
-                  <li>Seasonal events and limited-time offers</li>
-                  <li>Community news and developer updates</li>
-                </ul>
-              </div>
-              <div className="mt-4 space-y-2 text-xs">
-                <p className="font-semibold text-white">Your Privacy</p>
-                <p>We respect your privacy. Your email will only be used for marketing communications related to Ragnarok Universe. You can unsubscribe at any time.</p>
-              </div>
+            <div className="p-6 text-slate-300 text-sm">
+              <p className="text-slate-400 dark:text-slate-500 text-xs mb-4">Effective Date: July 1, 2026</p>
+              <PrivacyContent />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* California Privacy Statement Modal */}
+      {showCaliforniaModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-slate-200 dark:border-white/10">
+            <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 p-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">California Privacy Statement</h2>
+              <button
+                onClick={() => setShowCaliforniaModal(false)}
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-6 text-slate-700 dark:text-slate-300 text-sm min-h-[200px]">
+              {/* 내용 공란 */}
             </div>
           </div>
         </div>
