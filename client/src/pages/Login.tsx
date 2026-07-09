@@ -64,6 +64,10 @@ export default function Login() {
   const [showAgeModal, setShowAgeModal] = useState(false);
   const [showMarketingModal, setShowMarketingModal] = useState(false);
 
+  // California CCPA States
+  const [isCalifornia, setIsCalifornia] = useState(false);
+  const [zipCode, setZipCode] = useState("");
+
   // Handle Social Login (Google 우선 진행)
   const handleSocialClick = (provider: "Google" | "Apple" | "Facebook") => {
     setSocialProvider(provider);
@@ -360,6 +364,44 @@ export default function Login() {
                     </div>
                   </div>
 
+                {/* California CCPA */}
+                <div className="flex flex-col gap-3 mt-2">
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      id="isCalifornia"
+                      checked={isCalifornia}
+                      onCheckedChange={(checked) => setIsCalifornia(!!checked)}
+                      className="border-white/20 data-[state=checked]:bg-primary"
+                    />
+                    <Label htmlFor="isCalifornia" className="text-xs text-slate-300 cursor-pointer">
+                      Are you a resident of California, US?
+                    </Label>
+                  </div>
+                  {isCalifornia && (
+                    <div className="flex flex-col gap-1 ml-6">
+                      <Label className="text-xs text-slate-400">Zip code</Label>
+                      <Input
+                        value={zipCode}
+                        onChange={(e) => setZipCode(e.target.value)}
+                        placeholder=""
+                        className="bg-white/5 border-white/10 text-white text-xs h-9"
+                        maxLength={10}
+                      />
+                    </div>
+                  )}
+                  <p className="text-xs text-slate-400">
+                    Please check{" "}
+                    <a
+                      href="https://raguniverse-izcifhmz.manus.space/privacy-policy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:text-blue-300 underline"
+                    >
+                      California Privacy Statement
+                    </a>
+                    .
+                  </p>
+                </div>
 
                 </div>
 
@@ -458,6 +500,46 @@ export default function Login() {
                       <a href="https://raguniverse-izcifhmz.manus.space/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline">Read more</a>
                     </div>
                   </div>
+
+                {/* California CCPA */}
+                <div className="flex flex-col gap-3 mt-2">
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      id="isCaliforniaGuest"
+                      checked={isCalifornia}
+                      onCheckedChange={(checked) => setIsCalifornia(!!checked)}
+                      className="border-white/20 data-[state=checked]:bg-primary"
+                    />
+                    <Label htmlFor="isCaliforniaGuest" className="text-xs text-slate-300 cursor-pointer">
+                      Are you a resident of California, US?
+                    </Label>
+                  </div>
+                  {isCalifornia && (
+                    <div className="flex flex-col gap-1 ml-6">
+                      <Label className="text-xs text-slate-400">Zip code</Label>
+                      <Input
+                        value={zipCode}
+                        onChange={(e) => setZipCode(e.target.value)}
+                        placeholder=""
+                        className="bg-white/5 border-white/10 text-white text-xs h-9"
+                        maxLength={10}
+                      />
+                    </div>
+                  )}
+                  <p className="text-xs text-slate-400">
+                    Please check{" "}
+                    <a
+                      href="https://raguniverse-izcifhmz.manus.space/privacy-policy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:text-blue-300 underline"
+                    >
+                      California Privacy Statement
+                    </a>
+                    .
+                  </p>
+                </div>
+
                 </div>
 
                 <div className="flex gap-3 mt-2">
