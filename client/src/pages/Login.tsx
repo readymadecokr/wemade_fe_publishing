@@ -377,18 +377,16 @@ export default function Login() {
                       Are you a resident of California, US?
                     </Label>
                   </div>
-                  {isCalifornia && (
-                    <div className="flex flex-col gap-1 ml-6">
-                      <Label className="text-xs text-slate-400">Zip code</Label>
-                      <Input
-                        value={zipCode}
-                        onChange={(e) => setZipCode(e.target.value)}
-                        placeholder=""
-                        className="bg-white/5 border-white/10 text-white text-xs h-9"
-                        maxLength={10}
-                      />
-                    </div>
-                  )}
+                  <div className="flex flex-col gap-1">
+                    <Label className="text-xs text-slate-400">Zip code</Label>
+                    <Input
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value)}
+                      placeholder=""
+                      className="bg-white/5 border-white/10 text-white text-xs h-9"
+                      maxLength={10}
+                    />
+                  </div>
                   <p className="text-xs text-slate-400">
                     Please check{" "}
                     <a
@@ -514,18 +512,16 @@ export default function Login() {
                       Are you a resident of California, US?
                     </Label>
                   </div>
-                  {isCalifornia && (
-                    <div className="flex flex-col gap-1 ml-6">
-                      <Label className="text-xs text-slate-400">Zip code</Label>
-                      <Input
-                        value={zipCode}
-                        onChange={(e) => setZipCode(e.target.value)}
-                        placeholder=""
-                        className="bg-white/5 border-white/10 text-white text-xs h-9"
-                        maxLength={10}
-                      />
-                    </div>
-                  )}
+                  <div className="flex flex-col gap-1">
+                    <Label className="text-xs text-slate-400">Zip code</Label>
+                    <Input
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value)}
+                      placeholder=""
+                      className="bg-white/5 border-white/10 text-white text-xs h-9"
+                      maxLength={10}
+                    />
+                  </div>
                   <p className="text-xs text-slate-400">
                     Please check{" "}
                     <a
