@@ -666,18 +666,18 @@ export default function Login() {
       {/* Terms Modal */}
       {showTermsModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-slate-200">
-            <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">Terms of Service</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-slate-200 dark:border-white/10">
+            <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 p-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Terms of Service</h2>
               <button
                 onClick={() => setShowTermsModal(false)}
-                className="text-slate-400 hover:text-slate-700"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
               >
                 <X size={24} />
               </button>
             </div>
             <div className="p-6 text-slate-300 text-sm">
-              <p className="text-slate-400 text-xs mb-4">Effective Date: July 1, 2026</p>
+              <p className="text-slate-400 dark:text-slate-500 text-xs mb-4">Effective Date: July 1, 2026</p>
               <TermsContent />
 
             </div>
@@ -688,12 +688,12 @@ export default function Login() {
       {/* Age Verification Modal */}
       {showAgeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-slate-200">
-            <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">Age 20+ Verification</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-slate-200 dark:border-white/10">
+            <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 p-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Age 20+ Verification</h2>
               <button
                 onClick={() => setShowAgeModal(false)}
-                className="text-slate-400 hover:text-slate-700"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
               >
                 <X size={24} />
               </button>
@@ -720,18 +720,18 @@ export default function Login() {
       {/* Marketing Information Modal */}
       {showMarketingModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-slate-200">
-            <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">Privacy Policy</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-slate-200 dark:border-white/10">
+            <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 p-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Privacy Policy</h2>
               <button
                 onClick={() => setShowMarketingModal(false)}
-                className="text-slate-400 hover:text-slate-700"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
               >
                 <X size={24} />
               </button>
             </div>
             <div className="p-6 text-slate-300 text-sm">
-              <p className="text-slate-400 text-xs mb-4">Effective Date: July 1, 2026</p>
+              <p className="text-slate-400 dark:text-slate-500 text-xs mb-4">Effective Date: July 1, 2026</p>
               <PrivacyContent />
             </div>
           </div>
