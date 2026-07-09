@@ -330,14 +330,13 @@ export default function Login() {
                           (Required) I acknowledge that I have read and agree to the Terms of Service.
                         </Label>
                       </div>
-                      <a
-                        href="https://raguniverse-izcifhmz.manus.space/terms-of-service"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => setShowTermsModal(true)}
                         className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline"
                       >
                         Read more
-                      </a>
+                      </button>
                     </div>
 
                     {/* Privacy Policy */}
@@ -353,14 +352,13 @@ export default function Login() {
                           (Required) I acknowledge that I have read and understood the Privacy Policy.
                         </Label>
                       </div>
-                      <a
-                        href="https://raguniverse-izcifhmz.manus.space/privacy-policy"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => setShowMarketingModal(true)}
                         className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline"
                       >
                         Read more
-                      </a>
+                      </button>
                     </div>
                   </div>
 
@@ -479,7 +477,7 @@ export default function Login() {
                           (Required) I acknowledge that I have read and agree to the Terms of Service.
                         </Label>
                       </div>
-                      <a href="https://raguniverse-izcifhmz.manus.space/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline">Read more</a>
+                      <button type="button" onClick={() => setShowTermsModal(true)} className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline">Read more</button>
                     </div>
 
                     {/* Privacy */}
@@ -495,7 +493,7 @@ export default function Login() {
                           (Required) I acknowledge that I have read and understood the Privacy Policy.
                         </Label>
                       </div>
-                      <a href="https://raguniverse-izcifhmz.manus.space/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline">Read more</a>
+                      <button type="button" onClick={() => setShowMarketingModal(true)} className="text-[10px] text-blue-400 hover:text-blue-300 font-semibold whitespace-nowrap ml-2 underline">Read more</button>
                     </div>
                   </div>
 
@@ -780,7 +778,7 @@ export default function Login() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-white/10">
             <div className="sticky top-0 bg-slate-900 border-b border-white/10 p-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">Marketing Information</h2>
+              <h2 className="text-xl font-bold text-white">Privacy Policy</h2>
               <button
                 onClick={() => setShowMarketingModal(false)}
                 className="text-slate-400 hover:text-white"
@@ -789,19 +787,33 @@ export default function Login() {
               </button>
             </div>
             <div className="p-6 text-slate-300 text-sm space-y-4">
-              <p>This is an optional service. You can change your preference anytime in your account settings.</p>
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded p-4 text-blue-200">
-                <p className="font-semibold mb-2">What You'll Receive</p>
-                <ul className="list-disc list-inside space-y-2 text-xs">
-                  <li>Exclusive event announcements and special promotions</li>
-                  <li>Game updates and new content releases</li>
-                  <li>Seasonal events and limited-time offers</li>
-                  <li>Community news and developer updates</li>
-                </ul>
+              <p className="text-slate-400 text-xs">Effective Date: July 1, 2026</p>
+              <p className="text-xs">Gravity Co., Ltd. ("Company," "we", "us" or "our") maintains this Privacy Policy that summarizes our policies and processes on how we collect, use, disclose, transfer and store your personal information.</p>
+              <div>
+                <p className="font-bold text-white mb-2">1. Collecting Personal Information</p>
+                <p className="text-xs text-slate-300">Our primary goal in collecting the information described below is to provide you with a customized experience on our Service and to deliver better service, products, and more relevant content to our customers.</p>
               </div>
-              <div className="mt-4 space-y-2 text-xs">
-                <p className="font-semibold text-white">Your Privacy</p>
-                <p>We respect your privacy. Your email will only be used for marketing communications related to Ragnarok Universe. You can unsubscribe at any time.</p>
+              <div>
+                <p className="font-bold text-white mb-2">2. Use, Disclosure and Transfer</p>
+                <p className="text-xs text-slate-300">Unless otherwise described in this Privacy Policy, we will not use or disclose any personal information collected from you without your consent.</p>
+              </div>
+              <div>
+                <p className="font-bold text-white mb-2">3. Storage and Security</p>
+                <p className="text-xs text-slate-300">We employ reasonable measures to protect the security of information we collect from you. Such information is housed in secure databases located in South Korea and/or other countries.</p>
+              </div>
+              <div>
+                <p className="font-bold text-white mb-2">4. Additional Privacy Policy Terms</p>
+                <p className="text-xs text-slate-300">If you have questions about this Privacy Policy, please contact us at support@rouv.net</p>
+              </div>
+              <div className="pt-4 border-t border-white/10">
+                <a
+                  href="https://raguniverse-izcifhmz.manus.space/privacy-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 underline text-xs"
+                >
+                  View full Privacy Policy page →
+                </a>
               </div>
             </div>
           </div>
