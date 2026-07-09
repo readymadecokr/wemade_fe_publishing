@@ -66,6 +66,7 @@ export default function Login() {
   const [showMarketingModal, setShowMarketingModal] = useState(false);
 
   // California CCPA States
+  const [showCaliforniaModal, setShowCaliforniaModal] = useState(false);
   const [isCalifornia, setIsCalifornia] = useState(false);
   const [zipCode, setZipCode] = useState("");
 
@@ -388,14 +389,13 @@ export default function Login() {
                   </div>
                   <p className="text-xs text-slate-400">
                     Please check{" "}
-                    <a
-                      href="https://raguniverse-izcifhmz.manus.space/privacy-policy"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => setShowCaliforniaModal(true)}
                       className="text-blue-400 hover:text-blue-300 underline"
                     >
                       California Privacy Statement
-                    </a>
+                    </button>
                     .
                   </p>
                 </div>
@@ -523,14 +523,13 @@ export default function Login() {
                   </div>
                   <p className="text-xs text-slate-400">
                     Please check{" "}
-                    <a
-                      href="https://raguniverse-izcifhmz.manus.space/privacy-policy"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => setShowCaliforniaModal(true)}
                       className="text-blue-400 hover:text-blue-300 underline"
                     >
                       California Privacy Statement
-                    </a>
+                    </button>
                     .
                   </p>
                 </div>
@@ -733,6 +732,26 @@ export default function Login() {
             <div className="p-6 text-slate-300 text-sm">
               <p className="text-slate-400 dark:text-slate-500 text-xs mb-4">Effective Date: July 1, 2026</p>
               <PrivacyContent />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* California Privacy Statement Modal */}
+      {showCaliforniaModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-slate-200 dark:border-white/10">
+            <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 p-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">California Privacy Statement</h2>
+              <button
+                onClick={() => setShowCaliforniaModal(false)}
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-6 text-slate-700 dark:text-slate-300 text-sm min-h-[200px]">
+              {/* 내용 공란 */}
             </div>
           </div>
         </div>
