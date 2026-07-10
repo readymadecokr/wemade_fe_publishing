@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import SignInPanel from "@/components/SignInPanel";
-import { TermsContent, PrivacyContent } from "@/components/PolicyContent";
+import { TermsContent, PrivacyContent, CaliforniaContent } from "@/components/PolicyContent";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -805,8 +805,9 @@ export default function Login() {
                 <X size={24} />
               </button>
             </div>
-            <div className="p-6 text-slate-700 dark:text-slate-300 text-sm min-h-[200px]">
-              {/* 내용 공란 */}
+            <div className="p-6 text-slate-700 dark:text-slate-300 text-sm">
+              <p className="text-slate-400 dark:text-slate-500 text-xs mb-4">Effective Date: July 9, 2026</p>
+              <CaliforniaContent />
             </div>
           </div>
         </div>
