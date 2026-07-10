@@ -402,7 +402,7 @@ export default function Login() {
                         setZipCode(val);
                         setZipCodeError('');
                       }}
-                      placeholder="12345"
+                      placeholder="Enter 5 digits only"
                       className={`bg-white/5 border-white/10 text-white text-xs h-9 ${zipCodeError ? 'border-red-500' : ''}`}
                       maxLength={5}
                       inputMode="numeric"
@@ -545,7 +545,7 @@ export default function Login() {
                         setZipCode(val);
                         setZipCodeError('');
                       }}
-                      placeholder="12345"
+                      placeholder="Enter 5 digits only"
                       className={`bg-white/5 border-white/10 text-white text-xs h-9 ${zipCodeError ? 'border-red-500' : ''}`}
                       maxLength={5}
                       inputMode="numeric"
