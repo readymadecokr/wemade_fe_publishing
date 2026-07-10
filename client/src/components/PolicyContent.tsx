@@ -258,3 +258,200 @@ export function PrivacyContent() {
     </div>
   );
 }
+
+export function CaliforniaContent() {
+  return (
+    <div>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>Privacy Notice for California Residents</strong></p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>(Effective Date: July 1, 2026)</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">This Privacy Notice for California Residents supplements the information contained in our Privacy Policy and applies solely to all visitors, users, and others who use the Service and reside in the State of California (“consumers” or “you”). We adopt this Notice to comply with the California Consumer Privacy Act of 2018 (CCPA) and any terms defined in the CCPA have the same meaning when used in this notice.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Protecting your privacy is important to Gravity, Co., Ltd. and its subsidiaries and affiliates (“Gravity,” “we,” “our,” or “us”) because we know how important it is to you. This Privacy Notice describes the information that we collect through websites that we operate (each, a “Site”), our game publisher networks, crowd-sourcing service, and platforms (each, a “Network”), any mobile and web application of ours (each, an “App”), and chat rooms, blogs, web forums, messaging boards, or other public forums in our Apps and Sites (each, a “Forum”); how we use, disclose, and protect your information; and the choices you can make regarding your information.  The Sites, Networks, Apps, and Forums are referred to herein, collectively, as the “Service.”</p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>1. INFORMATION WE COLLECT</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">We collect information that identifies, relates to, describes, references, is capable of being associated with, or could reasonably be linked, directly or indirectly, with a particular consumer or device (“personal information”).  In particular, through your use of the Service, we have collected the following categories of personal information within the last twelve (12) months:</p>
+      <div className="overflow-x-auto mb-4">
+        <table className="w-full border-collapse text-xs">
+          <tbody>
+            <tr>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Category</th>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Examples</th>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Collected</th>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Identifiers</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">A real name, alias, postal address, unique personal identifier, online identifier, Internet Protocol address, email address, account name, Social Security number, driver's license number, passport number, or other similar identifiers</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Personal information categories listed in Cal. Civ. Code § 1798.80€</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">A name, signature, social security number, physical characteristics or description, address, telephone number, passport number, driver’s license or state identification card number, insurance policy number, education, employment, employment history, bank account number, credit card number, debit card number, or any other financial information, medical information, or health insurance information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Protected classification characteristics under California or federal law</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Age, race, color, ancestry, national origin, citizenship, religion or creed, marital status, medical condition, physical or mental disability, sex (including gender, gender identity, gender expression, pregnancy or childbirth and related medical conditions), sexual orientation, veteran or military status, genetic information (including familial genetic information)</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Commercial information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Records of personal property, products or services purchased, obtained, or considered, or other purchasing or consuming histories or tendencies</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Biometric information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Genetic, physiological, behavioral, and biological characteristics, or activity patterns used to extract a template or other identifier or identifying information, such as, fingerprints, faceprints, and voiceprints, iris or retina scans, keystroke, gait, or other physical patterns, and sleep, health, or exercise data</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Internet or other electronic network activity information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Browsing history, search history, and information on a consumer’s interaction with an Internet Web site, application, or advertisement</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Geolocation data </td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Physical location or movements</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Sensory data</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Audio, electronic, visual, thermal, olfactory, or similar information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Professional or employment-related information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Current or past job history or performance evaluations</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Non-public education information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Education records directly related to a student maintained by an educational institution or party acting on its behalf, such as grades, transcripts, class lists, student schedules, student identification codes, student financial information, or student disciplinary records</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Inferences drawn from any of the information identified above</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Profile reflecting a consumer’s preferences, characteristics, psychological trends, predispositions, behavior, attitudes, intelligence, abilities, and aptitudes</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Personal information does not include:</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Publicly available information from government records;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	De-identified or aggregated consumer information;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Information excluded from CCPA’s scope, like personal information protected by other certain sector-specific federal or California statutes.</p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>2. HOW WE COLLECT PERSONAL INFORMATION</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	We obtain the categories of personal information listed above from the following categories of sources:</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Directly From You: The information you provide while using the Service.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Indirectly From You: We collect certain technical information, like the Internet Protocol address, when you access and use our Service.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Collected and/or Received From Third Parties: We may collect your data from third parties, such as when processing your purchases through our Sites or Apps or when you access our Service through a social networking service (“SNS”).</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Collected Through Mobile Devices: When you use our Apps on your mobile telephone or other mobile device (“Mobile Device”), you are authorizing us to collect, store, use, and/or share, in addition to the information described above, the Mobile Device type; mobile carrier; platform version; navigation, interaction, and engagement information regarding our users; and other information you choose to provide to us.  Also, we receive and store information you provide when you sign up to have Short Message Service (“SMS”) notifications sent directly to your Mobile Device.</p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>3. HOW WE USE PERSONAL INFORMATION</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	We may use the personal information we collect for one or more of the following purposes:</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To fulfill or meet the reason you provided the information;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To provide, support, personalize, and develop our products and services for and through our Service;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To create, maintain and service accounts;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To provide customer service;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To process your requests and payments and fulfill orders and transactions;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To verify consumer information;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To personalize your Site, App, and Forum experience and to deliver content and product and service offerings relevant to your interests, including targeted offers and ads through our Service and via email or text (with your consent, where required by law);</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To provide advertising and marketing services;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To provide analytic services;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To detect and respond to security incidents;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To improve our Service;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	For testing, research, analysis, and product development;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	For auditing related to a current interaction with the user and concurrent transactions, including but not limited to, counting ad impressions to unique visitors, verifying positioning and quality of ad impressions, and auditing compliance with laws and other standards;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To respond to law enforcement requests and as required by applicable law, court order, or governmental regulations;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	As described to you when collecting your personal information or as otherwise set forth in the CCPA;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	To evaluate or conduct a merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some or all of Gravity’s assets, whether as a going concern or as part of bankruptcy, liquidation, or similar proceeding, in which personal information held by Gravity about our Service’s users is among the assets transfers.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Gravity will not collect additional categories of personal information or use the personal information we collected for materially different, unrelated, or incompatible purposes without providing you notice.</p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>4. SHARING PERSONAL INFORMATION</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Gravity may disclose your personal information to a third party for a business purpose.  When we disclose your personal information for a business purpose, we enter a contract that describes the purpose and requires the recipient to keep your personal information confidential and not use it for any purpose except performing the contract. </p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">In the preceding twelve (12) months, we have disclosed the following categories of personal information for a business purpose:</p>
+      <div className="overflow-x-auto mb-4">
+        <table className="w-full border-collapse text-xs">
+          <tbody>
+            <tr>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Category A:</th>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Identifiers</th>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category B:</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Personal information categories listed in Cal. Civ. Code § 1798.80(e)</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category D:</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Commercial information</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category F:</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Internet or other electronic network activity information</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">We disclose your personal information for a business purpose to the following categories of third parties:</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Our affiliates;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Our Partners</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Service providers;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Third parties to whom you or your agents authorize us to disclose your personal information in connection with products or services we provide to you.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">In the preceding twelve (12) months, we have not sold any personal information.</p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>5. DATA SECURITY</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">We have implemented measures designed to secure and safeguard your personal information from accidental loss and from unauthorized access and disclosure.  We maintain physical, electronic, and managerial procedures to limit access to your non-public personal information. </p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Unfortunately, transmission of information via the internet is not completely secure.  Although we take reasonable precautions to protect your personal information, we cannot guarantee the security of your personal information transmitted to us through our Services or other electronic means.  Any electronic transmission of personal information is at your own risk.</p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>6. YOUR RIGHTS AND CHOICES</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">The CCPA provides California residents with specific rights regarding their personal information.  This section describes your CCPA rights and explains how to exercise those rights.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Access to Specific Information and Data Portability Rights</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">You have the right to request that we disclose certain information to you about our collection and use of your personal information over the past twelve (12) months.  Once we receive and confirm your verifiable consumer request, we will disclose to you:</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	The categories of personal information we collected about you;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	The categories of sources for the personal information we collected about you;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Our business or commercial purpose for collecting that personal information;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	The categories of third parties with whom we share that personal information;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	The specific pieces of personal information we collected about you (also called a data portability request);</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	If we sold or disclosed your personal information for a business purpose, two separate lists disclosing: </p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">		o	sales, identifying the personal information categories that each category of recipients purchased; and</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">		o	disclosures for a business purpose, identifying the personal information categories that each category of recipient obtained.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">You have the right to request that we delete any of your personal information that we collected from you and retained, subject to certain exceptions.  Once we receive and confirm your verifiable consumer request, we will delete (and direct our service providers to delete) your personal information from our records, unless an exception applies.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">We may deny your deletion request if retaining the information is necessary for us or our service provider(s) to:</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Complete the transaction for which we collected the personal information, provide a good or service that you requested, take actions reasonably anticipated within the context of our ongoing business relationship with you, or otherwise perform our contract with you;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Detect security incidents, protect against malicious, deceptive, fraudulent, or illegal activity, or prosecute those responsible for such activities;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Debug products to identify and repair errors that impair existing intended functionality;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Exercise free speech, ensure the right of another consumer to exercise their free speech rights, or exercise another right provided for by law;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Comply with the California Electronic Communications Privacy Act (Cal. Penal Code § 1546 et. seq.);</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Engage in public or peer-reviewed scientific, historical, or statistical research in the public interest that adheres to all other applicable ethics and privacy laws, when the information’s deletion may likely render impossible or seriously impair the research’s achievement, if you previously provided informed consent;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Enable solely internal uses that are reasonably aligned with consumer expectations based on your relationship with us;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Comply with a legal obligation;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Make other internal and lawful uses of that information that are compatible with the context in which you provided it.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Exercising Access, Data Portability, and Deletion Rights</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">To exercise the access, data portability, and deletion rights described above, please submit a verifiable consumer request to us by either:</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Visiting  </p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Emailing us at support@rouv.net</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Only you, or someone legally authorized to act on your behalf, may make a verifiable consumer request related to your personal information.  You may also make a verifiable consumer request on behalf of your minor child. </p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">You may only make a verifiable consumer request for access or data portability twice within a 12-month period.  The verifiable consumer request must:</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Provide sufficient information that allows us to reasonably verify you are the person about whom we collected personal information or an authorized representative;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Describe your request with sufficient detail that allows us to properly understand, evaluate, and respond to it.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">We cannot respond to your request or provide you with personal information if we cannot verify your identity or authority to make the request and confirm the personal information relates to you.  Making a verifiable consumer request does not require you to create an account with us.  However, we do consider requests made through your password protected account sufficiently verified when the request relates to personal information associated with that specific account.  We will use only personal information provided in a verifiable consumer request to verify the requestor’s identity or authority to make the request.</p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>Response Timing and Format</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">We endeavor to respond to a verifiable consumer request within forty-five (45) days of its receipt.  If we require more time (up to 90 days), we will inform you of the reason and extension period in writing.  If you have an account with us, we will deliver our written response to that account.  If you do not have an account with us, we will deliver our written response by mail or electronically, at your option.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Any disclosures we provide will only cover the 12-month period preceding the verifiable consumer request’s receipt.  The response we provide will only cover the 12-month period preceding the verifiable consumer request’s receipt.  The response we provide will also explain the reasons we cannot comply with a request, if applicable.  For data portability requests, we will select a format to provide your personal information that is readily useable and should allow you to transmit the information from one entity to another entity without hindrance.  We do not charge a fee to process or respond to your verifiable consumer request unless it is excessive, repetitive, or manifestly unfounded.  If we determine that the request warrants a fee, we will tell you why we made that decision and provide you with a cost estimate before completing your request.</p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>7. NON-DISCRIMINATION</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">We will not discriminate against you for exercising any of your CCPA rights.  Unless permitted by the CCPA, we will not:</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Deny you goods or service;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Charge you different prices or rates for goods or services, including through granting discounts or other benefits, or imposing penalties;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Provide you a different level or quality of goods or services;</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Suggest that you may receive a different price or rate for goods or services or a different level or quality of goods or services.</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">However, we may offer you certain financial incentives permitted by the CCPA that can result in different prices, rates, or quality levels.  Any CCPA-permitted financial incentive we offer will reasonably relate to your personal information’s value and contain written terms that describe the program’s material aspects.  Participation in a financial incentive program requires your prior opt in consent, which you may revoke at any time.</p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>8. OUR POLICY CONCERNING CHILDREN</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">You must be at least 13 years of age to use our services and we do not knowingly collect any personal information from children under the age of 13 years old. If a child under 13 years old and would like to make use of our services (i.e. download and play the game we are offering) parental/legal guardian approval (i.e. consent) is required. We will take reasonable efforts to ensure we gain approval from a parent/legal guardian by taking the below steps:</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">1.	When the app is downloaded those who are under 13 years old will need to provide a parents/legal guardians email address where required</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">2.	Once sent to us we will send an email asking approval (i.e. parental/legal guardian consent) for someone under 13 to use our services</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">3.	Once we receive approval from a parent/legal guardian for those under 13 years old, they can start making use of our services</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">4.	If a parent/legal guardian rejects approval our services cannot be used</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Gravity Co., Ltd. is not responsible for those who have falsely claimed to have gained parental/legal guardian consent. If we discover a child under 13 years old has not gained parental/legal guardian consent, we will take all reasonable measures to delete their information from our systems which may also result in banning them from using our services again.</p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>9. CHANGES TO OUR PRIVACY NOTICE</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Gravity reserves the right to amend this Privacy Notice at our discretion and at any time.  When we make changes to this privacy notice, we will update the Privacy Notice’s effective date, and notify you via email at the last email address that you provided us and post the updated notice on the Sites.  Your continued use of our Service following the posting of changes constitutes your acceptance of such changes.</p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>10. CONTACT INFORMATION</strong></p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">If you have any questions or comments about this Privacy Notice, the ways in which Gravity collects and uses your information described herein, your choices and rights regarding such use, or wish to exercise your rights under California law, please do not hesitate to contact us at:</p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">•	Visiting https://ragnarok.universe.rouv.net/ </p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">•	Emailing us at support@rouv.net</p>
+    </div>
+  );
+}

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import SignInPanel from "@/components/SignInPanel";
-import { TermsContent, PrivacyContent } from "@/components/PolicyContent";
+import { TermsContent, PrivacyContent, CaliforniaContent } from "@/components/PolicyContent";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -67,8 +67,22 @@ export default function Login() {
 
   // California CCPA States
   const [showCaliforniaModal, setShowCaliforniaModal] = useState(false);
+  const [showInvalidZipModal, setShowInvalidZipModal] = useState(false);
   const [isCalifornia, setIsCalifornia] = useState(false);
   const [zipCode, setZipCode] = useState("");
+  const [zipCodeError, setZipCodeError] = useState("");
+
+  // Zip code 유효성 검사 (숫자 5자리)
+  const validateZipCode = (): boolean => {
+    if (zipCode === "") return true; // 비어있으면 통과 (선택사항)
+    if (!/^\d{5}$/.test(zipCode)) {
+      setZipCodeError("Please enter a valid zip code.");
+      setShowInvalidZipModal(true);
+      return false;
+    }
+    setZipCodeError("");
+    return true;
+  };
 
   // Handle Social Login (Google 우선 진행)
   const handleSocialClick = (provider: "Google" | "Apple" | "Facebook") => {
@@ -114,6 +128,7 @@ export default function Login() {
       toast.error("You must confirm that you are 15 years or older.");
       return;
     }
+    if (!validateZipCode()) return;
     const randomNickname = generateRandomNickname();
     // DB에 게스트 회원 저장
     guestRegisterMutation.mutate(
@@ -155,6 +170,7 @@ export default function Login() {
       toast.error("You must confirm that you are 20 years or older.");
       return;
     }
+    if (!validateZipCode()) return;
 
     // Note: agreeMarketing is optional, no validation needed
     // Note: turnstileVerified is optional, no validation needed
@@ -381,11 +397,20 @@ export default function Login() {
                     <Label className="text-xs text-slate-400">Zip code</Label>
                     <Input
                       value={zipCode}
-                      onChange={(e) => setZipCode(e.target.value)}
-                      placeholder=""
-                      className="bg-white/5 border-white/10 text-white text-xs h-9"
-                      maxLength={10}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 5);
+                        setZipCode(val);
+                        setZipCodeError('');
+                      }}
+                      placeholder="Enter 5 digits only"
+                      className={`bg-white/5 border-white/10 text-white text-xs h-9 ${zipCodeError ? 'border-red-500' : ''}`}
+                      maxLength={5}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                     />
+                    {zipCodeError && (
+                      <p className="text-red-400 text-xs mt-1">{zipCodeError}</p>
+                    )}
                   </div>
                   <p className="text-xs text-slate-400">
                     Please check{" "}
@@ -515,11 +540,20 @@ export default function Login() {
                     <Label className="text-xs text-slate-400">Zip code</Label>
                     <Input
                       value={zipCode}
-                      onChange={(e) => setZipCode(e.target.value)}
-                      placeholder=""
-                      className="bg-white/5 border-white/10 text-white text-xs h-9"
-                      maxLength={10}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 5);
+                        setZipCode(val);
+                        setZipCodeError('');
+                      }}
+                      placeholder="Enter 5 digits only"
+                      className={`bg-white/5 border-white/10 text-white text-xs h-9 ${zipCodeError ? 'border-red-500' : ''}`}
+                      maxLength={5}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                     />
+                    {zipCodeError && (
+                      <p className="text-red-400 text-xs mt-1">{zipCodeError}</p>
+                    )}
                   </div>
                   <p className="text-xs text-slate-400">
                     Please check{" "}
@@ -737,6 +771,27 @@ export default function Login() {
         </div>
       )}
 
+      {/* Invalid Zip Code Modal */}
+      {showInvalidZipModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-sm w-full p-8 flex flex-col items-center gap-4 shadow-2xl">
+            <div className="w-14 h-14 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+              <span className="text-red-500 text-2xl font-bold">!</span>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Invalid Zip Code</h3>
+            <p className="text-center text-slate-600 dark:text-slate-300 text-sm">
+              The zip code you entered is not valid.<br />Please check it and try again.
+            </p>
+            <button
+              onClick={() => setShowInvalidZipModal(false)}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition-colors"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* California Privacy Statement Modal */}
       {showCaliforniaModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -750,8 +805,9 @@ export default function Login() {
                 <X size={24} />
               </button>
             </div>
-            <div className="p-6 text-slate-700 dark:text-slate-300 text-sm min-h-[200px]">
-              {/* 내용 공란 */}
+            <div className="p-6 text-slate-700 dark:text-slate-300 text-sm">
+              <p className="text-slate-400 dark:text-slate-500 text-xs mb-4">Effective Date: July 9, 2026</p>
+              <CaliforniaContent />
             </div>
           </div>
         </div>
