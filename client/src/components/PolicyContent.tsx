@@ -370,8 +370,8 @@ export function CaliforniaContent() {
         <table className="w-full border-collapse text-xs">
           <tbody>
             <tr>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-200 dark:bg-slate-700 font-semibold text-slate-900 dark:text-white">Category A:</th>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-200 dark:bg-slate-700 font-semibold text-slate-900 dark:text-white">Identifiers</th>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Category A:</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Identifiers</td>
             </tr>
             <tr>
               <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Category B:</td>
