@@ -268,6 +268,72 @@ export function CaliforniaContent() {
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Protecting your privacy is important to Gravity, Co., Ltd. and its subsidiaries and affiliates (“Gravity,” “we,” “our,” or “us”) because we know how important it is to you. This Privacy Notice describes the information that we collect through websites that we operate (each, a “Site”), our game publisher networks, crowd-sourcing service, and platforms (each, a “Network”), any mobile and web application of ours (each, an “App”), and chat rooms, blogs, web forums, messaging boards, or other public forums in our Apps and Sites (each, a “Forum”); how we use, disclose, and protect your information; and the choices you can make regarding your information.  The Sites, Networks, Apps, and Forums are referred to herein, collectively, as the “Service.”</p>
       <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>1. INFORMATION WE COLLECT</strong></p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">We collect information that identifies, relates to, describes, references, is capable of being associated with, or could reasonably be linked, directly or indirectly, with a particular consumer or device (“personal information”).  In particular, through your use of the Service, we have collected the following categories of personal information within the last twelve (12) months:</p>
+      <div className="overflow-x-auto mb-4">
+        <table className="w-full border-collapse text-xs">
+          <tbody>
+            <tr>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Category</th>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Examples</th>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Collected</th>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Identifiers</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">A real name, alias, postal address, unique personal identifier, online identifier, Internet Protocol address, email address, account name, Social Security number, driver's license number, passport number, or other similar identifiers</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Personal information categories listed in Cal. Civ. Code § 1798.80€</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">A name, signature, social security number, physical characteristics or description, address, telephone number, passport number, driver’s license or state identification card number, insurance policy number, education, employment, employment history, bank account number, credit card number, debit card number, or any other financial information, medical information, or health insurance information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Protected classification characteristics under California or federal law</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Age, race, color, ancestry, national origin, citizenship, religion or creed, marital status, medical condition, physical or mental disability, sex (including gender, gender identity, gender expression, pregnancy or childbirth and related medical conditions), sexual orientation, veteran or military status, genetic information (including familial genetic information)</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Commercial information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Records of personal property, products or services purchased, obtained, or considered, or other purchasing or consuming histories or tendencies</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Biometric information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Genetic, physiological, behavioral, and biological characteristics, or activity patterns used to extract a template or other identifier or identifying information, such as, fingerprints, faceprints, and voiceprints, iris or retina scans, keystroke, gait, or other physical patterns, and sleep, health, or exercise data</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Internet or other electronic network activity information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Browsing history, search history, and information on a consumer’s interaction with an Internet Web site, application, or advertisement</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Geolocation data </td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Physical location or movements</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Sensory data</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Audio, electronic, visual, thermal, olfactory, or similar information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Professional or employment-related information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Current or past job history or performance evaluations</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Non-public education information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Education records directly related to a student maintained by an educational institution or party acting on its behalf, such as grades, transcripts, class lists, student schedules, student identification codes, student financial information, or student disciplinary records</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Inferences drawn from any of the information identified above</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Profile reflecting a consumer’s preferences, characteristics, psychological trends, predispositions, behavior, attitudes, intelligence, abilities, and aptitudes</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Personal information does not include:</p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Publicly available information from government records;</p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	De-identified or aggregated consumer information;</p>
@@ -300,6 +366,28 @@ export function CaliforniaContent() {
       <p className="text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1" style={{paddingTop: '20px'}}><strong>4. SHARING PERSONAL INFORMATION</strong></p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Gravity may disclose your personal information to a third party for a business purpose.  When we disclose your personal information for a business purpose, we enter a contract that describes the purpose and requires the recipient to keep your personal information confidential and not use it for any purpose except performing the contract. </p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">In the preceding twelve (12) months, we have disclosed the following categories of personal information for a business purpose:</p>
+      <div className="overflow-x-auto mb-4">
+        <table className="w-full border-collapse text-xs">
+          <tbody>
+            <tr>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Category A:</th>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Identifiers</th>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category B:</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Personal information categories listed in Cal. Civ. Code § 1798.80(e)</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category D:</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Commercial information</td>
+            </tr>
+            <tr>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category F:</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Internet or other electronic network activity information</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">We disclose your personal information for a business purpose to the following categories of third parties:</p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Our affiliates;</p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Our Partners</p>
@@ -364,94 +452,6 @@ export function CaliforniaContent() {
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">If you have any questions or comments about this Privacy Notice, the ways in which Gravity collects and uses your information described herein, your choices and rights regarding such use, or wish to exercise your rights under California law, please do not hesitate to contact us at:</p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">•	Visiting https://ragnarok.universe.rouv.net/ </p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">•	Emailing us at support@rouv.net</p>
-      <div className="overflow-x-auto mb-3">
-        <table className="w-full border-collapse text-xs">
-          <tbody>
-            <tr>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">Category</th>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">Examples</th>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">Collected</th>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Identifiers</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">A real name, alias, postal address, unique personal identifier, online identifier, Internet Protocol address, email address, account name, Social Security number, driver's license number, passport number, or other similar identifiers</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Personal information categories listed in Cal. Civ. Code § 1798.80€</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">A name, signature, social security number, physical characteristics or description, address, telephone number, passport number, driver’s license or state identification card number, insurance policy number, education, employment, employment history, bank account number, credit card number, debit card number, or any other financial information, medical information, or health insurance information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Protected classification characteristics under California or federal law</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Age, race, color, ancestry, national origin, citizenship, religion or creed, marital status, medical condition, physical or mental disability, sex (including gender, gender identity, gender expression, pregnancy or childbirth and related medical conditions), sexual orientation, veteran or military status, genetic information (including familial genetic information)</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Commercial information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Records of personal property, products or services purchased, obtained, or considered, or other purchasing or consuming histories or tendencies</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Biometric information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Genetic, physiological, behavioral, and biological characteristics, or activity patterns used to extract a template or other identifier or identifying information, such as, fingerprints, faceprints, and voiceprints, iris or retina scans, keystroke, gait, or other physical patterns, and sleep, health, or exercise data</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Internet or other electronic network activity information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Browsing history, search history, and information on a consumer’s interaction with an Internet Web site, application, or advertisement</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Geolocation data</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Physical location or movements</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Sensory data</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Audio, electronic, visual, thermal, olfactory, or similar information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Professional or employment-related information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Current or past job history or performance evaluations</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Non-public education information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Education records directly related to a student maintained by an educational institution or party acting on its behalf, such as grades, transcripts, class lists, student schedules, student identification codes, student financial information, or student disciplinary records</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Inferences drawn from any of the information identified above</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Profile reflecting a consumer’s preferences, characteristics, psychological trends, predispositions, behavior, attitudes, intelligence, abilities, and aptitudes</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div className="overflow-x-auto mb-3">
-        <table className="w-full border-collapse text-xs">
-          <tbody>
-            <tr>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">Category A:</th>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">Identifiers</th>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category B:</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Personal information categories listed in Cal. Civ. Code § 1798.80(e)</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category D:</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Commercial information</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category F:</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Internet or other electronic network activity information</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }
