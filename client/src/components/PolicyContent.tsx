@@ -272,64 +272,64 @@ export function CaliforniaContent() {
         <table className="w-full border-collapse text-xs">
           <tbody>
             <tr>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Category</th>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Examples</th>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Collected</th>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-200 dark:bg-slate-700 font-semibold text-slate-900 dark:text-white">Category</th>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-200 dark:bg-slate-700 font-semibold text-slate-900 dark:text-white">Examples</th>
+              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-200 dark:bg-slate-700 font-semibold text-slate-900 dark:text-white">Collected</th>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Identifiers</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">A real name, alias, postal address, unique personal identifier, online identifier, Internet Protocol address, email address, account name, Social Security number, driver's license number, passport number, or other similar identifiers</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Identifiers</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">A real name, alias, postal address, unique personal identifier, online identifier, Internet Protocol address, email address, account name, Social Security number, driver's license number, passport number, or other similar identifiers</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">YES</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Personal information categories listed in Cal. Civ. Code § 1798.80€</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">A name, signature, social security number, physical characteristics or description, address, telephone number, passport number, driver’s license or state identification card number, insurance policy number, education, employment, employment history, bank account number, credit card number, debit card number, or any other financial information, medical information, or health insurance information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Personal information categories listed in Cal. Civ. Code § 1798.80€</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">A name, signature, social security number, physical characteristics or description, address, telephone number, passport number, driver’s license or state identification card number, insurance policy number, education, employment, employment history, bank account number, credit card number, debit card number, or any other financial information, medical information, or health insurance information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">YES</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Protected classification characteristics under California or federal law</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Age, race, color, ancestry, national origin, citizenship, religion or creed, marital status, medical condition, physical or mental disability, sex (including gender, gender identity, gender expression, pregnancy or childbirth and related medical conditions), sexual orientation, veteran or military status, genetic information (including familial genetic information)</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">YES</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Protected classification characteristics under California or federal law</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Age, race, color, ancestry, national origin, citizenship, religion or creed, marital status, medical condition, physical or mental disability, sex (including gender, gender identity, gender expression, pregnancy or childbirth and related medical conditions), sexual orientation, veteran or military status, genetic information (including familial genetic information)</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">YES</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Commercial information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Records of personal property, products or services purchased, obtained, or considered, or other purchasing or consuming histories or tendencies</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Commercial information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Records of personal property, products or services purchased, obtained, or considered, or other purchasing or consuming histories or tendencies</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">NO</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Biometric information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Genetic, physiological, behavioral, and biological characteristics, or activity patterns used to extract a template or other identifier or identifying information, such as, fingerprints, faceprints, and voiceprints, iris or retina scans, keystroke, gait, or other physical patterns, and sleep, health, or exercise data</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Biometric information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Genetic, physiological, behavioral, and biological characteristics, or activity patterns used to extract a template or other identifier or identifying information, such as, fingerprints, faceprints, and voiceprints, iris or retina scans, keystroke, gait, or other physical patterns, and sleep, health, or exercise data</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">NO</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Internet or other electronic network activity information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Browsing history, search history, and information on a consumer’s interaction with an Internet Web site, application, or advertisement</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Internet or other electronic network activity information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Browsing history, search history, and information on a consumer’s interaction with an Internet Web site, application, or advertisement</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">NO</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Geolocation data </td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Physical location or movements</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Geolocation data </td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Physical location or movements</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">NO</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Sensory data</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Audio, electronic, visual, thermal, olfactory, or similar information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Sensory data</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Audio, electronic, visual, thermal, olfactory, or similar information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">NO</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Professional or employment-related information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Current or past job history or performance evaluations</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Professional or employment-related information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Current or past job history or performance evaluations</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">NO</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Non-public education information</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Education records directly related to a student maintained by an educational institution or party acting on its behalf, such as grades, transcripts, class lists, student schedules, student identification codes, student financial information, or student disciplinary records</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Non-public education information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Education records directly related to a student maintained by an educational institution or party acting on its behalf, such as grades, transcripts, class lists, student schedules, student identification codes, student financial information, or student disciplinary records</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">NO</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Inferences drawn from any of the information identified above</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Profile reflecting a consumer’s preferences, characteristics, psychological trends, predispositions, behavior, attitudes, intelligence, abilities, and aptitudes</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">NO</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Inferences drawn from any of the information identified above</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Profile reflecting a consumer’s preferences, characteristics, psychological trends, predispositions, behavior, attitudes, intelligence, abilities, and aptitudes</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">NO</td>
             </tr>
           </tbody>
         </table>
@@ -370,20 +370,20 @@ export function CaliforniaContent() {
         <table className="w-full border-collapse text-xs">
           <tbody>
             <tr>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Category A:</th>
-              <th className="border border-slate-300 dark:border-slate-600 p-2 text-left bg-slate-100 dark:bg-slate-800 font-semibold text-slate-900 dark:text-white">Identifiers</th>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Category A:</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Identifiers</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category B:</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Personal information categories listed in Cal. Civ. Code § 1798.80(e)</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Category B:</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Personal information categories listed in Cal. Civ. Code § 1798.80(e)</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category D:</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Commercial information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Category D:</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Commercial information</td>
             </tr>
             <tr>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Category F:</td>
-              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300">Internet or other electronic network activity information</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Category F:</td>
+              <td className="border border-slate-300 dark:border-slate-600 p-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">Internet or other electronic network activity information</td>
             </tr>
           </tbody>
         </table>
@@ -422,7 +422,7 @@ export function CaliforniaContent() {
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Make other internal and lawful uses of that information that are compatible with the context in which you provided it.</p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Exercising Access, Data Portability, and Deletion Rights</p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">To exercise the access, data portability, and deletion rights described above, please submit a verifiable consumer request to us by either:</p>
-      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Visiting  </p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Visiting <a href="https://ragnarok.universe.rouv.net/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">https://ragnarok.universe.rouv.net/</a> </p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Emailing us at support@rouv.net</p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Only you, or someone legally authorized to act on your behalf, may make a verifiable consumer request related to your personal information.  You may also make a verifiable consumer request on behalf of your minor child. </p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">You may only make a verifiable consumer request for access or data portability twice within a 12-month period.  The verifiable consumer request must:</p>
