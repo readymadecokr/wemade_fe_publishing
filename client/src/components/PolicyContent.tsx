@@ -422,7 +422,7 @@ export function CaliforniaContent() {
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Make other internal and lawful uses of that information that are compatible with the context in which you provided it.</p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Exercising Access, Data Portability, and Deletion Rights</p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">To exercise the access, data portability, and deletion rights described above, please submit a verifiable consumer request to us by either:</p>
-      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Visiting  </p>
+      <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Visiting <a href="https://ragnarok.universe.rouv.net/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">https://ragnarok.universe.rouv.net/</a> </p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">	•	Emailing us at support@rouv.net</p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">Only you, or someone legally authorized to act on your behalf, may make a verifiable consumer request related to your personal information.  You may also make a verifiable consumer request on behalf of your minor child. </p>
       <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed text-sm">You may only make a verifiable consumer request for access or data portability twice within a 12-month period.  The verifiable consumer request must:</p>
