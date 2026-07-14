@@ -806,7 +806,6 @@ export default function Login() {
               </button>
             </div>
             <div className="p-6 text-slate-700 dark:text-slate-300 text-sm">
-              <p className="text-slate-400 dark:text-slate-500 text-xs mb-4">Effective Date: July 9, 2026</p>
               <CaliforniaContent />
             </div>
           </div>
