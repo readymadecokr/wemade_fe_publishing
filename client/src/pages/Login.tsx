@@ -242,7 +242,7 @@ export default function Login() {
 
                   <Button 
                     onClick={() => handleSocialClick("Apple")}
-                    className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98" style={{display: 'none'}}
+                    className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98"
                   >
                     <img src={`${ASSET_BASE_URL}/manus-storage/icon_apple_ascii_ae22901e_e0e901f2.png`} alt="Apple" className="w-5 h-5" />
                     Sign In with Apple
@@ -250,14 +250,14 @@ export default function Login() {
 
                   <Button 
                     onClick={() => handleSocialClick("Facebook")}
-                    className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98" style={{display: 'none'}}
+                    className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98"
                   >
                     <img src={`${ASSET_BASE_URL}/manus-storage/icon_fb_ascii_315f83e7_ea4d87ad.png`} alt="Facebook" className="w-5 h-5" />
                     Sign In with Facebook
                   </Button>
                 </div>
 
-                <div className="relative flex py-2 items-center" style={{display: 'none'}}>
+                <div className="relative flex py-2 items-center">
                   <div className="flex-grow border-t border-white/5"></div>
                   <span className="flex-shrink mx-4 text-[10px] text-slate-500 uppercase tracking-widest">or</span>
                   <div className="flex-grow border-t border-white/5"></div>
@@ -267,7 +267,7 @@ export default function Login() {
                 <div className="flex flex-col gap-3">
                   <Button 
                     onClick={handleGuestMode}
-                    className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98" style={{display: 'none'}}
+                    className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98"
                   >
                     GUEST MODE (Try as Guest)
                   </Button>

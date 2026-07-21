@@ -250,7 +250,7 @@ export default function MyPage() {
                 </div>
 
                 {/* Navigation Menu */}
-                <nav className="space-y-2" style={{display: 'none'}}>
+                <nav className="space-y-2">
                   <button onClick={() => toast.info("Payment history feature coming soon.")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-sm font-medium">
                     <CreditCard size={16} className="text-black dark:text-white" />
                     <span>Payment History</span>
@@ -419,7 +419,7 @@ export default function MyPage() {
                   </div>
 
                   {/* Social Providers Buttons */}
-                  <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50" style={{display: 'none'}}>
+                  <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50">
                     <h4 className="text-black dark:text-white font-bold text-sm mb-4">Link Additional Accounts</h4>
                     <div className="flex flex-col sm:flex-row gap-3 mb-4">
                       {socialProvider !== "Google" && (
@@ -441,7 +441,7 @@ export default function MyPage() {
                   </div>
 
                   {/* Playing Games */}
-                  <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50" style={{display: 'none'}}>
+                  <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50">
                     <h4 className="text-black dark:text-white font-bold text-sm mb-4 flex items-center gap-2">
                       <Shield size={18} />
                       Playing Games

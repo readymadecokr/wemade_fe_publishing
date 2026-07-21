@@ -80,7 +80,7 @@ export default function Layout({ children }: LayoutProps) {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8" style={{display: 'none'}}>
+          <nav className="hidden lg:flex items-center gap-8">
             <Link href="/" className={`hover:text-blue-600 transition-colors cursor-pointer ${location === "/" ? "text-blue-600 font-bold" : "text-slate-600 dark:text-white"}`}>
               Home
             </Link>
@@ -121,7 +121,7 @@ export default function Layout({ children }: LayoutProps) {
             {/* Language and Theme */}
             <div className="flex items-center gap-3">
               <div className="relative">
-                <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="hover:text-blue-600 transition-colors flex items-center gap-1 cursor-pointer font-bold text-slate-600 dark:text-white hover:text-slate-900 dark:hover:text-slate-100" style={{display: 'none'}}>
+                <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="hover:text-blue-600 transition-colors flex items-center gap-1 cursor-pointer font-bold text-slate-600 dark:text-white hover:text-slate-900 dark:hover:text-slate-100">
                   <Globe size={14} /> {lang}
                 </button>
                 {langDropdownOpen && (

@@ -120,8 +120,19 @@ export default function Home() {
   ];
 
   const handleGameStart = () => {
-    // TT 종료 팝업 표시
-    setShowTTEndedDialog(true);
+    if (!isLoggedIn) {
+      // 1. 비로그인 → Sign In 팝업
+      setShowSignInDialog(true);
+      return;
+    }
+    if (isTTKeyVerified) {
+      // 3. TT Key 인증 완료 → 바로 게임 실행
+      toast.success("Launching game...");
+      window.open("https://discord.gg/yVWJkWdkAU", "_blank");
+      return;
+    }
+    // 2. 로그인 O, TT Key 미인증 → TT Key 팝업
+    setShowTTKeyDialog(true);
   };
 
   const handleTTKeySubmit = () => {
@@ -260,10 +271,10 @@ export default function Home() {
         </div>
 
         {/* Spacer: 버튼 높이의 50% (translate-y[50%] 기준) */}
-        <div className="bg-background" style={{ height: 'clamp(60px, 8vw, 130px)', display: 'none' }} />
+        <div className="bg-background" style={{ height: 'clamp(60px, 8vw, 130px)' }} />
 
         {/* NEWS SECTION - Unified layout */}
-        <section id="news" className="py-0 bg-background border-b border-border" style={{display: 'none'}}>
+        <section id="news" className="py-0 bg-background border-b border-border">
           <div className="container pt-3 md:pt-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
@@ -294,14 +305,14 @@ export default function Home() {
           <div className="container py-0">
             {/* Header */}
             <div>
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight" style={{display: 'none'}}>
+              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
                 About Ragnarok Universe
               </h2>
-              <p className="text-lg text-foreground/60" style={{display: 'none'}}>Discover the world of Ragnarok</p>
+              <p className="text-lg text-foreground/60">Discover the world of Ragnarok</p>
             </div>
 
             {/* Game Info Card */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 items-center" style={{display: 'none'}}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 items-center">
               {/* Game Image */}
               <div className="rounded-2xl overflow-hidden shadow-lg">
                 <img
