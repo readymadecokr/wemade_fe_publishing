@@ -210,11 +210,11 @@ export default function Layout({ children }: LayoutProps) {
         <div className="container py-12" style={{paddingTop: '30px'}}>
           {/* Footer Top: Company Logos */}
           <div className="flex justify-center items-center gap-6 text-xs font-semibold text-slate-600 dark:text-white mb-8">
-            <span>GRAVITY</span>
+            <a href="https://gravity.co.kr/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">GRAVITY</a>
             <span className="h-4 w-[1px] bg-slate-300 dark:bg-slate-600"></span>
-            <span>WEMADE CONNECT</span>
+            <a href="https://wemadeconnect.com/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">WEMADE CONNECT</a>
             <span className="h-4 w-[1px] bg-slate-300 dark:bg-slate-600"></span>
-            <span>GALA</span>
+            <a href="https://www.gala.biz/ko" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">GALA</a>
           </div>
 
           {/* Footer Middle: Links and Discord */}
