@@ -302,7 +302,7 @@ export default function Home() {
 
         {/* GAME INFO SECTION */}
         <section id="game-info" className="py-0 bg-background">
-          <div className="container py-0">
+          <div className="container py-0" style={{paddingTop: '30px'}}>
             {/* Header */}
             <div>
               <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
@@ -501,7 +501,7 @@ function MediaSection() {
         const embedUrl = getYoutubeEmbedUrl(item.youtubeUrl);
         if (!embedUrl) return null;
         return (
-          <div key={item.id} style={{ paddingTop: '70px' }}>
+          <div key={item.id} style={{ paddingTop: '0px' }}>
             <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight" >Media</h3>
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
