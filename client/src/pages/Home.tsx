@@ -274,7 +274,7 @@ export default function Home() {
         <div className="bg-background" style={{ height: 'clamp(60px, 8vw, 130px)' }} />
 
         {/* NEWS SECTION - Unified layout */}
-        <section id="news" className="py-0 bg-background border-b border-border">
+        <section id="news" className="py-0 bg-background">
           <div className="container pt-3 md:pt-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
