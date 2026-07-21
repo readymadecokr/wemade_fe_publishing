@@ -11,10 +11,13 @@ const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
  * - Interviews, events, updates with banner images
  */
 
+const ITEMS_PER_PAGE = 12;
+
 function NewsPageContent() {
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== "undefined" ? window.innerWidth < 768 : false
   );
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -207,23 +210,72 @@ function NewsPageContent() {
 
       {/* Content - 2 columns grid on mobile, 3 columns on desktop */}
       <main className="container py-4 px-2 md:px-4 md:py-12">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-6">
-          {newsData.map((news) => (
-            <div key={news.id}>
-              {isMobile ? (
-                // Mobile: No link, just display card
-                renderCard(news)
-              ) : (
-                // Desktop: Clickable link
-                <Link href={`/news/${news.id}`} asChild>
-                  <a>
-                    {renderCard(news)}
-                  </a>
-                </Link>
+        {(() => {
+          const totalPages = Math.ceil(newsData.length / ITEMS_PER_PAGE);
+          const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+          const pageData = newsData.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+          return (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-6">
+                {pageData.map((news) => (
+                  <div key={news.id}>
+                    {isMobile ? (
+                      renderCard(news)
+                    ) : (
+                      <Link href={`/news/${news.id}`} asChild>
+                        <a>{renderCard(news)}</a>
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-10 mb-4">
+                  {/* First page */}
+                  <button
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                    className="w-9 h-9 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    «
+                  </button>
+                  {/* Prev page */}
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="w-9 h-9 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    ‹
+                  </button>
+                  {/* Page indicator */}
+                  <div className="flex items-center gap-1 px-4 py-1 rounded-full border border-slate-300 text-sm text-slate-700 font-medium">
+                    <span>{currentPage}</span>
+                    <span className="text-slate-400">/</span>
+                    <span>{totalPages}</span>
+                  </div>
+                  {/* Next page */}
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="w-9 h-9 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    ›
+                  </button>
+                  {/* Last page */}
+                  <button
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                    className="w-9 h-9 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    »
+                  </button>
+                </div>
               )}
-            </div>
-          ))}
-        </div>
+            </>
+          );
+        })()}
       </main>
     </>
   );
