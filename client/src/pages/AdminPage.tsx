@@ -10,9 +10,9 @@ import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import type { AppRouter } from "../../../server/routers";
 import {
-  Activity, BarChart2, ChevronLeft, ChevronRight, Coins, CreditCard, Eye, Gamepad2,
+  Activity, BarChart2, Banknote, ChevronLeft, ChevronRight, CircleDollarSign, Coins, CreditCard, Eye, Gamepad2,
   Image, Link, LogOut, Pencil, Plus, RefreshCw, Search, Shield, ShoppingCart,
-  Tag, Trash2, ToggleLeft, ToggleRight, UserCheck, UserCog, Users, Users2, X,
+  Tag, Trash2, ToggleLeft, ToggleRight, UserCheck, UserCog, UserPlus, Users, Users2, UsersRound, X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -1163,10 +1163,10 @@ function DashboardSection({ adminClient }: { adminClient: ReturnType<typeof crea
   const today = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
 
   const kpis = [
-    { title: "신규 가입자 (NRU)", value: stats?.newToday, color: "from-orange-400 to-orange-500", icon: Users, sub: null },
-    { title: "누적 이용자", value: stats?.total, color: "from-purple-500 to-purple-600", icon: Users2, sub: "Total User" },
-    { title: "결제 금액", value: stats?.newToday ? stats.newToday * 1166 : 0, color: "from-cyan-500 to-blue-500", icon: CreditCard, sub: "Today Revenue" },
-    { title: "누적 결제 금액", value: stats?.total ? stats.total * 7543 : 0, color: "from-teal-500 to-green-600", icon: Coins, sub: "Total Revenue" },
+    { title: "신규 가입자 (NRU)", value: stats?.newToday, color: "from-orange-400 to-orange-500", icon: UserPlus, sub: null },
+    { title: "누적 이용자", value: stats?.total, color: "from-purple-500 to-purple-600", icon: UsersRound, sub: "Total User" },
+    { title: "결제 금액", value: stats?.newToday ? stats.newToday * 1166 : 0, color: "from-cyan-500 to-blue-500", icon: CircleDollarSign, sub: "Today Revenue" },
+    { title: "누적 결제 금액", value: stats?.total ? stats.total * 7543 : 0, color: "from-teal-500 to-green-600", icon: Banknote, sub: "Total Revenue" },
   ];
 
   return (
