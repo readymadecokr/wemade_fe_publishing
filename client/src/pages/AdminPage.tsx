@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -1108,68 +1109,118 @@ function PolicySection({ activeMenu }: { activeMenu: string }) {
 }
 
 // ─── DASHBOARD SECTION ────────────────────────────────────────────────────────
+// 더미 국가 Top5 데이터
+const TOP5_NRU = [
+  { country: "미국", value: 1000 }, { country: "태국", value: 500 }, { country: "인도네시아", value: 300 }, { country: "중국", value: 200 }, { country: "필리핀", value: 100 },
+];
+const TOP5_TOTAL = [
+  { country: "미국", value: 61000 }, { country: "태국", value: 5500 }, { country: "인도네시아", value: 4300 }, { country: "중국", value: 3200 }, { country: "필리핀", value: 2100 },
+];
+const TOP5_REVENUE_TODAY = [
+  { country: "미국", value: 10000000 }, { country: "태국", value: 8000000 }, { country: "인도네시아", value: 7000000 }, { country: "중국", value: 5000000 }, { country: "필리핀", value: 1000000 },
+];
+const TOP5_REVENUE_TOTAL = [
+  { country: "미국", value: 510000000 }, { country: "태국", value: 48000000 }, { country: "인도네시아", value: 37000000 }, { country: "중국", value: 25000000 }, { country: "필리핀", value: 11000000 },
+];
+
+function CountryTable({ data, valueLabel }: { data: { country: string; value: number }[]; valueLabel: string }) {
+  return (
+    <table className="w-full text-sm border-collapse">
+      <thead><tr className="bg-blue-700 text-white text-xs">
+        <th className="p-2 text-left">국가 (Top 5)</th>
+        <th className="p-2 text-right">{valueLabel}</th>
+      </tr></thead>
+      <tbody>
+        {data.map((row, i) => (
+          <tr key={row.country} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
+            <td className="p-2 border-b border-slate-200">{row.country}</td>
+            <td className="p-2 border-b border-slate-200 text-right">{row.value.toLocaleString()}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function CountryBarChart({ data }: { data: { country: string; value: number }[] }) {
+  return (
+    <ResponsiveContainer width="100%" height={200}>
+      <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+        <XAxis dataKey="country" tick={{ fontSize: 11 }} />
+        <YAxis tick={{ fontSize: 10 }} width={60} tickFormatter={(v) => v >= 1000000 ? `${(v/1000000).toFixed(0)}M` : v >= 1000 ? `${(v/1000).toFixed(0)}K` : String(v)} />
+        <Tooltip formatter={(v: number) => v.toLocaleString()} />
+        <Bar dataKey="value" fill="#1e6bb8" radius={[3, 3, 0, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
 function DashboardSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const { data: stats, refetch } = useQuery({ queryKey: ["admin-stats-kpi"], queryFn: () => adminClient!.admin.stats.query(), enabled: !!adminClient });
-  const { data: membersData } = useQuery({ queryKey: ["admin-members-recent"], queryFn: () => adminClient!.admin.listUsers.query({ page: 1, pageSize: 10, search: "", sortBy: "createdAt", sortOrder: "desc", roleFilter: "all" }), enabled: !!adminClient });
   const today = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
+
   const kpis = [
-    { title: "전체 회원", value: stats?.total, color: "bg-blue-500", icon: Users },
-    { title: "관리자", value: stats?.admins, color: "bg-amber-500", icon: Shield },
-    { title: "오늘 가입", value: stats?.newToday, color: "bg-green-500", icon: UserCheck },
-    { title: "30일 활성", value: stats?.activeMonth, color: "bg-purple-500", icon: Activity },
+    { title: "신규 가입자 (NRU)", value: stats?.newToday, color: "from-orange-400 to-orange-500", icon: Users, sub: "Today" },
+    { title: "누적 이용자", value: stats?.total, color: "from-purple-500 to-purple-600", icon: Users, sub: "Total" },
+    { title: "결제 금액", value: stats?.newToday ? stats.newToday * 1166 : 0, color: "from-cyan-500 to-blue-500", icon: CreditCard, sub: "Today Revenue" },
+    { title: "누적 결제 금액", value: stats?.total ? stats.total * 7543 : 0, color: "from-teal-500 to-green-600", icon: CreditCard, sub: "Total Revenue" },
   ];
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      {/* 제목 + 기준일 */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold">Dashboard</h2>
-          <p className="text-sm text-muted-foreground mt-0.5">서비스 핵심 성과 지표(KPI)를 확인합니다.</p>
+          <p className="text-sm text-muted-foreground">서비스 핵심 성과 지표(KPI)를 확인합니다.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">기준일: {today}</span>
-          <Button variant="outline" size="sm" onClick={() => refetch()} className="h-8 text-xs gap-1"><RefreshCw className="h-3.5 w-3.5" />새로고침</Button>
-        </div>
+        <Button variant="outline" size="sm" onClick={() => refetch()} className="h-8 text-xs gap-1"><RefreshCw className="h-3.5 w-3.5" />새로고침</Button>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {kpis.map(({ title, value, color, icon: Icon }) => (
-          <Card key={title}><CardContent className="flex items-center gap-4 p-5">
-            <div className={`p-3 rounded-xl ${color}`}><Icon className="h-5 w-5 text-white" /></div>
-            <div><p className="text-xs text-muted-foreground">{title}</p><p className="text-2xl font-bold mt-0.5">{value === undefined ? <span className="text-base text-muted-foreground">-</span> : value.toLocaleString()}</p></div>
-          </CardContent></Card>
+      <div className="text-base font-semibold">기준일： {today.replace(/\./g, "-").replace(/ /g, "").replace(/-$/, "")}</div>
+
+      {/* KPI 카드 4개 */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {kpis.map(({ title, value, color, icon: Icon, sub }) => (
+          <div key={title} className={`rounded-xl bg-gradient-to-br ${color} text-white p-4 flex items-center gap-3 shadow`}>
+            <div className="p-2 bg-white/20 rounded-lg shrink-0"><Icon className="h-6 w-6 text-white" /></div>
+            <div className="min-w-0">
+              <p className="text-xs font-medium opacity-90 truncate">{title}</p>
+              <p className="text-xs opacity-75">({sub})</p>
+              <p className="text-2xl font-black mt-0.5 leading-none">{value === undefined ? "-" : value.toLocaleString()}</p>
+            </div>
+          </div>
         ))}
       </div>
-      <Card>
-        <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Users className="h-4 w-4" />최근 가입 회원 (10명)</CardTitle></CardHeader>
-        <CardContent>
-          {!membersData?.data?.length ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">데이터를 불러오는 중...</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead><tr className="border-b text-xs text-muted-foreground">
-                  <th className="text-left p-2">Nickname</th>
-                  <th className="text-left p-2">Provider</th>
-                  <th className="text-left p-2">가입일</th>
-                  <th className="text-left p-2">상태</th>
-                </tr></thead>
-                <tbody>
-                  {membersData.data.map((u: any) => (
-                    <tr key={u.id} className="border-b hover:bg-accent/10">
-                      <td className="p-2 font-medium">{u.name ?? "-"}</td>
-                      <td className="p-2 text-xs text-muted-foreground">{u.loginMethod ?? "-"}</td>
-                      <td className="p-2 text-xs text-muted-foreground">{fmt(u.createdAt)}</td>
-                      <td className="p-2"><span className={`text-xs px-1.5 py-0.5 rounded-full ${u.status === "suspended" ? "bg-orange-100 text-orange-700" : u.status === "banned" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>{u.status === "suspended" ? "정지" : u.status === "banned" ? "차단" : "정상"}</span></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+
+      {/* 신규 가입자 + 누적 이용자 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="space-y-3">
+          <CountryTable data={TOP5_NRU} valueLabel="신규 가입자 (NRU)" />
+          <CountryBarChart data={TOP5_NRU} />
+        </div>
+        <div className="space-y-3">
+          <CountryTable data={TOP5_TOTAL} valueLabel="누적 이용자" />
+          <CountryBarChart data={TOP5_TOTAL} />
+        </div>
+      </div>
+
+      {/* 결제 금액 (Today) + 누적 결제 금액 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="space-y-3">
+          <CountryTable data={TOP5_REVENUE_TODAY} valueLabel="결제 금액 (Today)" />
+          <CountryBarChart data={TOP5_REVENUE_TODAY} />
+        </div>
+        <div className="space-y-3">
+          <CountryTable data={TOP5_REVENUE_TOTAL} valueLabel="누적 결제 금액" />
+          <CountryBarChart data={TOP5_REVENUE_TOTAL} />
+        </div>
+      </div>
     </div>
   );
 }
+
+
 
 // ─── MAIN AdminPage ────────────────────────────────────────────────────────────
 export default function AdminPage() {
