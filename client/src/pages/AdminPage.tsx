@@ -106,6 +106,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
   const [page, setPage] = useState(1); const [pageSize, setPageSize] = useState(20);
   const [sortBy, setSortBy] = useState("createdAt"); const [sortOrder, setSortOrder] = useState("desc");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [editForm, setEditForm] = useState<{ name: string } | null>(null);
   const [suspendForm, setSuspendForm] = useState<{ status: string; reason: string; until: string } | null>(null);
@@ -139,12 +140,13 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
           <div className="flex flex-col sm:flex-row gap-3">
             <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="닉네임, Open ID 검색..." />
             <div className="flex gap-2">
-              <Select value={roleFilter} onValueChange={v => { setRoleFilter(v); setPage(1); }}>
+              <Select value={statusFilter} onValueChange={v => { setStatusFilter(v); setPage(1); }}>
                 <SelectTrigger className="w-28 h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">전체 역할</SelectItem>
-                  <SelectItem value="user">일반 회원</SelectItem>
-                  <SelectItem value="admin">관리자</SelectItem>
+                  <SelectItem value="all">전체 상태</SelectItem>
+                  <SelectItem value="active">정상</SelectItem>
+                  <SelectItem value="suspended">이용정지</SelectItem>
+                  <SelectItem value="banned">영구정지</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1); }}>
@@ -357,7 +359,7 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
 
 // ─── BANNER SECTION ───────────────────────────────────────────────────────────
 type BannerRow = { id: number; title: string; imageUrl: string; imageKey: string | null; actionType: "url" | "content"; actionUrl: string | null; contentTitle: string | null; contentDate: string | null; contentBody: string | null; sortOrder: number; isActive: number; createdAt: Date; updatedAt: Date };
-type BannerForm = { id?: number; title: string; imageUrl: string; actionType: "url" | "content"; actionUrl: string; contentTitle: string; contentDate: string; contentBody: string; sortOrder: number; isActive: number };
+type BannerForm = { id?: number; title: string; imageUrl: string; actionType: "url" | "content"; actionUrl: string; contentTitle: string; contentDate: string; contentBody: string; sortOrder: number; isActive: number; startDate: string; endDate: string };
 
 function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [form, setForm] = useState<BannerForm | null>(null);
@@ -371,7 +373,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
   const updateM = useMutation({ mutationFn: (input: any) => adminClient!.admin.updateBanner.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
   const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.admin.deleteBanner.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
 
-  const empty: BannerForm = { title: "", imageUrl: "", actionType: "url", actionUrl: "", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (data?.length ?? 0), isActive: 1 };
+  const empty: BannerForm = { title: "", imageUrl: "", actionType: "url", actionUrl: "", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (data?.length ?? 0), isActive: 1, startDate: "", endDate: "" };
   const submit = () => {
     if (!form?.title || !form?.imageUrl) { toast.error("제목과 이미지를 입력하세요."); return; }
     const p = { title: form.title, imageUrl: form.imageUrl, actionType: form.actionType, actionUrl: form.actionUrl || undefined, contentTitle: form.contentTitle || undefined, contentDate: form.contentDate || undefined, contentBody: form.contentBody || undefined, sortOrder: form.sortOrder, isActive: form.isActive };
@@ -420,7 +422,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
             {!paged.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 배너가 없습니다.</div> : (
               <div className="space-y-2">
                 {paged.map(b => (
-                  <div key={b.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive })}>
+                  <div key={b.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: "", endDate: "" })}>
                     <span className="text-xs text-muted-foreground w-5 text-center">{b.sortOrder + 1}</span>
                     <div className="w-24 h-14 rounded overflow-hidden bg-slate-100 shrink-0"><img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" /></div>
                     <div className="flex-1 min-w-0">
@@ -432,7 +434,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                     </div>
                     <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
                       <Button variant="ghost" size="sm" onClick={() => setPreview(b)}><Eye className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive })}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: "", endDate: "" })}><Pencil className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${b.title}" 배너를 삭제하시겠습니까?`)) deleteM.mutate(b.id); }}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </div>
@@ -445,6 +447,10 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
       ) : (
         <Card><CardContent className="pt-6 space-y-4">
           <div className="space-y-1"><label className="text-sm font-medium">배너 제목 *</label><Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="배너 제목" /></div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1"><label className="text-sm font-medium">노출 시작일시 (선택)</label><Input type="datetime-local" value={form.startDate} onChange={e => setForm(f => f && ({ ...f, startDate: e.target.value }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">노출 종료일시 (선택)</label><Input type="datetime-local" value={form.endDate} onChange={e => setForm(f => f && ({ ...f, endDate: e.target.value }))} /></div>
+          </div>
           <div className="space-y-1">
             <label className="text-sm font-medium">이미지 등록 *</label>
             <div className="flex gap-2"><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." className="flex-1" /><Button type="button" variant="outline" onClick={handleFileSelect} disabled={uploading}>{uploading ? "업로드 중..." : "PC에서 찾아보기"}</Button></div>
@@ -544,10 +550,17 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1 col-span-2"><label className="text-sm font-medium">제목 *</label><Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="뉴스 제목" /></div>
             <div className="space-y-1"><label className="text-sm font-medium">카테고리</label><Input value={form.category} onChange={e => setForm(f => f && ({ ...f, category: e.target.value }))} placeholder="Update / Event / Interview" /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">발행일</label><Input type="date" value={form.publishedAt} onChange={e => setForm(f => f && ({ ...f, publishedAt: e.target.value }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">등록일시</label><Input type="datetime-local" value={form.publishedAt} onChange={e => setForm(f => f && ({ ...f, publishedAt: e.target.value }))} /></div>
             <div className="space-y-1 col-span-2"><label className="text-sm font-medium">요약</label><Input value={form.summary} onChange={e => setForm(f => f && ({ ...f, summary: e.target.value }))} placeholder="짧은 요약 (선택)" /></div>
             <div className="space-y-1 col-span-2"><label className="text-sm font-medium">본문</label><textarea className="w-full border rounded-md p-2 text-sm min-h-[120px]" value={form.content} onChange={e => setForm(f => f && ({ ...f, content: e.target.value }))} placeholder="뉴스 본문" /></div>
-            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">이미지 URL</label><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." /></div>
+            <div className="space-y-1 col-span-2">
+              <label className="text-sm font-medium">이미지 등록</label>
+              <div className="flex gap-2">
+                <Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." className="flex-1" />
+                <Button type="button" variant="outline" size="sm" onClick={() => { const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.onchange = async (ev) => { const file = (ev.target as HTMLInputElement).files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { const preview = e.target?.result as string; setForm(f => f && ({ ...f, imageUrl: preview })); toast.info('이미지 선택됨 (실제 저장 시 URL 입력 필요)'); }; reader.readAsDataURL(file); }; input.click(); }}>이미지 선택</Button>
+              </div>
+              {form.imageUrl && form.imageUrl.startsWith('/') && <img src={form.imageUrl} alt="preview" className="mt-2 rounded border h-24 object-cover" />}
+            </div>
             <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
           </div>
           <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "뉴스 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
@@ -1096,7 +1109,9 @@ function PolicySection({ activeMenu }: { activeMenu: string }) {
 
 // ─── DASHBOARD SECTION ────────────────────────────────────────────────────────
 function DashboardSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
-  const { data: stats } = useQuery({ queryKey: ["admin-stats-kpi"], queryFn: () => adminClient!.admin.stats.query(), enabled: !!adminClient });
+  const { data: stats, refetch } = useQuery({ queryKey: ["admin-stats-kpi"], queryFn: () => adminClient!.admin.stats.query(), enabled: !!adminClient });
+  const { data: membersData } = useQuery({ queryKey: ["admin-members-recent"], queryFn: () => adminClient!.admin.listUsers.query({ page: 1, pageSize: 10, search: "", sortBy: "createdAt", sortOrder: "desc", roleFilter: "all" }), enabled: !!adminClient });
+  const today = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
   const kpis = [
     { title: "전체 회원", value: stats?.total, color: "bg-blue-500", icon: Users },
     { title: "관리자", value: stats?.admins, color: "bg-amber-500", icon: Shield },
@@ -1105,18 +1120,52 @@ function DashboardSection({ adminClient }: { adminClient: ReturnType<typeof crea
   ];
   return (
     <div className="space-y-6">
-      <SectionHeader title="Dashboard" desc="서비스 핵심 성과 지표(KPI)를 확인합니다." />
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold">Dashboard</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">서비스 핵심 성과 지표(KPI)를 확인합니다.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">기준일: {today}</span>
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="h-8 text-xs gap-1"><RefreshCw className="h-3.5 w-3.5" />새로고침</Button>
+        </div>
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {kpis.map(({ title, value, color, icon: Icon }) => (
-          <Card key={title}><CardContent className="flex items-center gap-4 p-6">
-            <div className={`p-3 rounded-xl ${color}`}><Icon className="h-6 w-6 text-white" /></div>
-            <div><p className="text-sm text-muted-foreground">{title}</p><p className="text-2xl font-bold">{value === undefined ? <span className="text-base text-muted-foreground">-</span> : value.toLocaleString()}</p></div>
+          <Card key={title}><CardContent className="flex items-center gap-4 p-5">
+            <div className={`p-3 rounded-xl ${color}`}><Icon className="h-5 w-5 text-white" /></div>
+            <div><p className="text-xs text-muted-foreground">{title}</p><p className="text-2xl font-bold mt-0.5">{value === undefined ? <span className="text-base text-muted-foreground">-</span> : value.toLocaleString()}</p></div>
           </CardContent></Card>
         ))}
       </div>
       <Card>
-        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Users className="h-4 w-4" />최근 가입 회원</CardTitle></CardHeader>
-        <CardContent><p className="text-sm text-muted-foreground">회원 관리 메뉴에서 전체 회원 목록을 확인하세요.</p></CardContent>
+        <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Users className="h-4 w-4" />최근 가입 회원 (10명)</CardTitle></CardHeader>
+        <CardContent>
+          {!membersData?.data?.length ? (
+            <p className="text-sm text-muted-foreground py-4 text-center">데이터를 불러오는 중...</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead><tr className="border-b text-xs text-muted-foreground">
+                  <th className="text-left p-2">Nickname</th>
+                  <th className="text-left p-2">Provider</th>
+                  <th className="text-left p-2">가입일</th>
+                  <th className="text-left p-2">상태</th>
+                </tr></thead>
+                <tbody>
+                  {membersData.data.map((u: any) => (
+                    <tr key={u.id} className="border-b hover:bg-accent/10">
+                      <td className="p-2 font-medium">{u.name ?? "-"}</td>
+                      <td className="p-2 text-xs text-muted-foreground">{u.loginMethod ?? "-"}</td>
+                      <td className="p-2 text-xs text-muted-foreground">{fmt(u.createdAt)}</td>
+                      <td className="p-2"><span className={`text-xs px-1.5 py-0.5 rounded-full ${u.status === "suspended" ? "bg-orange-100 text-orange-700" : u.status === "banned" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>{u.status === "suspended" ? "정지" : u.status === "banned" ? "차단" : "정상"}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
       </Card>
     </div>
   );
@@ -1178,10 +1227,10 @@ export default function AdminPage() {
     { key: "members", label: "회원 관리", icon: Users },
     { key: "game", label: "Game", icon: Gamepad2 },
     { key: "main-banner", label: "Main Banner", icon: Image },
-    { key: "news", label: "News", icon: Search },
-    { key: "media", label: "Media", icon: UserCheck },
-    { key: "products", label: "인앱상품", icon: ShoppingCart },
-    { key: "payments", label: "결제", icon: CreditCard },
+    { key: "news", label: "News", icon: Link },
+    { key: "media", label: "Media", icon: Eye },
+    { key: "products", label: "Point Shop", icon: ShoppingCart },
+    { key: "payments", label: "결제 / 포인트", icon: CreditCard },
     { key: "stats", label: "통계", icon: BarChart2 },
     { key: "coupons", label: "쿠폰 관리", icon: Tag },
     { key: "admin-accounts", label: "관리자 관리", icon: UserCog },
@@ -1196,15 +1245,15 @@ export default function AdminPage() {
             <div className="p-2 bg-primary/10 rounded-lg"><Shield className="h-5 w-5 text-primary" /></div>
             <div><h1 className="font-bold text-lg leading-none">관리자 페이지</h1><p className="text-xs text-muted-foreground mt-0.5">Ragnarok Universe Admin</p></div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
-              <Avatar className="h-7 w-7"><AvatarFallback className="text-xs bg-primary/10 text-primary">{adminLoggedIn?.charAt(0).toUpperCase() ?? "A"}</AvatarFallback></Avatar>
-              <span className="font-medium text-foreground">{adminLoggedIn}</span>
-              <Badge className="bg-amber-500 hover:bg-amber-600 text-xs">관리자</Badge>
+          <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2 text-sm">
+              <span className="font-semibold text-foreground">{adminLoggedIn}</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium">관리자</span>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setShowChangePw(true)} className="text-muted-foreground text-xs">PW 변경</Button>
-            <Button variant="ghost" size="sm" onClick={() => (window.location.href = "/")} className="text-muted-foreground">홈으로</Button>
-            <Button variant="ghost" size="sm" onClick={handleAdminLogout} className="text-muted-foreground"><LogOut className="h-4 w-4" /></Button>
+            <div className="h-4 w-px bg-slate-200 mx-1 hidden sm:block" />
+            <Button variant="ghost" size="sm" onClick={() => (window.location.href = "/")} className="text-muted-foreground text-xs h-8 px-3">홈으로</Button>
+            <Button variant="outline" size="sm" onClick={() => setShowChangePw(true)} className="text-muted-foreground text-xs h-8 px-3">PW 변경</Button>
+            <Button variant="ghost" size="sm" onClick={handleAdminLogout} className="text-red-500 hover:text-red-600 hover:bg-red-50 text-xs h-8 px-3 gap-1"><LogOut className="h-3.5 w-3.5" />로그아웃</Button>
           </div>
         </div>
       </header>
