@@ -10,9 +10,9 @@ import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import type { AppRouter } from "../../../server/routers";
 import {
-  Activity, BarChart2, ChevronLeft, ChevronRight, CreditCard, Eye, Gamepad2,
+  Activity, BarChart2, ChevronLeft, ChevronRight, Coins, CreditCard, Eye, Gamepad2,
   Image, Link, LogOut, Pencil, Plus, RefreshCw, Search, Shield, ShoppingCart,
-  Tag, Trash2, ToggleLeft, ToggleRight, UserCheck, UserCog, Users, X,
+  Tag, Trash2, ToggleLeft, ToggleRight, UserCheck, UserCog, Users, Users2, X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -1125,20 +1125,22 @@ const TOP5_REVENUE_TOTAL = [
 
 function CountryTable({ data, valueLabel }: { data: { country: string; value: number }[]; valueLabel: string }) {
   return (
-    <table className="w-full text-sm border-collapse">
-      <thead><tr className="bg-blue-700 text-white text-xs">
-        <th className="p-2 text-left">국가 (Top 5)</th>
-        <th className="p-2 text-right">{valueLabel}</th>
-      </tr></thead>
-      <tbody>
-        {data.map((row, i) => (
-          <tr key={row.country} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
-            <td className="p-2 border-b border-slate-200">{row.country}</td>
-            <td className="p-2 border-b border-slate-200 text-right">{row.value.toLocaleString()}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+      <table className="w-full text-sm border-collapse">
+        <thead><tr className="bg-blue-700 text-white">
+          <th className="px-4 py-2.5 text-left text-xs font-semibold">국가 (Top 5)</th>
+          <th className="px-4 py-2.5 text-right text-xs font-semibold">{valueLabel}</th>
+        </tr></thead>
+        <tbody>
+          {data.map((row, i) => (
+            <tr key={row.country} className={`${i % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-blue-50 transition-colors`}>
+              <td className="px-4 py-2 border-b border-slate-100 text-slate-700">{row.country}</td>
+              <td className="px-4 py-2 border-b border-slate-100 text-right font-medium text-slate-800">{row.value.toLocaleString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
@@ -1161,10 +1163,10 @@ function DashboardSection({ adminClient }: { adminClient: ReturnType<typeof crea
   const today = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
 
   const kpis = [
-    { title: "신규 가입자 (NRU)", value: stats?.newToday, color: "from-orange-400 to-orange-500", icon: Users, sub: "Today" },
-    { title: "누적 이용자", value: stats?.total, color: "from-purple-500 to-purple-600", icon: Users, sub: "Total" },
+    { title: "신규 가입자 (NRU)", value: stats?.newToday, color: "from-orange-400 to-orange-500", icon: Users, sub: null },
+    { title: "누적 이용자", value: stats?.total, color: "from-purple-500 to-purple-600", icon: Users2, sub: "Total User" },
     { title: "결제 금액", value: stats?.newToday ? stats.newToday * 1166 : 0, color: "from-cyan-500 to-blue-500", icon: CreditCard, sub: "Today Revenue" },
-    { title: "누적 결제 금액", value: stats?.total ? stats.total * 7543 : 0, color: "from-teal-500 to-green-600", icon: CreditCard, sub: "Total Revenue" },
+    { title: "누적 결제 금액", value: stats?.total ? stats.total * 7543 : 0, color: "from-teal-500 to-green-600", icon: Coins, sub: "Total Revenue" },
   ];
 
   return (
@@ -1186,7 +1188,7 @@ function DashboardSection({ adminClient }: { adminClient: ReturnType<typeof crea
             <div className="p-2 bg-white/20 rounded-lg shrink-0"><Icon className="h-6 w-6 text-white" /></div>
             <div className="min-w-0">
               <p className="text-xs font-medium opacity-90 truncate">{title}</p>
-              <p className="text-xs opacity-75">({sub})</p>
+              {sub && <p className="text-xs opacity-75">({sub})</p>}
               <p className="text-2xl font-black mt-0.5 leading-none">{value === undefined ? "-" : value.toLocaleString()}</p>
             </div>
           </div>
