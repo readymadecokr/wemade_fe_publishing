@@ -822,9 +822,9 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                           </div>
                         </td>
                         {/* 활성 */}
-                        <td className="px-3 py-3 w-16"><StatusBadge active={b.isActive} /></td>
+                        <td className="px-3 py-3 w-16 whitespace-nowrap"><StatusBadge active={b.isActive} /></td>
                         {/* 버튼 */}
-                        <td className="px-2 py-3 w-28" onClick={e => e.stopPropagation()}>
+                        <td className="px-2 py-3 w-28 whitespace-nowrap" onClick={e => e.stopPropagation()}>
                           <div className="flex gap-1 justify-end">
                             <Button variant="ghost" size="sm" onClick={() => setPreview(b)}><Eye className="h-4 w-4" /></Button>
                             <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}><Pencil className="h-4 w-4" /></Button>
