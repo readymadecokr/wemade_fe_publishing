@@ -806,12 +806,12 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                     {/* 제목 */}
                     <p className="font-medium text-sm flex-1 min-w-0 truncate">{b.title}</p>
                     {/* 기간 표시 */}
-                    <div className="shrink-0 bg-slate-100 dark:bg-slate-700 rounded px-3 py-1.5 text-center min-w-[160px]">
-                      <p className="text-xs text-slate-600 dark:text-slate-300 font-mono leading-5">
+                    <div className="shrink-0 bg-slate-100 dark:bg-slate-700 rounded px-3 py-1.5 w-44 text-center">
+                      <p className="text-xs text-slate-600 dark:text-slate-300 font-mono tabular-nums leading-5 whitespace-nowrap">
                         {b.startDate ? b.startDate.replace("T", " ") : "-"}
                       </p>
-                      <p className="text-xs text-slate-400">~</p>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 font-mono leading-5">
+                      <p className="text-xs text-slate-400 leading-4">~</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 font-mono tabular-nums leading-5 whitespace-nowrap">
                         {b.endDate ? b.endDate.replace("T", " ") : "-"}
                       </p>
                     </div>
