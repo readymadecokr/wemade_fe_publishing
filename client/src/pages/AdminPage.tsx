@@ -281,7 +281,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
 }
 
 // ─── GAME SECTION ─────────────────────────────────────────────────────────────
-type GameForm = { id?: number; name: string; description: string; imageUrl: string; genre: string; platform: string; status: "active" | "beta" | "maintenance" | "inactive"; sortOrder: number };
+type GameForm = { id?: number; name: string; gameId: string; description: string; imageUrl: string; genre: string; platform: string; status: "active" | "beta" | "maintenance" | "inactive"; sortOrder: number };
 
 function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
@@ -293,7 +293,7 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
   const updateM = useMutation({ mutationFn: (input: any) => adminClient!.games.update.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
   const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.games.delete.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
 
-  const empty: GameForm = { name: "", description: "", imageUrl: "", genre: "", platform: "", status: "active", sortOrder: 0 };
+  const empty: GameForm = { name: "", gameId: "", description: "", imageUrl: "", genre: "", platform: "", status: "active", sortOrder: 0 };
   const submit = () => { if (!form?.name) { toast.error("게임명을 입력하세요."); return; } form.id ? updateM.mutate(form) : createM.mutate(form); };
 
   return (
@@ -310,7 +310,7 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
             {!data?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 게임이 없습니다.</div> : (
               <div className="space-y-2">
                 {data.items.map((g: any) => (
-                  <div key={g.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: g.id, name: g.name, description: g.description ?? "", imageUrl: g.imageUrl ?? "", genre: g.genre ?? "", platform: g.platform ?? "", status: g.status, sortOrder: g.sortOrder })}>
+                  <div key={g.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer"   onClick={() => setForm({ id: g.id, name: g.name, gameId: g.gameId ?? "", description: g.description ?? "", imageUrl: g.imageUrl ?? "", genre: g.genre ?? "", platform: g.platform ?? "", status: g.status, sortOrder: g.sortOrder })}>
                     {g.imageUrl && <img src={g.imageUrl} alt={g.name} className="w-16 h-10 object-cover rounded shrink-0" />}
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm">{g.name}</p>
@@ -320,7 +320,7 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                       </div>
                     </div>
                     <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
-                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: g.id, name: g.name, description: g.description ?? "", imageUrl: g.imageUrl ?? "", genre: g.genre ?? "", platform: g.platform ?? "", status: g.status, sortOrder: g.sortOrder })}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: g.id, name: g.name, gameId: g.gameId ?? "", description: g.description ?? "", imageUrl: g.imageUrl ?? "", genre: g.genre ?? "", platform: g.platform ?? "", status: g.status, sortOrder: g.sortOrder })}><Pencil className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${g.name}" 게임을 삭제하시겠습니까?`)) deleteM.mutate(g.id); }}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </div>
@@ -334,6 +334,7 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
         <Card><CardContent className="pt-6 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1 col-span-2"><label className="text-sm font-medium">게임명 *</label><Input value={form.name} onChange={e => setForm(f => f && ({ ...f, name: e.target.value }))} placeholder="게임명" /></div>
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">게임ID *</label><Input value={form.gameId} onChange={e => setForm(f => f && ({ ...f, gameId: e.target.value }))} placeholder="게임 고유 ID (예: ragnarok-universe)" /></div>
             <div className="space-y-1"><label className="text-sm font-medium">장르</label><Input value={form.genre} onChange={e => setForm(f => f && ({ ...f, genre: e.target.value }))} placeholder="Fantasy MMORPG" /></div>
             <div className="space-y-1"><label className="text-sm font-medium">플랫폼</label><Input value={form.platform} onChange={e => setForm(f => f && ({ ...f, platform: e.target.value }))} placeholder="Web Browser" /></div>
             <div className="space-y-1 col-span-2"><label className="text-sm font-medium">소개</label><textarea className="w-full border rounded-md p-2 text-sm min-h-[80px]" value={form.description} onChange={e => setForm(f => f && ({ ...f, description: e.target.value }))} placeholder="게임 소개" /></div>
