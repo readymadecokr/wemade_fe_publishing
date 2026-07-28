@@ -44,6 +44,8 @@ export const banners = mysqlTable("banners", {
   contentBody: text("contentBody"),
   sortOrder: int("sortOrder").default(0).notNull(),
   isActive: int("isActive").default(1).notNull(),
+  startDate: varchar("startDate", { length: 20 }),
+  endDate: varchar("endDate", { length: 20 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

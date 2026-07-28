@@ -36,6 +36,13 @@
       "when": 1782972225211,
       "tag": "0004_public_wrecking_crew",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1785226941414,
+      "tag": "0005_giant_rattler",
+      "breakpoints": true
     }
   ]
 }

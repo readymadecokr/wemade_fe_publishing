@@ -255,6 +255,8 @@ export const appRouter = router({
         contentBody: z.string().optional(),
         sortOrder: z.number().int().default(0),
         isActive: z.number().int().default(1),
+        startDate: z.string().optional().nullable(),
+        endDate: z.string().optional().nullable(),
       }))
       .mutation(async ({ input }) => {
         const db = await getDb();
@@ -277,6 +279,8 @@ export const appRouter = router({
         contentBody: z.string().optional().nullable(),
         sortOrder: z.number().int().optional(),
         isActive: z.number().int().optional(),
+        startDate: z.string().optional().nullable(),
+        endDate: z.string().optional().nullable(),
       }))
       .mutation(async ({ input }) => {
         const db = await getDb();

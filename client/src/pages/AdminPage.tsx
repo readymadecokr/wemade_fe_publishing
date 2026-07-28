@@ -728,7 +728,7 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
 }
 
 // ─── BANNER SECTION ───────────────────────────────────────────────────────────
-type BannerRow = { id: number; title: string; imageUrl: string; imageKey: string | null; actionType: "url" | "content"; actionUrl: string | null; contentTitle: string | null; contentDate: string | null; contentBody: string | null; sortOrder: number; isActive: number; createdAt: Date; updatedAt: Date };
+type BannerRow = { id: number; title: string; imageUrl: string; imageKey: string | null; actionType: "url" | "content"; actionUrl: string | null; contentTitle: string | null; contentDate: string | null; contentBody: string | null; sortOrder: number; isActive: number; startDate: string | null; endDate: string | null; createdAt: Date; updatedAt: Date };
 type BannerForm = { id?: number; title: string; imageUrl: string; actionType: "url" | "content"; actionUrl: string; contentTitle: string; contentDate: string; contentBody: string; sortOrder: number; isActive: number; startDate: string; endDate: string };
 
 function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
@@ -746,7 +746,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
   const empty: BannerForm = { title: "", imageUrl: "", actionType: "url", actionUrl: "", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (data?.length ?? 0), isActive: 1, startDate: "", endDate: "" };
   const submit = () => {
     if (!form?.title || !form?.imageUrl) { toast.error("제목과 이미지를 입력하세요."); return; }
-    const p = { title: form.title, imageUrl: form.imageUrl, actionType: form.actionType, actionUrl: form.actionUrl || undefined, contentTitle: form.contentTitle || undefined, contentDate: form.contentDate || undefined, contentBody: form.contentBody || undefined, sortOrder: form.sortOrder, isActive: form.isActive };
+    const p = { title: form.title, imageUrl: form.imageUrl, actionType: form.actionType, actionUrl: form.actionUrl || undefined, contentTitle: form.contentTitle || undefined, contentDate: form.contentDate || undefined, contentBody: form.contentBody || undefined, sortOrder: form.sortOrder, isActive: form.isActive, startDate: form.startDate || null, endDate: form.endDate || null };
     form.id ? updateM.mutate({ id: form.id, ...p }) : createM.mutate(p);
   };
 
@@ -795,7 +795,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                   <div
                     key={b.id}
                     className="flex items-center gap-3 px-4 py-3 border rounded-lg hover:bg-accent/30 cursor-pointer"
-                    onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: "", endDate: "" })}
+                    onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}
                   >
                     {/* 번호 */}
                     <span className="text-xs text-muted-foreground w-5 text-center shrink-0">{b.sortOrder + 1}</span>
@@ -805,16 +805,22 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                     </div>
                     {/* 제목 */}
                     <p className="font-medium text-sm flex-1 min-w-0 truncate">{b.title}</p>
-                    {/* 동작 타입 */}
-                    <span className="text-xs text-blue-600 shrink-0 w-24 text-center">
-                      {b.actionType === "url" ? "새창 띄우기" : "기존 페이지 전환"}
-                    </span>
+                    {/* 기간 표시 */}
+                    <div className="shrink-0 bg-slate-100 dark:bg-slate-700 rounded px-3 py-1.5 text-center min-w-[160px]">
+                      <p className="text-xs text-slate-600 dark:text-slate-300 font-mono leading-5">
+                        {b.startDate ? b.startDate.replace("T", " ") : "-"}
+                      </p>
+                      <p className="text-xs text-slate-400">~</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 font-mono leading-5">
+                        {b.endDate ? b.endDate.replace("T", " ") : "-"}
+                      </p>
+                    </div>
                     {/* 활성 배지 */}
                     <div className="shrink-0"><StatusBadge active={b.isActive} /></div>
                     {/* 버튼 */}
                     <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
                       <Button variant="ghost" size="sm" onClick={() => setPreview(b)}><Eye className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: "", endDate: "" })}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}><Pencil className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${b.title}" 배너를 삭제하시겠습니까?`)) deleteM.mutate(b.id); }}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </div>
