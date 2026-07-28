@@ -247,7 +247,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               {/* Nickname - 인라인 편집 */}
               <div className="grid grid-cols-3 gap-2 py-2.5 items-start">
                 <span className="text-muted-foreground font-medium pt-1.5">Nickname</span>
-                <div className="col-span-2 space-y-1">
+                <div className="col-span-2">
                   <div className="flex gap-2">
                     <Input
                       value={editForm?.name ?? selectedUser.name ?? ""}
@@ -262,12 +262,16 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                       {nickChecking ? "검색중" : "검색"}
                     </Button>
                   </div>
-                  {nickCheckResult === "available" && (
-                    <p className="text-xs text-blue-500 font-medium">사용 가능 합니다.</p>
-                  )}
-                  {nickCheckResult === "duplicate" && (
-                    <p className="text-xs text-red-500 font-medium">이미 사용중인 닉네임 입니다</p>
-                  )}
+                  {/* 항상 공간 확보 - 결과 없을 때는 투명 */}
+                  <p className={`text-xs font-medium mt-1 h-4 ${
+                    nickCheckResult === "available" ? "text-blue-500" :
+                    nickCheckResult === "duplicate" ? "text-red-500" :
+                    "text-transparent"
+                  }`}>
+                    {nickCheckResult === "available" ? "사용 가능 합니다." :
+                     nickCheckResult === "duplicate" ? "이미 사용중인 닉네임 입니다" :
+                     " "}
+                  </p>
                 </div>
               </div>
               {/* Provider */}
