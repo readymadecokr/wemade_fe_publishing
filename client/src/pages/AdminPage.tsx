@@ -971,24 +971,88 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
           </CardContent>
         </Card>
       ) : (
-        <Card><CardContent className="pt-6 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">제목 *</label><Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="뉴스 제목" /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">카테고리</label><Input value={form.category} onChange={e => setForm(f => f && ({ ...f, category: e.target.value }))} placeholder="Update / Event / Interview" /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">등록일시</label><Input type="datetime-local" value={form.publishedAt} onChange={e => setForm(f => f && ({ ...f, publishedAt: e.target.value }))} /></div>
-            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">요약</label><Input value={form.summary} onChange={e => setForm(f => f && ({ ...f, summary: e.target.value }))} placeholder="짧은 요약 (선택)" /></div>
-            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">본문</label><textarea className="w-full border rounded-md p-2 text-sm min-h-[120px]" value={form.content} onChange={e => setForm(f => f && ({ ...f, content: e.target.value }))} placeholder="뉴스 본문" /></div>
-            <div className="space-y-1 col-span-2">
-              <label className="text-sm font-medium">이미지 등록</label>
-              <div className="flex gap-2">
-                <Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." className="flex-1" />
-                <Button type="button" variant="outline" size="sm" onClick={() => { const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.onchange = async (ev) => { const file = (ev.target as HTMLInputElement).files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { const preview = e.target?.result as string; setForm(f => f && ({ ...f, imageUrl: preview })); toast.info('이미지 선택됨 (실제 저장 시 URL 입력 필요)'); }; reader.readAsDataURL(file); }; input.click(); }}>이미지 선택</Button>
-              </div>
-              {form.imageUrl && form.imageUrl.startsWith('/') && <img src={form.imageUrl} alt="preview" className="mt-2 rounded border h-24 object-cover" />}
-            </div>
-            <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
+        <Card><CardContent className="pt-6 space-y-5">
+          {/* ① 뉴스 제목 */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium">뉴스 제목</label>
+            <Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="뉴스 제목" />
           </div>
-          <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "뉴스 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
+          {/* ② 이미지 등록 */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium">이미지 등록 *</label>
+            <div className="flex gap-2">
+              <Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." className="flex-1" />
+              <Button type="button" variant="outline" onClick={async () => {
+                const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/jpeg,image/webp,image/png';
+                input.onchange = async (ev) => {
+                  const file = (ev.target as HTMLInputElement).files?.[0]; if (!file) return;
+                  if (file.size > 100 * 1024) { toast.error('100KB 이하 이미지를 선택해주세요.'); return; }
+                  try {
+                    const reader = new FileReader();
+                    const base64 = await new Promise<string>(r => { reader.onload = ev => r(ev.target?.result as string); reader.readAsDataURL(file); });
+                    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
+                    const safeFilename = `news-img-${Date.now()}.${ext}`;
+                    const result = await adminClient!.admin.uploadBannerImage.mutate({ base64, filename: safeFilename });
+                    setForm(f => f && ({ ...f, imageUrl: result.url }));
+                    toast.success('이미지 업로드 완료');
+                  } catch (e: any) { toast.error(`업로드 실패: ${e.message}`); }
+                };
+                input.click();
+              }}>PC에서 찾아보기</Button>
+            </div>
+            <p className="text-xs text-muted-foreground">권장 : 700 x 360px  |  100KB 미만  |  Jpg,webp,png</p>
+            {form.imageUrl && (
+              <img src={form.imageUrl} alt="preview" className="mt-2 rounded border h-24 object-cover" />
+            )}
+          </div>
+          {/* ③ 등록일시 + ④ 날짜 */}
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium shrink-0">등록일시</label>
+            <DateTimeInput value={form.publishedAt} onChange={v => setForm(f => f && ({ ...f, publishedAt: v }))} />
+          </div>
+          {/* ⑤ 내용 (웹에디터 영역 확보) */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium">내용</label>
+            <div className="border rounded-md bg-slate-50 dark:bg-slate-900" style={{ minHeight: 240 }}>
+              {/* 웹에디터 툴바 영역 */}
+              <div className="border-b bg-slate-100 dark:bg-slate-800 px-3 py-2 flex flex-wrap gap-1">
+                {["B", "I", "U", "S", "A•", "A•", "≡", "≡", "≡", "≡"].map((t, i) => (
+                  <button key={i} type="button" className="px-2 py-0.5 text-xs border rounded bg-white dark:bg-slate-700 hover:bg-slate-200 font-mono">{t}</button>
+                ))}
+                <span className="text-slate-300 mx-1">|</span>
+                {["스타일", "본문", "글꼴", "크기"].map((t, i) => (
+                  <button key={i} type="button" className="px-2 py-0.5 text-xs border rounded bg-white dark:bg-slate-700 hover:bg-slate-200">{t} ▾</button>
+                ))}
+              </div>
+              {/* 에디터 본문 영역 */}
+              <textarea
+                className="w-full bg-transparent p-3 text-sm resize-none focus:outline-none"
+                style={{ minHeight: 180 }}
+                value={form.content}
+                onChange={e => setForm(f => f && ({ ...f, content: e.target.value }))}
+                placeholder="등록 후 웹에디터가 연결됩니다."
+              />
+            </div>
+          </div>
+          {/* ⑥ 활성 상태 */}
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <label className="text-sm font-medium block mb-1">순서</label>
+              <Input type="number" value={form.id ?? ""} readOnly className="w-20 bg-slate-50" placeholder="-" />
+            </div>
+            <div>
+              <label className="text-sm font-medium block mb-1">활성 상태</label>
+              <div className="flex items-center gap-2 h-10">
+                <ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} />
+                <span className="text-sm">{form.isActive ? "활성" : "비활성"}</span>
+              </div>
+            </div>
+          </div>
+          {/* ⑦ 확인/취소 */}
+          <div className="flex gap-2 pt-1">
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white px-6" onClick={submit} disabled={createM.isPending || updateM.isPending}>확인</Button>
+            <Button variant="outline" className="px-6" onClick={() => setForm(null)}>취소</Button>
+          </div>
         </CardContent></Card>
       )}
     </div>
