@@ -373,12 +373,13 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
 }
 
 // ─── GAME SECTION ─────────────────────────────────────────────────────────────
-type GameForm = { id?: number; name: string; gameId: string; description: string; imageUrl: string; genre: string; platform: string; status: "active" | "beta" | "maintenance" | "inactive"; sortOrder: number };
+type GameForm = { id?: number; name: string; gameId: string; description: string; imageUrl: string; genre: string; platform: string; status: "active" | "inactive"; sortOrder: number };
 
 function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
   const [form, setForm] = useState<GameForm | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const { data, refetch } = useQuery({ queryKey: ["admin-games", search, page], queryFn: () => adminClient!.games.list.query({ search, page, pageSize: 20 }), enabled: !!adminClient });
   const createM = useMutation({ mutationFn: (input: any) => adminClient!.games.create.mutate(input), onSuccess: () => { toast.success("게임이 등록되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
@@ -387,6 +388,27 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
 
   const empty: GameForm = { name: "", gameId: "", description: "", imageUrl: "", genre: "", platform: "", status: "active", sortOrder: 0 };
   const submit = () => { if (!form?.name) { toast.error("게임명을 입력하세요."); return; } form.id ? updateM.mutate(form) : createM.mutate(form); };
+
+  const handleIconSelect = async () => {
+    const input = document.createElement("input"); input.type = "file"; input.accept = "image/jpeg,image/webp,image/png,image/gif";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]; if (!file) return;
+      if (file.size > 500 * 1024) { toast.error("500KB 이하 이미지를 선택해주세요."); return; }
+      setUploading(true);
+      try {
+        const reader = new FileReader();
+        const base64 = await new Promise<string>(r => { reader.onload = ev => r(ev.target?.result as string); reader.readAsDataURL(file); });
+        const result = await adminClient!.admin.uploadBannerImage.mutate({ base64, filename: file.name });
+        setForm(f => f && ({ ...f, imageUrl: result.url }));
+        toast.success("아이콘 업로드 완료");
+      } catch (err: any) { toast.error(`업로드 실패: ${err.message}`); }
+      finally { setUploading(false); }
+    };
+    input.click();
+  };
+
+  const toStatusLabel = (status: string) => status === "active" ? "활성" : "비활성";
+  const toFormStatus = (status: string): "active" | "inactive" => (status === "active" ? "active" : "inactive");
 
   return (
     <div className="space-y-6">
@@ -398,26 +420,51 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
           <CardHeader className="pb-3">
             <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="게임명 검색..." />
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {!data?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 게임이 없습니다.</div> : (
-              <div className="space-y-2">
-                {data.items.map((g: any) => (
-                  <div key={g.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer"   onClick={() => setForm({ id: g.id, name: g.name, gameId: g.gameId ?? "", description: g.description ?? "", imageUrl: g.imageUrl ?? "", genre: g.genre ?? "", platform: g.platform ?? "", status: g.status, sortOrder: g.sortOrder })}>
-                    {g.imageUrl && <img src={g.imageUrl} alt={g.name} className="w-16 h-10 object-cover rounded shrink-0" />}
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm">{g.name}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        {g.genre && <span className="text-xs text-muted-foreground">{g.genre}</span>}
-                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${g.status === "active" ? "bg-green-100 text-green-700" : g.status === "beta" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500"}`}>{g.status}</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
-                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: g.id, name: g.name, gameId: g.gameId ?? "", description: g.description ?? "", imageUrl: g.imageUrl ?? "", genre: g.genre ?? "", platform: g.platform ?? "", status: g.status, sortOrder: g.sortOrder })}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${g.name}" 게임을 삭제하시겠습니까?`)) deleteM.mutate(g.id); }}><Trash2 className="h-4 w-4" /></Button>
-                    </div>
-                  </div>
-                ))}
-                <Pagination page={page} total={data.total} pageSize={20} onChange={setPage} />
+              <div>
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-slate-50 dark:bg-slate-800">
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground w-16">아이콘</th>
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground">게임명</th>
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground">게임ID</th>
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground">장르</th>
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground">플랫폼</th>
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground">상태</th>
+                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">관리</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.items.map((g: any) => (
+                      <tr key={g.id} className="border-b last:border-0 hover:bg-accent/20 transition-colors">
+                        <td className="px-4 py-3">
+                          {g.imageUrl
+                            ? <img src={g.imageUrl} alt={g.name} className="w-10 h-10 object-cover rounded" />
+                            : <div className="w-10 h-10 rounded bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400 text-xs">없음</div>}
+                        </td>
+                        <td className="px-4 py-3 font-medium">{g.name}</td>
+                        <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{g.gameId ?? "-"}</td>
+                        <td className="px-4 py-3 text-muted-foreground">{g.genre ?? "-"}</td>
+                        <td className="px-4 py-3 text-muted-foreground">{g.platform ?? "-"}</td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                            g.status === "active" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"
+                          }`}>{toStatusLabel(g.status)}</span>
+                        </td>
+                        <td className="px-4 py-3 text-right" onClick={e => e.stopPropagation()}>
+                          <div className="flex gap-1 justify-end">
+                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: g.id, name: g.name, gameId: g.gameId ?? "", description: g.description ?? "", imageUrl: g.imageUrl ?? "", genre: g.genre ?? "", platform: g.platform ?? "", status: toFormStatus(g.status), sortOrder: g.sortOrder })}><Pencil className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${g.name}" 게임을 삭제하시겠습니까?`)) deleteM.mutate(g.id); }}><Trash2 className="h-4 w-4" /></Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="px-4 py-3">
+                  <Pagination page={page} total={data.total} pageSize={20} onChange={setPage} />
+                </div>
               </div>
             )}
           </CardContent>
@@ -430,15 +477,31 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
             <div className="space-y-1"><label className="text-sm font-medium">장르</label><Input value={form.genre} onChange={e => setForm(f => f && ({ ...f, genre: e.target.value }))} placeholder="Fantasy MMORPG" /></div>
             <div className="space-y-1"><label className="text-sm font-medium">플랫폼</label><Input value={form.platform} onChange={e => setForm(f => f && ({ ...f, platform: e.target.value }))} placeholder="Web Browser" /></div>
             <div className="space-y-1 col-span-2"><label className="text-sm font-medium">소개</label><textarea className="w-full border rounded-md p-2 text-sm min-h-[80px]" value={form.description} onChange={e => setForm(f => f && ({ ...f, description: e.target.value }))} placeholder="게임 소개" /></div>
-            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">이미지 URL</label><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." /></div>
+            {/* 아이콘 등록 */}
+            <div className="space-y-2 col-span-2">
+              <label className="text-sm font-medium">아이콘 등록</label>
+              <div className="flex items-center gap-3">
+                {form.imageUrl && (
+                  <img src={form.imageUrl} alt="아이콘 미리보기" className="w-12 h-12 object-cover rounded border" />
+                )}
+                <Button type="button" variant="outline" size="sm" onClick={handleIconSelect} disabled={uploading}>
+                  {uploading ? "업로드 중..." : "PC에서 이미지 파일 찾기"}
+                </Button>
+                {form.imageUrl && (
+                  <Button type="button" variant="ghost" size="sm" className="text-red-500" onClick={() => setForm(f => f && ({ ...f, imageUrl: "" }))}>삭제</Button>
+                )}
+              </div>
+              {form.imageUrl && (
+                <p className="text-xs text-muted-foreground break-all">{form.imageUrl}</p>
+              )}
+              <p className="text-xs text-muted-foreground">JPG, PNG, WEBP, GIF · 최대 500KB</p>
+            </div>
             <div className="space-y-1"><label className="text-sm font-medium">상태</label>
-              <Select value={form.status} onValueChange={v => setForm(f => f && ({ ...f, status: v as any }))}>
+              <Select value={form.status} onValueChange={v => setForm(f => f && ({ ...f, status: v as "active" | "inactive" }))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="beta">Beta</SelectItem>
-                  <SelectItem value="maintenance">Maintenance</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="active">활성</SelectItem>
+                  <SelectItem value="inactive">비활성</SelectItem>
                 </SelectContent>
               </Select>
             </div>
