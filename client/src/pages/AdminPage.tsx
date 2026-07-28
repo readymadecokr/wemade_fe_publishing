@@ -788,10 +788,22 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
               <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {!paged.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 배너가 없습니다.</div> : (
-              <div className="space-y-0">
+              <div>
                 <table className="w-full">
+                  <thead>
+                    <tr className="border-b bg-slate-50 dark:bg-slate-800 text-xs text-muted-foreground">
+                      <th className="px-3 py-2.5 text-center font-medium w-8">No</th>
+                      <th className="px-2 py-2.5 text-left font-medium w-28">이미지</th>
+                      <th className="px-3 py-2.5 text-left font-medium">제목</th>
+                      <th className="px-3 py-2.5 text-center font-medium w-44">노출일시</th>
+                      <th className="px-3 py-2.5 text-center font-medium w-16">공개</th>
+                      <th className="px-2 py-2.5 text-center font-medium w-10">보기</th>
+                      <th className="px-2 py-2.5 text-center font-medium w-10">수정</th>
+                      <th className="px-2 py-2.5 text-center font-medium w-10">삭제</th>
+                    </tr>
+                  </thead>
                   <tbody>
                     {paged.map(b => (
                       <tr
@@ -920,6 +932,17 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
             {!data?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 뉴스가 없습니다.</div> : (
               <div>
                 <table className="w-full">
+                  <thead>
+                    <tr className="border-b bg-slate-50 dark:bg-slate-800 text-xs text-muted-foreground">
+                      <th className="px-3 py-2.5 text-center font-medium w-8">No</th>
+                      <th className="px-2 py-2.5 text-left font-medium w-28">이미지</th>
+                      <th className="px-3 py-2.5 text-left font-medium">제목</th>
+                      <th className="px-3 py-2.5 text-center font-medium w-40">등록일시</th>
+                      <th className="px-3 py-2.5 text-center font-medium w-16">공개</th>
+                      <th className="px-2 py-2.5 text-center font-medium w-16">수정</th>
+                      <th className="px-2 py-2.5 text-center font-medium w-12">삭제</th>
+                    </tr>
+                  </thead>
                   <tbody>
                     {data.items.map((item: any, idx: number) => (
                       <tr
