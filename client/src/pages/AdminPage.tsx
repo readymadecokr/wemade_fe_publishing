@@ -36,6 +36,25 @@ function fmt(d: Date | string | null | undefined) {
   return new Date(d).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
 }
 
+// 24시간 형식 datetime 입력 콴포넌트 (YYYY-MM-DD HH:mm)
+function DateTimeInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
+  // value는 "YYYY-MM-DDTHH:mm" 또는 "YYYY-MM-DD HH:mm" 형식
+  const display = value ? value.replace("T", " ").slice(0, 16) : "";
+  return (
+    <Input
+      type="text"
+      value={display}
+      onChange={e => {
+        const v = e.target.value;
+        // YYYY-MM-DD HH:mm 형식으로 정리
+        onChange(v.replace(" ", "T"));
+      }}
+      placeholder={placeholder ?? "YYYY-MM-DD HH:mm"}
+      maxLength={16}
+    />
+  );
+}
+
 function SectionHeader({ title, desc, action }: { title: string; desc?: string; action?: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between">
@@ -374,11 +393,9 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
             {suspendForm?.status !== "active" && (
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold bg-pink-100 text-pink-800 px-2 py-0.5 rounded inline-block">이용 제한 시작일시</label>
-                <Input
-                  type="datetime-local"
+                <DateTimeInput
                   value={suspendForm?.startDate ?? ""}
-                  onChange={e => {
-                    const start = e.target.value;
+                  onChange={start => {
                     setSuspendForm(f => {
                       if (!f) return f;
                       const expiry = calcExpiry(start, f.suspendDays);
@@ -412,11 +429,10 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
             {suspendForm?.status === "suspended" && (
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold bg-pink-100 text-pink-800 px-2 py-0.5 rounded inline-block">이용 제한 만료일시</label>
-                <Input
-                  type="datetime-local"
+                <DateTimeInput
                   value={suspendForm?.until ?? ""}
-                  onChange={e => setSuspendForm(f => f && ({ ...f, until: e.target.value }))}
-                  placeholder="자동 계산 또는 직접 입력"
+                  onChange={v => setSuspendForm(f => f && ({ ...f, until: v }))}
+                  placeholder="자동 계산 또는 직접 입력 (YYYY-MM-DD HH:mm)"
                 />
               </div>
             )}
@@ -741,7 +757,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm truncate">{b.title}</p>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs text-blue-600">{b.actionType === "url" ? "URL 연결" : "콘텐츠"}</span>
+                        <span className="text-xs text-blue-600">{b.actionType === "url" ? "새창 띄우기" : "기존 페이지 전환"}</span>
                         <StatusBadge active={b.isActive} />
                       </div>
                     </div>
@@ -761,8 +777,8 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
         <Card><CardContent className="pt-6 space-y-4">
           <div className="space-y-1"><label className="text-sm font-medium">배너 제목 *</label><Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="배너 제목" /></div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1"><label className="text-sm font-medium">노출 시작일시 (선택)</label><Input type="datetime-local" value={form.startDate} onChange={e => setForm(f => f && ({ ...f, startDate: e.target.value }))} /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">노출 종료일시 (선택)</label><Input type="datetime-local" value={form.endDate} onChange={e => setForm(f => f && ({ ...f, endDate: e.target.value }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">노출 시작일시 (선택)</label><DateTimeInput value={form.startDate} onChange={v => setForm(f => f && ({ ...f, startDate: v }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">노출 종료일시 (선택)</label><DateTimeInput value={form.endDate} onChange={v => setForm(f => f && ({ ...f, endDate: v }))} /></div>
           </div>
           <div className="space-y-1">
             <label className="text-sm font-medium">이미지 등록 *</label>
@@ -773,16 +789,12 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
           <div className="space-y-1">
             <label className="text-sm font-medium">클릭 시 동작</label>
             <div className="flex gap-4">
-              {(["url", "content"] as const).map(t => <label key={t} className="flex items-center gap-2 cursor-pointer"><input type="radio" checked={form.actionType === t} onChange={() => setForm(f => f && ({ ...f, actionType: t }))} /><span className="text-sm">{t === "url" ? "URL 이동" : "콘텐츠 표시"}</span></label>)}
+              {(["url", "content"] as const).map(t => <label key={t} className="flex items-center gap-2 cursor-pointer"><input type="radio" checked={form.actionType === t} onChange={() => setForm(f => f && ({ ...f, actionType: t }))} /><span className="text-sm">{t === "url" ? "새창 띄우기" : "기존 페이지 전환"}</span></label>)}
             </div>
           </div>
           {form.actionType === "url" && <div className="space-y-1"><label className="text-sm font-medium">이동 URL</label><Input value={form.actionUrl} onChange={e => setForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="https://..." /></div>}
           {form.actionType === "content" && (
-            <div className="space-y-3">
-              <div className="space-y-1"><label className="text-sm font-medium">제목</label><Input value={form.contentTitle} onChange={e => setForm(f => f && ({ ...f, contentTitle: e.target.value }))} /></div>
-              <div className="space-y-1"><label className="text-sm font-medium">날짜</label><Input value={form.contentDate} onChange={e => setForm(f => f && ({ ...f, contentDate: e.target.value }))} placeholder="2026-07-01" /></div>
-              <div className="space-y-1"><label className="text-sm font-medium">내용</label><textarea className="w-full border rounded-md p-2 text-sm min-h-[80px]" value={form.contentBody} onChange={e => setForm(f => f && ({ ...f, contentBody: e.target.value }))} /></div>
-            </div>
+            <div className="space-y-1"><label className="text-sm font-medium">이동 URL</label><Input value={form.actionUrl} onChange={e => setForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="https://..." /></div>
           )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} /></div>
