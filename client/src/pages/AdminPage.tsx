@@ -110,7 +110,9 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [editForm, setEditForm] = useState<{ name: string } | null>(null);
-  const [suspendForm, setSuspendForm] = useState<{ status: string; reason: string; until: string } | null>(null);
+  const [suspendForm, setSuspendForm] = useState<{ status: string; reason: string; until: string; csCode: string; suspendDays: string } | null>(null);
+  const [showSuspendPreview, setShowSuspendPreview] = useState(false);
+  const generateCsCode = () => String(Math.floor(10000000000 + Math.random() * 90000000000));
   const qc = useQueryClient();
 
   const { data, isLoading, refetch } = useQuery({
@@ -189,7 +191,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                         <td className="p-2" onClick={e => e.stopPropagation()}>
                           <div className="flex gap-1">
                             <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => { setSelectedUser(u); setEditForm({ name: u.name ?? "" }); }}>수정</Button>
-                            <Button variant="ghost" size="sm" className="h-7 text-xs text-orange-500" onClick={() => { setSelectedUser(u); setSuspendForm({ status: "suspended", reason: "", until: "" }); }}>제재</Button>
+                            <Button variant="ghost" size="sm" className="h-7 text-xs text-orange-500" onClick={() => { setSelectedUser(u); setSuspendForm({ status: "suspended", reason: "", until: "", csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" }); }}>제재</Button>
                           </div>
                         </td>
                       </tr>
@@ -220,7 +222,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => { setEditForm({ name: selectedUser?.name ?? "" }); }}>정보 수정</Button>
-            <Button variant="outline" className="text-orange-500" onClick={() => setSuspendForm({ status: "suspended", reason: "", until: "" })}>제재</Button>
+            <Button variant="outline" className="text-orange-500" onClick={() => setSuspendForm({ status: "suspended", reason: "", until: "", csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" })}>제재</Button>
             <Button variant="ghost" onClick={() => setSelectedUser(null)}>닫기</Button>
           </DialogFooter>
         </DialogContent>
@@ -244,10 +246,19 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
       </Dialog>
 
       {/* 제재 모달 */}
-      <Dialog open={!!suspendForm} onOpenChange={() => setSuspendForm(null)}>
-        <DialogContent className="max-w-sm">
+      <Dialog open={!!suspendForm && !showSuspendPreview} onOpenChange={() => setSuspendForm(null)}>
+        <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>회원 제재</DialogTitle><DialogDescription>{selectedUser?.name} 회원에 대한 제재를 처리합니다.</DialogDescription></DialogHeader>
           <div className="space-y-3 py-2">
+            {/* CS Code */}
+            <div className="space-y-1">
+              <label className="text-sm font-medium">CS Code (자동 생성)</label>
+              <div className="flex gap-2">
+                <Input value={suspendForm?.csCode ?? ""} readOnly className="font-mono bg-slate-50" />
+                <Button type="button" variant="outline" size="sm" onClick={() => setSuspendForm(f => f && ({ ...f, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)) }))}>재생성</Button>
+              </div>
+            </div>
+            {/* 제재 유형 */}
             <div className="space-y-1">
               <label className="text-sm font-medium">제재 유형</label>
               <Select value={suspendForm?.status ?? "suspended"} onValueChange={v => setSuspendForm(f => f && ({ ...f, status: v }))}>
@@ -259,21 +270,56 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                 </SelectContent>
               </Select>
             </div>
+            {/* 제재 일수 */}
             {suspendForm?.status === "suspended" && (
               <div className="space-y-1">
-                <label className="text-sm font-medium">정지 해제일 (선택)</label>
-                <Input type="datetime-local" value={suspendForm.until} onChange={e => setSuspendForm(f => f && ({ ...f, until: e.target.value }))} />
+                <label className="text-sm font-medium">제재 일수</label>
+                <Input type="number" min="1" value={suspendForm.suspendDays} onChange={e => {
+                  const days = e.target.value;
+                  setSuspendForm(f => {
+                    if (!f) return f;
+                    const until = days ? new Date(Date.now() + parseInt(days) * 86400000).toISOString().slice(0, 16) : "";
+                    return { ...f, suspendDays: days, until };
+                  });
+                }} placeholder="정지 일수 (예: 7)" />
+                {suspendForm.until && <p className="text-xs text-muted-foreground">해제일: {new Date(suspendForm.until).toLocaleString("ko-KR")}</p>}
               </div>
             )}
+            {/* 사유 */}
             <div className="space-y-1">
-              <label className="text-sm font-medium">사유</label>
+              <label className="text-sm font-medium">제재 사유</label>
               <Input value={suspendForm?.reason ?? ""} onChange={e => setSuspendForm(f => f && ({ ...f, reason: e.target.value }))} placeholder="제재 사유 입력" />
             </div>
+            {/* 팝업 미리보기 버튼 */}
+            {suspendForm?.status !== "active" && (
+              <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => setShowSuspendPreview(true)}>팝업 미리보기</Button>
+            )}
           </div>
           <DialogFooter>
-            <Button onClick={() => { if (selectedUser && suspendForm) suspendMutation.mutate({ userId: selectedUser.id, status: suspendForm.status as any, suspendedUntil: suspendForm.until || undefined, reason: suspendForm.reason || undefined }); }} disabled={suspendMutation.isPending}>처리</Button>
+            <Button onClick={() => { if (selectedUser && suspendForm) suspendMutation.mutate({ userId: selectedUser.id, status: suspendForm.status as any, suspendedUntil: suspendForm.until || undefined, reason: suspendForm.reason || undefined, csCode: suspendForm.csCode || undefined } as any); }} disabled={suspendMutation.isPending}>처리</Button>
             <Button variant="ghost" onClick={() => setSuspendForm(null)}>취소</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 제재 팝업 미리보기 */}
+      <Dialog open={showSuspendPreview} onOpenChange={() => setShowSuspendPreview(false)}>
+        <DialogContent className="max-w-sm">
+          <div className="bg-white rounded-2xl p-6 space-y-4">
+            <h2 className="text-lg font-bold text-center text-slate-800">운영정책에 따른 접속 제한</h2>
+            <div className="space-y-1.5 text-sm">
+              <p><span className="text-red-500 font-semibold">CS Code</span> : {suspendForm?.csCode}</p>
+              <p><span className="text-red-500 font-semibold">제재 사유</span> : {suspendForm?.reason || "(사유 없음)"}</p>
+              <p><span className="text-red-500 font-semibold">제재 일자</span> : {new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/\. /g, "년 ").replace(".", "일")}</p>
+              {suspendForm?.status === "suspended" && suspendForm.suspendDays && (
+                <p><span className="text-red-500 font-semibold">제재 일수</span> : {suspendForm.suspendDays}일</p>
+              )}
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button variant="outline" className="flex-1 bg-slate-800 text-white hover:bg-slate-700 border-0">고객센터</Button>
+              <Button className="flex-1 bg-blue-500 hover:bg-blue-600" onClick={() => setShowSuspendPreview(false)}>확인</Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
