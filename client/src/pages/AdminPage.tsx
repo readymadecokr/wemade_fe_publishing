@@ -915,26 +915,57 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
           <CardHeader className="pb-3">
             <div className="flex gap-2"><SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="제목 또는 내용 검색..." /><Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button></div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {!data?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 뉴스가 없습니다.</div> : (
-              <div className="space-y-2">
-                {data.items.map((item: any) => (
-                  <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 10) : "" })}>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{item.title}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs text-muted-foreground">{item.category}</span>
-                        <StatusBadge active={item.isActive} />
-                        <span className="text-xs text-muted-foreground">{item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : ""}</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
-                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 10) : "" })}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 뉴스를 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
-                    </div>
-                  </div>
-                ))}
-                <Pagination page={page} total={data.total} pageSize={20} onChange={setPage} />
+              <div>
+                <table className="w-full">
+                  <tbody>
+                    {data.items.map((item: any, idx: number) => (
+                      <tr
+                        key={item.id}
+                        className="border-b last:border-0 hover:bg-accent/30 cursor-pointer"
+                        onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 10) : "" })}
+                      >
+                        {/* 번호 */}
+                        <td className="px-3 py-3 w-8 text-xs text-muted-foreground text-center whitespace-nowrap">{idx + 1 + (page - 1) * 20}</td>
+                        {/* 썸네일 */}
+                        <td className="px-2 py-3 w-28">
+                          {item.imageUrl
+                            ? <div className="w-24 h-14 rounded overflow-hidden bg-slate-100"><img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" /></div>
+                            : <div className="w-24 h-14 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 text-xs">없음</div>}
+                        </td>
+                        {/* 제목 */}
+                        <td className="px-3 py-3 font-medium text-sm">{item.title}</td>
+                        {/* 등록일시 */}
+                        <td className="px-3 py-3 w-40 whitespace-nowrap">
+                          <span className="text-xs text-slate-500 bg-slate-100 dark:bg-slate-700 rounded px-2 py-1 font-mono">
+                            {item.publishedAt ? new Date(item.publishedAt).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }) : "-"}
+                          </span>
+                        </td>
+                        {/* 활성 */}
+                        <td className="px-3 py-3 w-16 whitespace-nowrap"><StatusBadge active={item.isActive} /></td>
+                        {/* 카테고리 배지 */}
+                        <td className="px-3 py-3 w-20 whitespace-nowrap">
+                          <span className={`text-xs font-medium px-2 py-1 rounded ${
+                            item.category === "Update" ? "bg-pink-100 text-pink-700" :
+                            item.category === "Event" ? "bg-purple-100 text-purple-700" :
+                            "bg-blue-100 text-blue-700"
+                          }`}>{item.category}</span>
+                        </td>
+                        {/* 버튼 */}
+                        <td className="px-2 py-3 w-20 whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                          <div className="flex gap-1 justify-end">
+                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 10) : "" })}><Pencil className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 뉴스를 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="px-4 py-3">
+                  <Pagination page={page} total={data.total} pageSize={20} onChange={setPage} />
+                </div>
               </div>
             )}
           </CardContent>
