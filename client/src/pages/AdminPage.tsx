@@ -901,6 +901,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
   const empty: NewsForm = { title: "", category: "Update", summary: "", content: "", imageUrl: "", isActive: 1, publishedAt: new Date().toISOString().slice(0, 10) };
   const submit = () => {
     if (!form?.title) { toast.error("제목을 입력하세요."); return; }
+    // publishedAt: DateTimeInput에서 YYYY-MM-DDTHH:mm 형식으로 저장됨 - 그대로 전달
     const p = { title: form.title, category: form.category, summary: form.summary || undefined, content: form.content || undefined, imageUrl: form.imageUrl || undefined, isActive: form.isActive, publishedAt: form.publishedAt || undefined };
     form.id ? updateM.mutate({ id: form.id, ...p }) : createM.mutate(p);
   };
@@ -924,7 +925,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                       <tr
                         key={item.id}
                         className="border-b last:border-0 hover:bg-accent/30 cursor-pointer"
-                        onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 10) : "" })}
+                        onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 16) : "" })}
                       >
                         {/* 번호 */}
                         <td className="px-3 py-3 w-8 text-xs text-muted-foreground text-center whitespace-nowrap">{idx + 1 + (page - 1) * 20}</td>
@@ -944,18 +945,11 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                         </td>
                         {/* 활성 */}
                         <td className="px-3 py-3 w-16 whitespace-nowrap"><StatusBadge active={item.isActive} /></td>
-                        {/* 카테고리 배지 */}
-                        <td className="px-3 py-3 w-20 whitespace-nowrap">
-                          <span className={`text-xs font-medium px-2 py-1 rounded ${
-                            item.category === "Update" ? "bg-pink-100 text-pink-700" :
-                            item.category === "Event" ? "bg-purple-100 text-purple-700" :
-                            "bg-blue-100 text-blue-700"
-                          }`}>{item.category}</span>
-                        </td>
+
                         {/* 버튼 */}
                         <td className="px-2 py-3 w-20 whitespace-nowrap" onClick={e => e.stopPropagation()}>
                           <div className="flex gap-1 justify-end">
-                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 10) : "" })}><Pencil className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 16) : "" })}><Pencil className="h-4 w-4" /></Button>
                             <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 뉴스를 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
                           </div>
                         </td>
@@ -1044,7 +1038,6 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
               <label className="text-sm font-medium block mb-1">활성 상태</label>
               <div className="flex items-center gap-2 h-10">
                 <ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} />
-                <span className="text-sm">{form.isActive ? "활성" : "비활성"}</span>
               </div>
             </div>
           </div>
