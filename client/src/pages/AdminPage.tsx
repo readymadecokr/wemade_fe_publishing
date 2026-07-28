@@ -1028,15 +1028,15 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
               />
             </div>
           </div>
-          {/* ⑥ 활성 상태 */}
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
+          {/* ⑥ 순서 + 활성 상태 (2열 그리드) */}
+          <div className="grid grid-cols-2 gap-6">
+            <div>
               <label className="text-sm font-medium block mb-1">순서</label>
-              <Input type="number" value={form.id ?? ""} readOnly className="w-20 bg-slate-50" placeholder="-" />
+              <Input type="number" value={form.id ?? ""} readOnly className="bg-slate-50" placeholder="-" />
             </div>
             <div>
               <label className="text-sm font-medium block mb-1">활성 상태</label>
-              <div className="flex items-center gap-2 h-10">
+              <div className="flex items-center h-10">
                 <ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} />
               </div>
             </div>
