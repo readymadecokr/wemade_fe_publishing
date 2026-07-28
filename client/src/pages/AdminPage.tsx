@@ -10,7 +10,7 @@ import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import type { AppRouter } from "../../../server/routers";
 import {
-  Activity, BarChart2, Banknote, ChevronLeft, ChevronRight, CircleDollarSign, Coins, CreditCard, Eye, Gamepad2,
+  Activity, BarChart2, Banknote, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, CircleDollarSign, Coins, CreditCard, Eye, Gamepad2,
   Image, Link, LogOut, Pencil, Plus, RefreshCw, Search, Shield, ShoppingCart,
   Tag, Trash2, ToggleLeft, ToggleRight, UserCheck, UserCog, UserPlus, Users, Users2, UsersRound, X,
 } from "lucide-react";
@@ -386,6 +386,19 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
   const updateM = useMutation({ mutationFn: (input: any) => adminClient!.games.update.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
   const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.games.delete.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
 
+  const moveOrder = async (items: any[], idx: number, dir: "up" | "down") => {
+    const arr = [...items];
+    const swapIdx = dir === "up" ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= arr.length) return;
+    const aOrder = arr[idx].sortOrder;
+    const bOrder = arr[swapIdx].sortOrder;
+    try {
+      await adminClient!.games.update.mutate({ id: arr[idx].id, sortOrder: bOrder });
+      await adminClient!.games.update.mutate({ id: arr[swapIdx].id, sortOrder: aOrder });
+      refetch();
+    } catch (e: any) { toast.error(`순서 변경 실패: ${e.message}`); }
+  };
+
   const empty: GameForm = { name: "", gameId: "", description: "", imageUrl: "", genre: "", platform: "", status: "active", sortOrder: 0 };
   const submit = () => { if (!form?.name) { toast.error("게임명을 입력하세요."); return; } form.id ? updateM.mutate(form) : createM.mutate(form); };
 
@@ -426,22 +439,26 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b bg-slate-50 dark:bg-slate-800">
-                      <th className="text-left px-4 py-3 font-medium text-muted-foreground w-16">아이콘</th>
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground w-20">아이콘</th>
                       <th className="text-left px-4 py-3 font-medium text-muted-foreground">게임명</th>
                       <th className="text-left px-4 py-3 font-medium text-muted-foreground">게임ID</th>
                       <th className="text-left px-4 py-3 font-medium text-muted-foreground">장르</th>
                       <th className="text-left px-4 py-3 font-medium text-muted-foreground">플랫폼</th>
                       <th className="text-left px-4 py-3 font-medium text-muted-foreground">상태</th>
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">관리</th>
+                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">순서</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {data.items.map((g: any) => (
-                      <tr key={g.id} className="border-b last:border-0 hover:bg-accent/20 transition-colors">
+                    {data.items.map((g: any, idx: number) => (
+                      <tr
+                        key={g.id}
+                        className="border-b last:border-0 hover:bg-accent/30 transition-colors cursor-pointer"
+                        onClick={() => setForm({ id: g.id, name: g.name, gameId: g.gameId ?? "", description: g.description ?? "", imageUrl: g.imageUrl ?? "", genre: g.genre ?? "", platform: g.platform ?? "", status: toFormStatus(g.status), sortOrder: g.sortOrder })}
+                      >
                         <td className="px-4 py-3">
                           {g.imageUrl
-                            ? <img src={g.imageUrl} alt={g.name} className="w-10 h-10 object-cover rounded" />
-                            : <div className="w-10 h-10 rounded bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400 text-xs">없음</div>}
+                            ? <img src={g.imageUrl} alt={g.name} className="w-14 h-14 object-cover rounded" />
+                            : <div className="w-14 h-14 rounded bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400 text-xs">없음</div>}
                         </td>
                         <td className="px-4 py-3 font-medium">{g.name}</td>
                         <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{g.gameId ?? "-"}</td>
@@ -454,8 +471,18 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                         </td>
                         <td className="px-4 py-3 text-right" onClick={e => e.stopPropagation()}>
                           <div className="flex gap-1 justify-end">
-                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: g.id, name: g.name, gameId: g.gameId ?? "", description: g.description ?? "", imageUrl: g.imageUrl ?? "", genre: g.genre ?? "", platform: g.platform ?? "", status: toFormStatus(g.status), sortOrder: g.sortOrder })}><Pencil className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${g.name}" 게임을 삭제하시겠습니까?`)) deleteM.mutate(g.id); }}><Trash2 className="h-4 w-4" /></Button>
+                            <Button
+                              variant="ghost" size="sm"
+                              disabled={idx === 0}
+                              onClick={() => moveOrder(data.items, idx, "up")}
+                              title="위로"
+                            ><ChevronUp className="h-4 w-4" /></Button>
+                            <Button
+                              variant="ghost" size="sm"
+                              disabled={idx === data.items.length - 1}
+                              onClick={() => moveOrder(data.items, idx, "down")}
+                              title="아래로"
+                            ><ChevronDown className="h-4 w-4" /></Button>
                           </div>
                         </td>
                       </tr>
@@ -480,21 +507,27 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
             {/* 아이콘 등록 */}
             <div className="space-y-2 col-span-2">
               <label className="text-sm font-medium">아이콘 등록</label>
-              <div className="flex items-center gap-3">
-                {form.imageUrl && (
-                  <img src={form.imageUrl} alt="아이콘 미리보기" className="w-12 h-12 object-cover rounded border" />
-                )}
-                <Button type="button" variant="outline" size="sm" onClick={handleIconSelect} disabled={uploading}>
-                  {uploading ? "업로드 중..." : "PC에서 이미지 파일 찾기"}
-                </Button>
-                {form.imageUrl && (
-                  <Button type="button" variant="ghost" size="sm" className="text-red-500" onClick={() => setForm(f => f && ({ ...f, imageUrl: "" }))}>삭제</Button>
-                )}
+              <div className="flex items-start gap-4">
+                {/* 왼쪽 미리보기 */}
+                <div className="shrink-0">
+                  {form.imageUrl
+                    ? <img src={form.imageUrl} alt="아이콘 미리보기" className="w-20 h-20 object-cover rounded-lg border shadow-sm" />
+                    : <div className="w-20 h-20 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-400 text-xs">미등록</div>}
+                </div>
+                {/* 오른쪽 컨트롤 */}
+                <div className="flex flex-col gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={handleIconSelect} disabled={uploading}>
+                    {uploading ? "업로드 중..." : "PC에서 이미지 파일 찾기"}
+                  </Button>
+                  {form.imageUrl && (
+                    <Button type="button" variant="ghost" size="sm" className="text-red-500 justify-start px-2" onClick={() => setForm(f => f && ({ ...f, imageUrl: "" }))}>아이콘 삭제</Button>
+                  )}
+                  <p className="text-xs text-muted-foreground">JPG, PNG, WEBP, GIF · 최대 500KB</p>
+                  {form.imageUrl && (
+                    <p className="text-xs text-muted-foreground break-all max-w-xs">{form.imageUrl}</p>
+                  )}
+                </div>
               </div>
-              {form.imageUrl && (
-                <p className="text-xs text-muted-foreground break-all">{form.imageUrl}</p>
-              )}
-              <p className="text-xs text-muted-foreground">JPG, PNG, WEBP, GIF · 최대 500KB</p>
             </div>
             <div className="space-y-1"><label className="text-sm font-medium">상태</label>
               <Select value={form.status} onValueChange={v => setForm(f => f && ({ ...f, status: v as "active" | "inactive" }))}>
