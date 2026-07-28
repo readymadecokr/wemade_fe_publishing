@@ -835,13 +835,17 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                         </td>
                         {/* 활성 */}
                         <td className="px-3 py-3 w-16 whitespace-nowrap"><StatusBadge active={b.isActive} /></td>
-                        {/* 버튼 */}
-                        <td className="px-2 py-3 w-28 whitespace-nowrap" onClick={e => e.stopPropagation()}>
-                          <div className="flex gap-1 justify-end">
-                            <Button variant="ghost" size="sm" onClick={() => setPreview(b)}><Eye className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}><Pencil className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${b.title}" 배너를 삭제하시겠습니까?`)) deleteM.mutate(b.id); }}><Trash2 className="h-4 w-4" /></Button>
-                          </div>
+                        {/* 보기 */}
+                        <td className="px-2 py-3 w-10 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                          <Button variant="ghost" size="sm" onClick={() => setPreview(b)}><Eye className="h-4 w-4" /></Button>
+                        </td>
+                        {/* 수정 */}
+                        <td className="px-2 py-3 w-10 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                          <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}><Pencil className="h-4 w-4" /></Button>
+                        </td>
+                        {/* 삭제 */}
+                        <td className="px-2 py-3 w-10 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                          <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${b.title}" 배너를 삭제하시겠습니까?`)) deleteM.mutate(b.id); }}><Trash2 className="h-4 w-4" /></Button>
                         </td>
                       </tr>
                     ))}
@@ -969,12 +973,13 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                         {/* 활성 */}
                         <td className="px-3 py-3 w-16 whitespace-nowrap"><StatusBadge active={item.isActive} /></td>
 
-                        {/* 버튼 */}
-                        <td className="px-2 py-3 w-20 whitespace-nowrap" onClick={e => e.stopPropagation()}>
-                          <div className="flex gap-1 justify-end">
-                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 16) : "" })}><Pencil className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 뉴스를 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
-                          </div>
+                        {/* 수정 */}
+                        <td className="px-2 py-3 w-16 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                          <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 16) : "" })}><Pencil className="h-4 w-4" /></Button>
+                        </td>
+                        {/* 삭제 */}
+                        <td className="px-2 py-3 w-12 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
+                          <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 뉴스를 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
                         </td>
                       </tr>
                     ))}
