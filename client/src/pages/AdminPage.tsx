@@ -110,9 +110,16 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [editForm, setEditForm] = useState<{ name: string } | null>(null);
-  const [suspendForm, setSuspendForm] = useState<{ status: string; reason: string; until: string; csCode: string; suspendDays: string } | null>(null);
+  const [suspendForm, setSuspendForm] = useState<{ status: string; reason: string; startDate: string; until: string; csCode: string; suspendDays: string } | null>(null);
   const [showSuspendPreview, setShowSuspendPreview] = useState(false);
   const generateCsCode = () => String(Math.floor(10000000000 + Math.random() * 90000000000));
+  const nowDateTimeLocal = () => new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 16);
+  const calcExpiry = (start: string, days: string) => {
+    if (!start || !days || isNaN(parseInt(days))) return "";
+    const d = new Date(start);
+    d.setDate(d.getDate() + parseInt(days));
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  };
   const qc = useQueryClient();
 
   const { data, isLoading, refetch } = useQuery({
@@ -185,13 +192,13 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                         <td className="p-2 text-xs text-muted-foreground">{fmt(u.lastSignedIn)}</td>
                         <td className="p-2">
                           <span className={`text-xs px-1.5 py-0.5 rounded-full ${(u as any).status === "suspended" ? "bg-orange-100 text-orange-700" : (u as any).status === "banned" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
-                            {(u as any).status === "suspended" ? "정지" : (u as any).status === "banned" ? "차단" : "정상"}
+                            {(u as any).status === "suspended" ? "이용 정지" : (u as any).status === "banned" ? "영구 정지" : "정상"}
                           </span>
                         </td>
                         <td className="p-2" onClick={e => e.stopPropagation()}>
                           <div className="flex gap-1">
                             <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => { setSelectedUser(u); setEditForm({ name: u.name ?? "" }); }}>수정</Button>
-                            <Button variant="ghost" size="sm" className="h-7 text-xs text-orange-500" onClick={() => { setSelectedUser(u); setSuspendForm({ status: "suspended", reason: "", until: "", csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" }); }}>제재</Button>
+                            <Button variant="ghost" size="sm" className="h-7 text-xs text-orange-500" onClick={() => { setSelectedUser(u); (() => { const now = new Date(Date.now() + 9*3600000).toISOString().slice(0,16); const expiry = calcExpiry(now, "7"); setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" }); })(); }}>이용 제한</Button>
                           </div>
                         </td>
                       </tr>
@@ -222,7 +229,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => { setEditForm({ name: selectedUser?.name ?? "" }); }}>정보 수정</Button>
-            <Button variant="outline" className="text-orange-500" onClick={() => setSuspendForm({ status: "suspended", reason: "", until: "", csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" })}>제재</Button>
+            <Button variant="outline" className="text-orange-500" onClick={() => (() => { const now = new Date(Date.now() + 9*3600000).toISOString().slice(0,16); const expiry = calcExpiry(now, "7"); setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" }); })()}>이용 제한</Button>
             <Button variant="ghost" onClick={() => setSelectedUser(null)}>닫기</Button>
           </DialogFooter>
         </DialogContent>
@@ -245,58 +252,96 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
         </DialogContent>
       </Dialog>
 
-      {/* 제재 모달 */}
+      {/* 이용 제한 모달 */}
       <Dialog open={!!suspendForm && !showSuspendPreview} onOpenChange={() => setSuspendForm(null)}>
-        <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>회원 제재</DialogTitle><DialogDescription>{selectedUser?.name} 회원에 대한 제재를 처리합니다.</DialogDescription></DialogHeader>
-          <div className="space-y-3 py-2">
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold bg-pink-100 text-pink-800 px-3 py-1.5 rounded w-fit">이용 제한 설정</DialogTitle>
+            <DialogDescription>{selectedUser?.name} 회원에 대한 제재를 처리합니다.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-1">
             {/* CS Code */}
-            <div className="space-y-1">
-              <label className="text-sm font-medium">CS Code (자동 생성)</label>
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold">CS Code (자동 생성)</label>
               <div className="flex gap-2">
-                <Input value={suspendForm?.csCode ?? ""} readOnly className="font-mono bg-slate-50" />
-                <Button type="button" variant="outline" size="sm" onClick={() => setSuspendForm(f => f && ({ ...f, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)) }))}>재생성</Button>
+                <Input value={suspendForm?.csCode ?? ""} readOnly className="font-mono bg-slate-50 flex-1" />
+                <Button type="button" variant="outline" size="sm" className="shrink-0" onClick={() => setSuspendForm(f => f && ({ ...f, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)) }))}>재생성</Button>
               </div>
             </div>
-            {/* 제재 유형 */}
-            <div className="space-y-1">
-              <label className="text-sm font-medium">제재 유형</label>
+            {/* 이용 제한 유형 */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold bg-pink-100 text-pink-800 px-2 py-0.5 rounded inline-block">이용 제한 유형</label>
               <Select value={suspendForm?.status ?? "suspended"} onValueChange={v => setSuspendForm(f => f && ({ ...f, status: v }))}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">제재 해제 (정상)</SelectItem>
-                  <SelectItem value="suspended">일시 정지</SelectItem>
-                  <SelectItem value="banned">영구 차단</SelectItem>
+                  <SelectItem value="active">제한 해제 (정상)</SelectItem>
+                  <SelectItem value="suspended">이용 정지</SelectItem>
+                  <SelectItem value="banned">영구 정지</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            {/* 제재 일수 */}
-            {suspendForm?.status === "suspended" && (
-              <div className="space-y-1">
-                <label className="text-sm font-medium">제재 일수</label>
-                <Input type="number" min="1" value={suspendForm.suspendDays} onChange={e => {
-                  const days = e.target.value;
-                  setSuspendForm(f => {
-                    if (!f) return f;
-                    const until = days ? new Date(Date.now() + parseInt(days) * 86400000).toISOString().slice(0, 16) : "";
-                    return { ...f, suspendDays: days, until };
-                  });
-                }} placeholder="정지 일수 (예: 7)" />
-                {suspendForm.until && <p className="text-xs text-muted-foreground">해제일: {new Date(suspendForm.until).toLocaleString("ko-KR")}</p>}
+            {/* 이용 제한 시작일시 */}
+            {suspendForm?.status !== "active" && (
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold bg-pink-100 text-pink-800 px-2 py-0.5 rounded inline-block">이용 제한 시작일시</label>
+                <Input
+                  type="datetime-local"
+                  value={suspendForm?.startDate ?? ""}
+                  onChange={e => {
+                    const start = e.target.value;
+                    setSuspendForm(f => {
+                      if (!f) return f;
+                      const expiry = calcExpiry(start, f.suspendDays);
+                      return { ...f, startDate: start, until: expiry };
+                    });
+                  }}
+                />
               </div>
             )}
-            {/* 사유 */}
-            <div className="space-y-1">
-              <label className="text-sm font-medium">제재 사유</label>
+            {/* 이용 제한 일수 */}
+            {suspendForm?.status === "suspended" && (
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold bg-pink-100 text-pink-800 px-2 py-0.5 rounded inline-block">이용 제한 일수</label>
+                <Input
+                  type="number"
+                  min="1"
+                  value={suspendForm.suspendDays}
+                  onChange={e => {
+                    const days = e.target.value;
+                    setSuspendForm(f => {
+                      if (!f) return f;
+                      const expiry = calcExpiry(f.startDate, days);
+                      return { ...f, suspendDays: days, until: expiry };
+                    });
+                  }}
+                  placeholder="정지 일수 (예: 7)"
+                />
+              </div>
+            )}
+            {/* 이용 제한 만료일시 */}
+            {suspendForm?.status === "suspended" && (
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold bg-pink-100 text-pink-800 px-2 py-0.5 rounded inline-block">이용 제한 만료일시</label>
+                <Input
+                  type="datetime-local"
+                  value={suspendForm?.until ?? ""}
+                  onChange={e => setSuspendForm(f => f && ({ ...f, until: e.target.value }))}
+                  placeholder="자동 계산 또는 직접 입력"
+                />
+              </div>
+            )}
+            {/* 이용 제한 사유 */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold bg-pink-100 text-pink-800 px-2 py-0.5 rounded inline-block">이용 제한 사유</label>
               <Input value={suspendForm?.reason ?? ""} onChange={e => setSuspendForm(f => f && ({ ...f, reason: e.target.value }))} placeholder="제재 사유 입력" />
             </div>
-            {/* 팝업 미리보기 버튼 */}
+            {/* 팝업 미리보기 */}
             {suspendForm?.status !== "active" && (
-              <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => setShowSuspendPreview(true)}>팝업 미리보기</Button>
+              <Button type="button" variant="outline" className="w-full" onClick={() => setShowSuspendPreview(true)}>팝업 미리보기</Button>
             )}
           </div>
           <DialogFooter>
-            <Button onClick={() => { if (selectedUser && suspendForm) suspendMutation.mutate({ userId: selectedUser.id, status: suspendForm.status as any, suspendedUntil: suspendForm.until || undefined, reason: suspendForm.reason || undefined, csCode: suspendForm.csCode || undefined } as any); }} disabled={suspendMutation.isPending}>처리</Button>
+            <Button className="bg-blue-500 hover:bg-blue-600" onClick={() => { if (selectedUser && suspendForm) suspendMutation.mutate({ userId: selectedUser.id, status: suspendForm.status as any, suspendedUntil: suspendForm.until || undefined, reason: suspendForm.reason || undefined, csCode: suspendForm.csCode || undefined } as any); }} disabled={suspendMutation.isPending}>처리</Button>
             <Button variant="ghost" onClick={() => setSuspendForm(null)}>취소</Button>
           </DialogFooter>
         </DialogContent>
