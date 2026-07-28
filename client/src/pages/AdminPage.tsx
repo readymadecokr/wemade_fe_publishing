@@ -38,19 +38,14 @@ function fmt(d: Date | string | null | undefined) {
 
 // 24시간 형식 datetime 입력 콴포넌트 (YYYY-MM-DD HH:mm)
 function DateTimeInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
-  // value는 "YYYY-MM-DDTHH:mm" 또는 "YYYY-MM-DD HH:mm" 형식
-  const display = value ? value.replace("T", " ").slice(0, 16) : "";
   return (
-    <Input
-      type="text"
-      value={display}
-      onChange={e => {
-        const v = e.target.value;
-        // YYYY-MM-DD HH:mm 형식으로 정리
-        onChange(v.replace(" ", "T"));
-      }}
-      placeholder={placeholder ?? "YYYY-MM-DD HH:mm"}
-      maxLength={16}
+    <input
+      type="datetime-local"
+      lang="en-GB"
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="datetime-24h flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     />
   );
 }

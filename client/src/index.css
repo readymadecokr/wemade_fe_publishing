@@ -223,3 +223,15 @@
 .floating-discord {
   animation: float 3s ease-in-out infinite, pulse-glow 2s ease-in-out infinite;
 }
+
+/* datetime-local 24시간 강제 적용: 오전/오후 선택 컬럼 숨김 */
+.datetime-24h::-webkit-datetime-edit-ampm-field {
+  display: none;
+}
+.datetime-24h::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+/* 크롬/엣지 달력 팝업 내 AM/PM 컬럼 숨김 */
+input[type="datetime-local"].datetime-24h {
+  /* hour12 강제 비활성화는 CSS만으로 불가하므로 ampm 필드만 숨김 */
+}
