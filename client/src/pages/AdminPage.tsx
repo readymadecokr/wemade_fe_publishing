@@ -110,6 +110,8 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [editForm, setEditForm] = useState<{ name: string } | null>(null);
+  const [nickCheckResult, setNickCheckResult] = useState<"idle" | "available" | "duplicate">("idle");
+  const [nickChecking, setNickChecking] = useState(false);
   const [suspendForm, setSuspendForm] = useState<{ status: string; reason: string; startDate: string; until: string; csCode: string; suspendDays: string } | null>(null);
   const [showSuspendPreview, setShowSuspendPreview] = useState(false);
   const generateCsCode = () => String(Math.floor(10000000000 + Math.random() * 90000000000));
@@ -130,9 +132,19 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
 
   const updateNickMutation = useMutation({
     mutationFn: (input: { userId: number; name: string }) => adminClient!.memberAdmin.updateNickname.mutate(input),
-    onSuccess: () => { toast.success("닉네임이 수정되었습니다."); setEditForm(null); setSelectedUser(null); refetch(); },
+    onSuccess: () => { toast.success("닉네임이 수정되었습니다."); setEditForm(null); setSelectedUser(null); setNickCheckResult("idle"); refetch(); },
     onError: (e: Error) => toast.error(`실패: ${e.message}`),
   });
+
+  const handleNickCheck = async () => {
+    if (!editForm?.name.trim() || !selectedUser) return;
+    setNickChecking(true);
+    try {
+      const res = await adminClient!.memberAdmin.checkNickname.query({ name: editForm.name.trim(), excludeUserId: selectedUser.id });
+      setNickCheckResult(res.isDuplicate ? "duplicate" : "available");
+    } catch { setNickCheckResult("idle"); }
+    finally { setNickChecking(false); }
+  };
   const suspendMutation = useMutation({
     mutationFn: (input: any) => adminClient!.memberAdmin.suspend.mutate(input),
     onSuccess: () => { toast.success("제재 처리되었습니다."); setSuspendForm(null); setSelectedUser(null); refetch(); },
@@ -213,41 +225,101 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
       </Card>
 
       {/* 회원 상세 / 수정 모달 */}
-      <Dialog open={!!selectedUser && !editForm && !suspendForm} onOpenChange={() => setSelectedUser(null)}>
+      {/* 회원 정보 조회 + 닉네임 수정 통합 팝업 */}
+      <Dialog open={!!selectedUser && !suspendForm} onOpenChange={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>회원 정보 조회</DialogTitle>
             <DialogDescription>회원 상세 정보를 확인합니다.</DialogDescription>
           </DialogHeader>
           {selectedUser && (
-            <div className="space-y-3 text-sm">
-              {[["ID", selectedUser.id], ["Open ID", selectedUser.openId], ["Nickname", selectedUser.name ?? "-"], ["Provider", selectedUser.loginMethod ?? "-"], ["가입일", fmt(selectedUser.createdAt)], ["마지막 로그인", fmt(selectedUser.lastSignedIn)], ["상태", (selectedUser as any).status ?? "active"]].map(([k, v]) => (
-                <div key={String(k)} className="grid grid-cols-3 gap-2"><span className="text-muted-foreground font-medium">{k}</span><span className="col-span-2 font-mono break-all">{String(v)}</span></div>
-              ))}
-              {(selectedUser as any).suspendReason && <div className="grid grid-cols-3 gap-2"><span className="text-muted-foreground font-medium">제재 사유</span><span className="col-span-2">{(selectedUser as any).suspendReason}</span></div>}
+            <div className="space-y-0 text-sm divide-y">
+              {/* ID */}
+              <div className="grid grid-cols-3 gap-2 py-2.5">
+                <span className="text-muted-foreground font-medium">ID</span>
+                <span className="col-span-2 font-mono">{selectedUser.id}</span>
+              </div>
+              {/* Open ID */}
+              <div className="grid grid-cols-3 gap-2 py-2.5">
+                <span className="text-muted-foreground font-medium">Open ID</span>
+                <span className="col-span-2 font-mono break-all text-xs">{selectedUser.openId}</span>
+              </div>
+              {/* Nickname - 인라인 편집 */}
+              <div className="grid grid-cols-3 gap-2 py-2.5 items-start">
+                <span className="text-muted-foreground font-medium pt-1.5">Nickname</span>
+                <div className="col-span-2 space-y-1">
+                  <div className="flex gap-2">
+                    <Input
+                      value={editForm?.name ?? selectedUser.name ?? ""}
+                      onChange={e => {
+                        setEditForm({ name: e.target.value });
+                        setNickCheckResult("idle");
+                      }}
+                      className="h-8 text-sm"
+                      placeholder="닉네임 입력"
+                    />
+                    <Button size="sm" className="h-8 shrink-0 bg-blue-500 hover:bg-blue-600 text-white" onClick={handleNickCheck} disabled={nickChecking || !(editForm?.name ?? selectedUser.name)}>
+                      {nickChecking ? "검색중" : "검색"}
+                    </Button>
+                  </div>
+                  {nickCheckResult === "available" && (
+                    <p className="text-xs text-blue-500 font-medium">사용 가능 합니다.</p>
+                  )}
+                  {nickCheckResult === "duplicate" && (
+                    <p className="text-xs text-red-500 font-medium">이미 사용중인 닉네임 입니다</p>
+                  )}
+                </div>
+              </div>
+              {/* Provider */}
+              <div className="grid grid-cols-3 gap-2 py-2.5">
+                <span className="text-muted-foreground font-medium">Provider</span>
+                <span className="col-span-2">{selectedUser.loginMethod ?? "-"}</span>
+              </div>
+              {/* 가입일 */}
+              <div className="grid grid-cols-3 gap-2 py-2.5">
+                <span className="text-muted-foreground font-medium">가입일</span>
+                <span className="col-span-2">{fmt(selectedUser.createdAt)}</span>
+              </div>
+              {/* 마지막 로그인 */}
+              <div className="grid grid-cols-3 gap-2 py-2.5">
+                <span className="text-muted-foreground font-medium">마지막 로그인</span>
+                <span className="col-span-2">{fmt(selectedUser.lastSignedIn)}</span>
+              </div>
+              {/* 상태 */}
+              <div className="grid grid-cols-3 gap-2 py-2.5">
+                <span className="text-muted-foreground font-medium">상태</span>
+                <span className="col-span-2">{(selectedUser as any).status ?? "active"}</span>
+              </div>
+              {(selectedUser as any).suspendReason && (
+                <div className="grid grid-cols-3 gap-2 py-2.5">
+                  <span className="text-muted-foreground font-medium">제재 사유</span>
+                  <span className="col-span-2">{(selectedUser as any).suspendReason}</span>
+                </div>
+              )}
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setEditForm({ name: selectedUser?.name ?? "" }); }}>정보 수정</Button>
-            <Button className="bg-red-500 hover:bg-red-600 text-white" onClick={() => (() => { const now = new Date(Date.now() + 9*3600000).toISOString().slice(0,16); const expiry = calcExpiry(now, "7"); setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" }); })()}>이용 제한</Button>
-            <Button variant="outline" onClick={() => setSelectedUser(null)} className="border border-slate-300">닫기</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* 닉네임 수정 모달 */}
-      <Dialog open={!!editForm} onOpenChange={() => { setEditForm(null); }}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>회원 정보 수정</DialogTitle></DialogHeader>
-          <div className="space-y-3 py-2">
-            <div className="space-y-1">
-              <label className="text-sm font-medium">닉네임</label>
-              <Input value={editForm?.name ?? ""} onChange={e => setEditForm(f => f && ({ ...f, name: e.target.value }))} placeholder="새 닉네임" />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button onClick={() => { if (selectedUser && editForm) updateNickMutation.mutate({ userId: selectedUser.id, name: editForm.name }); }} disabled={updateNickMutation.isPending}>저장</Button>
-            <Button variant="ghost" onClick={() => setEditForm(null)}>취소</Button>
+            <Button
+              variant="outline"
+              className="border border-slate-300"
+              disabled={updateNickMutation.isPending || nickCheckResult === "duplicate" || (!editForm && nickCheckResult === "idle")}
+              onClick={() => {
+                if (selectedUser && editForm) {
+                  updateNickMutation.mutate({ userId: selectedUser.id, name: editForm.name });
+                }
+              }}
+            >
+              {updateNickMutation.isPending ? "저장 중..." : "저장"}
+            </Button>
+            <Button
+              className="bg-red-500 hover:bg-red-600 text-white"
+              onClick={() => {
+                const now = new Date(Date.now() + 9*3600000).toISOString().slice(0,16);
+                const expiry = calcExpiry(now, "7");
+                setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" });
+              }}
+            >이용 제한</Button>
+            <Button variant="outline" className="border border-slate-300" onClick={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>닫기</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

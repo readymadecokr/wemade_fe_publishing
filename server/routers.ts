@@ -618,6 +618,15 @@ export const appRouter = router({
         await db.update(users).set({ name: input.name }).where(eq(users.id, input.userId));
         return { success: true };
       }),
+    checkNickname: adminKeyProcedure
+      .input(z.object({ name: z.string(), excludeUserId: z.number().optional() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const existing = await db.select({ id: users.id }).from(users).where(eq(users.name, input.name)).limit(1);
+        const isDuplicate = existing.length > 0 && existing[0].id !== input.excludeUserId;
+        return { isDuplicate };
+      }),
   }),
 
   // ===== GAMES =====
