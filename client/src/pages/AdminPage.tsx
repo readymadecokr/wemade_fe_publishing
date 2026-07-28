@@ -792,16 +792,26 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
             {!paged.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 배너가 없습니다.</div> : (
               <div className="space-y-2">
                 {paged.map(b => (
-                  <div key={b.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/30 cursor-pointer" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: "", endDate: "" })}>
-                    <span className="text-xs text-muted-foreground w-5 text-center">{b.sortOrder + 1}</span>
-                    <div className="w-24 h-14 rounded overflow-hidden bg-slate-100 shrink-0"><img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" /></div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{b.title}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs text-blue-600">{b.actionType === "url" ? "새창 띄우기" : "기존 페이지 전환"}</span>
-                        <StatusBadge active={b.isActive} />
-                      </div>
+                  <div
+                    key={b.id}
+                    className="flex items-center gap-3 px-4 py-3 border rounded-lg hover:bg-accent/30 cursor-pointer"
+                    onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: "", endDate: "" })}
+                  >
+                    {/* 번호 */}
+                    <span className="text-xs text-muted-foreground w-5 text-center shrink-0">{b.sortOrder + 1}</span>
+                    {/* 썸네일 */}
+                    <div className="w-24 h-14 rounded overflow-hidden bg-slate-100 shrink-0">
+                      <img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" />
                     </div>
+                    {/* 제목 */}
+                    <p className="font-medium text-sm flex-1 min-w-0 truncate">{b.title}</p>
+                    {/* 동작 타입 */}
+                    <span className="text-xs text-blue-600 shrink-0 w-24 text-center">
+                      {b.actionType === "url" ? "새창 띄우기" : "기존 페이지 전환"}
+                    </span>
+                    {/* 활성 배지 */}
+                    <div className="shrink-0"><StatusBadge active={b.isActive} /></div>
+                    {/* 버튼 */}
                     <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
                       <Button variant="ghost" size="sm" onClick={() => setPreview(b)}><Eye className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: "", endDate: "" })}><Pencil className="h-4 w-4" /></Button>
