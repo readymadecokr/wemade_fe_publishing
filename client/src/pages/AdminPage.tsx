@@ -381,6 +381,7 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
   const [form, setForm] = useState<GameForm | null>(null);
   const [uploading, setUploading] = useState(false);
 
+  const queryClient = useQueryClient();
   const { data, refetch } = useQuery({ queryKey: ["admin-games", search, page], queryFn: () => adminClient!.games.list.query({ search, page, pageSize: 20 }), enabled: !!adminClient });
   const createM = useMutation({ mutationFn: (input: any) => adminClient!.games.create.mutate(input), onSuccess: () => { toast.success("게임이 등록되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
   const updateM = useMutation({ mutationFn: (input: any) => adminClient!.games.update.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
@@ -390,13 +391,26 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
     const arr = [...items];
     const swapIdx = dir === "up" ? idx - 1 : idx + 1;
     if (swapIdx < 0 || swapIdx >= arr.length) return;
-    const aOrder = arr[idx].sortOrder;
-    const bOrder = arr[swapIdx].sortOrder;
+    // 낙관적 업데이트: 즉시 UI 반영
+    const newItems = arr.map((g, i) => {
+      if (i === idx) return { ...g, sortOrder: arr[swapIdx].sortOrder };
+      if (i === swapIdx) return { ...g, sortOrder: arr[idx].sortOrder };
+      return g;
+    });
+    newItems.sort((a, b) => a.sortOrder - b.sortOrder);
+    queryClient.setQueryData(["admin-games", search, page], (old: any) =>
+      old ? { ...old, items: newItems } : old
+    );
     try {
-      await adminClient!.games.update.mutate({ id: arr[idx].id, sortOrder: bOrder });
-      await adminClient!.games.update.mutate({ id: arr[swapIdx].id, sortOrder: aOrder });
-      refetch();
-    } catch (e: any) { toast.error(`순서 변경 실패: ${e.message}`); }
+      await adminClient!.games.update.mutate({ id: arr[idx].id, sortOrder: arr[swapIdx].sortOrder });
+      await adminClient!.games.update.mutate({ id: arr[swapIdx].id, sortOrder: arr[idx].sortOrder });
+    } catch (e: any) {
+      // 실패 시 원래대로 롤백
+      queryClient.setQueryData(["admin-games", search, page], (old: any) =>
+        old ? { ...old, items: arr } : old
+      );
+      toast.error(`순서 변경 실패: ${e.message}`);
+    }
   };
 
   const empty: GameForm = { name: "", gameId: "", description: "", imageUrl: "", genre: "", platform: "", status: "active", sortOrder: 0 };
@@ -411,7 +425,10 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
       try {
         const reader = new FileReader();
         const base64 = await new Promise<string>(r => { reader.onload = ev => r(ev.target?.result as string); reader.readAsDataURL(file); });
-        const result = await adminClient!.admin.uploadBannerImage.mutate({ base64, filename: file.name });
+        // 파일명을 ASCII로 변환 (한글 등 비ASCII 문자 제거)
+        const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+        const safeFilename = `game-icon-${Date.now()}.${ext}`;
+        const result = await adminClient!.admin.uploadBannerImage.mutate({ base64, filename: safeFilename });
         setForm(f => f && ({ ...f, imageUrl: result.url }));
         toast.success("아이콘 업로드 완료");
       } catch (err: any) { toast.error(`업로드 실패: ${err.message}`); }
