@@ -310,6 +310,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
             <div className="space-y-1.5 text-sm">
               <p><span className="text-red-500 font-semibold">CS Code</span> : {suspendForm?.csCode}</p>
               <p><span className="text-red-500 font-semibold">제재 사유</span> : {suspendForm?.reason || "(사유 없음)"}</p>
+              <p><span className="text-red-500 font-semibold">제재 시작일</span> : {new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/\. /g, "년 ").replace(".", "일")}</p>
               <p><span className="text-red-500 font-semibold">제재 일자</span> : {new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/\. /g, "년 ").replace(".", "일")}</p>
               {suspendForm?.status === "suspended" && suspendForm.suspendDays && (
                 <p><span className="text-red-500 font-semibold">제재 일수</span> : {suspendForm.suspendDays}일</p>
