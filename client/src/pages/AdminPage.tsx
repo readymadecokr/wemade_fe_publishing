@@ -36,17 +36,63 @@ function fmt(d: Date | string | null | undefined) {
   return new Date(d).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
 }
 
-// 24시간 형식 datetime 입력 콴포넌트 (YYYY-MM-DD HH:mm)
+// 24시간 달력 + 시/분 드롭다운 콤포넌트
 function DateTimeInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
+  // value: "YYYY-MM-DDTHH:mm" 형식
+  const datePart = value ? value.slice(0, 10) : "";
+  const timePart = value ? value.slice(11, 16) : "";
+  const hour = timePart ? timePart.slice(0, 2) : "";
+  const minute = timePart ? timePart.slice(3, 5) : "";
+
+  const handleDate = (d: string) => {
+    const h = hour || "00";
+    const m = minute || "00";
+    onChange(d ? `${d}T${h}:${m}` : "");
+  };
+  const handleHour = (h: string) => {
+    const d = datePart || new Date().toISOString().slice(0, 10);
+    const m = minute || "00";
+    onChange(`${d}T${h}:${m}`);
+  };
+  const handleMinute = (m: string) => {
+    const d = datePart || new Date().toISOString().slice(0, 10);
+    const h = hour || "00";
+    onChange(`${d}T${h}:${m}`);
+  };
+
   return (
-    <input
-      type="datetime-local"
-      lang="en-GB"
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      placeholder={placeholder}
-      className="datetime-24h flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-    />
+    <div className="flex gap-1 items-center">
+      {/* 날짜 선택 */}
+      <input
+        type="date"
+        value={datePart}
+        onChange={e => handleDate(e.target.value)}
+        className="flex h-10 rounded-md border border-input bg-background px-2 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      />
+      {/* 시 선택 (00~23) */}
+      <select
+        value={hour}
+        onChange={e => handleHour(e.target.value)}
+        className="flex h-10 w-16 rounded-md border border-input bg-background px-2 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <option value="">시</option>
+        {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0")).map(h => (
+          <option key={h} value={h}>{h}</option>
+        ))}
+      </select>
+      <span className="text-muted-foreground text-sm">:</span>
+      {/* 분 선택 (00~59) */}
+      <select
+        value={minute}
+        onChange={e => handleMinute(e.target.value)}
+        className="flex h-10 w-16 rounded-md border border-input bg-background px-2 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <option value="">분</option>
+        {Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0")).map(m => (
+          <option key={m} value={m}>{m}</option>
+        ))}
+      </select>
+    </div>
   );
 }
 
