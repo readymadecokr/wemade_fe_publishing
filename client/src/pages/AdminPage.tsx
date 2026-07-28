@@ -490,8 +490,8 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                       >
                         <td className="px-4 py-3">
                           {g.imageUrl
-                            ? <img src={g.imageUrl} alt={g.name} className="w-14 h-14 object-cover rounded" />
-                            : <div className="w-14 h-14 rounded bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400 text-xs">없음</div>}
+                            ? <img src={g.imageUrl} alt={g.name} className="w-20 h-20 object-cover rounded-lg" />
+                            : <div className="w-20 h-20 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400 text-xs">없음</div>}
                         </td>
                         <td className="px-4 py-3 font-medium">{g.name}</td>
                         <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{g.gameId ?? "-"}</td>
