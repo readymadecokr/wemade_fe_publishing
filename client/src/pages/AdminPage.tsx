@@ -197,7 +197,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                         </td>
                         <td className="p-2" onClick={e => e.stopPropagation()}>
                           <div className="flex gap-1">
-                            <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => { setSelectedUser(u); setEditForm({ name: u.name ?? "" }); }}>수정</Button>
+                            <Button variant="outline" size="sm" className="h-7 text-xs border border-slate-300" onClick={() => { setSelectedUser(u); }}>수정</Button>
                             <Button size="sm" className="h-7 text-xs bg-red-500 hover:bg-red-600 text-white" onClick={() => { setSelectedUser(u); (() => { const now = new Date(Date.now() + 9*3600000).toISOString().slice(0,16); const expiry = calcExpiry(now, "7"); setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" }); })(); }}>이용 제한</Button>
                           </div>
                         </td>
@@ -230,7 +230,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
           <DialogFooter>
             <Button variant="outline" onClick={() => { setEditForm({ name: selectedUser?.name ?? "" }); }}>정보 수정</Button>
             <Button className="bg-red-500 hover:bg-red-600 text-white" onClick={() => (() => { const now = new Date(Date.now() + 9*3600000).toISOString().slice(0,16); const expiry = calcExpiry(now, "7"); setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" }); })()}>이용 제한</Button>
-            <Button variant="ghost" onClick={() => setSelectedUser(null)}>닫기</Button>
+            <Button variant="outline" onClick={() => setSelectedUser(null)} className="border border-slate-300">닫기</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
