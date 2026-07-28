@@ -137,12 +137,18 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
   });
 
   const handleNickCheck = async () => {
-    if (!editForm?.name.trim() || !selectedUser) return;
+    if (!selectedUser) return;
+    // editForm이 없으면 selectedUser.name을 폴백으로 사용
+    const nameToCheck = (editForm?.name ?? selectedUser.name ?? "").trim();
+    if (!nameToCheck) return;
     setNickChecking(true);
     try {
-      const res = await adminClient!.memberAdmin.checkNickname.query({ name: editForm.name.trim(), excludeUserId: selectedUser.id });
+      const res = await adminClient!.memberAdmin.checkNickname.query({ name: nameToCheck, excludeUserId: selectedUser.id });
       setNickCheckResult(res.isDuplicate ? "duplicate" : "available");
-    } catch { setNickCheckResult("idle"); }
+    } catch (e: any) {
+      toast.error(`중복 확인 실패: ${e.message}`);
+      setNickCheckResult("idle");
+    }
     finally { setNickChecking(false); }
   };
   const suspendMutation = useMutation({
@@ -292,7 +298,15 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               {/* 상태 */}
               <div className="grid grid-cols-3 gap-2 py-2.5">
                 <span className="text-muted-foreground font-medium">상태</span>
-                <span className="col-span-2">{(selectedUser as any).status ?? "active"}</span>
+                <span className={`col-span-2 font-medium ${
+                  (selectedUser as any).status === "suspended" ? "text-red-500" :
+                  (selectedUser as any).status === "banned" ? "text-red-500" :
+                  "text-foreground"
+                }`}>
+                  {(selectedUser as any).status === "suspended" ? "이용정지" :
+                   (selectedUser as any).status === "banned" ? "영구정지" :
+                   "정상"}
+                </span>
               </div>
               {(selectedUser as any).suspendReason && (
                 <div className="grid grid-cols-3 gap-2 py-2.5">
