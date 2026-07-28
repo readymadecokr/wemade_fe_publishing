@@ -790,42 +790,54 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
           </CardHeader>
           <CardContent>
             {!paged.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 배너가 없습니다.</div> : (
-              <div className="space-y-2">
-                {paged.map(b => (
-                  <div
-                    key={b.id}
-                    className="flex items-center gap-3 px-4 py-3 border rounded-lg hover:bg-accent/30 cursor-pointer"
-                    onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}
-                  >
-                    {/* 번호 */}
-                    <span className="text-xs text-muted-foreground w-5 text-center shrink-0">{b.sortOrder + 1}</span>
-                    {/* 썸네일 */}
-                    <div className="w-24 h-14 rounded overflow-hidden bg-slate-100 shrink-0">
-                      <img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" />
-                    </div>
-                    {/* 제목 */}
-                    <p className="font-medium text-sm flex-1 min-w-0 truncate">{b.title}</p>
-                    {/* 기간 표시 */}
-                    <div className="shrink-0 bg-slate-100 dark:bg-slate-700 rounded px-3 py-1.5 w-44 text-center">
-                      <p className="text-xs text-slate-600 dark:text-slate-300 font-mono tabular-nums leading-5 whitespace-nowrap">
-                        {b.startDate ? b.startDate.replace("T", " ") : "-"}
-                      </p>
-                      <p className="text-xs text-slate-400 leading-4">~</p>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 font-mono tabular-nums leading-5 whitespace-nowrap">
-                        {b.endDate ? b.endDate.replace("T", " ") : "-"}
-                      </p>
-                    </div>
-                    {/* 활성 배지 */}
-                    <div className="shrink-0"><StatusBadge active={b.isActive} /></div>
-                    {/* 버튼 */}
-                    <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
-                      <Button variant="ghost" size="sm" onClick={() => setPreview(b)}><Eye className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${b.title}" 배너를 삭제하시겠습니까?`)) deleteM.mutate(b.id); }}><Trash2 className="h-4 w-4" /></Button>
-                    </div>
-                  </div>
-                ))}
-                <Pagination page={page} total={filtered.length} pageSize={pageSize} onChange={setPage} />
+              <div className="space-y-0">
+                <table className="w-full">
+                  <tbody>
+                    {paged.map(b => (
+                      <tr
+                        key={b.id}
+                        className="border-b last:border-0 hover:bg-accent/30 cursor-pointer"
+                        onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}
+                      >
+                        {/* 번호 */}
+                        <td className="px-3 py-3 w-8 text-xs text-muted-foreground text-center">{b.sortOrder + 1}</td>
+                        {/* 썸네일 */}
+                        <td className="px-2 py-3 w-28">
+                          <div className="w-24 h-14 rounded overflow-hidden bg-slate-100">
+                            <img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" />
+                          </div>
+                        </td>
+                        {/* 제목 */}
+                        <td className="px-3 py-3 font-medium text-sm">{b.title}</td>
+                        {/* 기간 */}
+                        <td className="px-3 py-3 w-44">
+                          <div className="bg-slate-100 dark:bg-slate-700 rounded px-3 py-1.5 text-center">
+                            <p className="text-xs text-slate-600 dark:text-slate-300 font-mono tabular-nums leading-5 whitespace-nowrap">
+                              {b.startDate ? b.startDate.replace("T", " ") : "-"}
+                            </p>
+                            <p className="text-xs text-slate-400 leading-4">~</p>
+                            <p className="text-xs text-slate-600 dark:text-slate-300 font-mono tabular-nums leading-5 whitespace-nowrap">
+                              {b.endDate ? b.endDate.replace("T", " ") : "-"}
+                            </p>
+                          </div>
+                        </td>
+                        {/* 활성 */}
+                        <td className="px-3 py-3 w-16"><StatusBadge active={b.isActive} /></td>
+                        {/* 버튼 */}
+                        <td className="px-2 py-3 w-28" onClick={e => e.stopPropagation()}>
+                          <div className="flex gap-1 justify-end">
+                            <Button variant="ghost" size="sm" onClick={() => setPreview(b)}><Eye className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}><Pencil className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${b.title}" 배너를 삭제하시겠습니까?`)) deleteM.mutate(b.id); }}><Trash2 className="h-4 w-4" /></Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="px-4 py-3">
+                  <Pagination page={page} total={filtered.length} pageSize={pageSize} onChange={setPage} />
+                </div>
               </div>
             )}
           </CardContent>
