@@ -431,7 +431,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
             )}
           </div>
           <DialogFooter>
-            <Button className="bg-blue-500 hover:bg-blue-600" onClick={() => { if (selectedUser && suspendForm) suspendMutation.mutate({ userId: selectedUser.id, status: suspendForm.status as any, suspendedUntil: suspendForm.until || undefined, reason: suspendForm.reason || undefined, csCode: suspendForm.csCode || undefined } as any); }} disabled={suspendMutation.isPending}>처리</Button>
+            <Button className="bg-red-500 hover:bg-red-600 text-white" onClick={() => { if (selectedUser && suspendForm) suspendMutation.mutate({ userId: selectedUser.id, status: suspendForm.status as any, suspendedUntil: suspendForm.until || undefined, reason: suspendForm.reason || undefined, csCode: suspendForm.csCode || undefined } as any); }} disabled={suspendMutation.isPending}>저장</Button>
             <Button variant="ghost" onClick={() => setSuspendForm(null)}>취소</Button>
           </DialogFooter>
         </DialogContent>
