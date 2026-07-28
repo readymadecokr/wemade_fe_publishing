@@ -635,11 +635,17 @@ export const appRouter = router({
         return { items, total: Number(count) };
       }),
     create: adminKeyProcedure
-      .input(z.object({ name: z.string(), description: z.string().optional(), imageUrl: z.string().optional(), genre: z.string().optional(), platform: z.string().optional(), status: z.enum(['active','beta','maintenance','inactive']).default('active'), sortOrder: z.number().default(0) }))
+      .input(z.object({ name: z.string(), description: z.string().optional(), imageUrl: z.string().optional(), genre: z.string().optional(), platform: z.string().optional(), status: z.enum(['active','beta','maintenance','inactive']).default('active'), sortOrder: z.number().optional() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
-        const result = await db.insert(games).values(input);
+        // sortOrder가 없으면 현재 max+10으로 자동 부여
+        let sortOrder = input.sortOrder;
+        if (sortOrder === undefined || sortOrder === null) {
+          const [{ maxOrder }] = await db.select({ maxOrder: sql<number>`COALESCE(MAX(sortOrder), 0)` }).from(games);
+          sortOrder = Number(maxOrder) + 10;
+        }
+        const result = await db.insert(games).values({ ...input, sortOrder });
         return { id: (result as any).insertId };
       }),
     update: adminKeyProcedure

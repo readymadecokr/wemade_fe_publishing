@@ -391,23 +391,39 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
     const arr = [...items];
     const swapIdx = dir === "up" ? idx - 1 : idx + 1;
     if (swapIdx < 0 || swapIdx >= arr.length) return;
+
+    // sortOrder가 동일한 경우 인덱스 기반으로 재할당
+    const needsReindex = arr.some((g, i) => i > 0 && g.sortOrder === arr[i - 1].sortOrder);
+    if (needsReindex) {
+      arr.forEach((g, i) => { g.sortOrder = (i + 1) * 10; });
+    }
+
+    // 실제 스왕할 sortOrder 값
+    const aOrder = arr[idx].sortOrder;
+    const bOrder = arr[swapIdx].sortOrder;
+
     // 낙관적 업데이트: 즉시 UI 반영
     const newItems = arr.map((g, i) => {
-      if (i === idx) return { ...g, sortOrder: arr[swapIdx].sortOrder };
-      if (i === swapIdx) return { ...g, sortOrder: arr[idx].sortOrder };
+      if (i === idx) return { ...g, sortOrder: bOrder };
+      if (i === swapIdx) return { ...g, sortOrder: aOrder };
       return g;
     });
     newItems.sort((a, b) => a.sortOrder - b.sortOrder);
     queryClient.setQueryData(["admin-games", search, page], (old: any) =>
       old ? { ...old, items: newItems } : old
     );
+
     try {
-      await adminClient!.games.update.mutate({ id: arr[idx].id, sortOrder: arr[swapIdx].sortOrder });
-      await adminClient!.games.update.mutate({ id: arr[swapIdx].id, sortOrder: arr[idx].sortOrder });
+      if (needsReindex) {
+        // 전체 재인덱스 후 스왕
+        await Promise.all(arr.map((g) => adminClient!.games.update.mutate({ id: g.id, sortOrder: g.sortOrder })));
+      }
+      await adminClient!.games.update.mutate({ id: arr[idx].id, sortOrder: bOrder });
+      await adminClient!.games.update.mutate({ id: arr[swapIdx].id, sortOrder: aOrder });
     } catch (e: any) {
       // 실패 시 원래대로 롤백
       queryClient.setQueryData(["admin-games", search, page], (old: any) =>
-        old ? { ...old, items: arr } : old
+        old ? { ...old, items: items } : old
       );
       toast.error(`순서 변경 실패: ${e.message}`);
     }
