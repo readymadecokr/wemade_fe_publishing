@@ -1785,22 +1785,76 @@ function AdminAccountsSection({ adminClient }: { adminClient: ReturnType<typeof 
 
 // ─── POLICY SECTION ───────────────────────────────────────────────────────────
 function PolicySection({ activeMenu }: { activeMenu: string }) {
-  const map: Record<string, { title: string; url: string; desc: string }> = {
-    "policy-terms": { title: "Terms of Service", url: "/terms-of-service", desc: "서비스 이용약관 내용을 수정합니다. 변경 사항은 Terms of Service 페이지에 즉시 반영됩니다." },
-    "policy-privacy": { title: "Privacy Policy", url: "/privacy-policy", desc: "개인정보 처리방침 내용을 수정합니다. 변경 사항은 Privacy Policy 페이지에 즉시 반영됩니다." },
-    "policy-settings": { title: "Privacy Settings", url: "/", desc: "Privacy Settings 팝업 내용을 수정합니다." },
+  const map: Record<string, { title: string; desc: string }> = {
+    "policy-terms": { title: "Terms of Service", desc: "서비스 이용약관 내용을 수정합니다. 변경 사항은 Terms of Service 페이지에 즉시 반영됩니다." },
+    "policy-privacy": { title: "Privacy Policy", desc: "개인정보 처리방침 내용을 수정합니다. 변경 사항은 Privacy Policy 페이지에 즉시 반영됩니다." },
+    "policy-settings": { title: "Privacy Settings", desc: "Privacy Settings 팝업 내용을 수정합니다." },
   };
+  const [content, setContent] = useState("");
   const cur = map[activeMenu]; if (!cur) return null;
+
+  const TB = ({ t }: { t: string }) => (
+    <button type="button" className="px-1.5 py-0.5 text-xs border rounded bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 min-w-[22px] text-center leading-4">{t}</button>
+  );
+  const Sep = () => <span className="w-px h-4 bg-slate-300 dark:bg-slate-600 mx-0.5 self-center inline-block" />;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <SectionHeader title={cur.title} desc={cur.desc} />
-      <Card><CardContent className="pt-6">
-        <div className="flex flex-col items-center gap-4 py-8">
-          <Shield className="h-12 w-12 text-muted-foreground" />
-          <p className="text-muted-foreground text-sm text-center">정책 페이지 내용은 개발자가 소스 코드에서 직접 수정합니다.<br />아래 버튼을 클릭하면 해당 페이지를 미리볼 수 있습니다.</p>
-          <a href={cur.url} target="_blank" rel="noopener noreferrer"><Button variant="outline"><Eye className="h-4 w-4 mr-2" />{cur.title} 페이지 보기</Button></a>
-        </div>
-      </CardContent></Card>
+      <Card>
+        <CardContent className="p-0">
+          {/* 웹에디터 툴바 */}
+          <div className="border-b bg-slate-100 dark:bg-slate-800 px-3 py-2 space-y-1.5">
+            {/* 툴바 1행 */}
+            <div className="flex flex-wrap items-center gap-0.5">
+              {["☰","≡","□","⎙","⌘","⌖","⌕","⌗"].map((t,i)=><TB key={i} t={t} />)}
+              <Sep />
+              {["✂","⎘","⎗","⎙"].map((t,i)=><TB key={i} t={t} />)}
+              <Sep />
+              {["↩","↪"].map((t,i)=><TB key={i} t={t} />)}
+              <Sep />
+              {["←","→","↓","↑"].map((t,i)=><TB key={i} t={t} />)}
+              <Sep />
+              {["확대","상세","연습","연습","연습","연습","연습","연습"].map((t,i)=><TB key={i} t={t} />)}
+            </div>
+            {/* 툴바 2행 */}
+            <div className="flex flex-wrap items-center gap-0.5">
+              {["B","I","U","S","x₂","x²","Ł"].map((t,i)=><TB key={i} t={t} />)}
+              <Sep />
+              {["≡","≡","≡","“”","¶","«»","—","≈","≈","≈","≈"].map((t,i)=><TB key={i} t={t} />)}
+              <Sep />
+              {["≡","≡","≡","≡","¶","≈","≈","≈"].map((t,i)=><TB key={i} t={t} />)}
+            </div>
+            {/* 툴바 3행 */}
+            <div className="flex flex-wrap items-center gap-0.5">
+              {["□","▦","▤","≡","Ω","≈","≈"].map((t,i)=><TB key={i} t={t} />)}
+            </div>
+            {/* 툴바 4행 - 스타일 선택 */}
+            <div className="flex flex-wrap items-center gap-1">
+              {[["스타일","w-20"],["본문","w-20"],["글꼴","w-20"],["크기","w-16"]].map(([label,w],i)=>(
+                <select key={i} className={`${w} h-6 text-xs border rounded bg-white dark:bg-slate-700 px-1`}><option>{label}</option></select>
+              ))}
+              <Sep />
+              {["A-","A-","≈","≈","?"].map((t,i)=><TB key={i} t={t} />)}
+            </div>
+          </div>
+          {/* 에디터 본문 */}
+          <div className="p-4">
+            <textarea
+              className="w-full bg-transparent text-sm resize-none focus:outline-none"
+              style={{ minHeight: 320 }}
+              value={content}
+              onChange={e => setContent(e.target.value)}
+              placeholder="내용을 입력하세요..."
+            />
+          </div>
+        </CardContent>
+      </Card>
+      {/* 확인/취소 */}
+      <div className="flex gap-2">
+        <Button className="bg-blue-500 hover:bg-blue-600 text-white px-8" onClick={() => toast.success("저장되었습니다.")}>확인</Button>
+        <Button variant="outline" className="px-8" onClick={() => setContent("")}>취소</Button>
+      </div>
     </div>
   );
 }
