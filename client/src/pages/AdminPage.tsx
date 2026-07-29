@@ -796,7 +796,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                 <table className="w-full">
                   <thead>
                     <tr className="border-b bg-slate-50 dark:bg-slate-800 text-xs text-muted-foreground">
-                      <th className="px-3 py-2.5 text-center font-medium w-8">No</th>
+                      <th className="px-3 py-2.5 text-center font-medium w-8">순서</th>
                       <th className="px-2 py-2.5 text-left font-medium w-28">이미지</th>
                       <th className="px-3 py-2.5 text-left font-medium">제목</th>
                       <th className="px-3 py-2.5 text-center font-medium w-44">노출일시</th>
@@ -884,7 +884,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
             <div className="space-y-1"><label className="text-sm font-medium">이동 URL</label><Input value={form.actionUrl} onChange={e => setForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="https://..." /></div>
           )}
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} readOnly className="bg-slate-50" /></div>
             <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
           </div>
           <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "배너 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
@@ -940,7 +940,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                 <table className="w-full">
                   <thead>
                     <tr className="border-b bg-slate-50 dark:bg-slate-800 text-xs text-muted-foreground">
-                      <th className="px-3 py-2.5 text-center font-medium w-8">No</th>
+                      <th className="px-3 py-2.5 text-center font-medium w-8">순서</th>
                       <th className="px-2 py-2.5 text-left font-medium w-28">이미지</th>
                       <th className="px-3 py-2.5 text-left font-medium">제목</th>
                       <th className="px-3 py-2.5 text-center font-medium w-40">등록일시</th>
@@ -1063,6 +1063,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
             <div>
               <label className="text-sm font-medium block mb-1">순서</label>
               <Input type="number" value={form.id ?? ""} readOnly className="bg-slate-50" placeholder="-" />
+              <p className="text-xs text-muted-foreground mt-0.5">등록 순서 (ID 기준)</p>
             </div>
             <div>
               <label className="text-sm font-medium block mb-1">활성 상태</label>
