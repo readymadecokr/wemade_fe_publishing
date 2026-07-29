@@ -124,10 +124,12 @@ function Pagination({ page, total, pageSize, onChange }: { page: number; total: 
   const totalPages = Math.ceil(total / pageSize);
   if (totalPages <= 1) return null;
   return (
-    <div className="flex items-center justify-center gap-2 pt-4">
-      <Button variant="outline" size="sm" onClick={() => onChange(Math.max(1, page - 1))} disabled={page === 1}><ChevronLeft className="h-4 w-4" /></Button>
-      <span className="text-sm text-muted-foreground">{page} / {totalPages}</span>
-      <Button variant="outline" size="sm" onClick={() => onChange(Math.min(totalPages, page + 1))} disabled={page === totalPages}><ChevronRight className="h-4 w-4" /></Button>
+    <div className="flex items-center justify-center gap-1 pt-4">
+      <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(1)} disabled={page === 1}><ChevronLeft className="h-3 w-3" /><ChevronLeft className="h-3 w-3 -ml-1" /></Button>
+      <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(Math.max(1, page - 1))} disabled={page === 1}><ChevronLeft className="h-4 w-4" /></Button>
+      <span className="text-sm text-muted-foreground px-2">{page} / {totalPages}</span>
+      <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(Math.min(totalPages, page + 1))} disabled={page === totalPages}><ChevronRight className="h-4 w-4" /></Button>
+      <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(totalPages)} disabled={page === totalPages}><ChevronRight className="h-3 w-3" /><ChevronRight className="h-3 w-3 -ml-1" /></Button>
     </div>
   );
 }
