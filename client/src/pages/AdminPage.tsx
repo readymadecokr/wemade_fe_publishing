@@ -1724,7 +1724,7 @@ function AdminAccountsSection({ adminClient }: { adminClient: ReturnType<typeof 
               {/* ③ 비밀 번호 */}
               <div className="space-y-1">
                 <label className="text-sm font-medium">{form.id ? "비밀 번호 (변경 시만)" : "비밀 번호 *"}</label>
-                <Input type="password" value={form.password} onChange={e => setForm(f => f && ({ ...f, password: e.target.value }))} className="min-h-[80px]" />
+                <Input type="password" value={form.password} onChange={e => setForm(f => f && ({ ...f, password: e.target.value }))} />
               </div>
               {/* ④ 활성 상태 */}
               {form.id && (
