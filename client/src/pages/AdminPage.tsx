@@ -123,13 +123,14 @@ function SearchBar({ value, onChange, onSearch, placeholder = "검색..." }: { v
 function Pagination({ page, total, pageSize, onChange }: { page: number; total: number; pageSize: number; onChange: (p: number) => void }) {
   const totalPages = Math.ceil(total / pageSize);
   if (totalPages <= 1) return null;
+  const btnCls = "flex items-center justify-center h-8 w-9 border border-input rounded text-sm bg-background hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none";
   return (
     <div className="flex items-center justify-center gap-1 pt-4">
-      <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(1)} disabled={page === 1}><span className="text-sm">«</span></Button>
-      <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(Math.max(1, page - 1))} disabled={page === 1}><ChevronLeft className="h-4 w-4" /></Button>
-      <span className="text-sm text-muted-foreground px-2">{page} / {totalPages}</span>
-      <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(Math.min(totalPages, page + 1))} disabled={page === totalPages}><ChevronRight className="h-4 w-4" /></Button>
-      <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(totalPages)} disabled={page === totalPages}><span className="text-sm">»</span></Button>
+      <button className={btnCls} onClick={() => onChange(1)} disabled={page === 1}>«</button>
+      <button className={btnCls} onClick={() => onChange(Math.max(1, page - 1))} disabled={page === 1}>‹</button>
+      <button className={`${btnCls} w-14 font-medium text-muted-foreground cursor-default pointer-events-none`} disabled>{page} / {totalPages}</button>
+      <button className={btnCls} onClick={() => onChange(Math.min(totalPages, page + 1))} disabled={page === totalPages}>›</button>
+      <button className={btnCls} onClick={() => onChange(totalPages)} disabled={page === totalPages}>»</button>
     </div>
   );
 }
