@@ -1342,16 +1342,16 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
   const [startDate, setStartDate] = useState(oneMonthAgo);
   const [endDate, setEndDate] = useState(today);
   const [countrySearch, setCountrySearch] = useState("");
-  const [selectedCountries, setSelectedCountries] = useState<string[]>(["\uc804\uccb4"]);
+  const [selectedCountries, setSelectedCountries] = useState<string[]>(["전체"]);
   const [countryOpen, setCountryOpen] = useState(false);
   const [queried, setQueried] = useState(false);
 
   const filteredCountries = STATS_COUNTRIES.filter(c => !countrySearch || c.toLowerCase().includes(countrySearch.toLowerCase()));
   const toggleCountry = (c: string) => {
-    if (c === "\uc804\uccb4") { setSelectedCountries(["\uc804\uccb4"]); return; }
-    setSelectedCountries(prev => { const w = prev.filter(x => x !== "\uc804\uccb4"); return w.includes(c) ? w.filter(x => x !== c) : [...w, c]; });
+    if (c === "전체") { setSelectedCountries(["전체"]); return; }
+    setSelectedCountries(prev => { const w = prev.filter(x => x !== "전체"); return w.includes(c) ? w.filter(x => x !== c) : [...w, c]; });
   };
-  const countryLabel = selectedCountries.includes("\uc804\uccb4") ? "\uc804\uccb4" : selectedCountries.join(", ");
+  const countryLabel = selectedCountries.includes("전체") ? "전체" : selectedCountries.join(", ");
   const dummyAccum = { nru:50, dau:2000, totalUser:10000, withdraw:500, pu:50, revenue:5000000, txCount:100, arpu:2500 };
   const days = Math.max(1, Math.ceil((new Date(endDate).getTime()-new Date(startDate).getTime())/86400000)+1);
   const dummyDaily = Array.from({length: Math.min(days,60)},(_,i)=>{ const d=new Date(startDate); d.setDate(d.getDate()+i); return {date:d.toISOString().slice(0,10)}; });
@@ -1360,12 +1360,12 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
 
   return (
     <div className="space-y-6">
-      <SectionHeader title="\ud1b5\uacc4" desc="\uc218\uc9d1\ub41c \uc774\ubca4\ud2b8 \ub370\uc774\ud130\ub97c \uae30\uac04\ubcc4\ub85c \uc870\ud68c\ud569\ub2c8\ub2e4." />
+      <SectionHeader title="통계" desc="수집된 이벤트 데이터를 기간별로 조회합니다." />
       <Card>
         <CardContent className="pt-5 pb-4">
           <div className="flex flex-wrap items-end gap-4">
             <div>
-              <label className="text-sm font-medium block mb-1">\uc870\ud68c\uae30\uac04 \uc120\ud0dd</label>
+              <label className="text-sm font-medium block mb-1">조회기간 선택</label>
               <div className="flex items-center gap-2">
                 <input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)} className="h-9 rounded-md border border-input bg-background px-2 text-sm" />
                 <span className="text-muted-foreground text-sm">~</span>
@@ -1373,9 +1373,9 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
               </div>
             </div>
             <div className="relative">
-              <label className="text-sm font-medium block mb-1">\uad6d\uac00 \uc120\ud0dd</label>
+              <label className="text-sm font-medium block mb-1">국가 선택</label>
               <button type="button" className="flex items-center gap-2 h-9 min-w-[160px] rounded-md border border-input bg-background px-3 text-sm" onClick={()=>setCountryOpen(o=>!o)}>
-                <input type="checkbox" readOnly checked={selectedCountries.includes("\uc804\uccb4")} className="pointer-events-none" />
+                <input type="checkbox" readOnly checked={selectedCountries.includes("전체")} className="pointer-events-none" />
                 <span className="flex-1 text-left truncate">{countryLabel}</span>
                 <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
               </button>
@@ -1388,7 +1388,7 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
                     </div>
                   </div>
                   <div className="max-h-48 overflow-y-auto p-2 space-y-0.5">
-                    {filteredCountries.length===0 ? <p className="text-xs text-muted-foreground text-center py-3">\uacb0\uacfc \uc5c6\uc74c</p> : filteredCountries.map(c=>(
+                    {filteredCountries.length===0 ? <p className="text-xs text-muted-foreground text-center py-3">결과 없음</p> : filteredCountries.map(c=>(
                       <label key={c} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent/30 cursor-pointer text-sm">
                         <input type="checkbox" checked={selectedCountries.includes(c)} onChange={()=>toggleCountry(c)} />
                         <span>{c}</span>
@@ -1396,28 +1396,28 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
                     ))}
                   </div>
                   <div className="p-2 border-t flex justify-end">
-                    <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white h-7 text-xs px-4" onClick={()=>setCountryOpen(false)}>\uc801\uc6a9</Button>
+                    <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white h-7 text-xs px-4" onClick={()=>setCountryOpen(false)}>적용</Button>
                   </div>
                 </div>
               )}
             </div>
             <div className="flex gap-2 pb-0.5">
-              <Button className="bg-blue-500 hover:bg-blue-600 text-white h-9" onClick={()=>setQueried(true)}>\uc870\ud68c</Button>
-              <Button className="bg-green-600 hover:bg-green-700 text-white h-9" onClick={()=>toast.info("Excel \ub2e4\uc6b4\ub85c\ub4dc \uae30\ub2a5\uc740 API \uc5f0\ub3d9 \ud6c4 \uc0ac\uc6a9 \uac00\ub2a5\ud569\ub2c8\ub2e4.")}>Excel \uc800\uc7a5</Button>
+              <Button className="bg-blue-500 hover:bg-blue-600 text-white h-9" onClick={()=>setQueried(true)}>조회</Button>
+              <Button className="bg-green-600 hover:bg-green-700 text-white h-9" onClick={()=>toast.info("Excel 다운로드 기능은 API 연동 후 사용 가능합니다.")}>Excel 저장</Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
       <div>
-        <h3 className="text-base font-semibold mb-3">1. \uae30\uac04\ub0b4 \ub204\uc801 \ud1b5\uacc4</h3>
+        <h3 className="text-base font-semibold mb-3">1. 기간내 누적 통계</h3>
         <div className="border rounded-lg overflow-hidden">
           <table className="w-full text-sm">
             <thead><tr>
-              <th className={thCls}>\uc2e0\uaddc \uac00\uc785\uc790<br/><span className="font-normal">(NRU)</span></th>
-              <th className={thCls}>\uc77c\uac04 \uc774\uc6a9\uc790<br/><span className="font-normal">(DAU)</span></th>
-              <th className={thCls}>\ub204\uc801 \uc774\uc6a9\uc790</th>
-              <th className={thCls}>\ud0c8\ud1f4 \uc774\uc6a9\uc790</th>
+              <th className={thCls}>신규 가입자<br/><span className="font-normal">(NRU)</span></th>
+              <th className={thCls}>일간 이용자<br/><span className="font-normal">(DAU)</span></th>
+              <th className={thCls}>누적 이용자</th>
+              <th className={thCls}>탈퇴 이용자</th>
             </tr></thead>
             <tbody><tr>
               <td className={tdCls}>{queried?dummyAccum.nru.toLocaleString():"-"}</td>
@@ -1428,9 +1428,9 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
           </table>
           <table className="w-full text-sm border-t">
             <thead><tr>
-              <th className={thCls}>\uacb0\uc81c \uc774\uc6a9\uc790<br/><span className="font-normal">(PU)</span></th>
-              <th className={thCls}>\uacb0\uc81c \uae08\uc561</th>
-              <th className={thCls}>\uacb0\uc81c \uac74\uc218</th>
+              <th className={thCls}>결제 이용자<br/><span className="font-normal">(PU)</span></th>
+              <th className={thCls}>결제 금액</th>
+              <th className={thCls}>결제 건수</th>
               <th className={thCls}>ARPU</th>
             </tr></thead>
             <tbody><tr>
@@ -1444,18 +1444,18 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
       </div>
 
       <div>
-        <h3 className="text-base font-semibold mb-3">2. \uae30\uac04\ub0b4 \uc77c\ubcc4 \ud1b5\uacc4</h3>
+        <h3 className="text-base font-semibold mb-3">2. 기간내 일별 통계</h3>
         <div className="border rounded-lg overflow-hidden overflow-x-auto">
           <table className="w-full text-sm min-w-[700px]">
             <thead><tr>
-              <th className={thCls}>\ub0a0\uc9dc</th>
-              <th className={thCls}>\uc2e0\uaddc \uac00\uc785\uc790<br/><span className="font-normal">(NRU)</span></th>
-              <th className={thCls}>\uc77c\uac04 \uc774\uc6a9\uc790<br/><span className="font-normal">(DAU)</span></th>
-              <th className={thCls}>\ub204\uc801 \uc774\uc6a9\uc790</th>
-              <th className={thCls}>\ud0c8\ud1f4 \uc774\uc6a9\uc790</th>
-              <th className={thCls}>\uacb0\uc81c \uc774\uc6a9\uc790<br/><span className="font-normal">(PU)</span></th>
-              <th className={thCls}>\uacb0\uc81c\uae08\uc561</th>
-              <th className={thCls}>\uacb0\uc81c \uac74\uc218</th>
+              <th className={thCls}>날짜</th>
+              <th className={thCls}>신규 가입자<br/><span className="font-normal">(NRU)</span></th>
+              <th className={thCls}>일간 이용자<br/><span className="font-normal">(DAU)</span></th>
+              <th className={thCls}>누적 이용자</th>
+              <th className={thCls}>탈퇴 이용자</th>
+              <th className={thCls}>결제 이용자<br/><span className="font-normal">(PU)</span></th>
+              <th className={thCls}>결제금액</th>
+              <th className={thCls}>결제 건수</th>
               <th className={thCls}>ARPU</th>
             </tr></thead>
             <tbody>
