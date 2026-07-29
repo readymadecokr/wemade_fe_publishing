@@ -125,11 +125,11 @@ function Pagination({ page, total, pageSize, onChange }: { page: number; total: 
   if (totalPages <= 1) return null;
   return (
     <div className="flex items-center justify-center gap-1 pt-4">
-      <Button variant="outline" size="sm" className="h-8 px-2" onClick={() => onChange(1)} disabled={page === 1}><span className="text-xs font-bold tracking-tighter">&laquo;</span></Button>
+      <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(1)} disabled={page === 1}><span className="text-sm">«</span></Button>
       <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(Math.max(1, page - 1))} disabled={page === 1}><ChevronLeft className="h-4 w-4" /></Button>
       <span className="text-sm text-muted-foreground px-2">{page} / {totalPages}</span>
       <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(Math.min(totalPages, page + 1))} disabled={page === totalPages}><ChevronRight className="h-4 w-4" /></Button>
-      <Button variant="outline" size="sm" className="h-8 px-2" onClick={() => onChange(totalPages)} disabled={page === totalPages}><span className="text-xs font-bold tracking-tighter">&raquo;</span></Button>
+      <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => onChange(totalPages)} disabled={page === totalPages}><span className="text-sm">»</span></Button>
     </div>
   );
 }
