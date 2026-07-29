@@ -797,7 +797,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                 <table className="w-full">
                   <thead>
                     <tr className="border-b bg-slate-50 dark:bg-slate-800 text-xs text-muted-foreground">
-                      <th className="px-3 py-2.5 text-center font-medium w-8">순서</th>
+                      <th className="px-3 py-2.5 text-center font-medium w-14 whitespace-nowrap">순서</th>
                       <th className="px-2 py-2.5 text-left font-medium w-28">이미지</th>
                       <th className="px-3 py-2.5 text-left font-medium">제목</th>
                       <th className="px-3 py-2.5 text-center font-medium w-44">노출일시</th>
@@ -815,7 +815,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                         onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}
                       >
                         {/* 번호 */}
-                        <td className="px-3 py-3 w-8 text-xs text-muted-foreground text-center">{b.sortOrder + 1}</td>
+                        <td className="px-3 py-3 w-14 text-sm text-muted-foreground text-center whitespace-nowrap">{b.sortOrder + 1}</td>
                         {/* 썸네일 */}
                         <td className="px-2 py-3 w-28">
                           <div className="w-24 h-14 rounded overflow-hidden bg-slate-100">
@@ -941,7 +941,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                 <table className="w-full">
                   <thead>
                     <tr className="border-b bg-slate-50 dark:bg-slate-800 text-xs text-muted-foreground">
-                      <th className="px-3 py-2.5 text-center font-medium w-8">순서</th>
+                      <th className="px-3 py-2.5 text-center font-medium w-14 whitespace-nowrap">순서</th>
                       <th className="px-2 py-2.5 text-left font-medium w-28">이미지</th>
                       <th className="px-3 py-2.5 text-left font-medium">제목</th>
                       <th className="px-3 py-2.5 text-center font-medium w-40">등록일시</th>
@@ -958,7 +958,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                         onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 16) : "" })}
                       >
                         {/* 번호 */}
-                        <td className="px-3 py-3 w-8 text-xs text-muted-foreground text-center whitespace-nowrap">{idx + 1 + (page - 1) * 20}</td>
+                        <td className="px-3 py-3 w-14 text-sm text-muted-foreground text-center whitespace-nowrap">{idx + 1 + (page - 1) * 20}</td>
                         {/* 썸네일 */}
                         <td className="px-2 py-3 w-28">
                           {item.imageUrl
