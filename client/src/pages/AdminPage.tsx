@@ -1710,7 +1710,8 @@ function AdminAccountsSection({ adminClient }: { adminClient: ReturnType<typeof 
         <Card><CardContent className="pt-6">
           <div className="flex gap-6">
             {/* 좌측: 기본 정보 */}
-            <div className="flex-1 space-y-4">
+            <div className="flex-1 flex flex-col justify-between">
+              <div className="space-y-4">
               {/* ① 아이디 */}
               <div className="space-y-1">
                 <label className="text-sm font-medium">아이디</label>
@@ -1733,8 +1734,9 @@ function AdminAccountsSection({ adminClient }: { adminClient: ReturnType<typeof 
                   <div className="flex items-center h-10 gap-2"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div>
                 </div>
               )}
+              </div>
               {/* ⑥ 확인/취소 */}
-              <div className="flex gap-2 pt-2">
+              <div className="flex gap-2 pt-6">
                 <Button className="bg-blue-500 hover:bg-blue-600 text-white px-8" onClick={submit} disabled={createM.isPending || updateM.isPending}>확인</Button>
                 <Button variant="outline" className="px-8" onClick={() => setForm(null)}>취소</Button>
               </div>
