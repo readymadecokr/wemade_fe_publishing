@@ -123,12 +123,12 @@ function SearchBar({ value, onChange, onSearch, placeholder = "검색..." }: { v
 function Pagination({ page, total, pageSize, onChange }: { page: number; total: number; pageSize: number; onChange: (p: number) => void }) {
   const totalPages = Math.ceil(total / pageSize);
   if (totalPages <= 1) return null;
-  const btnCls = "flex items-center justify-center h-8 w-9 border border-input rounded text-sm bg-background hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none";
+  const btnCls = "flex items-center justify-center h-10 w-11 border border-input rounded-md text-base bg-background hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none select-none";
   return (
     <div className="flex items-center justify-center gap-1 pt-4">
       <button className={btnCls} onClick={() => onChange(1)} disabled={page === 1}>«</button>
       <button className={btnCls} onClick={() => onChange(Math.max(1, page - 1))} disabled={page === 1}>‹</button>
-      <button className={`${btnCls} w-14 font-medium text-muted-foreground cursor-default pointer-events-none`} disabled>{page} / {totalPages}</button>
+      <button className={`${btnCls} w-16 font-medium text-muted-foreground cursor-default pointer-events-none`} disabled>{page} / {totalPages}</button>
       <button className={btnCls} onClick={() => onChange(Math.min(totalPages, page + 1))} disabled={page === totalPages}>›</button>
       <button className={btnCls} onClick={() => onChange(totalPages)} disabled={page === totalPages}>»</button>
     </div>
