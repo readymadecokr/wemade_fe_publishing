@@ -1713,23 +1713,23 @@ function AdminAccountsSection({ adminClient }: { adminClient: ReturnType<typeof 
             <div className="flex-1 space-y-4">
               {/* ① 아이디 */}
               <div className="space-y-1">
-                <label className="text-sm font-medium flex items-center gap-1"><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white text-xs font-bold">1</span> 아이디</label>
+                <label className="text-sm font-medium">아이디</label>
                 <Input value={form.username} onChange={e => setForm(f => f && ({ ...f, username: e.target.value }))} disabled={!!form.id} className={form.id ? "bg-slate-50" : ""} />
               </div>
               {/* ② 표시 이름 */}
               <div className="space-y-1">
-                <label className="text-sm font-medium flex items-center gap-1"><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white text-xs font-bold">2</span> 표시 이름</label>
+                <label className="text-sm font-medium">표시 이름</label>
                 <Input value={form.displayName} onChange={e => setForm(f => f && ({ ...f, displayName: e.target.value }))} />
               </div>
               {/* ③ 비밀 번호 */}
               <div className="space-y-1">
-                <label className="text-sm font-medium flex items-center gap-1"><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white text-xs font-bold">3</span> {form.id ? "비밀 번호 (변경 시만)" : "비밀 번호 *"}</label>
+                <label className="text-sm font-medium">{form.id ? "비밀 번호 (변경 시만)" : "비밀 번호 *"}</label>
                 <Input type="password" value={form.password} onChange={e => setForm(f => f && ({ ...f, password: e.target.value }))} className="min-h-[80px]" />
               </div>
               {/* ④ 활성 상태 */}
               {form.id && (
                 <div className="space-y-1">
-                  <label className="text-sm font-medium flex items-center gap-1"><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white text-xs font-bold">4</span> 활성 상태</label>
+                  <label className="text-sm font-medium">활성 상태</label>
                   <div className="flex items-center h-10 gap-2"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div>
                 </div>
               )}
@@ -1741,7 +1741,7 @@ function AdminAccountsSection({ adminClient }: { adminClient: ReturnType<typeof 
             </div>
             {/* 우측: 접근 권한 체크박스 */}
             <div className="w-72 shrink-0">
-              <label className="text-sm font-medium flex items-center gap-1 mb-3"><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white text-xs font-bold">5</span> 접근 권한</label>
+              <label className="text-sm font-medium mb-3">접근 권한</label>
               <div className="border rounded-lg overflow-hidden">
                 {[
                   { key: "dashboard", label: "Dashboard" },
