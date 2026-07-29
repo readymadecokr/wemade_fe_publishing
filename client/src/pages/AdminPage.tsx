@@ -1352,9 +1352,13 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
     setSelectedCountries(prev => { const w = prev.filter(x => x !== "전체"); return w.includes(c) ? w.filter(x => x !== c) : [...w, c]; });
   };
   const countryLabel = selectedCountries.includes("전체") ? "전체" : selectedCountries.join(", ");
+  const [dailyPageSize, setDailyPageSize] = useState(10);
+  const [dailyPage, setDailyPage] = useState(1);
   const dummyAccum = { nru:50, dau:2000, totalUser:10000, withdraw:500, pu:50, revenue:5000000, txCount:100, arpu:2500 };
   const days = Math.max(1, Math.ceil((new Date(endDate).getTime()-new Date(startDate).getTime())/86400000)+1);
-  const dummyDaily = Array.from({length: Math.min(days,60)},(_,i)=>{ const d=new Date(startDate); d.setDate(d.getDate()+i); return {date:d.toISOString().slice(0,10)}; });
+  const allDailyRows = Array.from({length: Math.min(days,365)},(_,i)=>{ const d=new Date(startDate); d.setDate(d.getDate()+i); return {date:d.toISOString().slice(0,10)}; });
+  const totalDailyPages = Math.max(1, Math.ceil(allDailyRows.length / dailyPageSize));
+  const pagedDailyRows = allDailyRows.slice((dailyPage-1)*dailyPageSize, dailyPage*dailyPageSize);
   const thCls = "px-3 py-2.5 text-center text-xs font-medium bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 whitespace-nowrap";
   const tdCls = "px-3 py-2.5 text-center text-sm border border-slate-200 dark:border-slate-700";
 
@@ -1412,39 +1416,58 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
       <div>
         <h3 className="text-base font-semibold mb-3">1. 기간내 누적 통계</h3>
         <div className="border rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead><tr>
-              <th className={thCls}>신규 가입자<br/><span className="font-normal">(NRU)</span></th>
-              <th className={thCls}>일간 이용자<br/><span className="font-normal">(DAU)</span></th>
-              <th className={thCls}>누적 이용자</th>
-              <th className={thCls}>탈퇴 이용자</th>
-            </tr></thead>
-            <tbody><tr>
-              <td className={tdCls}>{queried?dummyAccum.nru.toLocaleString():"-"}</td>
-              <td className={tdCls}>{queried?dummyAccum.dau.toLocaleString():"-"}</td>
-              <td className={tdCls}>{queried?dummyAccum.totalUser.toLocaleString():"-"}</td>
-              <td className={tdCls}>{queried?dummyAccum.withdraw.toLocaleString():"-"}</td>
-            </tr></tbody>
+          <table className="w-full text-sm table-fixed">
+            <thead>
+              <tr>
+                <th className={thCls}>신규 가입자<br/><span className="font-normal">(NRU)</span></th>
+                <th className={thCls}>일간 이용자<br/><span className="font-normal">(DAU)</span></th>
+                <th className={thCls}>누적 이용자</th>
+                <th className={thCls}>탈퇴 이용자</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className={tdCls}>{queried?dummyAccum.nru.toLocaleString():"-"}</td>
+                <td className={tdCls}>{queried?dummyAccum.dau.toLocaleString():"-"}</td>
+                <td className={tdCls}>{queried?dummyAccum.totalUser.toLocaleString():"-"}</td>
+                <td className={tdCls}>{queried?dummyAccum.withdraw.toLocaleString():"-"}</td>
+              </tr>
+            </tbody>
           </table>
-          <table className="w-full text-sm border-t">
-            <thead><tr>
-              <th className={thCls}>결제 이용자<br/><span className="font-normal">(PU)</span></th>
-              <th className={thCls}>결제 금액</th>
-              <th className={thCls}>결제 건수</th>
-              <th className={thCls}>ARPU</th>
-            </tr></thead>
-            <tbody><tr>
-              <td className={tdCls}>{queried?dummyAccum.pu.toLocaleString():"-"}</td>
-              <td className={tdCls}>{queried?dummyAccum.revenue.toLocaleString():"-"}</td>
-              <td className={tdCls}>{queried?dummyAccum.txCount.toLocaleString():"-"}</td>
-              <td className={tdCls}>{queried?dummyAccum.arpu.toLocaleString():"-"}</td>
-            </tr></tbody>
+          <table className="w-full text-sm table-fixed border-t">
+            <thead>
+              <tr>
+                <th className={thCls}>결제 이용자<br/><span className="font-normal">(PU)</span></th>
+                <th className={thCls}>결제 금액</th>
+                <th className={thCls}>결제 건수</th>
+                <th className={thCls}>ARPU</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className={tdCls}>{queried?dummyAccum.pu.toLocaleString():"-"}</td>
+                <td className={tdCls}>{queried?dummyAccum.revenue.toLocaleString():"-"}</td>
+                <td className={tdCls}>{queried?dummyAccum.txCount.toLocaleString():"-"}</td>
+                <td className={tdCls}>{queried?dummyAccum.arpu.toLocaleString():"-"}</td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>
 
       <div>
-        <h3 className="text-base font-semibold mb-3">2. 기간내 일별 통계</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-base font-semibold">2. 기간내 일별 통계</h3>
+          <Select value={String(dailyPageSize)} onValueChange={v=>{ setDailyPageSize(Number(v)); setDailyPage(1); }}>
+            <SelectTrigger className="w-28 h-8 text-sm"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="10">10개씩</SelectItem>
+              <SelectItem value="20">20개씩</SelectItem>
+              <SelectItem value="50">50개씩</SelectItem>
+              <SelectItem value="100">100개씩</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <div className="border rounded-lg overflow-hidden overflow-x-auto">
           <table className="w-full text-sm min-w-[700px]">
             <thead><tr>
@@ -1459,7 +1482,7 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
               <th className={thCls}>ARPU</th>
             </tr></thead>
             <tbody>
-              {dummyDaily.map((row,i)=>(
+              {pagedDailyRows.map((row,i)=>(
                 <tr key={i} className={i%2===0?"bg-white dark:bg-transparent":"bg-slate-50 dark:bg-slate-900/30"}>
                   <td className={tdCls+" font-mono text-xs"}>{row.date}</td>
                   {Array(8).fill(null).map((_,j)=><td key={j} className={tdCls}></td>)}
@@ -1467,6 +1490,14 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
               ))}
             </tbody>
           </table>
+        </div>
+        {/* 페이지네이션 */}
+        <div className="flex items-center justify-center gap-1 mt-4">
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" disabled={dailyPage===1} onClick={()=>setDailyPage(1)}>«</Button>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" disabled={dailyPage===1} onClick={()=>setDailyPage(p=>Math.max(1,p-1))}>‹</Button>
+          <span className="text-sm px-3">{dailyPage} / {totalDailyPages}</span>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" disabled={dailyPage===totalDailyPages} onClick={()=>setDailyPage(p=>Math.min(totalDailyPages,p+1))}>›</Button>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" disabled={dailyPage===totalDailyPages} onClick={()=>setDailyPage(totalDailyPages)}>»</Button>
         </div>
       </div>
     </div>
