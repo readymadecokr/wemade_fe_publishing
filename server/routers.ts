@@ -335,20 +335,25 @@ export const appRouter = router({
         const offset = (input.page - 1) * input.pageSize;
         let q = db.select().from(news).$dynamic();
         if (input.search) q = q.where(or(like(news.title, `%${input.search}%`), like(news.content ?? news.title, `%${input.search}%`)));
-        const items = await q.orderBy(desc(news.createdAt)).limit(input.pageSize).offset(offset);
+        const items = await q.orderBy(asc(news.sortOrder), asc(news.id)).limit(input.pageSize).offset(offset);
         const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(news);
         return { items, total: Number(count) };
       }),
     create: adminKeyProcedure
-      .input(z.object({ title: z.string(), category: z.string().default('Update'), summary: z.string().optional(), content: z.string().optional(), imageUrl: z.string().optional(), isActive: z.number().default(1), publishedAt: z.string().optional() }))
+      .input(z.object({ title: z.string(), category: z.string().default('Update'), summary: z.string().optional(), content: z.string().optional(), imageUrl: z.string().optional(), isActive: z.number().default(1), sortOrder: z.number().optional(), publishedAt: z.string().optional() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
-        const result = await db.insert(news).values({ ...input, publishedAt: input.publishedAt ? new Date(input.publishedAt) : new Date() });
+        let sortOrder = input.sortOrder;
+        if (sortOrder === undefined || sortOrder === null) {
+          const [{ maxOrder }] = await db.select({ maxOrder: sql<number>`COALESCE(MAX(sortOrder), 0)` }).from(news);
+          sortOrder = Number(maxOrder) + 10;
+        }
+        const result = await db.insert(news).values({ ...input, sortOrder, publishedAt: input.publishedAt ? new Date(input.publishedAt) : new Date() });
         return { id: (result as any).insertId };
       }),
     update: adminKeyProcedure
-      .input(z.object({ id: z.number(), title: z.string().optional(), category: z.string().optional(), summary: z.string().optional(), content: z.string().optional(), imageUrl: z.string().optional(), isActive: z.number().optional(), publishedAt: z.string().optional() }))
+      .input(z.object({ id: z.number(), title: z.string().optional(), category: z.string().optional(), summary: z.string().optional(), content: z.string().optional(), imageUrl: z.string().optional(), isActive: z.number().optional(), sortOrder: z.number().optional(), publishedAt: z.string().optional() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');

@@ -61,6 +61,7 @@ export const news = mysqlTable("news", {
   content: text("content"),
   imageUrl: text("imageUrl"),
   isActive: int("isActive").default(1).notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
   publishedAt: timestamp("publishedAt").defaultNow().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

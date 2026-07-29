@@ -905,7 +905,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
 }
 
 // ─── NEWS SECTION ─────────────────────────────────────────────────────────────
-type NewsForm = { id?: number; title: string; category: string; summary: string; content: string; imageUrl: string; isActive: number; publishedAt: string };
+type NewsForm = { id?: number; title: string; category: string; summary: string; content: string; imageUrl: string; isActive: number; sortOrder: number; publishedAt: string };
 
 function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
@@ -917,11 +917,11 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
   const updateM = useMutation({ mutationFn: (input: any) => adminClient!.news.update.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
   const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.news.delete.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
 
-  const empty: NewsForm = { title: "", category: "Update", summary: "", content: "", imageUrl: "", isActive: 1, publishedAt: new Date().toISOString().slice(0, 10) };
+  const empty: NewsForm = { title: "", category: "Update", summary: "", content: "", imageUrl: "", isActive: 1, sortOrder: 0, publishedAt: new Date().toISOString().slice(0, 10) };
   const submit = () => {
     if (!form?.title) { toast.error("제목을 입력하세요."); return; }
     // publishedAt: DateTimeInput에서 YYYY-MM-DDTHH:mm 형식으로 저장됨 - 그대로 전달
-    const p = { title: form.title, category: form.category, summary: form.summary || undefined, content: form.content || undefined, imageUrl: form.imageUrl || undefined, isActive: form.isActive, publishedAt: form.publishedAt || undefined };
+    const p = { title: form.title, category: form.category, summary: form.summary || undefined, content: form.content || undefined, imageUrl: form.imageUrl || undefined, isActive: form.isActive, sortOrder: form.sortOrder, publishedAt: form.publishedAt || undefined };
     form.id ? updateM.mutate({ id: form.id, ...p }) : createM.mutate(p);
   };
 
@@ -955,10 +955,10 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                       <tr
                         key={item.id}
                         className="border-b last:border-0 hover:bg-accent/30 cursor-pointer"
-                        onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 16) : "" })}
+                        onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, sortOrder: item.sortOrder ?? 0, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 16) : "" })}
                       >
                         {/* 번호 */}
-                        <td className="px-3 py-3 w-14 text-sm text-muted-foreground text-center whitespace-nowrap">{idx + 1 + (page - 1) * 20}</td>
+                        <td className="px-3 py-3 w-14 text-sm text-muted-foreground text-center whitespace-nowrap">{(item.sortOrder ?? 0) + 1}</td>
                         {/* 썸네일 */}
                         <td className="px-2 py-3 w-28">
                           {item.imageUrl
@@ -978,7 +978,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
 
                         {/* 수정 */}
                         <td className="px-2 py-3 w-16 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
-                          <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 16) : "" })}><Pencil className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, category: item.category, summary: item.summary ?? "", content: item.content ?? "", imageUrl: item.imageUrl ?? "", isActive: item.isActive, sortOrder: item.sortOrder ?? 0, publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 16) : "" })}><Pencil className="h-4 w-4" /></Button>
                         </td>
                         {/* 삭제 */}
                         <td className="px-2 py-3 w-12 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
@@ -1063,8 +1063,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
           <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="text-sm font-medium block mb-1">순서</label>
-              <Input type="number" value={form.id ?? ""} readOnly className="bg-slate-50" placeholder="-" />
-              <p className="text-xs text-muted-foreground mt-0.5">등록 순서 (ID 기준)</p>
+              <Input type="number" value={form.sortOrder + 1} onChange={e => setForm(f => f && ({ ...f, sortOrder: Math.max(0, parseInt(e.target.value) || 1) - 1 }))} min={1} />
             </div>
             <div>
               <label className="text-sm font-medium block mb-1">활성 상태</label>
