@@ -1683,21 +1683,21 @@ function AdminAccountsSection({ adminClient }: { adminClient: ReturnType<typeof 
           {!data?.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 관리자가 없습니다.</div> : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead><tr className="border-b text-muted-foreground text-xs"><th className="text-left p-2">ID</th><th className="text-left p-2">아이디</th><th className="text-left p-2">이름</th><th className="text-left p-2">상태</th><th className="text-left p-2">마지막 로그인</th><th className="text-left p-2">등록일</th><th className="text-left p-2">처리</th></tr></thead>
+                <thead><tr className="border-b bg-slate-50 dark:bg-slate-800 text-muted-foreground text-xs"><th className="text-left p-2">ID</th><th className="text-left p-2">아이디</th><th className="text-left p-2">이름</th><th className="text-left p-2">상태</th><th className="text-left p-2">마지막 로그인</th><th className="text-left p-2">등록일</th><th className="text-center p-2">수정</th><th className="text-center p-2">삭제</th></tr></thead>
                 <tbody>
                   {data.map((item: any) => (
-                    <tr key={item.id} className="border-b hover:bg-accent/20">
+                    <tr key={item.id} className="border-b hover:bg-accent/20 cursor-pointer" onClick={() => setForm({ id: item.id, username: item.username, password: "", displayName: item.displayName ?? "", permissions: item.permissions ?? "", isActive: item.isActive })}>
                       <td className="p-2">{item.id}</td>
                       <td className="p-2 font-medium">{item.username}</td>
                       <td className="p-2">{item.displayName ?? "-"}</td>
                       <td className="p-2"><StatusBadge active={item.isActive} /></td>
                       <td className="p-2 text-xs text-muted-foreground">{fmt(item.lastLoginAt)}</td>
                       <td className="p-2 text-xs text-muted-foreground">{fmt(item.createdAt)}</td>
-                      <td className="p-2">
-                        <div className="flex gap-1">
-                          <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, username: item.username, password: "", displayName: item.displayName ?? "", permissions: item.permissions ?? "", isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.username}" 관리자를 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
-                        </div>
+                      <td className="p-2 text-center" onClick={e => e.stopPropagation()}>
+                        <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, username: item.username, password: "", displayName: item.displayName ?? "", permissions: item.permissions ?? "", isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
+                      </td>
+                      <td className="p-2 text-center" onClick={e => e.stopPropagation()}>
+                        <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.username}" 관리자를 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
                       </td>
                     </tr>
                   ))}
