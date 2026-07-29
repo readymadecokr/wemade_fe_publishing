@@ -1099,8 +1099,8 @@ function MediaSection({ adminClient }: { adminClient: ReturnType<typeof createAd
 
   return (
     <div className="space-y-6">
-      <SectionHeader title={form ? (form.id ? "동영상 수정" : "동영상 등록") : "Media 관리"} desc="YouTube 영상 링크를 등록·수정합니다."
-        action={!form ? <Button onClick={() => setForm(empty)}><Plus className="h-4 w-4 mr-2" />동영상 등록</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>} />
+      <SectionHeader title={form ? "동영상 수정" : "Media 관리"} desc="YouTube 영상 링크를 수정합니다."
+        action={form ? <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button> : undefined} />
 
       {!form ? (
         <Card><CardContent className="pt-4">
@@ -1118,7 +1118,6 @@ function MediaSection({ adminClient }: { adminClient: ReturnType<typeof createAd
                     </div>
                     <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
                       <Button variant="ghost" size="sm" onClick={() => setForm({ id: item.id, title: item.title, youtubeUrl: item.youtubeUrl, description: item.description ?? "", sortOrder: item.sortOrder, isActive: item.isActive })}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${item.title}" 동영상을 삭제하시겠습니까?`)) deleteM.mutate(item.id); }}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </div>
                 );
