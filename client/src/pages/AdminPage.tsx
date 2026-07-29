@@ -1334,40 +1334,141 @@ function PaymentsSection({ adminClient }: { adminClient: ReturnType<typeof creat
 }
 
 // ─── STATS SECTION ────────────────────────────────────────────────────────────
+const STATS_COUNTRIES = ["전체","한국","미국","일본","중국","태국","인도네시아","말레이시아","필리핀","브라질","독일","프랑스","영국","캐나다","오스트레일리아","싱가포르","비에트남","러시아","멕시코","아르헨티나"];
+
 function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
-  const [activeEvent, setActiveEvent] = useState("signup");
-  const eventTypes = [
-    { key: "signup", label: "회원가입" }, { key: "login", label: "로그인" }, { key: "logout", label: "로그아웃" },
-    { key: "withdraw", label: "회원탈퇴" }, { key: "game_start", label: "게임실행" }, { key: "page_visit", label: "페이지 방문" },
-    { key: "purchase", label: "구매" }, { key: "refund", label: "환불" },
-  ];
-  const { data: totalData } = useQuery({ queryKey: ["admin-stats-total"], queryFn: () => adminClient!.stats.totalByType.query(), enabled: !!adminClient });
-  const { data: chartData } = useQuery({ queryKey: ["admin-stats-chart", activeEvent], queryFn: () => adminClient!.stats.summary.query({ eventType: activeEvent }), enabled: !!adminClient });
-  const getTotal = (type: string) => Number(totalData?.find((d: any) => d.eventType === type)?.count ?? 0);
+  const today = new Date().toISOString().slice(0,10);
+  const oneMonthAgo = new Date(Date.now()-30*24*3600000).toISOString().slice(0,10);
+  const [startDate, setStartDate] = useState(oneMonthAgo);
+  const [endDate, setEndDate] = useState(today);
+  const [countrySearch, setCountrySearch] = useState("");
+  const [selectedCountries, setSelectedCountries] = useState<string[]>(["\uc804\uccb4"]);
+  const [countryOpen, setCountryOpen] = useState(false);
+  const [queried, setQueried] = useState(false);
+
+  const filteredCountries = STATS_COUNTRIES.filter(c => !countrySearch || c.toLowerCase().includes(countrySearch.toLowerCase()));
+  const toggleCountry = (c: string) => {
+    if (c === "\uc804\uccb4") { setSelectedCountries(["\uc804\uccb4"]); return; }
+    setSelectedCountries(prev => { const w = prev.filter(x => x !== "\uc804\uccb4"); return w.includes(c) ? w.filter(x => x !== c) : [...w, c]; });
+  };
+  const countryLabel = selectedCountries.includes("\uc804\uccb4") ? "\uc804\uccb4" : selectedCountries.join(", ");
+  const dummyAccum = { nru:50, dau:2000, totalUser:10000, withdraw:500, pu:50, revenue:5000000, txCount:100, arpu:2500 };
+  const days = Math.max(1, Math.ceil((new Date(endDate).getTime()-new Date(startDate).getTime())/86400000)+1);
+  const dummyDaily = Array.from({length: Math.min(days,60)},(_,i)=>{ const d=new Date(startDate); d.setDate(d.getDate()+i); return {date:d.toISOString().slice(0,10)}; });
+  const thCls = "px-3 py-2.5 text-center text-xs font-medium bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 whitespace-nowrap";
+  const tdCls = "px-3 py-2.5 text-center text-sm border border-slate-200 dark:border-slate-700";
 
   return (
     <div className="space-y-6">
-      <SectionHeader title="통계" desc="수집된 이벤트 데이터를 기간별로 조회합니다." />
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {eventTypes.map(({ key, label }) => (
-          <Card key={key} className={`cursor-pointer transition-all ${activeEvent === key ? "ring-2 ring-primary" : "hover:shadow-md"}`} onClick={() => setActiveEvent(key)}>
-            <CardContent className="pt-4 pb-3"><p className="text-xs text-muted-foreground">{label}</p><p className="text-2xl font-bold mt-1">{getTotal(key).toLocaleString()}</p></CardContent>
-          </Card>
-        ))}
-      </div>
+      <SectionHeader title="\ud1b5\uacc4" desc="\uc218\uc9d1\ub41c \uc774\ubca4\ud2b8 \ub370\uc774\ud130\ub97c \uae30\uac04\ubcc4\ub85c \uc870\ud68c\ud569\ub2c8\ub2e4." />
       <Card>
-        <CardHeader className="pb-3"><CardTitle className="text-base">{eventTypes.find(e => e.key === activeEvent)?.label} 일별 현황</CardTitle></CardHeader>
-        <CardContent>
-          {!chartData?.length ? <div className="text-center py-8 text-muted-foreground text-sm">데이터가 없습니다.</div> : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead><tr className="border-b text-muted-foreground"><th className="text-left p-2">날짜</th><th className="text-right p-2">건수</th></tr></thead>
-                <tbody>{chartData.map((row: any, i: number) => <tr key={i} className="border-b hover:bg-accent/20"><td className="p-2">{row.date}</td><td className="p-2 text-right font-mono">{Number(row.count).toLocaleString()}</td></tr>)}</tbody>
-              </table>
+        <CardContent className="pt-5 pb-4">
+          <div className="flex flex-wrap items-end gap-4">
+            <div>
+              <label className="text-sm font-medium block mb-1">\uc870\ud68c\uae30\uac04 \uc120\ud0dd</label>
+              <div className="flex items-center gap-2">
+                <input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)} className="h-9 rounded-md border border-input bg-background px-2 text-sm" />
+                <span className="text-muted-foreground text-sm">~</span>
+                <input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)} className="h-9 rounded-md border border-input bg-background px-2 text-sm" />
+              </div>
             </div>
-          )}
+            <div className="relative">
+              <label className="text-sm font-medium block mb-1">\uad6d\uac00 \uc120\ud0dd</label>
+              <button type="button" className="flex items-center gap-2 h-9 min-w-[160px] rounded-md border border-input bg-background px-3 text-sm" onClick={()=>setCountryOpen(o=>!o)}>
+                <input type="checkbox" readOnly checked={selectedCountries.includes("\uc804\uccb4")} className="pointer-events-none" />
+                <span className="flex-1 text-left truncate">{countryLabel}</span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+              </button>
+              {countryOpen && (
+                <div className="absolute z-50 top-full left-0 mt-1 w-56 bg-background border rounded-lg shadow-lg">
+                  <div className="p-2 border-b">
+                    <div className="flex items-center gap-2 px-2 py-1 border rounded-md">
+                      <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <input type="text" value={countrySearch} onChange={e=>setCountrySearch(e.target.value)} placeholder="search" className="flex-1 text-sm bg-transparent outline-none" />
+                    </div>
+                  </div>
+                  <div className="max-h-48 overflow-y-auto p-2 space-y-0.5">
+                    {filteredCountries.length===0 ? <p className="text-xs text-muted-foreground text-center py-3">\uacb0\uacfc \uc5c6\uc74c</p> : filteredCountries.map(c=>(
+                      <label key={c} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent/30 cursor-pointer text-sm">
+                        <input type="checkbox" checked={selectedCountries.includes(c)} onChange={()=>toggleCountry(c)} />
+                        <span>{c}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div className="p-2 border-t flex justify-end">
+                    <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white h-7 text-xs px-4" onClick={()=>setCountryOpen(false)}>\uc801\uc6a9</Button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="flex gap-2 pb-0.5">
+              <Button className="bg-blue-500 hover:bg-blue-600 text-white h-9" onClick={()=>setQueried(true)}>\uc870\ud68c</Button>
+              <Button className="bg-green-600 hover:bg-green-700 text-white h-9" onClick={()=>toast.info("Excel \ub2e4\uc6b4\ub85c\ub4dc \uae30\ub2a5\uc740 API \uc5f0\ub3d9 \ud6c4 \uc0ac\uc6a9 \uac00\ub2a5\ud569\ub2c8\ub2e4.")}>Excel \uc800\uc7a5</Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
+
+      <div>
+        <h3 className="text-base font-semibold mb-3">1. \uae30\uac04\ub0b4 \ub204\uc801 \ud1b5\uacc4</h3>
+        <div className="border rounded-lg overflow-hidden">
+          <table className="w-full text-sm">
+            <thead><tr>
+              <th className={thCls}>\uc2e0\uaddc \uac00\uc785\uc790<br/><span className="font-normal">(NRU)</span></th>
+              <th className={thCls}>\uc77c\uac04 \uc774\uc6a9\uc790<br/><span className="font-normal">(DAU)</span></th>
+              <th className={thCls}>\ub204\uc801 \uc774\uc6a9\uc790</th>
+              <th className={thCls}>\ud0c8\ud1f4 \uc774\uc6a9\uc790</th>
+            </tr></thead>
+            <tbody><tr>
+              <td className={tdCls}>{queried?dummyAccum.nru.toLocaleString():"-"}</td>
+              <td className={tdCls}>{queried?dummyAccum.dau.toLocaleString():"-"}</td>
+              <td className={tdCls}>{queried?dummyAccum.totalUser.toLocaleString():"-"}</td>
+              <td className={tdCls}>{queried?dummyAccum.withdraw.toLocaleString():"-"}</td>
+            </tr></tbody>
+          </table>
+          <table className="w-full text-sm border-t">
+            <thead><tr>
+              <th className={thCls}>\uacb0\uc81c \uc774\uc6a9\uc790<br/><span className="font-normal">(PU)</span></th>
+              <th className={thCls}>\uacb0\uc81c \uae08\uc561</th>
+              <th className={thCls}>\uacb0\uc81c \uac74\uc218</th>
+              <th className={thCls}>ARPU</th>
+            </tr></thead>
+            <tbody><tr>
+              <td className={tdCls}>{queried?dummyAccum.pu.toLocaleString():"-"}</td>
+              <td className={tdCls}>{queried?dummyAccum.revenue.toLocaleString():"-"}</td>
+              <td className={tdCls}>{queried?dummyAccum.txCount.toLocaleString():"-"}</td>
+              <td className={tdCls}>{queried?dummyAccum.arpu.toLocaleString():"-"}</td>
+            </tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-base font-semibold mb-3">2. \uae30\uac04\ub0b4 \uc77c\ubcc4 \ud1b5\uacc4</h3>
+        <div className="border rounded-lg overflow-hidden overflow-x-auto">
+          <table className="w-full text-sm min-w-[700px]">
+            <thead><tr>
+              <th className={thCls}>\ub0a0\uc9dc</th>
+              <th className={thCls}>\uc2e0\uaddc \uac00\uc785\uc790<br/><span className="font-normal">(NRU)</span></th>
+              <th className={thCls}>\uc77c\uac04 \uc774\uc6a9\uc790<br/><span className="font-normal">(DAU)</span></th>
+              <th className={thCls}>\ub204\uc801 \uc774\uc6a9\uc790</th>
+              <th className={thCls}>\ud0c8\ud1f4 \uc774\uc6a9\uc790</th>
+              <th className={thCls}>\uacb0\uc81c \uc774\uc6a9\uc790<br/><span className="font-normal">(PU)</span></th>
+              <th className={thCls}>\uacb0\uc81c\uae08\uc561</th>
+              <th className={thCls}>\uacb0\uc81c \uac74\uc218</th>
+              <th className={thCls}>ARPU</th>
+            </tr></thead>
+            <tbody>
+              {dummyDaily.map((row,i)=>(
+                <tr key={i} className={i%2===0?"bg-white dark:bg-transparent":"bg-slate-50 dark:bg-slate-900/30"}>
+                  <td className={tdCls+" font-mono text-xs"}>{row.date}</td>
+                  {Array(8).fill(null).map((_,j)=><td key={j} className={tdCls}></td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
