@@ -1707,15 +1707,74 @@ function AdminAccountsSection({ adminClient }: { adminClient: ReturnType<typeof 
           )}
         </CardContent></Card>
       ) : (
-        <Card><CardContent className="pt-6 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1"><label className="text-sm font-medium">아이디 *</label><Input value={form.username} onChange={e => setForm(f => f && ({ ...f, username: e.target.value }))} disabled={!!form.id} /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">{form.id ? "새 비밀번호 (변경 시만)" : "비밀번호 *"}</label><Input type="password" value={form.password} onChange={e => setForm(f => f && ({ ...f, password: e.target.value }))} /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">표시 이름</label><Input value={form.displayName} onChange={e => setForm(f => f && ({ ...f, displayName: e.target.value }))} /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">권한 (JSON)</label><Input value={form.permissions} onChange={e => setForm(f => f && ({ ...f, permissions: e.target.value }))} placeholder='["dashboard"]' /></div>
-            {form.id && <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>}
+        <Card><CardContent className="pt-6">
+          <div className="flex gap-6">
+            {/* 좌측: 기본 정보 */}
+            <div className="flex-1 space-y-4">
+              {/* ① 아이디 */}
+              <div className="space-y-1">
+                <label className="text-sm font-medium flex items-center gap-1"><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white text-xs font-bold">1</span> 아이디</label>
+                <Input value={form.username} onChange={e => setForm(f => f && ({ ...f, username: e.target.value }))} disabled={!!form.id} className={form.id ? "bg-slate-50" : ""} />
+              </div>
+              {/* ② 표시 이름 */}
+              <div className="space-y-1">
+                <label className="text-sm font-medium flex items-center gap-1"><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white text-xs font-bold">2</span> 표시 이름</label>
+                <Input value={form.displayName} onChange={e => setForm(f => f && ({ ...f, displayName: e.target.value }))} />
+              </div>
+              {/* ③ 비밀 번호 */}
+              <div className="space-y-1">
+                <label className="text-sm font-medium flex items-center gap-1"><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white text-xs font-bold">3</span> {form.id ? "비밀 번호 (변경 시만)" : "비밀 번호 *"}</label>
+                <Input type="password" value={form.password} onChange={e => setForm(f => f && ({ ...f, password: e.target.value }))} className="min-h-[80px]" />
+              </div>
+              {/* ④ 활성 상태 */}
+              {form.id && (
+                <div className="space-y-1">
+                  <label className="text-sm font-medium flex items-center gap-1"><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white text-xs font-bold">4</span> 활성 상태</label>
+                  <div className="flex items-center h-10 gap-2"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div>
+                </div>
+              )}
+              {/* ⑥ 확인/취소 */}
+              <div className="flex gap-2 pt-2">
+                <Button className="bg-blue-500 hover:bg-blue-600 text-white px-8" onClick={submit} disabled={createM.isPending || updateM.isPending}>확인</Button>
+                <Button variant="outline" className="px-8" onClick={() => setForm(null)}>취소</Button>
+              </div>
+            </div>
+            {/* 우측: 접근 권한 체크박스 */}
+            <div className="w-72 shrink-0">
+              <label className="text-sm font-medium flex items-center gap-1 mb-3"><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white text-xs font-bold">5</span> 접근 권한</label>
+              <div className="border rounded-lg overflow-hidden">
+                {[
+                  { key: "dashboard", label: "Dashboard" },
+                  { key: "members", label: "회원 관리" },
+                  { key: "game", label: "GAME" },
+                  { key: "banner", label: "Main banner" },
+                  { key: "news", label: "News" },
+                  { key: "media", label: "Media" },
+                  { key: "products", label: "인앱상품" },
+                  { key: "payments", label: "결제" },
+                  { key: "stats", label: "통계" },
+                  { key: "coupons", label: "쿠폰관리" },
+                  { key: "admins", label: "관리자 관리" },
+                  { key: "policy", label: "운영 정책" },
+                ].map(({ key, label }) => {
+                  let perms: string[] = [];
+                  try { perms = JSON.parse(form.permissions || "[]"); } catch {}
+                  const checked = perms.includes(key);
+                  const toggle = () => {
+                    const next = checked ? perms.filter(p => p !== key) : [...perms, key];
+                    setForm(f => f && ({ ...f, permissions: JSON.stringify(next) }));
+                  };
+                  return (
+                    <label key={key} className="flex items-center gap-3 px-4 py-2.5 border-b last:border-0 hover:bg-accent/20 cursor-pointer">
+                      <input type="checkbox" checked={checked} onChange={toggle}
+                        className="w-4 h-4 accent-blue-500" />
+                      <span className="text-sm">{label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-          <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "관리자 생성"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
         </CardContent></Card>
       )}
     </div>
