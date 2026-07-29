@@ -238,7 +238,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                 </SelectContent>
               </Select>
               <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1); }}>
-                <SelectTrigger className="w-20 h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-28 h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {[10, 20, 50, 100].map(n => <SelectItem key={n} value={String(n)}>{n}개씩</SelectItem>)}
                 </SelectContent>
@@ -1491,14 +1491,7 @@ function StatsSection({ adminClient }: { adminClient: ReturnType<typeof createAd
             </tbody>
           </table>
         </div>
-        {/* 페이지네이션 */}
-        <div className="flex items-center justify-center gap-1 mt-4">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" disabled={dailyPage===1} onClick={()=>setDailyPage(1)}>«</Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" disabled={dailyPage===1} onClick={()=>setDailyPage(p=>Math.max(1,p-1))}>‹</Button>
-          <span className="text-sm px-3">{dailyPage} / {totalDailyPages}</span>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" disabled={dailyPage===totalDailyPages} onClick={()=>setDailyPage(p=>Math.min(totalDailyPages,p+1))}>›</Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" disabled={dailyPage===totalDailyPages} onClick={()=>setDailyPage(totalDailyPages)}>»</Button>
-        </div>
+        <Pagination page={dailyPage} total={allDailyRows.length} pageSize={dailyPageSize} onChange={setDailyPage} />
       </div>
     </div>
   );
