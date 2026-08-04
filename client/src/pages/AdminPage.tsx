@@ -1982,7 +1982,7 @@ export default function AdminPage() {
   const [adminLoginError, setAdminLoginError] = useState("");
   const [adminLoggedIn, setAdminLoggedIn] = useState<string | null>(() => sessionStorage.getItem("admin_session"));
   const [showChangePw, setShowChangePw] = useState(false);
-  const [newPw, setNewPw] = useState(""); const [confirmPw, setConfirmPw] = useState(""); const [changePwError, setChangePwError] = useState("");
+  const [currentPw, setCurrentPw] = useState(""); const [newPw, setNewPw] = useState(""); const [confirmPw, setConfirmPw] = useState(""); const [changePwError, setChangePwError] = useState("");
   const [activeMenu, setActiveMenu] = useState("dashboard");
 
   const handleAdminLogin = (e: React.FormEvent) => {
@@ -1995,11 +1995,14 @@ export default function AdminPage() {
   const handleAdminLogout = () => { sessionStorage.removeItem("admin_session"); setAdminLoggedIn(null); setAdminId(""); setAdminPw(""); };
   const handleChangePw = (e: React.FormEvent) => {
     e.preventDefault();
+    const storedPw = localStorage.getItem(`admin_pw_${adminLoggedIn}`) ?? (adminLoggedIn === "cyanima" || adminLoggedIn === "blue0246" ? "0000" : "");
+    if (!currentPw.trim()) { setChangePwError("현재 비밀번호를 입력해 주세요."); return; }
+    if (currentPw !== storedPw) { setChangePwError("현재 비밀번호가 올바르지 않습니다."); return; }
     if (!newPw.trim()) { setChangePwError("새 비밀번호를 입력해 주세요."); return; }
     if (newPw !== confirmPw) { setChangePwError("비밀번호가 일치하지 않습니다."); return; }
     if (newPw.length < 4) { setChangePwError("비밀번호는 4자 이상이어야 합니다."); return; }
     localStorage.setItem(`admin_pw_${adminLoggedIn}`, newPw);
-    setChangePwError(""); setNewPw(""); setConfirmPw(""); setShowChangePw(false);
+    setChangePwError(""); setCurrentPw(""); setNewPw(""); setConfirmPw(""); setShowChangePw(false);
     toast.success("비밀번호가 변경되었습니다.");
   };
 
@@ -2112,10 +2115,23 @@ export default function AdminPage() {
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Password 변경</DialogTitle><DialogDescription>{adminLoggedIn} 계정의 비밀번호를 변경합니다.</DialogDescription></DialogHeader>
           <form onSubmit={handleChangePw} className="flex flex-col gap-3 py-2">
-            <div className="flex flex-col gap-1"><label className="text-sm font-medium">새 Password</label><Input type="password" placeholder="새 비밀번호 (4자 이상)" value={newPw} onChange={e => setNewPw(e.target.value)} /></div>
-            <div className="flex flex-col gap-1"><label className="text-sm font-medium">비밀번호 확인</label><Input type="password" placeholder="비밀번호 다시 입력" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} /></div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium">현재 비밀번호</label>
+              <Input type="password" placeholder="" value={currentPw} onChange={e => { setCurrentPw(e.target.value); setChangePwError(""); }} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium">새 Password</label>
+              <Input type="password" placeholder="새 비밀번호 (4자 이상)" value={newPw} onChange={e => { setNewPw(e.target.value); setChangePwError(""); }} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium">비밀번호 확인</label>
+              <Input type="password" placeholder="비밀번호 다시 입력" value={confirmPw} onChange={e => { setConfirmPw(e.target.value); setChangePwError(""); }} />
+            </div>
             {changePwError && <p className="text-sm text-destructive">{changePwError}</p>}
-            <div className="flex gap-2 mt-2"><Button type="submit">변경</Button><Button type="button" variant="ghost" onClick={() => { setShowChangePw(false); setNewPw(""); setConfirmPw(""); setChangePwError(""); }}>취소</Button></div>
+            <div className="flex gap-2 mt-2">
+              <Button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white">변경</Button>
+              <Button type="button" variant="outline" onClick={() => { setShowChangePw(false); setCurrentPw(""); setNewPw(""); setConfirmPw(""); setChangePwError(""); }}>취소</Button>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
