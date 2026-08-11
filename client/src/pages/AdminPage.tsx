@@ -1361,6 +1361,253 @@ function PaymentsSection({ adminClient }: { adminClient: ReturnType<typeof creat
   );
 }
 
+// ─── SHOP SECTION ─────────────────────────────────────────────────────────────
+function fmtRuc(n: number): string { return Math.min(n, 9999999).toLocaleString("en-US"); }
+
+type ShopProductForm = { id?: number; name: string; priceUsd: string; ruCashAmount: number; bonusCashAmount: number; imageUrl: string; isActive: number; sortOrder: number };
+
+function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [tab, setTab] = useState<"products" | "charge" | "use" | "balances">("products");
+  const [page, setPage] = useState(1);
+  const [form, setForm] = useState<ShopProductForm | null>(null);
+  const [adjustForm, setAdjustForm] = useState<{ userId: string; ruCashDelta: string; bonusCashDelta: string; reason: string } | null>(null);
+  const [balanceSearch, setBalanceSearch] = useState(""); const [balanceSearchInput, setBalanceSearchInput] = useState("");
+
+  const { data: productsData, refetch: refetchProducts } = useQuery({ queryKey: ["admin-shop-products", page], queryFn: () => adminClient!.shop.adminListProducts.query({ page, pageSize: 50 }), enabled: !!adminClient && tab === "products" });
+  const { data: chargeData, refetch: refetchCharge } = useQuery({ queryKey: ["admin-shop-charge", page], queryFn: () => adminClient!.shop.adminChargeHistory.query({ page, pageSize: 20 }), enabled: !!adminClient && tab === "charge" });
+  const { data: useData, refetch: refetchUse } = useQuery({ queryKey: ["admin-shop-use", page], queryFn: () => adminClient!.shop.adminUseHistory.query({ page, pageSize: 20 }), enabled: !!adminClient && tab === "use" });
+  const { data: balancesData, refetch: refetchBalances } = useQuery({ queryKey: ["admin-shop-balances", page, balanceSearch], queryFn: () => adminClient!.shop.adminBalances.query({ page, pageSize: 20, search: balanceSearch || undefined }), enabled: !!adminClient && tab === "balances" });
+
+  const createProductM = useMutation({ mutationFn: (input: any) => adminClient!.shop.adminCreateProduct.mutate(input), onSuccess: () => { toast.success("등록되었습니다."); setForm(null); refetchProducts(); }, onError: (e: Error) => toast.error(e.message) });
+  const updateProductM = useMutation({ mutationFn: (input: any) => adminClient!.shop.adminUpdateProduct.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetchProducts(); }, onError: (e: Error) => toast.error(e.message) });
+  const deleteProductM = useMutation({ mutationFn: (id: number) => adminClient!.shop.adminDeleteProduct.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetchProducts(); }, onError: (e: Error) => toast.error(e.message) });
+  const adjustM = useMutation({ mutationFn: (input: any) => adminClient!.shop.adminAdjustBalance.mutate(input), onSuccess: () => { toast.success("잔액이 조정되었습니다."); setAdjustForm(null); refetchBalances(); }, onError: (e: Error) => toast.error(e.message) });
+
+  const emptyProduct: ShopProductForm = { name: "", priceUsd: "0.00", ruCashAmount: 0, bonusCashAmount: 0, imageUrl: "", isActive: 1, sortOrder: 0 };
+
+  const handleExcelCharge = () => {
+    const items = (chargeData?.items ?? []) as any[];
+    if (!items.length) { toast.error("내역이 없습니다."); return; }
+    const headers = ["회원", "게임코드", "TIME", "충전전 RUC", "충전전 Bonus", "PG", "Price(USD)", "충전량 RUC", "충전량 Bonus", "충전후 RUC", "충전후 Bonus"];
+    const rows = items.map((r: any) => [r.user?.name ?? r.user?.openId ?? "-", r.tx.gameCode, new Date(r.tx.createdAt).toLocaleString("ko-KR"), r.tx.beforeRuCash, r.tx.beforeBonusCash, r.tx.pgName ?? "-", r.tx.priceUsd ?? "-", r.tx.ruCashDelta, r.tx.bonusCashDelta, r.tx.afterRuCash, r.tx.afterBonusCash]);
+    const csv = [headers, ...rows].map(r => r.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "charge_history.csv"; a.click(); URL.revokeObjectURL(url);
+  };
+
+  const handleExcelUse = () => {
+    const items = (useData?.items ?? []) as any[];
+    if (!items.length) { toast.error("내역이 없습니다."); return; }
+    const headers = ["회원", "게임코드", "TIME", "사용전 RUC", "사용전 Bonus", "Item Name", "QTY", "Item Price", "Total Price", "잔량 RUC", "잔량 Bonus"];
+    const rows = items.map((r: any) => [r.user?.name ?? r.user?.openId ?? "-", r.tx.gameCode, new Date(r.tx.createdAt).toLocaleString("ko-KR"), r.tx.beforeRuCash, r.tx.beforeBonusCash, r.tx.itemName ?? "-", r.tx.itemQty ?? 1, r.tx.itemPriceRuc ?? 0, r.tx.totalPriceRuc ?? 0, r.tx.afterRuCash, r.tx.afterBonusCash]);
+    const csv = [headers, ...rows].map(r => r.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "use_history.csv"; a.click(); URL.revokeObjectURL(url);
+  };
+
+  const tabs = [
+    { key: "products" as const, label: "상품 관리" },
+    { key: "charge" as const, label: "충전 내역" },
+    { key: "use" as const, label: "사용 내역" },
+    { key: "balances" as const, label: "잔액 조회" },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <SectionHeader title={form ? (form.id ? "상품 수정" : "상품 등록") : "Shop (RU Cash) 관리"} desc="RU Cash 충전 상품, 충전/사용 내역, 잔액을 관리합니다."
+        action={!form ? (
+          <div className="flex gap-2">
+            {tab === "products" && <Button onClick={() => setForm(emptyProduct)}><Plus className="h-4 w-4 mr-1" />상품 등록</Button>}
+            {tab === "charge" && <Button className="bg-green-600 hover:bg-green-700 text-white h-9 text-sm" onClick={handleExcelCharge}>Excel 저장</Button>}
+            {tab === "use" && <Button className="bg-green-600 hover:bg-green-700 text-white h-9 text-sm" onClick={handleExcelUse}>Excel 저장</Button>}
+            <Button variant="outline" size="sm" onClick={() => { if (tab === "products") refetchProducts(); else if (tab === "charge") refetchCharge(); else if (tab === "use") refetchUse(); else refetchBalances(); }}><RefreshCw className="h-4 w-4" /></Button>
+          </div>
+        ) : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>}
+      />
+
+      {!form ? (
+        <>
+          {/* 탭 */}
+          <div className="flex gap-2 border-b">
+            {tabs.map(t => (
+              <button key={t.key} onClick={() => { setTab(t.key); setPage(1); }} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${tab === t.key ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {/* 상품 관리 */}
+          {tab === "products" && (
+            <Card><CardContent className="pt-4">
+              {!productsData?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">등록된 상품이 없습니다.</div> : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b bg-slate-50 dark:bg-slate-800 text-xs text-muted-foreground">
+                      <th className="text-left p-2">순서</th><th className="text-left p-2">상품명</th><th className="text-right p-2">USD</th><th className="text-right p-2">RU Cash</th><th className="text-right p-2">Bonus</th><th className="text-left p-2">상태</th><th className="text-left p-2">수정</th><th className="text-left p-2">삭제</th>
+                    </tr></thead>
+                    <tbody>
+                      {(productsData.items as any[]).map((p: any) => (
+                        <tr key={p.id} className="border-b hover:bg-accent/20 cursor-pointer" onClick={() => setForm({ id: p.id, name: p.name, priceUsd: String(p.priceUsd), ruCashAmount: p.ruCashAmount, bonusCashAmount: p.bonusCashAmount, imageUrl: p.imageUrl ?? "", isActive: p.isActive, sortOrder: p.sortOrder })}>
+                          <td className="p-2 text-xs text-muted-foreground">{p.sortOrder}</td>
+                          <td className="p-2 font-medium">{p.name}</td>
+                          <td className="p-2 text-right">{Number(p.priceUsd).toFixed(2)}</td>
+                          <td className="p-2 text-right font-mono text-[#9b2020]">{fmtRuc(p.ruCashAmount)}</td>
+                          <td className="p-2 text-right font-mono text-green-700">{fmtRuc(p.bonusCashAmount)}</td>
+                          <td className="p-2"><StatusBadge active={p.isActive} /></td>
+                          <td className="p-2" onClick={e => e.stopPropagation()}><Button variant="ghost" size="sm" className="h-7" onClick={() => setForm({ id: p.id, name: p.name, priceUsd: String(p.priceUsd), ruCashAmount: p.ruCashAmount, bonusCashAmount: p.bonusCashAmount, imageUrl: p.imageUrl ?? "", isActive: p.isActive, sortOrder: p.sortOrder })}><Pencil className="h-3.5 w-3.5" /></Button></td>
+                          <td className="p-2" onClick={e => e.stopPropagation()}><Button variant="ghost" size="sm" className="h-7 text-red-500" onClick={() => { if (confirm(`"${p.name}" 상품을 삭제하시겠습니까?`)) deleteProductM.mutate(p.id); }}><Trash2 className="h-3.5 w-3.5" /></Button></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent></Card>
+          )}
+
+          {/* 충전 내역 */}
+          {tab === "charge" && (
+            <Card><CardContent className="pt-4">
+              {!chargeData?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">충전 내역이 없습니다.</div> : (
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead><tr className="border-b bg-slate-50 dark:bg-slate-800 text-muted-foreground">
+                        {["회원", "게임코드", "TIME", "충전전 RUC", "충전전 Bonus", "PG", "Price(USD)", "충전량 RUC", "충전량 Bonus", "충전후 RUC", "충전후 Bonus"].map(h => <th key={h} className="text-left p-2 whitespace-nowrap">{h}</th>)}
+                      </tr></thead>
+                      <tbody>
+                        {(chargeData.items as any[]).map((r: any) => (
+                          <tr key={r.tx.id} className="border-b hover:bg-accent/20">
+                            <td className="p-2">{r.user?.name ?? r.user?.openId ?? "-"}</td>
+                            <td className="p-2">{r.tx.gameCode}</td>
+                            <td className="p-2 whitespace-nowrap">{fmt(r.tx.createdAt)}</td>
+                            <td className="p-2 text-right">{fmtRuc(r.tx.beforeRuCash)}</td>
+                            <td className="p-2 text-right">{fmtRuc(r.tx.beforeBonusCash)}</td>
+                            <td className="p-2">{r.tx.pgName ?? "-"}</td>
+                            <td className="p-2 text-right">{r.tx.priceUsd ? Number(r.tx.priceUsd).toFixed(2) : "-"}</td>
+                            <td className="p-2 text-right text-[#9b2020] font-semibold">+{fmtRuc(r.tx.ruCashDelta)}</td>
+                            <td className="p-2 text-right text-green-700 font-semibold">+{fmtRuc(r.tx.bonusCashDelta)}</td>
+                            <td className="p-2 text-right">{fmtRuc(r.tx.afterRuCash)}</td>
+                            <td className="p-2 text-right">{fmtRuc(r.tx.afterBonusCash)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <Pagination page={page} total={chargeData.total} pageSize={20} onChange={setPage} />
+                </>
+              )}
+            </CardContent></Card>
+          )}
+
+          {/* 사용 내역 */}
+          {tab === "use" && (
+            <Card><CardContent className="pt-4">
+              {!useData?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">사용 내역이 없습니다.</div> : (
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead><tr className="border-b bg-slate-50 dark:bg-slate-800 text-muted-foreground">
+                        {["회원", "게임코드", "TIME", "사용전 RUC", "사용전 Bonus", "Item Name", "QTY", "Item Price", "Total Price", "잔량 RUC", "잔량 Bonus"].map(h => <th key={h} className="text-left p-2 whitespace-nowrap">{h}</th>)}
+                      </tr></thead>
+                      <tbody>
+                        {(useData.items as any[]).map((r: any) => (
+                          <tr key={r.tx.id} className="border-b hover:bg-accent/20">
+                            <td className="p-2">{r.user?.name ?? r.user?.openId ?? "-"}</td>
+                            <td className="p-2">{r.tx.gameCode}</td>
+                            <td className="p-2 whitespace-nowrap">{fmt(r.tx.createdAt)}</td>
+                            <td className="p-2 text-right">{fmtRuc(r.tx.beforeRuCash)}</td>
+                            <td className="p-2 text-right">{fmtRuc(r.tx.beforeBonusCash)}</td>
+                            <td className="p-2">{r.tx.itemName ?? "-"}</td>
+                            <td className="p-2 text-right">{r.tx.itemQty ?? 1}</td>
+                            <td className="p-2 text-right">{fmtRuc(r.tx.itemPriceRuc ?? 0)}</td>
+                            <td className="p-2 text-right text-[#9b2020] font-semibold">{fmtRuc(r.tx.totalPriceRuc ?? 0)}</td>
+                            <td className="p-2 text-right">{fmtRuc(r.tx.afterRuCash)}</td>
+                            <td className="p-2 text-right">{fmtRuc(r.tx.afterBonusCash)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <Pagination page={page} total={useData.total} pageSize={20} onChange={setPage} />
+                </>
+              )}
+            </CardContent></Card>
+          )}
+
+          {/* 잔액 조회 */}
+          {tab === "balances" && (
+            <Card><CardContent className="pt-4">
+              <div className="flex gap-2 mb-4">
+                <Input placeholder="닉네임 / Open ID 검색..." value={balanceSearchInput} onChange={e => setBalanceSearchInput(e.target.value)} className="max-w-xs h-8 text-sm" onKeyDown={e => { if (e.key === "Enter") { setBalanceSearch(balanceSearchInput); setPage(1); } }} />
+                <Button size="sm" className="h-8" onClick={() => { setBalanceSearch(balanceSearchInput); setPage(1); }}><Search className="h-3.5 w-3.5" /></Button>
+                <Button variant="outline" size="sm" className="h-8 text-blue-600" onClick={() => setAdjustForm({ userId: "", ruCashDelta: "", bonusCashDelta: "", reason: "" })}>잔액 조정</Button>
+              </div>
+              {!balancesData?.items?.length ? <div className="text-center py-8 text-muted-foreground text-sm">잔액 데이터가 없습니다.</div> : (
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead><tr className="border-b bg-slate-50 dark:bg-slate-800 text-xs text-muted-foreground">
+                        <th className="text-left p-2">User ID</th><th className="text-left p-2">Nickname</th><th className="text-right p-2">RU Cash</th><th className="text-right p-2">Bonus RU Cash</th><th className="text-left p-2">최종 갱신</th>
+                      </tr></thead>
+                      <tbody>
+                        {(balancesData.items as any[]).map((r: any) => (
+                          <tr key={r.balance.id} className="border-b hover:bg-accent/20">
+                            <td className="p-2 text-xs text-muted-foreground font-mono">{r.user?.id ?? "-"}</td>
+                            <td className="p-2 font-medium">{r.user?.name ?? r.user?.openId ?? "-"}</td>
+                            <td className="p-2 text-right font-mono text-[#9b2020] font-semibold">{fmtRuc(r.balance.ruCash)}</td>
+                            <td className="p-2 text-right font-mono text-green-700 font-semibold">{fmtRuc(r.balance.bonusCash)}</td>
+                            <td className="p-2 text-xs text-muted-foreground">{fmt(r.balance.updatedAt)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <Pagination page={page} total={balancesData.total} pageSize={20} onChange={setPage} />
+                </>
+              )}
+            </CardContent></Card>
+          )}
+        </>
+      ) : (
+        /* 상품 등록/수정 폼 */
+        <Card><CardContent className="pt-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">상품명 *</label><Input value={form.name} onChange={e => setForm(f => f && ({ ...f, name: e.target.value }))} placeholder="예: USD 10" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">USD 가격 *</label><Input type="number" step="0.01" value={form.priceUsd} onChange={e => setForm(f => f && ({ ...f, priceUsd: e.target.value }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">RU Cash 지급량 *</label><Input type="number" value={form.ruCashAmount} onChange={e => setForm(f => f && ({ ...f, ruCashAmount: parseInt(e.target.value) || 0 }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">Bonus RU Cash 지급량</label><Input type="number" value={form.bonusCashAmount} onChange={e => setForm(f => f && ({ ...f, bonusCashAmount: parseInt(e.target.value) || 0 }))} /></div>
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">이미지 URL</label><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={() => { if (!form.name || !form.priceUsd) { toast.error("상품명과 가격을 입력하세요."); return; } form.id ? updateProductM.mutate(form) : createProductM.mutate(form); }} disabled={createProductM.isPending || updateProductM.isPending}>{form.id ? "수정 저장" : "상품 등록"}</Button>
+            <Button variant="outline" onClick={() => setForm(null)}>취소</Button>
+          </div>
+        </CardContent></Card>
+      )}
+
+      {/* 잔액 조정 모달 */}
+      <Dialog open={!!adjustForm} onOpenChange={() => setAdjustForm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>RU Cash 잔액 조정</DialogTitle><DialogDescription>음수 입력 시 차감됩니다.</DialogDescription></DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="space-y-1"><label className="text-sm font-medium">회원 ID *</label><Input type="number" value={adjustForm?.userId ?? ""} onChange={e => setAdjustForm(f => f && ({ ...f, userId: e.target.value }))} placeholder="회원 숫자 ID" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">RU Cash 조정량</label><Input type="number" value={adjustForm?.ruCashDelta ?? ""} onChange={e => setAdjustForm(f => f && ({ ...f, ruCashDelta: e.target.value }))} placeholder="100 또는 -100" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">Bonus RU Cash 조정량</label><Input type="number" value={adjustForm?.bonusCashDelta ?? ""} onChange={e => setAdjustForm(f => f && ({ ...f, bonusCashDelta: e.target.value }))} placeholder="100 또는 -100" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">사유</label><Input value={adjustForm?.reason ?? ""} onChange={e => setAdjustForm(f => f && ({ ...f, reason: e.target.value }))} placeholder="조정 사유" /></div>
+          </div>
+          <DialogFooter>
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={() => { if (!adjustForm?.userId) { toast.error("회원 ID를 입력하세요."); return; } adjustM.mutate({ userId: parseInt(adjustForm.userId), ruCashDelta: parseInt(adjustForm.ruCashDelta || "0"), bonusCashDelta: parseInt(adjustForm.bonusCashDelta || "0"), reason: adjustForm.reason || undefined }); }} disabled={adjustM.isPending}>저장</Button>
+            <Button variant="outline" onClick={() => setAdjustForm(null)}>취소</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
 // ─── STATS SECTION ────────────────────────────────────────────────────────────
 const STATS_COUNTRIES = ["전체","한국","미국","일본","중국","태국","인도네시아","말레이시아","필리핀","브라질","독일","프랑스","영국","캐나다","오스트레일리아","싱가포르","비에트남","러시아","멕시코","아르헨티나"];
 
@@ -2061,7 +2308,8 @@ export default function AdminPage() {
     { key: "main-banner", label: "Main Banner", icon: Image },
     { key: "news", label: "News", icon: Link },
     { key: "media", label: "Media", icon: Eye },
-    { key: "products", label: "Point Shop", icon: ShoppingCart },
+    { key: "shop", label: "Shop", icon: ShoppingCart },
+    { key: "products", label: "인앱상품", icon: Coins },
     { key: "payments", label: "결제 / 포인트", icon: CreditCard },
     { key: "stats", label: "통계", icon: BarChart2 },
     { key: "coupons", label: "쿠폰 관리", icon: Tag },
@@ -2127,6 +2375,7 @@ export default function AdminPage() {
           {activeMenu === "news" && <NewsSection adminClient={adminClient} />}
           {activeMenu === "media" && <MediaSection adminClient={adminClient} />}
           {activeMenu === "products" && <ProductsSection adminClient={adminClient} />}
+          {activeMenu === "shop" && <ShopSection adminClient={adminClient} />}
           {activeMenu === "payments" && <PaymentsSection adminClient={adminClient} />}
           {activeMenu === "stats" && <StatsSection adminClient={adminClient} />}
           {activeMenu === "coupons" && <CouponsSection adminClient={adminClient} />}

@@ -43,6 +43,13 @@
       "when": 1785226941414,
       "tag": "0005_giant_rattler",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1786430004040,
+      "tag": "0006_daily_phantom_reporter",
+      "breakpoints": true
     }
   ]
 }

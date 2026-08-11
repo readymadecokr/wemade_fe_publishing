@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { adminKeyProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import { users, banners, news, media, products, payments, pointLogs, coupons, couponUses, admins, statsEvents, games } from "../drizzle/schema";
+import { ruCashProducts, ruCashBalances, ruCashTransactions } from "../drizzle/schema";
 import { storagePut } from "./storage";
 import { asc, desc, eq, like, or, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -723,6 +724,198 @@ export const appRouter = router({
         if (!product) throw new Error('상품을 찾을 수 없습니다.');
         await db.insert(pointLogs).values({ userId: input.userId, type: 'free', amount: product.pointAmount, reason: input.reason ?? `상품 지급: ${product.name}` });
         return { success: true, pointAmount: product.pointAmount };
+      }),
+  }),
+
+  // ===== SHOP (RU Cash) =====
+  shop: router({
+    // 공개: 활성 상품 목록
+    listProducts: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(ruCashProducts).where(eq(ruCashProducts.isActive, 1)).orderBy(asc(ruCashProducts.sortOrder), asc(ruCashProducts.id));
+    }),
+
+    // 공개: 내 잔액 조회
+    myBalance: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) return { ruCash: 0, bonusCash: 0 };
+      const db = await getDb();
+      if (!db) return { ruCash: 0, bonusCash: 0 };
+      const [row] = await db.select().from(ruCashBalances).where(eq(ruCashBalances.userId, ctx.user.id)).limit(1);
+      return row ? { ruCash: row.ruCash, bonusCash: row.bonusCash } : { ruCash: 0, bonusCash: 0 };
+    }),
+
+    // 공개: 내 충전 내역 (구매 내역)
+    myChargeHistory: publicProcedure
+      .input(z.object({ page: z.number().default(1), pageSize: z.number().default(20) }))
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user) return { items: [], total: 0 };
+        const db = await getDb();
+        if (!db) return { items: [], total: 0 };
+        const offset = (input.page - 1) * input.pageSize;
+        const [items, countResult] = await Promise.all([
+          db.select().from(ruCashTransactions)
+            .where(sql`${ruCashTransactions.userId} = ${ctx.user.id} AND ${ruCashTransactions.type} = 'charge'`)
+            .orderBy(desc(ruCashTransactions.createdAt))
+            .limit(input.pageSize).offset(offset),
+          db.select({ count: sql<number>`COUNT(*)` }).from(ruCashTransactions)
+            .where(sql`${ruCashTransactions.userId} = ${ctx.user.id} AND ${ruCashTransactions.type} = 'charge'`),
+        ]);
+        return { items, total: Number(countResult[0]?.count ?? 0) };
+      }),
+
+    // 공개: 내 사용 내역
+    myUseHistory: publicProcedure
+      .input(z.object({ page: z.number().default(1), pageSize: z.number().default(20) }))
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user) return { items: [], total: 0 };
+        const db = await getDb();
+        if (!db) return { items: [], total: 0 };
+        const offset = (input.page - 1) * input.pageSize;
+        const [items, countResult] = await Promise.all([
+          db.select().from(ruCashTransactions)
+            .where(sql`${ruCashTransactions.userId} = ${ctx.user.id} AND ${ruCashTransactions.type} = 'use'`)
+            .orderBy(desc(ruCashTransactions.createdAt))
+            .limit(input.pageSize).offset(offset),
+          db.select({ count: sql<number>`COUNT(*)` }).from(ruCashTransactions)
+            .where(sql`${ruCashTransactions.userId} = ${ctx.user.id} AND ${ruCashTransactions.type} = 'use'`),
+        ]);
+        return { items, total: Number(countResult[0]?.count ?? 0) };
+      }),
+
+    // 관리자: 상품 목록
+    adminListProducts: adminKeyProcedure
+      .input(z.object({ page: z.number().default(1), pageSize: z.number().default(50) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const offset = (input.page - 1) * input.pageSize;
+        const [items, countResult] = await Promise.all([
+          db.select().from(ruCashProducts).orderBy(asc(ruCashProducts.sortOrder), asc(ruCashProducts.id)).limit(input.pageSize).offset(offset),
+          db.select({ count: sql<number>`COUNT(*)` }).from(ruCashProducts),
+        ]);
+        return { items, total: Number(countResult[0]?.count ?? 0) };
+      }),
+
+    // 관리자: 상품 등록
+    adminCreateProduct: adminKeyProcedure
+      .input(z.object({ name: z.string(), priceUsd: z.string(), ruCashAmount: z.number(), bonusCashAmount: z.number(), imageUrl: z.string().optional(), isActive: z.number().default(1), sortOrder: z.number().default(0) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.insert(ruCashProducts).values({ name: input.name, priceUsd: input.priceUsd, ruCashAmount: input.ruCashAmount, bonusCashAmount: input.bonusCashAmount, imageUrl: input.imageUrl ?? null, isActive: input.isActive, sortOrder: input.sortOrder });
+        return { success: true };
+      }),
+
+    // 관리자: 상품 수정
+    adminUpdateProduct: adminKeyProcedure
+      .input(z.object({ id: z.number(), name: z.string(), priceUsd: z.string(), ruCashAmount: z.number(), bonusCashAmount: z.number(), imageUrl: z.string().optional(), isActive: z.number(), sortOrder: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.update(ruCashProducts).set({ name: input.name, priceUsd: input.priceUsd, ruCashAmount: input.ruCashAmount, bonusCashAmount: input.bonusCashAmount, imageUrl: input.imageUrl ?? null, isActive: input.isActive, sortOrder: input.sortOrder }).where(eq(ruCashProducts.id, input.id));
+        return { success: true };
+      }),
+
+    // 관리자: 상품 삭제
+    adminDeleteProduct: adminKeyProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.delete(ruCashProducts).where(eq(ruCashProducts.id, input.id));
+        return { success: true };
+      }),
+
+    // 관리자: 충전 내역 목록
+    adminChargeHistory: adminKeyProcedure
+      .input(z.object({ page: z.number().default(1), pageSize: z.number().default(20), userId: z.number().optional() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const offset = (input.page - 1) * input.pageSize;
+        const whereClause = input.userId
+          ? sql`${ruCashTransactions.type} = 'charge' AND ${ruCashTransactions.userId} = ${input.userId}`
+          : sql`${ruCashTransactions.type} = 'charge'`;
+        const [items, countResult] = await Promise.all([
+          db.select({ tx: ruCashTransactions, user: { id: users.id, name: users.name, openId: users.openId } })
+            .from(ruCashTransactions)
+            .leftJoin(users, eq(ruCashTransactions.userId, users.id))
+            .where(whereClause)
+            .orderBy(desc(ruCashTransactions.createdAt))
+            .limit(input.pageSize).offset(offset),
+          db.select({ count: sql<number>`COUNT(*)` }).from(ruCashTransactions).where(whereClause),
+        ]);
+        return { items, total: Number(countResult[0]?.count ?? 0) };
+      }),
+
+    // 관리자: 사용 내역 목록
+    adminUseHistory: adminKeyProcedure
+      .input(z.object({ page: z.number().default(1), pageSize: z.number().default(20), userId: z.number().optional() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const offset = (input.page - 1) * input.pageSize;
+        const whereClause = input.userId
+          ? sql`${ruCashTransactions.type} = 'use' AND ${ruCashTransactions.userId} = ${input.userId}`
+          : sql`${ruCashTransactions.type} = 'use'`;
+        const [items, countResult] = await Promise.all([
+          db.select({ tx: ruCashTransactions, user: { id: users.id, name: users.name, openId: users.openId } })
+            .from(ruCashTransactions)
+            .leftJoin(users, eq(ruCashTransactions.userId, users.id))
+            .where(whereClause)
+            .orderBy(desc(ruCashTransactions.createdAt))
+            .limit(input.pageSize).offset(offset),
+          db.select({ count: sql<number>`COUNT(*)` }).from(ruCashTransactions).where(whereClause),
+        ]);
+        return { items, total: Number(countResult[0]?.count ?? 0) };
+      }),
+
+    // 관리자: 회원 잔액 목록
+    adminBalances: adminKeyProcedure
+      .input(z.object({ page: z.number().default(1), pageSize: z.number().default(20), search: z.string().optional() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const offset = (input.page - 1) * input.pageSize;
+        const whereClause = input.search
+          ? sql`(${users.name} LIKE ${'%' + (input.search ?? '') + '%'} OR ${users.openId} LIKE ${'%' + (input.search ?? '') + '%'})`
+          : undefined;
+        const [items, countResult] = await Promise.all([
+          db.select({ balance: ruCashBalances, user: { id: users.id, name: users.name, openId: users.openId } })
+            .from(ruCashBalances)
+            .leftJoin(users, eq(ruCashBalances.userId, users.id))
+            .where(whereClause)
+            .orderBy(desc(ruCashBalances.updatedAt))
+            .limit(input.pageSize).offset(offset),
+          db.select({ count: sql<number>`COUNT(*)` }).from(ruCashBalances).where(whereClause),
+        ]);
+        return { items, total: Number(countResult[0]?.count ?? 0) };
+      }),
+
+    // 관리자: 잔액 수동 조정
+    adminAdjustBalance: adminKeyProcedure
+      .input(z.object({ userId: z.number(), ruCashDelta: z.number(), bonusCashDelta: z.number(), reason: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const [existing] = await db.select().from(ruCashBalances).where(eq(ruCashBalances.userId, input.userId)).limit(1);
+        const before = existing ?? { ruCash: 0, bonusCash: 0 };
+        const afterRuCash = Math.max(0, before.ruCash + input.ruCashDelta);
+        const afterBonusCash = Math.max(0, before.bonusCash + input.bonusCashDelta);
+        if (existing) {
+          await db.update(ruCashBalances).set({ ruCash: afterRuCash, bonusCash: afterBonusCash }).where(eq(ruCashBalances.userId, input.userId));
+        } else {
+          await db.insert(ruCashBalances).values({ userId: input.userId, ruCash: afterRuCash, bonusCash: afterBonusCash });
+        }
+        await db.insert(ruCashTransactions).values({
+          userId: input.userId, type: input.ruCashDelta >= 0 ? 'charge' : 'use',
+          beforeRuCash: before.ruCash, beforeBonusCash: before.bonusCash,
+          ruCashDelta: Math.abs(input.ruCashDelta), bonusCashDelta: Math.abs(input.bonusCashDelta),
+          afterRuCash, afterBonusCash,
+          pgName: '관리자 수동 조정', itemName: input.reason ?? '관리자 조정',
+        });
+        return { success: true, afterRuCash, afterBonusCash };
       }),
   }),
 });

@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useTheme } from "@/contexts/ThemeContext";
 import PrivacySettingsDialog from "./PrivacySettingsDialog";
+import { trpc } from "@/lib/trpc";
+
+function fmtRuc(n: number): string { return Math.min(n, 9999999).toLocaleString("en-US"); }
 
 // Footer logo image updated to GravityCI-가로형(2022).png for light mode
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
@@ -26,6 +29,15 @@ export default function Layout({ children }: LayoutProps) {
 
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
   const userNickname = localStorage.getItem("rou_nickname") || "Adventurer";
+
+  // RU Cash 잔액 조회 (Manus OAuth 로그인 사용자용)
+  const { data: ruBalance } = trpc.shop.myBalance.useQuery(undefined, {
+    refetchOnWindowFocus: true,
+    staleTime: 30000,
+  });
+  const ruCash = ruBalance?.ruCash ?? 0;
+  const bonusCash = ruBalance?.bonusCash ?? 0;
+  const hasBalance = ruBalance !== undefined;
 
   // Show Privacy Settings popup on first visit (no cookie consent yet)
   useEffect(() => {
@@ -91,7 +103,7 @@ export default function Layout({ children }: LayoutProps) {
               Game Info
             </button>
             <button onClick={() => setShowComingSoonDialog(true)} className="hover:text-blue-600 transition-colors cursor-pointer text-slate-600 dark:text-white font-bold text-base">
-              Point Shop
+              Shop
             </button>
             <button onClick={() => setShowTTKeyDialog(true)} className="hover:text-blue-600 transition-colors cursor-pointer text-slate-600 dark:text-white font-bold text-base">
               Discord
@@ -101,9 +113,16 @@ export default function Layout({ children }: LayoutProps) {
           {/* Desktop CTA / Profile */}
           <div className="hidden lg:flex items-center gap-4">
             {/* Auth Section */}
-            {isLoggedIn ? (
-              <div className="flex items-center gap-4">
-                <Link href="/mypage" className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors cursor-pointer">
+          {isLoggedIn ? (
+            <div className="flex items-center gap-4">
+              {hasBalance && (
+                <Link href="/point-shop" className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 transition-colors cursor-pointer text-xs font-semibold text-slate-700">
+                  <span className="text-[#9b2020]">RU Cash <span className="font-black">{fmtRuc(ruCash)}</span></span>
+                  <span className="h-3 w-px bg-red-300" />
+                  <span className="text-green-700">Bonus <span className="font-black">{fmtRuc(bonusCash)}</span></span>
+                </Link>
+              )}
+              <Link href="/mypage" className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors cursor-pointer">
                   <span className="text-xs font-semibold text-slate-900">My Page</span>
                 </Link>
                 <Button variant="outline" size="sm" onClick={handleLogout} className="text-xs border-blue-200 hover:bg-blue-50 text-slate-600">
@@ -166,7 +185,7 @@ export default function Layout({ children }: LayoutProps) {
               Game Info
             </button>
             <button onClick={() => { setShowComingSoonDialog(true); setIsMobileMenuOpen(false); }} className="text-left text-sm font-bold text-slate-600 dark:text-white hover:text-blue-600 w-full">
-              Point Shop
+              Shop
             </button>
             <button onClick={() => { setShowTTKeyDialog(true); setIsMobileMenuOpen(false); }} className="text-left text-sm font-bold text-slate-600 dark:text-white hover:text-blue-600 w-full">
               Discord

@@ -181,6 +181,62 @@ export const games = mysqlTable("games", {
 export type Game = typeof games.$inferSelect;
 
 /** Statistics event log */
+/** RU Cash 충전 상품 */
+export const ruCashProducts = mysqlTable("ruCashProducts", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  priceUsd: decimal("priceUsd", { precision: 10, scale: 2 }).notNull(), // USD 가격
+  ruCashAmount: int("ruCashAmount").default(0).notNull(),               // 지급 RU Cash
+  bonusCashAmount: int("bonusCashAmount").default(0).notNull(),         // 지급 Bonus RU Cash
+  imageUrl: text("imageUrl"),
+  isActive: int("isActive").default(1).notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type RuCashProduct = typeof ruCashProducts.$inferSelect;
+
+/** RU Cash 잔액 (사용자별 단일 행) */
+export const ruCashBalances = mysqlTable("ruCashBalances", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  ruCash: int("ruCash").default(0).notNull(),
+  bonusCash: int("bonusCash").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type RuCashBalance = typeof ruCashBalances.$inferSelect;
+
+/** RU Cash 트랜잭션 (충전/차감 이력) */
+export const ruCashTransactions = mysqlTable("ruCashTransactions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: mysqlEnum("type", ["charge", "use"]).notNull(),                // charge=충전, use=사용
+  gameCode: varchar("gameCode", { length: 32 }).default("ROU").notNull(),
+  // 충전 전 잔액
+  beforeRuCash: int("beforeRuCash").default(0).notNull(),
+  beforeBonusCash: int("beforeBonusCash").default(0).notNull(),
+  // 변동량 (충전 시 양수, 차감 시 양수 = 차감된 양)
+  ruCashDelta: int("ruCashDelta").default(0).notNull(),
+  bonusCashDelta: int("bonusCashDelta").default(0).notNull(),
+  // 충전 후 잔액
+  afterRuCash: int("afterRuCash").default(0).notNull(),
+  afterBonusCash: int("afterBonusCash").default(0).notNull(),
+  // 충전 전용 필드
+  productId: int("productId").references(() => ruCashProducts.id),
+  pgName: varchar("pgName", { length: 64 }),                           // PayPal, PayerMax 등
+  priceUsd: decimal("priceUsd", { precision: 10, scale: 2 }),
+  // 사용 전용 필드
+  itemName: varchar("itemName", { length: 255 }),
+  itemQty: int("itemQty").default(1),
+  itemPriceRuc: int("itemPriceRuc").default(0),                        // 아이템 단가(RUC)
+  totalPriceRuc: int("totalPriceRuc").default(0),                      // 총 차감(RUC)
+  transactionId: varchar("transactionId", { length: 128 }),            // 멱등 키
+  status: mysqlEnum("status", ["completed", "failed", "pending"]).default("completed").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type RuCashTransaction = typeof ruCashTransactions.$inferSelect;
+
+/** Statistics event log */
 export const statsEvents = mysqlTable("statsEvents", {
   id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
   eventType: varchar("eventType", { length: 64 }).notNull(), // signup, login, logout, withdraw, game_start, page_visit, purchase, refund
