@@ -40,14 +40,14 @@ function ChargeTab() {
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
   // 상품 id(sortOrder 기준 1~8)별로 각각 다른 코인 아이콘
   const COIN_ICONS: Record<number, string> = {
-    1: "/manus-storage/rucash-p1-1usd_95e76acd.png",
-    2: "/manus-storage/rucash-p2-5usd_bf74b05c.png",
-    3: "/manus-storage/rucash-p3-10usd_3f24618e.png",
-    4: "/manus-storage/rucash-p4-15usd_88264663.png",
-    5: "/manus-storage/rucash-p5-20usd_a7596c46.png",
-    6: "/manus-storage/rucash-p6-30usd_ee469797.png",
-    7: "/manus-storage/rucash-p7-50usd_6ef6662c.png",
-    8: "/manus-storage/rucash-p8-100usd_2038315e.png",
+    1: "/manus-storage/ruc-icon-1usd_48bf96a8.png",
+    2: "/manus-storage/ruc-icon-5usd_12b5a647.png",
+    3: "/manus-storage/ruc-icon-10usd_e80f7d29.png",
+    4: "/manus-storage/ruc-icon-15usd_a5a11421.png",
+    5: "/manus-storage/ruc-icon-20usd_18c60b38.png",
+    6: "/manus-storage/ruc-icon-30usd_1de74b76.png",
+    7: "/manus-storage/ruc-icon-50usd_f778d233.png",
+    8: "/manus-storage/ruc-icon-100usd_d5258086.png",
   };
   return (
     <div>
@@ -60,7 +60,7 @@ function ChargeTab() {
             <button key={p.id} onClick={() => setSelected(p.id)}
               className={`rounded-xl border-2 p-5 text-center transition-all hover:shadow-lg flex flex-col gap-1 ${isSelected ? "border-[#9b2020] bg-red-50 shadow-lg" : "border-slate-200 bg-white hover:border-red-300"}`}>
               <div className="flex justify-center mb-1">
-                <img src={coinIcon} alt="RU Cash coin" className="w-14 h-14 object-contain" />
+                <img src={coinIcon} alt="RU Cash coin" className="w-20 h-20 object-contain" />
               </div>
               <div className="text-xl font-black text-[#9b2020] leading-tight">{fmtRuc(total)}<span className="text-sm font-bold ml-1">RUC</span></div>
               {p.bonusCashAmount > 0 ? (
