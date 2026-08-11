@@ -9,6 +9,9 @@ import { useAuth } from "@/_core/hooks/useAuth";
 function fmtRuc(n: number): string {
   return Math.min(n, 9999999).toLocaleString("en-US");
 }
+function fmtAbs(n: number): string {
+  return Math.min(Math.abs(n), 9999999).toLocaleString("en-US");
+}
 
 function fmtDate(d: Date | string | null | undefined): string {
   if (!d) return "-";
@@ -165,8 +168,8 @@ function ChargeHistoryTab() {
                   <td className="px-3 py-2 text-right">{fmtRuc(tx.beforeBonusCash)}</td>
                   <td className="px-3 py-2">{tx.pgName ?? "-"}</td>
                   <td className="px-3 py-2 text-right">{tx.priceUsd ? `$${Number(tx.priceUsd).toFixed(0)}` : "-"}</td>
-                  <td className="px-3 py-2 text-right font-bold text-[#9b2020]">{fmtRuc(tx.ruCashDelta)}</td>
-                  <td className="px-3 py-2 text-right font-bold text-green-700">{fmtRuc(tx.bonusCashDelta)}</td>
+                  <td className="px-3 py-2 text-right font-bold text-[#9b2020]">{fmtAbs(tx.ruCashDelta)}</td>
+                  <td className="px-3 py-2 text-right font-bold text-green-700">{fmtAbs(tx.bonusCashDelta)}</td>
                   <td className="px-3 py-2 text-right font-bold">{fmtRuc(tx.afterRuCash)}</td>
                   <td className="px-3 py-2 text-right font-bold text-blue-700">{fmtRuc(tx.afterBonusCash)}</td>
                 </tr>
@@ -234,8 +237,8 @@ function UseHistoryTab() {
                   <td className="px-3 py-2 text-right font-bold text-green-700">{fmtRuc(tx.beforeBonusCash)}</td>
                   <td className="px-3 py-2">{tx.itemName ?? "-"}</td>
                   <td className="px-3 py-2 text-right">{tx.itemQty ?? 1}</td>
-                  <td className="px-3 py-2 text-right">{fmtRuc(tx.itemPriceRuc ?? 0)}</td>
-                  <td className="px-3 py-2 text-right font-bold">{fmtRuc(tx.totalPriceRuc ?? 0)}</td>
+                  <td className="px-3 py-2 text-right">{fmtAbs(tx.itemPriceRuc ?? 0)}</td>
+                  <td className="px-3 py-2 text-right font-bold">{fmtAbs(tx.totalPriceRuc ?? 0)}</td>
                   <td className="px-3 py-2 text-right font-bold text-[#9b2020]">{fmtRuc(tx.afterRuCash)}</td>
                   <td className="px-3 py-2 text-right font-bold text-blue-700">{tx.afterBonusCash === 0 ? <span className="text-slate-400">0</span> : fmtRuc(tx.afterBonusCash)}</td>
                 </tr>
