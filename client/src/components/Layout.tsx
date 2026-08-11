@@ -42,9 +42,8 @@ export default function Layout({ children }: LayoutProps) {
   // Show Privacy Settings popup on first visit (no cookie consent yet)
   useEffect(() => {
     const cookieConsent = localStorage.getItem("rou_cookie_consent");
-    if (!cookieConsent) {
-      setShowPrivacySettings(true);
-    }
+    // 자동 팝업 비활성화 - 사용자가 직접 Privacy Settings 클릭 시에만 표시
+    void cookieConsent;
   }, []);
 
   const handleLogout = () => {

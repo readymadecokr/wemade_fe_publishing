@@ -36,13 +36,13 @@ function BalanceBar({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }
 }
 
 // ─── 충전 탭 (PDF 12페이지: $금액 / RUC / +Bonus 카드 4열) ───────────────────
-function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
+function ChargeTab({ ruCash, bonusCash, isLoggedIn = true }: { ruCash: number; bonusCash: number; isLoggedIn?: boolean }) {
   const [selected, setSelected] = useState<number | null>(null);
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
 
   return (
     <div>
-      <BalanceBar ruCash={ruCash} bonusCash={bonusCash} />
+      {isLoggedIn && <BalanceBar ruCash={ruCash} bonusCash={bonusCash} />}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {(products as any[]).map((p: any) => {
           const isSelected = selected === p.id;
@@ -275,6 +275,15 @@ export default function PointShop() {
     { key: "use-history", label: "사용 내역" },
   ];
 
+  // 로그인 필요 탭 클릭 시 처리
+  const handleTabClick = (key: typeof tab) => {
+    if (!user && key !== "charge") {
+      setLocation("/login");
+      return;
+    }
+    setTab(key);
+  };
+
   return (
     <Layout>
       {/* 페이지 타이틀 */}
@@ -286,39 +295,31 @@ export default function PointShop() {
       </div>
 
       <div className="container py-8">
-        {!user ? (
-          <div className="text-center py-16">
-            <p className="text-slate-500 mb-4">Shop을 이용하려면 로그인이 필요합니다.</p>
-            <button onClick={() => setLocation("/login")} className="px-6 py-2 bg-[#9b2020] text-white font-bold rounded-lg hover:bg-[#7a1a1a] transition-colors">
-              로그인
-            </button>
-          </div>
-        ) : (
-          <div className="flex gap-6">
-            {/* 좌측 메뉴 */}
-            <aside className="w-44 shrink-0">
-              <nav className="flex flex-col gap-1">
-                {menus.map(m => (
-                  <button
-                    key={m.key}
-                    onClick={() => setTab(m.key)}
-                    className={`w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${tab === m.key ? "bg-[#9b2020] text-white shadow-sm" : "bg-white text-slate-700 hover:bg-red-50 border border-slate-200"}`}
-                  >
-                    {m.label}
-                  </button>
-                ))}
-              </nav>
-            </aside>
+        <div className="flex gap-6">
+          {/* 좌측 메뉴 */}
+          <aside className="w-44 shrink-0">
+            <nav className="flex flex-col gap-1">
+              {menus.map(m => (
+                <button
+                  key={m.key}
+                  onClick={() => handleTabClick(m.key)}
+                  className={`w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${tab === m.key && (user || m.key === "charge") ? "bg-[#9b2020] text-white shadow-sm" : "bg-white text-slate-700 hover:bg-red-50 border border-slate-200"}`}
+                >
+                  {m.label}
+                  {!user && m.key !== "charge" && <span className="ml-1 text-xs text-slate-400">🔒</span>}
+                </button>
+              ))}
+            </nav>
+          </aside>
 
-            {/* 우측 본문 */}
-            <main className="flex-1 min-w-0">
-              {tab === "status" && <StatusTab ruCash={ruCash} bonusCash={bonusCash} />}
-              {tab === "charge" && <ChargeTab ruCash={ruCash} bonusCash={bonusCash} />}
-              {tab === "charge-history" && <ChargeHistoryTab />}
-              {tab === "use-history" && <UseHistoryTab />}
-            </main>
-          </div>
-        )}
+          {/* 우측 본문 */}
+          <main className="flex-1 min-w-0">
+            {tab === "status" && (user ? <StatusTab ruCash={ruCash} bonusCash={bonusCash} /> : null)}
+            {tab === "charge" && <ChargeTab ruCash={user ? ruCash : 0} bonusCash={user ? bonusCash : 0} isLoggedIn={!!user} />}
+            {tab === "charge-history" && (user ? <ChargeHistoryTab /> : null)}
+            {tab === "use-history" && (user ? <UseHistoryTab /> : null)}
+          </main>
+        </div>
 
         <div className="mt-10 pt-6 border-t border-slate-200">
           <button onClick={() => setLocation("/")} className="inline-flex items-center gap-1 text-slate-500 hover:text-[#9b2020] text-sm font-medium transition-colors">
