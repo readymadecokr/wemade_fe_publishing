@@ -144,7 +144,6 @@ function ChargeHistoryTab() {
   return (
     <div className="space-y-4">
       <h2 className="text-base font-bold text-slate-800">구매 내역</h2>
-      <p className="text-xs text-slate-400">※ 충전 전/후 잔액과 PG사 결제금액을 함께 기록하여 CS 문의 대응 및 정산 검증에 활용합니다.</p>
       {!items.length ? (
         <div className="text-center py-12 text-slate-400 text-sm">충전 내역이 없습니다.</div>
       ) : (
@@ -214,7 +213,6 @@ function UseHistoryTab() {
   return (
     <div className="space-y-4">
       <h2 className="text-base font-bold text-slate-800">사용 내역</h2>
-      <p className="text-xs text-slate-400">※ 상점 구매 시 Bonus RU Cash가 우선 차감되므로, 이번 구매(Total Price)에서 Bonus 전액 소진 후 나머지는 RU Cash에서 차감됩니다.</p>
       {!items.length ? (
         <div className="text-center py-12 text-slate-400 text-sm">사용 내역이 없습니다.</div>
       ) : (
