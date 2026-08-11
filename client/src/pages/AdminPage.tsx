@@ -222,9 +222,32 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
 
   const totalPages = data?.totalPages ?? 1;
 
+  const handleExcelDownload = () => {
+    if (!data?.data?.length) { toast.error("다운로드할 데이터가 없습니다."); return; }
+    const headers = ["User ID", "Nickname", "Provider", "Registration Date", "Last Activity", "상태"];
+    const rows = (data.data as UserRow[]).map((u) => [
+      u.id,
+      u.name ?? "-",
+      u.loginMethod ?? "-",
+      fmt(u.createdAt),
+      fmt(u.lastSignedIn),
+      (u as any).status === "suspended" ? "이용정지" : (u as any).status === "banned" ? "영구정지" : "정상",
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "members.csv"; a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
-      <SectionHeader title="회원 관리" desc="가입 회원 목록 조회, 정보 수정, 제재 처리" action={<Button variant="outline" size="sm" onClick={() => refetch()}><RefreshCw className="h-4 w-4 mr-1" />새로고침</Button>} />
+      <SectionHeader title="회원 관리" desc="가입 회원 목록 조회, 정보 수정, 제재 처리" action={
+        <div className="flex gap-2">
+          <Button className="bg-green-600 hover:bg-green-700 text-white h-9 text-sm" onClick={handleExcelDownload}>Excel 저장</Button>
+          <Button variant="outline" size="sm" onClick={() => refetch()}><RefreshCw className="h-4 w-4 mr-1" />새로고침</Button>
+        </div>
+      } />
 
       <Card>
         <CardHeader className="pb-3">
@@ -257,6 +280,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead><tr className="border-b text-muted-foreground text-xs">
+                    <th className="text-left p-2">User ID</th>
                     <th className="text-left p-2">Nickname</th>
                     <th className="text-left p-2">Provider</th>
                     <th className="text-left p-2">Registration Date</th>
@@ -267,6 +291,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                   <tbody>
                     {(data?.data ?? []).map((u: UserRow) => (
                       <tr key={u.id} className="border-b hover:bg-accent/20 cursor-pointer" onClick={() => setSelectedUser(u)}>
+                        <td className="p-2 text-xs text-muted-foreground font-mono">{u.id}</td>
                         <td className="p-2 font-medium">{u.name ?? "-"}</td>
                         <td className="p-2 text-xs text-muted-foreground">{u.loginMethod ?? "-"}</td>
                         <td className="p-2 text-xs text-muted-foreground">{fmt(u.createdAt)}</td>
@@ -305,7 +330,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
             <div className="space-y-0 text-sm divide-y">
               {/* ID */}
               <div className="grid grid-cols-3 gap-2 py-2.5">
-                <span className="text-muted-foreground font-medium">ID</span>
+                <span className="text-muted-foreground font-medium">User ID</span>
                 <span className="col-span-2 font-mono">{selectedUser.id}</span>
               </div>
               {/* Open ID */}
