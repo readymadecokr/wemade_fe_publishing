@@ -5,67 +5,78 @@ import Layout from "@/components/Layout";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 
-// ─── 포인트 포맷 (콤마, 최대 9자 = 9,999,999) ─────────────────────────────────
+// ─── 포맷 유틸 ────────────────────────────────────────────────────────────────
 function fmtRuc(n: number): string {
-  const clamped = Math.min(n, 9999999);
-  return clamped.toLocaleString("en-US");
+  return Math.min(n, 9999999).toLocaleString("en-US");
 }
 
 function fmtDate(d: Date | string | null | undefined): string {
   if (!d) return "-";
-  return new Date(d).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
+  const dt = new Date(d);
+  const y = dt.getFullYear();
+  const mo = String(dt.getMonth() + 1).padStart(2, "0");
+  const day = String(dt.getDate()).padStart(2, "0");
+  const h = String(dt.getHours()).padStart(2, "0");
+  const mi = String(dt.getMinutes()).padStart(2, "0");
+  return `${y}-${mo}-${day} ${h}:${mi}`;
 }
 
-// ─── 잔액 바 ──────────────────────────────────────────────────────────────────
+// ─── 잔액 바 (PDF 12페이지: 검정 배경, RU Cash | Bonus RU Cash 두 칸) ─────────
 function BalanceBar({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
   return (
-    <div className="flex items-center gap-4 bg-[#7a1a1a] text-white rounded-lg px-5 py-3 text-sm font-semibold">
-      <span>RU Cash: <span className="text-yellow-300">{fmtRuc(ruCash)}</span></span>
-      <span className="h-4 w-px bg-white/40" />
-      <span>Bonus RU Cash: <span className="text-yellow-300">{fmtRuc(bonusCash)}</span></span>
+    <div className="flex rounded-lg overflow-hidden border border-slate-200 text-sm font-bold mb-6">
+      <div className="flex-1 bg-[#1a1a1a] text-white px-6 py-3">
+        RU Cash: <span className="text-white font-black ml-1">{fmtRuc(ruCash)}</span>
+      </div>
+      <div className="flex-1 bg-[#2a2a2a] text-white px-6 py-3 border-l border-slate-600">
+        Bonus RU Cash: <span className="text-white font-black ml-1">{fmtRuc(bonusCash)}</span>
+      </div>
     </div>
   );
 }
 
-// ─── 충전 탭 ──────────────────────────────────────────────────────────────────
+// ─── 충전 탭 (PDF 12페이지: $금액 / RUC / +Bonus 카드 4열) ───────────────────
 function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
   const [selected, setSelected] = useState<number | null>(null);
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
 
   return (
-    <div className="space-y-6">
+    <div>
       <BalanceBar ruCash={ruCash} bonusCash={bonusCash} />
-      <div>
-        <h2 className="text-lg font-bold text-slate-800 mb-4">충전 상품 선택</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {(products as any[]).map((p: any) => (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {(products as any[]).map((p: any) => {
+          const isSelected = selected === p.id;
+          return (
             <button
               key={p.id}
               onClick={() => setSelected(p.id)}
-              className={`rounded-xl border-2 p-4 text-left transition-all hover:shadow-md ${selected === p.id ? "border-[#9b2020] bg-red-50 shadow-md" : "border-slate-200 bg-white hover:border-red-300"}`}
+              className={`rounded-lg border-2 p-4 text-center transition-all hover:shadow-md ${isSelected ? "border-[#9b2020] bg-red-50 shadow-md" : "border-slate-200 bg-white hover:border-red-300"}`}
             >
-              <div className="text-base font-bold text-slate-800 mb-1">{p.name}</div>
-              <div className="text-sm text-slate-600 mb-2">
-                <span className="font-semibold text-[#9b2020]">{fmtRuc(p.ruCashAmount)}</span> RU Cash
-                {p.bonusCashAmount > 0 && (
-                  <div className="text-xs text-green-700 mt-0.5">+{fmtRuc(p.bonusCashAmount)} Bonus</div>
-                )}
-              </div>
-              <div className="text-xs font-bold text-slate-500">USD {Number(p.priceUsd).toFixed(2)}</div>
+              {/* $금액 */}
+              <div className="text-xl font-black text-slate-800 mb-1">{p.name}</div>
+              {/* RUC */}
+              <div className="text-base font-bold text-[#9b2020]">{fmtRuc(p.ruCashAmount)} RUC</div>
+              {/* +Bonus */}
+              {p.bonusCashAmount > 0 ? (
+                <div className="text-xs text-slate-500 mt-0.5">+{fmtRuc(p.bonusCashAmount)} Bonus</div>
+              ) : (
+                <div className="text-xs text-transparent mt-0.5">-</div>
+              )}
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
       {selected && (
-        <div className="flex items-center gap-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-          <div className="flex-1">
+        <div className="mt-6 flex items-center gap-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <div className="flex-1 text-sm text-slate-700">
             {(() => {
               const p = (products as any[]).find((x: any) => x.id === selected);
               if (!p) return null;
               return (
-                <div className="text-sm text-slate-700">
-                  <span className="font-bold">{p.name}</span> 선택됨 — {fmtRuc(p.ruCashAmount)} RU Cash{p.bonusCashAmount > 0 ? ` + ${fmtRuc(p.bonusCashAmount)} Bonus RU Cash` : ""} / USD {Number(p.priceUsd).toFixed(2)}
-                </div>
+                <span>
+                  <strong>{p.name}</strong> 선택됨 — {fmtRuc(p.ruCashAmount)} RUC
+                  {p.bonusCashAmount > 0 ? ` + ${fmtRuc(p.bonusCashAmount)} Bonus` : ""}
+                </span>
               );
             })()}
           </div>
@@ -77,7 +88,7 @@ function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
           </button>
         </div>
       )}
-      <p className="text-xs text-slate-400">※ 실제 결제는 PG 연동 후 이용 가능합니다. 현재는 상품 구성 확인 단계입니다.</p>
+      <p className="mt-4 text-xs text-slate-400">※ 실제 결제는 PG 연동 후 이용 가능합니다. 현재는 상품 구성 확인 단계입니다.</p>
     </div>
   );
 }
@@ -86,7 +97,7 @@ function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
 function StatusTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-bold text-slate-800">현재 소지 상태</h2>
+      <BalanceBar ruCash={ruCash} bonusCash={bonusCash} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="rounded-xl border border-slate-200 bg-white p-6">
           <div className="text-xs text-slate-500 mb-1 font-semibold uppercase tracking-wide">RU Cash</div>
@@ -107,7 +118,8 @@ function StatusTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
   );
 }
 
-// ─── 구매 내역 탭 ─────────────────────────────────────────────────────────────
+// ─── 구매 내역 탭 (PDF 14페이지) ──────────────────────────────────────────────
+// 컬럼: 게임코드 / TIME / 충전전 RUC / 충전전 Bonus / PG / Price / 충전량 RUC / 충전량 Bonus / 충전후 RUC / 충전후 Bonus
 function ChargeHistoryTab() {
   const [page, setPage] = useState(1);
   const { data } = trpc.shop.myChargeHistory.useQuery({ page, pageSize: 10 });
@@ -115,9 +127,23 @@ function ChargeHistoryTab() {
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / 10));
 
+  const COLS = [
+    { label: "게임코드", key: "gameCode" },
+    { label: "TIME", key: "time" },
+    { label: "충전전 RUC", key: "beforeRuCash" },
+    { label: "충전전 Bonus", key: "beforeBonusCash" },
+    { label: "PG", key: "pgName" },
+    { label: "Price", key: "priceUsd" },
+    { label: "충전량 RUC", key: "ruCashDelta" },
+    { label: "충전량 Bonus", key: "bonusCashDelta" },
+    { label: "충전후 RUC", key: "afterRuCash" },
+    { label: "충전후 Bonus", key: "afterBonusCash" },
+  ];
+
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-bold text-slate-800">구매 내역 (충전 내역)</h2>
+      <h2 className="text-base font-bold text-slate-800">구매 내역</h2>
+      <p className="text-xs text-slate-400">※ 충전 전/후 잔액과 PG사 결제금액을 함께 기록하여 CS 문의 대응 및 정산 검증에 활용합니다.</p>
       {!items.length ? (
         <div className="text-center py-12 text-slate-400 text-sm">충전 내역이 없습니다.</div>
       ) : (
@@ -125,24 +151,24 @@ function ChargeHistoryTab() {
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-[#9b2020] text-white">
-                {["게임코드", "TIME", "충전전 RUC", "충전전 Bonus", "PG", "Price(USD)", "충전량 RUC", "충전량 Bonus", "충전후 RUC", "충전후 Bonus"].map(h => (
-                  <th key={h} className="px-3 py-2 text-left font-semibold whitespace-nowrap">{h}</th>
+                {COLS.map(c => (
+                  <th key={c.key} className="px-3 py-2.5 text-left font-semibold whitespace-nowrap">{c.label}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {items.map((tx: any) => (
                 <tr key={tx.id} className="border-b border-slate-100 hover:bg-slate-50">
-                  <td className="px-3 py-2">{tx.gameCode ?? "ROU"}</td>
+                  <td className="px-3 py-2 font-medium text-[#9b2020]">{tx.gameCode ?? "ROU"}</td>
                   <td className="px-3 py-2 whitespace-nowrap">{fmtDate(tx.createdAt)}</td>
                   <td className="px-3 py-2 text-right">{fmtRuc(tx.beforeRuCash)}</td>
                   <td className="px-3 py-2 text-right">{fmtRuc(tx.beforeBonusCash)}</td>
                   <td className="px-3 py-2">{tx.pgName ?? "-"}</td>
-                  <td className="px-3 py-2 text-right">{tx.priceUsd ? Number(tx.priceUsd).toFixed(2) : "-"}</td>
-                  <td className="px-3 py-2 text-right text-[#9b2020] font-semibold">+{fmtRuc(tx.ruCashDelta)}</td>
-                  <td className="px-3 py-2 text-right text-green-700 font-semibold">+{fmtRuc(tx.bonusCashDelta)}</td>
-                  <td className="px-3 py-2 text-right">{fmtRuc(tx.afterRuCash)}</td>
-                  <td className="px-3 py-2 text-right">{fmtRuc(tx.afterBonusCash)}</td>
+                  <td className="px-3 py-2 text-right">{tx.priceUsd ? `$${Number(tx.priceUsd).toFixed(0)}` : "-"}</td>
+                  <td className="px-3 py-2 text-right font-bold text-[#9b2020]">{fmtRuc(tx.ruCashDelta)}</td>
+                  <td className="px-3 py-2 text-right font-bold text-green-700">{fmtRuc(tx.bonusCashDelta)}</td>
+                  <td className="px-3 py-2 text-right font-bold">{fmtRuc(tx.afterRuCash)}</td>
+                  <td className="px-3 py-2 text-right font-bold text-blue-700">{fmtRuc(tx.afterBonusCash)}</td>
                 </tr>
               ))}
             </tbody>
@@ -162,7 +188,8 @@ function ChargeHistoryTab() {
   );
 }
 
-// ─── 사용 내역 탭 ─────────────────────────────────────────────────────────────
+// ─── 사용 내역 탭 (PDF 16페이지) ──────────────────────────────────────────────
+// 컬럼: 게임코드 / TIME / 사용전 RUC / 사용전 Bonus / Item Name / QTY / Item Price / Total Price / 잔량 RUC / 잔량 Bonus
 function UseHistoryTab() {
   const [page, setPage] = useState(1);
   const { data } = trpc.shop.myUseHistory.useQuery({ page, pageSize: 10 });
@@ -170,9 +197,23 @@ function UseHistoryTab() {
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / 10));
 
+  const COLS = [
+    { label: "게임코드", key: "gameCode" },
+    { label: "TIME", key: "time" },
+    { label: "사용전 RUC", key: "beforeRuCash" },
+    { label: "사용전 Bonus", key: "beforeBonusCash" },
+    { label: "Item Name", key: "itemName" },
+    { label: "QTY", key: "itemQty" },
+    { label: "Item Price", key: "itemPriceRuc" },
+    { label: "Total Price", key: "totalPriceRuc" },
+    { label: "잔량 RUC", key: "afterRuCash" },
+    { label: "잔량 Bonus", key: "afterBonusCash" },
+  ];
+
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-bold text-slate-800">사용 내역</h2>
+      <h2 className="text-base font-bold text-slate-800">사용 내역</h2>
+      <p className="text-xs text-slate-400">※ 상점 구매 시 Bonus RU Cash가 우선 차감되므로, 이번 구매(Total Price)에서 Bonus 전액 소진 후 나머지는 RU Cash에서 차감됩니다.</p>
       {!items.length ? (
         <div className="text-center py-12 text-slate-400 text-sm">사용 내역이 없습니다.</div>
       ) : (
@@ -180,24 +221,24 @@ function UseHistoryTab() {
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-[#9b2020] text-white">
-                {["게임코드", "TIME", "사용전 RUC", "사용전 Bonus", "Item Name", "QTY", "Item Price", "Total Price", "잔량 RUC", "잔량 Bonus"].map(h => (
-                  <th key={h} className="px-3 py-2 text-left font-semibold whitespace-nowrap">{h}</th>
+                {COLS.map(c => (
+                  <th key={c.key} className="px-3 py-2.5 text-left font-semibold whitespace-nowrap">{c.label}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {items.map((tx: any) => (
                 <tr key={tx.id} className="border-b border-slate-100 hover:bg-slate-50">
-                  <td className="px-3 py-2">{tx.gameCode ?? "ROU"}</td>
+                  <td className="px-3 py-2 font-medium text-[#9b2020]">{tx.gameCode ?? "ROU"}</td>
                   <td className="px-3 py-2 whitespace-nowrap">{fmtDate(tx.createdAt)}</td>
-                  <td className="px-3 py-2 text-right">{fmtRuc(tx.beforeRuCash)}</td>
-                  <td className="px-3 py-2 text-right">{fmtRuc(tx.beforeBonusCash)}</td>
+                  <td className="px-3 py-2 text-right font-bold text-[#9b2020]">{fmtRuc(tx.beforeRuCash)}</td>
+                  <td className="px-3 py-2 text-right font-bold text-green-700">{fmtRuc(tx.beforeBonusCash)}</td>
                   <td className="px-3 py-2">{tx.itemName ?? "-"}</td>
                   <td className="px-3 py-2 text-right">{tx.itemQty ?? 1}</td>
                   <td className="px-3 py-2 text-right">{fmtRuc(tx.itemPriceRuc ?? 0)}</td>
-                  <td className="px-3 py-2 text-right text-[#9b2020] font-semibold">{fmtRuc(tx.totalPriceRuc ?? 0)}</td>
-                  <td className="px-3 py-2 text-right">{fmtRuc(tx.afterRuCash)}</td>
-                  <td className="px-3 py-2 text-right">{fmtRuc(tx.afterBonusCash)}</td>
+                  <td className="px-3 py-2 text-right font-bold">{fmtRuc(tx.totalPriceRuc ?? 0)}</td>
+                  <td className="px-3 py-2 text-right font-bold text-[#9b2020]">{fmtRuc(tx.afterRuCash)}</td>
+                  <td className="px-3 py-2 text-right font-bold text-blue-700">{tx.afterBonusCash === 0 ? <span className="text-slate-400">0</span> : fmtRuc(tx.afterBonusCash)}</td>
                 </tr>
               ))}
             </tbody>
@@ -213,9 +254,6 @@ function UseHistoryTab() {
           <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="w-10 h-9 border rounded text-sm disabled:opacity-40">»</button>
         </div>
       )}
-      <p className="text-xs text-slate-400 bg-slate-50 rounded-lg p-3">
-        ※ 사용 시 Bonus RU Cash가 우선 차감되며, 부족분은 RU Cash에서 차감됩니다.
-      </p>
     </div>
   );
 }
@@ -258,7 +296,7 @@ export default function PointShop() {
         ) : (
           <div className="flex gap-6">
             {/* 좌측 메뉴 */}
-            <aside className="w-48 shrink-0">
+            <aside className="w-44 shrink-0">
               <nav className="flex flex-col gap-1">
                 {menus.map(m => (
                   <button

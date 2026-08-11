@@ -37,3 +37,10 @@
 - [x] 관리자 Shop 잔액 조회: 회원별 RU Cash / Bonus RU Cash 잔액 조회 + 수동 조정
 - [x] 포인트 표기 규칙: 콤마 포함 최대 9자(예: 9,999,999), 소지 한도 적용
 - [x] 타입 점검 및 체크포인트 저장
+
+## Shop UI 개선 (PDF 5·12·14·16페이지 반영)
+- [x] 서비스 헤더 캐시 표기: "RU Cash: 17,245 | Bonus RU Cash: 1,250 [ 마이페이지 ]" 형식으로 변경
+- [x] 충전 상품 DB 업데이트: PDF 5페이지 기준 8종 ($1/$5/$10/$15/$20/$30/$50/$100, RUC/Bonus 값)
+- [x] 충전 탭 UI: PDF 12페이지 - 상단 잔액 바(RU Cash | Bonus RU Cash), 상품 카드($금액/RUC/+Bonus 형식)
+- [x] 구매 내역 UI: PDF 14페이지 - 컬럼(게임코드/TIME/충전전 RUC/충전전 Bonus/PG/Price/충전량 RUC/충전량 Bonus/충전후 RUC/충전후 Bonus)
+- [x] 사용 내역 UI: PDF 16페이지 - 컬럼(게임코드/TIME/사용전 RUC/사용전 Bonus/Item Name/QTY/Item Price/Total Price/잔량 RUC/잔량 Bonus)
