@@ -38,6 +38,12 @@ function Pagination({ page, totalPages, setPage }: { page: number; totalPages: n
 function ChargeTab() {
   const [selected, setSelected] = useState<number | null>(null);
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
+  const getCoinIcon = (name: string) => {
+    const usd = parseFloat(name.replace("$", ""));
+    return usd >= 30
+      ? "/manus-storage/rucash-coin-lg_b5c05a46.png"
+      : "/manus-storage/rucash-coin-sm_2561ae2e.png";
+  };
   return (
     <div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -47,6 +53,9 @@ function ChargeTab() {
           return (
             <button key={p.id} onClick={() => setSelected(p.id)}
               className={`rounded-xl border-2 p-5 text-center transition-all hover:shadow-lg flex flex-col gap-1 ${isSelected ? "border-[#9b2020] bg-red-50 shadow-lg" : "border-slate-200 bg-white hover:border-red-300"}`}>
+              <div className="flex justify-center mb-1">
+                <img src={getCoinIcon(p.name)} alt="RU Cash coin" className="w-14 h-14 object-contain" />
+              </div>
               <div className="text-xl font-black text-[#9b2020] leading-tight">{fmtRuc(total)}<span className="text-sm font-bold ml-1">RUC</span></div>
               {p.bonusCashAmount > 0 ? (
                 <div className="text-xs font-semibold text-green-600">{fmtRuc(p.ruCashAmount)} RUC + {fmtRuc(p.bonusCashAmount)} Bonus</div>
@@ -92,8 +101,7 @@ function StatusTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
         </div>
       </div>
       <div className="text-xs text-slate-400 bg-slate-50 rounded-lg p-3">
-        ※ 사용 시 Bonus RU Cash가 우선 차감되며, 부족분은 RU Cash에서 차감됩니다.<br />
-        ※ 소지 한도: 최대 9,999,999 (콤마 포함 9자리)
+        ※ 사용 시 Bonus RU Cash가 우선 차감되며, 부족분은 RU Cash에서 차감됩니다.
       </div>
     </div>
   );
