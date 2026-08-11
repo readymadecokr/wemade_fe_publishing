@@ -36,29 +36,31 @@ function BalanceBar({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }
 }
 
 // ─── 충전 탭 (PDF 12페이지: $금액 / RUC / +Bonus 카드 4열) ───────────────────
-function ChargeTab({ ruCash, bonusCash, isLoggedIn = true }: { ruCash: number; bonusCash: number; isLoggedIn?: boolean }) {
+function ChargeTab({ ruCash, bonusCash, isLoggedIn = true }: { ruCash: number; bonusCash: number; isLoggedIn?: boolean }) { // eslint-disable-line
   const [selected, setSelected] = useState<number | null>(null);
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
 
   return (
     <div>
       {isLoggedIn && <BalanceBar ruCash={ruCash} bonusCash={bonusCash} />}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {(products as any[]).map((p: any) => {
           const isSelected = selected === p.id;
+          const total = p.ruCashAmount + p.bonusCashAmount;
           return (
             <button
               key={p.id}
               onClick={() => setSelected(p.id)}
-              className={`rounded-lg border-2 p-4 text-center transition-all hover:shadow-md ${isSelected ? "border-[#9b2020] bg-red-50 shadow-md" : "border-slate-200 bg-white hover:border-red-300"}`}
+              className={`rounded-xl border-2 p-5 text-center transition-all hover:shadow-lg flex flex-col gap-1 ${isSelected ? "border-[#9b2020] bg-red-50 shadow-lg" : "border-slate-200 bg-white hover:border-red-300"}`}
             >
-              {/* $금액 */}
-              <div className="text-xl font-black text-slate-800 mb-1">{p.name}</div>
-              {/* RUC */}
-              <div className="text-base font-bold text-[#9b2020]">{fmtRuc(p.ruCashAmount)} RUC</div>
-              {/* +Bonus */}
+              {/* USD 금액 - 크게 강조 */}
+              <div className="text-2xl font-black text-slate-900">{p.name}</div>
+              {/* 합계 지급량 - 가장 크게 */}
+              <div className="text-xl font-black text-[#9b2020] leading-tight">{fmtRuc(total)}<span className="text-sm font-bold ml-1">RUC</span></div>
+              {/* RUC + Bonus 구성 */}
+              <div className="text-xs text-slate-600 mt-0.5">{fmtRuc(p.ruCashAmount)} RUC</div>
               {p.bonusCashAmount > 0 ? (
-                <div className="text-xs text-slate-500 mt-0.5">+{fmtRuc(p.bonusCashAmount)} Bonus</div>
+                <div className="text-xs font-semibold text-green-600">+{fmtRuc(p.bonusCashAmount)} Bonus</div>
               ) : (
                 <div className="text-xs text-transparent mt-0.5">-</div>
               )}
@@ -72,10 +74,11 @@ function ChargeTab({ ruCash, bonusCash, isLoggedIn = true }: { ruCash: number; b
             {(() => {
               const p = (products as any[]).find((x: any) => x.id === selected);
               if (!p) return null;
+              const total = p.ruCashAmount + p.bonusCashAmount;
               return (
                 <span>
-                  <strong>{p.name}</strong> 선택됨 — {fmtRuc(p.ruCashAmount)} RUC
-                  {p.bonusCashAmount > 0 ? ` + ${fmtRuc(p.bonusCashAmount)} Bonus` : ""}
+                  <strong>{p.name}</strong> 선택됨 — 합계 <strong className="text-[#9b2020]">{fmtRuc(total)} RUC</strong>
+                  {p.bonusCashAmount > 0 ? <span className="text-green-600"> ({fmtRuc(p.ruCashAmount)} + {fmtRuc(p.bonusCashAmount)} Bonus)</span> : ""}
                 </span>
               );
             })()}
@@ -88,7 +91,6 @@ function ChargeTab({ ruCash, bonusCash, isLoggedIn = true }: { ruCash: number; b
           </button>
         </div>
       )}
-      <p className="mt-4 text-xs text-slate-400">※ 실제 결제는 PG 연동 후 이용 가능합니다. 현재는 상품 구성 확인 단계입니다.</p>
     </div>
   );
 }
@@ -275,15 +277,6 @@ export default function PointShop() {
     { key: "use-history", label: "사용 내역" },
   ];
 
-  // 로그인 필요 탭 클릭 시 처리
-  const handleTabClick = (key: typeof tab) => {
-    if (!user && key !== "charge") {
-      setLocation("/login");
-      return;
-    }
-    setTab(key);
-  };
-
   return (
     <Layout>
       {/* 페이지 타이틀 */}
@@ -302,11 +295,10 @@ export default function PointShop() {
               {menus.map(m => (
                 <button
                   key={m.key}
-                  onClick={() => handleTabClick(m.key)}
-                  className={`w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${tab === m.key && (user || m.key === "charge") ? "bg-[#9b2020] text-white shadow-sm" : "bg-white text-slate-700 hover:bg-red-50 border border-slate-200"}`}
+                  onClick={() => setTab(m.key)}
+                  className={`w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${tab === m.key ? "bg-[#9b2020] text-white shadow-sm" : "bg-white text-slate-700 hover:bg-red-50 border border-slate-200"}`}
                 >
                   {m.label}
-                  {!user && m.key !== "charge" && <span className="ml-1 text-xs text-slate-400">🔒</span>}
                 </button>
               ))}
             </nav>
@@ -314,10 +306,10 @@ export default function PointShop() {
 
           {/* 우측 본문 */}
           <main className="flex-1 min-w-0">
-            {tab === "status" && (user ? <StatusTab ruCash={ruCash} bonusCash={bonusCash} /> : null)}
-            {tab === "charge" && <ChargeTab ruCash={user ? ruCash : 0} bonusCash={user ? bonusCash : 0} isLoggedIn={!!user} />}
-            {tab === "charge-history" && (user ? <ChargeHistoryTab /> : null)}
-            {tab === "use-history" && (user ? <UseHistoryTab /> : null)}
+            {tab === "status" && <StatusTab ruCash={ruCash} bonusCash={bonusCash} />}
+            {tab === "charge" && <ChargeTab ruCash={ruCash} bonusCash={bonusCash} isLoggedIn={!!user} />}
+            {tab === "charge-history" && <ChargeHistoryTab />}
+            {tab === "use-history" && <UseHistoryTab />}
           </main>
         </div>
 
