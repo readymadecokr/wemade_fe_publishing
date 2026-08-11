@@ -38,11 +38,16 @@ function Pagination({ page, totalPages, setPage }: { page: number; totalPages: n
 function ChargeTab() {
   const [selected, setSelected] = useState<number | null>(null);
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
-  const getCoinIcon = (name: string) => {
-    const usd = parseFloat(name.replace("$", ""));
-    return usd >= 30
-      ? "/manus-storage/rucash-coin-lg_b5c05a46.png"
-      : "/manus-storage/rucash-coin-sm_2561ae2e.png";
+  // 상품 id(sortOrder 기준 1~8)별로 각각 다른 코인 아이콘
+  const COIN_ICONS: Record<number, string> = {
+    1: "/manus-storage/rucash-p1-1usd_95e76acd.png",
+    2: "/manus-storage/rucash-p2-5usd_bf74b05c.png",
+    3: "/manus-storage/rucash-p3-10usd_3f24618e.png",
+    4: "/manus-storage/rucash-p4-15usd_88264663.png",
+    5: "/manus-storage/rucash-p5-20usd_a7596c46.png",
+    6: "/manus-storage/rucash-p6-30usd_ee469797.png",
+    7: "/manus-storage/rucash-p7-50usd_6ef6662c.png",
+    8: "/manus-storage/rucash-p8-100usd_2038315e.png",
   };
   return (
     <div>
@@ -50,11 +55,12 @@ function ChargeTab() {
         {(products as any[]).map((p: any) => {
           const isSelected = selected === p.id;
           const total = p.ruCashAmount + p.bonusCashAmount;
+          const coinIcon = COIN_ICONS[p.id] ?? "/manus-storage/rucash-p1-1usd_95e76acd.png";
           return (
             <button key={p.id} onClick={() => setSelected(p.id)}
               className={`rounded-xl border-2 p-5 text-center transition-all hover:shadow-lg flex flex-col gap-1 ${isSelected ? "border-[#9b2020] bg-red-50 shadow-lg" : "border-slate-200 bg-white hover:border-red-300"}`}>
               <div className="flex justify-center mb-1">
-                <img src={getCoinIcon(p.name)} alt="RU Cash coin" className="w-14 h-14 object-contain" />
+                <img src={coinIcon} alt="RU Cash coin" className="w-14 h-14 object-contain" />
               </div>
               <div className="text-xl font-black text-[#9b2020] leading-tight">{fmtRuc(total)}<span className="text-sm font-bold ml-1">RUC</span></div>
               {p.bonusCashAmount > 0 ? (
