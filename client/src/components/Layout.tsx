@@ -99,12 +99,12 @@ export default function Layout({ children }: LayoutProps) {
             <Link href="/news" className={`hover:text-blue-600 transition-colors cursor-pointer ${location === "/news" ? "text-blue-600 font-bold" : "text-slate-600 dark:text-white"}`}>
               News
             </Link>
-            <button onClick={() => setShowComingSoonDialog(true)} className="hover:text-blue-600 transition-colors cursor-pointer text-slate-600 dark:text-white font-bold text-base">
+            <Link href="/game-info" className={`hover:text-blue-600 transition-colors cursor-pointer ${location === "/game-info" ? "text-blue-600 font-bold" : "text-slate-600 dark:text-white font-bold"}`}>
               Game Info
-            </button>
-            <button onClick={() => setShowComingSoonDialog(true)} className="hover:text-blue-600 transition-colors cursor-pointer text-slate-600 dark:text-white font-bold text-base">
+            </Link>
+            <Link href="/point-shop" className={`hover:text-blue-600 transition-colors cursor-pointer ${location === "/point-shop" ? "text-blue-600 font-bold" : "text-slate-600 dark:text-white font-bold"}`}>
               Shop
-            </button>
+            </Link>
             <button onClick={() => setShowTTKeyDialog(true)} className="hover:text-blue-600 transition-colors cursor-pointer text-slate-600 dark:text-white font-bold text-base">
               Discord
             </button>
@@ -182,12 +182,12 @@ export default function Layout({ children }: LayoutProps) {
             <Link href="/news" onClick={() => setIsMobileMenuOpen(false)} className={`text-left text-sm font-bold ${location === "/news" ? "text-blue-600" : "text-slate-600 dark:text-white"}`}>
               News
             </Link>
-            <button onClick={() => { setShowComingSoonDialog(true); setIsMobileMenuOpen(false); }} className="text-left text-sm font-bold text-slate-600 dark:text-white hover:text-blue-600 w-full">
+            <Link href="/game-info" onClick={() => setIsMobileMenuOpen(false)} className={`text-left text-sm font-bold ${location === "/game-info" ? "text-blue-600" : "text-slate-600 dark:text-white"}`}>
               Game Info
-            </button>
-            <button onClick={() => { setShowComingSoonDialog(true); setIsMobileMenuOpen(false); }} className="text-left text-sm font-bold text-slate-600 dark:text-white hover:text-blue-600 w-full">
+            </Link>
+            <Link href="/point-shop" onClick={() => setIsMobileMenuOpen(false)} className={`text-left text-sm font-bold ${location === "/point-shop" ? "text-blue-600" : "text-slate-600 dark:text-white"}`}>
               Shop
-            </button>
+            </Link>
             <button onClick={() => { setShowTTKeyDialog(true); setIsMobileMenuOpen(false); }} className="text-left text-sm font-bold text-slate-600 dark:text-white hover:text-blue-600 w-full">
               Discord
             </button>
