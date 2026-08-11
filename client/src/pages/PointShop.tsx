@@ -53,17 +53,16 @@ function ChargeTab({ ruCash, bonusCash, isLoggedIn = true }: { ruCash: number; b
               onClick={() => setSelected(p.id)}
               className={`rounded-xl border-2 p-5 text-center transition-all hover:shadow-lg flex flex-col gap-1 ${isSelected ? "border-[#9b2020] bg-red-50 shadow-lg" : "border-slate-200 bg-white hover:border-red-300"}`}
             >
-              {/* USD 금액 - 크게 강조 */}
-              <div className="text-2xl font-black text-slate-900">{p.name}</div>
-              {/* 합계 지급량 - 가장 크게 */}
+              {/* 1줄: 합계 지급량 - 가장 크게 강조 */}
               <div className="text-xl font-black text-[#9b2020] leading-tight">{fmtRuc(total)}<span className="text-sm font-bold ml-1">RUC</span></div>
-              {/* RUC + Bonus 구성 */}
-              <div className="text-xs text-slate-600 mt-0.5">{fmtRuc(p.ruCashAmount)} RUC</div>
+              {/* 2줄: RUC + Bonus 구성 */}
               {p.bonusCashAmount > 0 ? (
-                <div className="text-xs font-semibold text-green-600">+{fmtRuc(p.bonusCashAmount)} Bonus</div>
+                <div className="text-xs font-semibold text-green-600">{fmtRuc(p.ruCashAmount)} RUC + {fmtRuc(p.bonusCashAmount)} Bonus</div>
               ) : (
-                <div className="text-xs text-transparent mt-0.5">-</div>
+                <div className="text-xs text-transparent">-</div>
               )}
+              {/* 3줄: USD 금액 */}
+              <div className="text-base font-black text-slate-800 mt-1">{p.name}</div>
             </button>
           );
         })}
