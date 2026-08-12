@@ -282,7 +282,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               ))}
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="닉네임, User ID, Open ID 검색..." />
+              <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder={memberTab === "all" ? "닉네임, User ID, Open ID 검색..." : "닉네임, CS Code, User ID, Open ID 검색..."} />
               <div className="flex flex-wrap gap-2">
                 {memberTab !== "all" && (
                   <div className="flex gap-2">
@@ -310,10 +310,10 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                   <thead><tr className="border-b text-muted-foreground text-xs">
                     <th className="text-left p-2">User ID</th>
                     <th className="text-left p-2">Nickname</th>
+                    {memberTab !== "all" && <th className="text-left p-2">CS Code</th>}
                     <th className="text-left p-2">Provider</th>
                     <th className="text-left p-2">Registration Date</th>
                     <th className="text-left p-2">Last Activity</th>
-                    {memberTab !== "all" && <th className="text-left p-2">CS Code</th>}
                     <th className="text-left p-2">상태</th>
                     <th className="text-left p-2">처리</th>
                   </tr></thead>
@@ -322,10 +322,10 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                       <tr key={u.id} className="border-b hover:bg-accent/20 cursor-pointer" onClick={() => setSelectedUser(u)}>
                         <td className="p-2 text-xs text-muted-foreground font-mono">{u.id}</td>
                         <td className="p-2 font-medium">{u.name ?? "-"}</td>
+                        {memberTab !== "all" && <td className="p-2 text-xs font-mono text-muted-foreground">{u.csCode ?? "-"}</td>}
                         <td className="p-2 text-xs text-muted-foreground">{u.loginMethod ?? "-"}</td>
                         <td className="p-2 text-xs text-muted-foreground">{fmt(u.createdAt)}</td>
                         <td className="p-2 text-xs text-muted-foreground">{fmt(u.lastSignedIn)}</td>
-                        {memberTab !== "all" && <td className="p-2 text-xs font-mono text-muted-foreground">{u.csCode ?? "-"}</td>}
                         <td className="p-2">
                           <span className={`text-xs px-1.5 py-0.5 rounded-full ${(u as any).status === "suspended" ? "bg-orange-100 text-orange-700" : (u as any).status === "banned" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
                             {(u as any).status === "suspended" ? "이용 정지" : (u as any).status === "banned" ? "영구 정지" : "정상"}
@@ -334,7 +334,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                         <td className="p-2" onClick={e => e.stopPropagation()}>
                           <div className="flex gap-1">
                             <Button variant="outline" size="sm" className="h-7 text-xs border border-slate-300" onClick={() => { setSelectedUser(u); }}>수정</Button>
-                            <Button size="sm" className="h-7 text-xs bg-red-500 hover:bg-red-600 text-white" onClick={() => { setSelectedUser(u); (() => { const now = new Date(Date.now() + 9*3600000).toISOString().slice(0,16); const expiry = calcExpiry(now, "7"); setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" }); })(); }}>이용 제한</Button>
+                            <Button size="sm" className="h-7 text-xs bg-red-500 hover:bg-red-600 text-white" onClick={() => { setSelectedUser(u); (() => { const now = nowDateTimeLocal(); const expiry = calcExpiry(now, "7"); setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: u.csCode ?? generateCsCode(), suspendDays: "7" }); })(); }}>이용 제한</Button>
                           </div>
                         </td>
                       </tr>
@@ -450,9 +450,9 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
             <Button
               className="bg-red-500 hover:bg-red-600 text-white"
               onClick={() => {
-                const now = new Date(Date.now() + 9*3600000).toISOString().slice(0,16);
+                const now = nowDateTimeLocal();
                 const expiry = calcExpiry(now, "7");
-                setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)), suspendDays: "7" });
+                setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: selectedUser?.csCode ?? generateCsCode(), suspendDays: "7" });
               }}
             >이용 제한</Button>
             <Button variant="outline" className="border border-slate-300" onClick={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>닫기</Button>
@@ -470,10 +470,10 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
           <div className="space-y-4 py-1">
             {/* CS Code */}
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold">CS Code (자동 생성)</label>
+              <label className="text-sm font-semibold">{selectedUser?.csCode ? "CS Code (고정)" : "CS Code (자동 생성)"}</label>
               <div className="flex gap-2">
                 <Input value={suspendForm?.csCode ?? ""} readOnly className="font-mono bg-slate-50 flex-1" />
-                <Button type="button" variant="outline" size="sm" className="shrink-0" onClick={() => setSuspendForm(f => f && ({ ...f, csCode: String(Math.floor(10000000000 + Math.random() * 90000000000)) }))}>재생성</Button>
+                {!selectedUser?.csCode && <Button type="button" variant="outline" size="sm" className="shrink-0" onClick={() => setSuspendForm(f => f && ({ ...f, csCode: generateCsCode() }))}>재생성</Button>}
               </div>
             </div>
             {/* 이용 제한 유형 */}

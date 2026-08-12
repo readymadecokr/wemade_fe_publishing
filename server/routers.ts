@@ -114,7 +114,8 @@ export const appRouter = router({
             or(
               like(users.name, searchTerm),
               like(users.email, searchTerm),
-              like(users.openId, searchTerm)
+              like(users.openId, searchTerm),
+              like(users.csCode, searchTerm)
             )
           );
         }
@@ -631,7 +632,9 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
-        await db.update(users).set({ status: input.status, suspendedUntil: input.suspendedUntil ? new Date(input.suspendedUntil) : null, suspendReason: input.reason ?? null, csCode: input.status === 'active' ? null : input.csCode ?? null }).where(eq(users.id, input.userId));
+        const existing = await db.select({ csCode: users.csCode }).from(users).where(eq(users.id, input.userId)).limit(1);
+        const fixedCsCode = input.status === 'active' ? null : existing[0]?.csCode ?? input.csCode ?? null;
+        await db.update(users).set({ status: input.status, suspendedUntil: input.suspendedUntil ? new Date(input.suspendedUntil) : null, suspendReason: input.reason ?? null, csCode: fixedCsCode }).where(eq(users.id, input.userId));
         return { success: true };
       }),
     updateNickname: adminKeyProcedure
