@@ -336,14 +336,12 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                   <Input placeholder={`${searchField === "name" ? "Nickname" : searchField === "id" ? "User ID" : "CS Code"} 검색`} value={searchInput} onChange={e => setSearchInput(e.target.value)} onKeyDown={e => e.key === "Enter" && (setSearch(searchInput), setPage(1))} className="pl-8 h-8 text-sm" />
                 </div>
               </div>
-              {memberTab === "all" && (
-                <div className="flex flex-wrap items-center gap-2 text-sm shrink-0">
-                  <span className="shrink-0 font-medium text-slate-600 dark:text-slate-300">등록 기간</span>
-                  <Input type="date" value={registrationStartDate} onChange={e => { setRegistrationStartDate(e.target.value); setPage(1); }} className="h-8 w-36 text-sm" aria-label="등록 기간 시작일" />
-                  <span className="text-slate-400">~</span>
-                  <Input type="date" value={registrationEndDate} onChange={e => { setRegistrationEndDate(e.target.value); setPage(1); }} className="h-8 w-36 text-sm" aria-label="등록 기간 종료일" />
-                </div>
-              )}
+              <div className="flex flex-wrap items-center gap-2 text-sm shrink-0">
+                <span className="shrink-0 font-medium text-slate-600 dark:text-slate-300">등록 기간</span>
+                <Input type="date" value={registrationStartDate} onChange={e => { setRegistrationStartDate(e.target.value); setPage(1); }} className="h-8 w-36 text-sm" aria-label="등록 기간 시작일" />
+                <span className="text-slate-400">~</span>
+                <Input type="date" value={registrationEndDate} onChange={e => { setRegistrationEndDate(e.target.value); setPage(1); }} className="h-8 w-36 text-sm" aria-label="등록 기간 종료일" />
+              </div>
               <Button size="sm" onClick={() => { setSearch(searchInput); setPage(1); }} className="h-8 w-14 shrink-0">검색</Button>
               <div className="flex flex-wrap gap-2 xl:ml-auto">
                 <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1); }}>
@@ -562,7 +560,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
           <div className="space-y-4 py-1">
             {/* CS Code */}
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold">CS Code (새 조치 자동 발급)</label>
+              <label className="text-sm font-semibold">CS Code</label>
               <div className="flex gap-2">
                 <Input value={suspendForm?.csCode ?? ""} readOnly className="font-mono bg-slate-50 flex-1" />
                 <Button type="button" variant="outline" size="sm" className="shrink-0" onClick={() => setSuspendForm(f => f && ({ ...f, csCode: generateCsCode() }))}>재생성</Button>

@@ -663,14 +663,43 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
-        return db.select({
+        const historyFields = {
           id: memberRestrictionHistories.id,
           status: memberRestrictionHistories.status,
           csCode: memberRestrictionHistories.csCode,
           reason: memberRestrictionHistories.reason,
           suspendedUntil: memberRestrictionHistories.suspendedUntil,
           appliedAt: memberRestrictionHistories.appliedAt,
-        }).from(memberRestrictionHistories).where(eq(memberRestrictionHistories.userId, input.userId)).orderBy(desc(memberRestrictionHistories.appliedAt));
+        };
+        const histories = await db.select(historyFields).from(memberRestrictionHistories).where(eq(memberRestrictionHistories.userId, input.userId)).orderBy(desc(memberRestrictionHistories.appliedAt));
+        const [currentUser] = await db.select({
+          status: users.status,
+          csCode: users.csCode,
+          suspendReason: users.suspendReason,
+          suspendedUntil: users.suspendedUntil,
+          updatedAt: users.updatedAt,
+        }).from(users).where(eq(users.id, input.userId)).limit(1);
+
+        const isRestricted = currentUser?.status === 'suspended' || currentUser?.status === 'banned';
+        const currentCode = currentUser?.csCode || (isRestricted ? `${Date.now()}${String(input.userId).padStart(3, '0')}` : null);
+        const currentActionExists = isRestricted && histories.some(item => item.status === currentUser?.status && item.csCode === currentCode);
+
+        if (isRestricted && currentCode && !currentActionExists && currentUser) {
+          if (!currentUser.csCode) {
+            await db.update(users).set({ csCode: currentCode }).where(eq(users.id, input.userId));
+          }
+          await db.insert(memberRestrictionHistories).values({
+            userId: input.userId,
+            status: currentUser.status,
+            csCode: currentCode,
+            reason: currentUser.suspendReason,
+            suspendedUntil: currentUser.suspendedUntil,
+            appliedAt: currentUser.updatedAt,
+          });
+          return db.select(historyFields).from(memberRestrictionHistories).where(eq(memberRestrictionHistories.userId, input.userId)).orderBy(desc(memberRestrictionHistories.appliedAt));
+        }
+
+        return histories;
       }),
     updateNickname: adminKeyProcedure
       .input(z.object({ userId: z.number(), name: z.string() }))
