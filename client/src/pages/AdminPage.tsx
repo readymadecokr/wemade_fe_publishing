@@ -17,6 +17,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { fetchAllPaged } from "@/lib/pagedExport";
 
 // ─── Admin tRPC client ────────────────────────────────────────────────────────
 function createAdminClient(adminKey: string) {
@@ -172,6 +173,10 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
   const [roleFilter, setRoleFilter] = useState("all");
   const [memberTab, setMemberTab] = useState<"all" | "restricted">("all");
   const [searchField, setSearchField] = useState<"name" | "id" | "csCode">("name");
+  const [registrationStartDate, setRegistrationStartDate] = useState("");
+  const [registrationEndDate, setRegistrationEndDate] = useState("");
+  const [isExcelDownloading, setIsExcelDownloading] = useState(false);
+  const [excelProgress, setExcelProgress] = useState<{ current: number; total: number } | null>(null);
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [editForm, setEditForm] = useState<{ name: string } | null>(null);
   const [nickCheckResult, setNickCheckResult] = useState<"idle" | "available" | "duplicate">("idle");
@@ -189,8 +194,8 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
   const qc = useQueryClient();
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["admin-members", search, searchField, memberTab, page, pageSize, sortBy, sortOrder, roleFilter],
-    queryFn: () => adminClient!.admin.listUsers.query({ page, pageSize, search, searchField, statusFilter: memberTab, sortBy: sortBy as any, sortOrder: sortOrder as any, roleFilter: roleFilter as any }),
+    queryKey: ["admin-members", search, searchField, memberTab, page, pageSize, sortBy, sortOrder, roleFilter, registrationStartDate, registrationEndDate],
+    queryFn: () => adminClient!.admin.listUsers.query({ page, pageSize, search, searchField, statusFilter: memberTab, sortBy: sortBy as any, sortOrder: sortOrder as any, roleFilter: roleFilter as any, registrationStartDate: registrationStartDate || undefined, registrationEndDate: registrationEndDate || undefined }),
     enabled: !!adminClient,
   });
   const { data: restrictionHistory = [], isLoading: restrictionHistoryLoading } = useQuery({
@@ -229,22 +234,54 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
 
   const totalPages = data?.totalPages ?? 1;
 
-  const handleExcelDownload = () => {
-    if (!data?.data?.length) { toast.error("다운로드할 데이터가 없습니다."); return; }
-    const headers = ["User ID", "Nickname", "Provider", "Registration Date", "Last Activity", "상태"];
-    const rows = (data.data as UserRow[]).map((u) => [
-      u.id,
-      u.name ?? "-",
-      u.loginMethod ?? "-",
-      fmt(u.createdAt),
-      fmt(u.lastSignedIn),
-      (u as any).status === "suspended" ? "이용정지" : (u as any).status === "banned" ? "영구정지" : "정상",
-    ]);
-    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url; a.download = "members.csv"; a.click();
-    URL.revokeObjectURL(url);
+  const handleExcelDownload = async () => {
+    if (!registrationStartDate || !registrationEndDate) {
+      toast.error("Excel 저장 전 등록 기간의 시작일과 종료일을 모두 선택해 주세요.");
+      return;
+    }
+    if (registrationStartDate > registrationEndDate) {
+      toast.error("등록 기간의 시작일은 종료일보다 늦을 수 없습니다.");
+      return;
+    }
+    setIsExcelDownloading(true);
+    setExcelProgress(null);
+    try {
+      const exportPageSize = 100;
+      const { rows: exportRows, total } = await fetchAllPaged(async (exportPage) => adminClient!.admin.listUsers.query({
+        page: exportPage,
+        pageSize: exportPageSize,
+        search,
+        searchField,
+        statusFilter: memberTab,
+        sortBy: sortBy as any,
+        sortOrder: sortOrder as any,
+        roleFilter: roleFilter as any,
+        registrationStartDate,
+        registrationEndDate,
+      }), (current, totalPages) => setExcelProgress({ current, total: totalPages }), 50000);
+      if (!exportRows.length) { toast.error("선택한 기간에 다운로드할 회원이 없습니다."); return; }
+      const headers = ["User ID", "Nickname", "CS Code", "Provider", "Registration Date", "Last Activity", "상태"];
+      const rows = exportRows.map((u) => [
+        u.id,
+        u.name ?? "-",
+        u.csCode ?? "-",
+        u.loginMethod ?? "-",
+        fmt(u.createdAt),
+        fmt(u.lastSignedIn),
+        (u as any).status === "suspended" ? "이용정지" : (u as any).status === "banned" ? "영구정지" : "정상",
+      ]);
+      const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a"); a.href = url; a.download = `members_${registrationStartDate}_${registrationEndDate}.csv`; a.click();
+      URL.revokeObjectURL(url);
+      toast.success(`${exportRows.length.toLocaleString()}건의 회원 목록을 저장했습니다.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? `Excel 저장 실패: ${error.message}` : "Excel 저장에 실패했습니다.");
+    } finally {
+      setIsExcelDownloading(false);
+      setExcelProgress(null);
+    }
   };
 
   const memberTabs = [
@@ -261,7 +298,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
     <div className="space-y-6">
       <SectionHeader title="회원 관리" desc="가입 회원 목록 조회, 정보 수정, 제재 처리" action={
         <div className="flex gap-2">
-          <Button className="bg-green-600 hover:bg-green-700 text-white h-9 text-sm" onClick={handleExcelDownload}>Excel 저장</Button>
+          <Button className="bg-green-600 hover:bg-green-700 text-white h-9 text-sm" onClick={handleExcelDownload} disabled={isExcelDownloading}>{isExcelDownloading ? (excelProgress ? `저장 중... (${excelProgress.current}/${excelProgress.total})` : "저장 준비 중...") : "Excel 저장"}</Button>
           <Button variant="outline" size="sm" onClick={() => refetch()}><RefreshCw className="h-4 w-4 mr-1" />새로고침</Button>
         </div>
       } />
@@ -296,6 +333,14 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                 </Select>
                 <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder={`${searchField === "name" ? "Nickname" : searchField === "id" ? "User ID" : "CS Code"} 검색`} />
               </div>
+              {memberTab === "all" && (
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
+                  <span className="shrink-0 font-medium text-slate-600 dark:text-slate-300">등록 기간</span>
+                  <Input type="date" value={registrationStartDate} onChange={e => { setRegistrationStartDate(e.target.value); setPage(1); }} className="h-8 w-full sm:w-36 text-sm" aria-label="등록 기간 시작일" />
+                  <span className="text-center text-slate-400">~</span>
+                  <Input type="date" value={registrationEndDate} onChange={e => { setRegistrationEndDate(e.target.value); setPage(1); }} className="h-8 w-full sm:w-36 text-sm" aria-label="등록 기간 종료일" />
+                </div>
+              )}
               <div className="flex flex-wrap gap-2">
                 <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1); }}>
                   <SelectTrigger className="w-28 h-8 text-sm"><SelectValue /></SelectTrigger>

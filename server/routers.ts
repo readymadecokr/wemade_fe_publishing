@@ -6,7 +6,7 @@ import { getDb } from "./db";
 import { users, memberRestrictionHistories, banners, news, media, products, payments, pointLogs, coupons, couponUses, admins, statsEvents, games } from "../drizzle/schema";
 import { ruCashProducts, ruCashBalances, ruCashTransactions } from "../drizzle/schema";
 import { storagePut } from "./storage";
-import { asc, desc, eq, like, or, sql } from "drizzle-orm";
+import { asc, desc, eq, gte, like, lt, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -97,6 +97,8 @@ export const appRouter = router({
           roleFilter: z.enum(["all", "user", "admin"]).default("all"),
           statusFilter: z.enum(["all", "active", "suspended", "banned", "restricted"]).default("all"),
           searchField: z.enum(["name", "id", "csCode"]).default("name"),
+          registrationStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+          registrationEndDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
         })
       )
       .query(async ({ input }) => {
@@ -109,7 +111,7 @@ export const appRouter = router({
           .set({ csCode: sql`CONCAT('9', LPAD(CAST(${users.id} AS CHAR), 10, '0'))` })
           .where(sql`${users.status} IN ('suspended', 'banned') AND (${users.csCode} IS NULL OR ${users.csCode} = '')`);
 
-        const { page, pageSize, search, sortBy, sortOrder, roleFilter, statusFilter, searchField } = input;
+        const { page, pageSize, search, sortBy, sortOrder, roleFilter, statusFilter, searchField, registrationStartDate, registrationEndDate } = input;
         const offset = (page - 1) * pageSize;
 
         const whereConditions: unknown[] = [];
@@ -133,6 +135,15 @@ export const appRouter = router({
           whereConditions.push(or(eq(users.status, "suspended"), eq(users.status, "banned")));
         } else if (statusFilter !== "all") {
           whereConditions.push(eq(users.status, statusFilter));
+        }
+
+        if (registrationStartDate) {
+          whereConditions.push(gte(users.createdAt, new Date(`${registrationStartDate}T00:00:00+09:00`)));
+        }
+        if (registrationEndDate) {
+          const endExclusive = new Date(`${registrationEndDate}T00:00:00+09:00`);
+          endExclusive.setDate(endExclusive.getDate() + 1);
+          whereConditions.push(lt(users.createdAt, endExclusive));
         }
 
         const sortColumnMap = {
