@@ -580,26 +580,33 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
 
       {/* 현재 회원 제재 팝업 미리보기 */}
       <Dialog open={!!memberRestrictionPreview} onOpenChange={(open) => { if (!open) setMemberRestrictionPreview(null); }}>
-        <DialogContent className="max-w-md p-0 overflow-hidden">
-          <div className="bg-white p-7 text-slate-800">
+        <DialogContent className="max-w-md border-0 bg-white p-0 shadow-2xl">
+          <div className="p-7 text-slate-800">
             <DialogHeader className="space-y-1 text-left">
-              <DialogTitle className="text-xl font-bold">접속 제한 안내</DialogTitle>
-              <DialogDescription>운영정책에 따라 이 계정의 접속이 제한되었습니다.</DialogDescription>
+              <DialogTitle className="text-center text-xl font-bold">운영정책에 따른 접속 제한</DialogTitle>
+              <DialogDescription className="sr-only">현재 제재 상태에 따른 접속 제한 안내입니다.</DialogDescription>
             </DialogHeader>
-            {memberRestrictionPreview && (
-              <div className="mt-6 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm">
-                <div className="flex justify-between gap-4"><span className="font-medium text-slate-500">제한 상태</span><span className="font-semibold text-red-600">{memberRestrictionPreview.status === "banned" ? "영구정지" : "이용정지"}</span></div>
-                <div className="flex justify-between gap-4"><span className="font-medium text-slate-500">CS Code</span><span className="font-mono text-slate-800">{memberRestrictionPreview.csCode}</span></div>
-                {memberRestrictionPreview.status === "suspended" ? (
-                  <div className="flex justify-between gap-4"><span className="font-medium text-slate-500">이용 제한 기간</span><span className="text-right text-slate-800">{fmt(memberRestrictionPreview.appliedAt)} ~ {fmt(memberRestrictionPreview.suspendedUntil)}</span></div>
-                ) : (
-                  <div className="flex justify-between gap-4"><span className="font-medium text-slate-500">이용 제한 기간</span><span className="text-slate-800">영구 제한</span></div>
-                )}
-                <div className="space-y-1 border-t border-slate-200 pt-3"><span className="font-medium text-slate-500">제재 사유</span><p className="break-words text-slate-800">{memberRestrictionPreview.reason || "운영정책 위반"}</p></div>
-              </div>
-            )}
-            <div className="mt-6 flex justify-end">
-              <Button className="min-w-24 bg-blue-500 hover:bg-blue-600" onClick={() => setMemberRestrictionPreview(null)}>확인</Button>
+            {memberRestrictionPreview && (() => {
+              const start = memberRestrictionPreview.appliedAt ? new Date(memberRestrictionPreview.appliedAt) : null;
+              const end = memberRestrictionPreview.suspendedUntil ? new Date(memberRestrictionPreview.suspendedUntil) : null;
+              const suspensionDays = start && end
+                ? Math.max(1, Math.round((new Date(end.getFullYear(), end.getMonth(), end.getDate()).getTime() - new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime()) / (1000 * 60 * 60 * 24)))
+                : null;
+              return (
+                <div className="mt-5 space-y-2 text-sm leading-6">
+                  <p><span className="font-semibold text-red-500">CS Code</span> : {memberRestrictionPreview.csCode}</p>
+                  <p><span className="font-semibold text-red-500">제재 사유</span> : {memberRestrictionPreview.reason || "(사유 없음)"}</p>
+                  <p><span className="font-semibold text-red-500">제재 시작일</span> : {start ? fmt(start) : "-"}</p>
+                  <p><span className="font-semibold text-red-500">제재 일자</span> : {memberRestrictionPreview.status === "banned" ? "영구" : (start ? fmt(start) : "-")}</p>
+                  {memberRestrictionPreview.status === "suspended" && suspensionDays && (
+                    <p><span className="font-semibold text-red-500">제재 일수</span> : {suspensionDays}일</p>
+                  )}
+                </div>
+              );
+            })()}
+            <div className="mt-6 flex gap-3">
+              <Button type="button" variant="outline" className="flex-1 border-0 bg-slate-800 text-white hover:bg-slate-700">고객센터</Button>
+              <Button type="button" className="flex-1 bg-blue-500 hover:bg-blue-600" onClick={() => setMemberRestrictionPreview(null)}>확인</Button>
             </div>
           </div>
         </DialogContent>
