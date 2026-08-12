@@ -636,11 +636,16 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
         const existing = await db.select({ csCode: users.csCode }).from(users).where(eq(users.id, input.userId)).limit(1);
-        const fixedCsCode = input.status === 'active' ? null : existing[0]?.csCode ?? input.csCode ?? null;
+        const generatedCsCode = `${Date.now()}${Math.floor(100 + Math.random() * 900)}`;
+        // 새 제재 조치에는 새 CS Code를 발급한다. 기존 이력 행의 CS Code는 변경하지 않는다.
+        const issuedCsCode = input.status === 'active'
+          ? null
+          : (!input.csCode || input.csCode === existing[0]?.csCode ? generatedCsCode : input.csCode);
+        const historyCsCode = input.status === 'active' ? existing[0]?.csCode ?? null : issuedCsCode;
         const suspendedUntil = input.suspendedUntil ? new Date(input.suspendedUntil) : null;
-        await db.update(users).set({ status: input.status, suspendedUntil, suspendReason: input.reason ?? null, csCode: fixedCsCode }).where(eq(users.id, input.userId));
-        await db.insert(memberRestrictionHistories).values({ userId: input.userId, status: input.status, csCode: fixedCsCode, reason: input.reason ?? null, suspendedUntil });
-        return { success: true };
+        await db.update(users).set({ status: input.status, suspendedUntil, suspendReason: input.reason ?? null, csCode: issuedCsCode }).where(eq(users.id, input.userId));
+        await db.insert(memberRestrictionHistories).values({ userId: input.userId, status: input.status, csCode: historyCsCode, reason: input.reason ?? null, suspendedUntil });
+        return { success: true, csCode: issuedCsCode };
       }),
     restrictionHistory: adminKeyProcedure
       .input(z.object({ userId: z.number() }))

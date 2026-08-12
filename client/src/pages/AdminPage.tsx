@@ -341,7 +341,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                         <td className="p-2" onClick={e => e.stopPropagation()}>
                           <div className="flex gap-1">
                             <Button variant="outline" size="sm" className="h-7 text-xs border border-slate-300" onClick={() => { setSelectedUser(u); }}>수정</Button>
-                            <Button size="sm" className="h-7 text-xs bg-red-500 hover:bg-red-600 text-white" onClick={() => { setSelectedUser(u); (() => { const now = nowDateTimeLocal(); const expiry = calcExpiry(now, "7"); setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: u.csCode ?? generateCsCode(), suspendDays: "7" }); })(); }}>이용 제한</Button>
+                            <Button size="sm" className="h-7 text-xs bg-red-500 hover:bg-red-600 text-white" onClick={() => { setSelectedUser(u); (() => { const now = nowDateTimeLocal(); const expiry = calcExpiry(now, "7"); setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: generateCsCode(), suspendDays: "7" }); })(); }}>이용 제한</Button>
                           </div>
                         </td>
                       </tr>
@@ -358,7 +358,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
       {/* 회원 상세 / 수정 모달 */}
       {/* 회원 정보 조회 + 닉네임 수정 통합 팝업 */}
       <Dialog open={!!selectedUser && !suspendForm} onOpenChange={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="w-[calc(100vw-2rem)] max-w-4xl max-h-[92vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>회원 정보 조회</DialogTitle>
             <DialogDescription>회원 상세 정보를 확인합니다.</DialogDescription>
@@ -433,7 +433,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                    "정상"}
                   {(selectedUser as any).status === "suspended" && (
                     <span className="ml-3 text-xs font-normal text-slate-600 dark:text-slate-300">
-                      이용정지 기간: {fmt(latestSuspensionHistory?.appliedAt)} ~ {fmt(selectedUser.suspendedUntil)}
+                      기간: {fmt(latestSuspensionHistory?.appliedAt ?? selectedUser.updatedAt)} ~ {fmt(selectedUser.suspendedUntil)}
                     </span>
                   )}
                 </span>
@@ -495,7 +495,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               onClick={() => {
                 const now = nowDateTimeLocal();
                 const expiry = calcExpiry(now, "7");
-                setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: selectedUser?.csCode ?? generateCsCode(), suspendDays: "7" });
+                setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: generateCsCode(), suspendDays: "7" });
               }}
             >이용 제한</Button>
             <Button variant="outline" className="border border-slate-300" onClick={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>닫기</Button>
@@ -513,10 +513,10 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
           <div className="space-y-4 py-1">
             {/* CS Code */}
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold">{selectedUser?.csCode ? "CS Code (고정)" : "CS Code (자동 생성)"}</label>
+              <label className="text-sm font-semibold">CS Code (새 조치 자동 발급)</label>
               <div className="flex gap-2">
                 <Input value={suspendForm?.csCode ?? ""} readOnly className="font-mono bg-slate-50 flex-1" />
-                {!selectedUser?.csCode && <Button type="button" variant="outline" size="sm" className="shrink-0" onClick={() => setSuspendForm(f => f && ({ ...f, csCode: generateCsCode() }))}>재생성</Button>}
+                <Button type="button" variant="outline" size="sm" className="shrink-0" onClick={() => setSuspendForm(f => f && ({ ...f, csCode: generateCsCode() }))}>재생성</Button>
               </div>
             </div>
             {/* 이용 제한 유형 */}
