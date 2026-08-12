@@ -103,6 +103,12 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error("Database not available");
 
+        // 이전 버전에서 CS Code가 저장되지 않은 제재 회원은 목록 조회 시 1회 보완한다.
+        // 새 제재 건은 memberAdmin.suspend에서 발급된 CS Code를 그대로 보존한다.
+        await db.update(users)
+          .set({ csCode: sql`CONCAT('9', LPAD(CAST(${users.id} AS CHAR), 10, '0'))` })
+          .where(sql`${users.status} IN ('suspended', 'banned') AND (${users.csCode} IS NULL OR ${users.csCode} = '')`);
+
         const { page, pageSize, search, sortBy, sortOrder, roleFilter, statusFilter, csCode } = input;
         const offset = (page - 1) * pageSize;
 
