@@ -321,8 +321,8 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                 </button>
               ))}
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex flex-1 flex-col sm:flex-row gap-2">
+            <div className="flex flex-col xl:flex-row xl:items-center gap-3">
+              <div className="flex items-center gap-2 w-full xl:w-[380px] shrink-0">
                 <Select value={searchField} onValueChange={value => { setSearchField(value as "name" | "id" | "csCode"); setPage(1); }}>
                   <SelectTrigger className="w-36 h-8 text-sm shrink-0"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -331,17 +331,21 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                     <SelectItem value="csCode">CS Code</SelectItem>
                   </SelectContent>
                 </Select>
-                <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder={`${searchField === "name" ? "Nickname" : searchField === "id" ? "User ID" : "CS Code"} 검색`} />
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                  <Input placeholder={`${searchField === "name" ? "Nickname" : searchField === "id" ? "User ID" : "CS Code"} 검색`} value={searchInput} onChange={e => setSearchInput(e.target.value)} onKeyDown={e => e.key === "Enter" && (setSearch(searchInput), setPage(1))} className="pl-8 h-8 text-sm" />
+                </div>
               </div>
               {memberTab === "all" && (
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
+                <div className="flex flex-wrap items-center gap-2 text-sm shrink-0">
                   <span className="shrink-0 font-medium text-slate-600 dark:text-slate-300">등록 기간</span>
-                  <Input type="date" value={registrationStartDate} onChange={e => { setRegistrationStartDate(e.target.value); setPage(1); }} className="h-8 w-full sm:w-36 text-sm" aria-label="등록 기간 시작일" />
-                  <span className="text-center text-slate-400">~</span>
-                  <Input type="date" value={registrationEndDate} onChange={e => { setRegistrationEndDate(e.target.value); setPage(1); }} className="h-8 w-full sm:w-36 text-sm" aria-label="등록 기간 종료일" />
+                  <Input type="date" value={registrationStartDate} onChange={e => { setRegistrationStartDate(e.target.value); setPage(1); }} className="h-8 w-36 text-sm" aria-label="등록 기간 시작일" />
+                  <span className="text-slate-400">~</span>
+                  <Input type="date" value={registrationEndDate} onChange={e => { setRegistrationEndDate(e.target.value); setPage(1); }} className="h-8 w-36 text-sm" aria-label="등록 기간 종료일" />
                 </div>
               )}
-              <div className="flex flex-wrap gap-2">
+              <Button size="sm" onClick={() => { setSearch(searchInput); setPage(1); }} className="h-8 w-14 shrink-0">검색</Button>
+              <div className="flex flex-wrap gap-2 xl:ml-auto">
                 <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1); }}>
                   <SelectTrigger className="w-28 h-8 text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>
