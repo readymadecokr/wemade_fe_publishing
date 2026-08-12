@@ -170,9 +170,8 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
   const [page, setPage] = useState(1); const [pageSize, setPageSize] = useState(20);
   const [sortBy, setSortBy] = useState("createdAt"); const [sortOrder, setSortOrder] = useState("desc");
   const [roleFilter, setRoleFilter] = useState("all");
-  const [memberTab, setMemberTab] = useState<"all" | "suspended" | "banned">("all");
-  const [csCode, setCsCode] = useState("");
-  const [csCodeInput, setCsCodeInput] = useState("");
+  const [memberTab, setMemberTab] = useState<"all" | "restricted">("all");
+  const [searchField, setSearchField] = useState<"name" | "id" | "csCode">("name");
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [editForm, setEditForm] = useState<{ name: string } | null>(null);
   const [nickCheckResult, setNickCheckResult] = useState<"idle" | "available" | "duplicate">("idle");
@@ -190,8 +189,8 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
   const qc = useQueryClient();
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["admin-members", search, csCode, memberTab, page, pageSize, sortBy, sortOrder, roleFilter],
-    queryFn: () => adminClient!.admin.listUsers.query({ page, pageSize, search, csCode, statusFilter: memberTab, sortBy: sortBy as any, sortOrder: sortOrder as any, roleFilter: roleFilter as any }),
+    queryKey: ["admin-members", search, searchField, memberTab, page, pageSize, sortBy, sortOrder, roleFilter],
+    queryFn: () => adminClient!.admin.listUsers.query({ page, pageSize, search, searchField, statusFilter: memberTab, sortBy: sortBy as any, sortOrder: sortOrder as any, roleFilter: roleFilter as any }),
     enabled: !!adminClient,
   });
 
@@ -244,14 +243,12 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
 
   const memberTabs = [
     { value: "all" as const, label: "회원 관리" },
-    { value: "suspended" as const, label: "이용 정지 관리" },
-    { value: "banned" as const, label: "영구 정지 관리" },
+    { value: "restricted" as const, label: "이용 제한 회원 관리" },
   ];
-  const changeMemberTab = (tab: "all" | "suspended" | "banned") => {
+  const changeMemberTab = (tab: "all" | "restricted") => {
     setMemberTab(tab);
     setPage(1);
-    setCsCode("");
-    setCsCodeInput("");
+    setSearchField("name");
   };
 
   return (
@@ -282,14 +279,18 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               ))}
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder={memberTab === "all" ? "닉네임, User ID, Open ID 검색..." : "닉네임, CS Code, User ID, Open ID 검색..."} />
+              <div className="flex flex-1 flex-col sm:flex-row gap-2">
+                <Select value={searchField} onValueChange={value => { setSearchField(value as "name" | "id" | "csCode"); setPage(1); }}>
+                  <SelectTrigger className="w-36 h-8 text-sm shrink-0"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="name">Nickname</SelectItem>
+                    <SelectItem value="id">User ID</SelectItem>
+                    {memberTab === "restricted" && <SelectItem value="csCode">CS Code</SelectItem>}
+                  </SelectContent>
+                </Select>
+                <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder={`${searchField === "name" ? "Nickname" : searchField === "id" ? "User ID" : "CS Code"} 검색`} />
+              </div>
               <div className="flex flex-wrap gap-2">
-                {memberTab !== "all" && (
-                  <div className="flex gap-2">
-                    <Input value={csCodeInput} onChange={e => setCsCodeInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter") { setCsCode(csCodeInput); setPage(1); } }} placeholder="CS Code 검색" className="h-8 w-36 text-sm font-mono" />
-                    <Button variant="outline" size="sm" className="h-8" onClick={() => { setCsCode(csCodeInput); setPage(1); }}><Search className="h-3.5 w-3.5 mr-1" />검색</Button>
-                  </div>
-                )}
                 <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1); }}>
                   <SelectTrigger className="w-28 h-8 text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>

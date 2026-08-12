@@ -95,8 +95,8 @@ export const appRouter = router({
           sortBy: z.enum(["id", "name", "email", "createdAt", "lastSignedIn", "role"]).default("createdAt"),
           sortOrder: z.enum(["asc", "desc"]).default("desc"),
           roleFilter: z.enum(["all", "user", "admin"]).default("all"),
-          statusFilter: z.enum(["all", "active", "suspended", "banned"]).default("all"),
-          csCode: z.string().optional(),
+          statusFilter: z.enum(["all", "active", "suspended", "banned", "restricted"]).default("all"),
+          searchField: z.enum(["name", "id", "csCode"]).default("name"),
         })
       )
       .query(async ({ input }) => {
@@ -109,33 +109,30 @@ export const appRouter = router({
           .set({ csCode: sql`CONCAT('9', LPAD(CAST(${users.id} AS CHAR), 10, '0'))` })
           .where(sql`${users.status} IN ('suspended', 'banned') AND (${users.csCode} IS NULL OR ${users.csCode} = '')`);
 
-        const { page, pageSize, search, sortBy, sortOrder, roleFilter, statusFilter, csCode } = input;
+        const { page, pageSize, search, sortBy, sortOrder, roleFilter, statusFilter, searchField } = input;
         const offset = (page - 1) * pageSize;
 
         const whereConditions: unknown[] = [];
 
         if (search && search.trim()) {
           const searchTerm = `%${search.trim()}%`;
-          whereConditions.push(
-            or(
-              like(users.name, searchTerm),
-              like(users.email, searchTerm),
-              like(users.openId, searchTerm),
-              like(users.csCode, searchTerm)
-            )
-          );
+          if (searchField === "id") {
+            whereConditions.push(like(sql<string>`CAST(${users.id} AS CHAR)`, searchTerm));
+          } else if (searchField === "csCode") {
+            whereConditions.push(like(users.csCode, searchTerm));
+          } else {
+            whereConditions.push(like(users.name, searchTerm));
+          }
         }
 
         if (roleFilter !== "all") {
           whereConditions.push(eq(users.role, roleFilter));
         }
 
-        if (statusFilter !== "all") {
+        if (statusFilter === "restricted") {
+          whereConditions.push(or(eq(users.status, "suspended"), eq(users.status, "banned")));
+        } else if (statusFilter !== "all") {
           whereConditions.push(eq(users.status, statusFilter));
-        }
-
-        if (csCode && csCode.trim()) {
-          whereConditions.push(like(users.csCode, `%${csCode.trim()}%`));
         }
 
         const sortColumnMap = {
