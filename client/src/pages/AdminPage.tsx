@@ -163,14 +163,16 @@ function MenuItem({ id, label, icon: Icon, active, onClick }: { id: string; labe
 }
 
 // ─── MEMBERS SECTION ──────────────────────────────────────────────────────────
-type UserRow = { id: number; openId: string; name: string | null; email: string | null; loginMethod: string | null; role: "user" | "admin"; status?: string; suspendedUntil?: Date | null; suspendReason?: string | null; createdAt: Date; updatedAt: Date; lastSignedIn: Date };
+type UserRow = { id: number; openId: string; name: string | null; email: string | null; loginMethod: string | null; role: "user" | "admin"; status?: string; suspendedUntil?: Date | null; suspendReason?: string | null; csCode?: string | null; createdAt: Date; updatedAt: Date; lastSignedIn: Date };
 
 function MembersSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1); const [pageSize, setPageSize] = useState(20);
   const [sortBy, setSortBy] = useState("createdAt"); const [sortOrder, setSortOrder] = useState("desc");
   const [roleFilter, setRoleFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [memberTab, setMemberTab] = useState<"all" | "suspended" | "banned">("all");
+  const [csCode, setCsCode] = useState("");
+  const [csCodeInput, setCsCodeInput] = useState("");
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [editForm, setEditForm] = useState<{ name: string } | null>(null);
   const [nickCheckResult, setNickCheckResult] = useState<"idle" | "available" | "duplicate">("idle");
@@ -188,8 +190,8 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
   const qc = useQueryClient();
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["admin-members", search, page, pageSize, sortBy, sortOrder, roleFilter],
-    queryFn: () => adminClient!.admin.listUsers.query({ page, pageSize, search, sortBy: sortBy as any, sortOrder: sortOrder as any, roleFilter: roleFilter as any }),
+    queryKey: ["admin-members", search, csCode, memberTab, page, pageSize, sortBy, sortOrder, roleFilter],
+    queryFn: () => adminClient!.admin.listUsers.query({ page, pageSize, search, csCode, statusFilter: memberTab, sortBy: sortBy as any, sortOrder: sortOrder as any, roleFilter: roleFilter as any }),
     enabled: !!adminClient,
   });
 
@@ -240,6 +242,18 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
     URL.revokeObjectURL(url);
   };
 
+  const memberTabs = [
+    { value: "all" as const, label: "회원 관리" },
+    { value: "suspended" as const, label: "이용 정지 관리" },
+    { value: "banned" as const, label: "영구 정지 관리" },
+  ];
+  const changeMemberTab = (tab: "all" | "suspended" | "banned") => {
+    setMemberTab(tab);
+    setPage(1);
+    setCsCode("");
+    setCsCodeInput("");
+  };
+
   return (
     <div className="space-y-6">
       <SectionHeader title="회원 관리" desc="가입 회원 목록 조회, 정보 수정, 제재 처리" action={
@@ -251,24 +265,38 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
 
       <Card>
         <CardHeader className="pb-3">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="닉네임, Open ID 검색..." />
-            <div className="flex gap-2">
-              <Select value={statusFilter} onValueChange={v => { setStatusFilter(v); setPage(1); }}>
-                <SelectTrigger className="w-28 h-8 text-sm"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">전체 상태</SelectItem>
-                  <SelectItem value="active">정상</SelectItem>
-                  <SelectItem value="suspended">이용정지</SelectItem>
-                  <SelectItem value="banned">영구정지</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1); }}>
-                <SelectTrigger className="w-28 h-8 text-sm"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {[10, 20, 50, 100].map(n => <SelectItem key={n} value={String(n)}>{n}개씩</SelectItem>)}
-                </SelectContent>
-              </Select>
+          <div className="flex flex-col gap-4">
+            <div className="flex border-b border-slate-200 dark:border-slate-700" role="tablist" aria-label="회원 관리 상태 탭">
+              {memberTabs.map((tab) => (
+                <button
+                  key={tab.value}
+                  type="button"
+                  role="tab"
+                  aria-selected={memberTab === tab.value}
+                  onClick={() => changeMemberTab(tab.value)}
+                  className={`relative px-6 py-3 text-sm font-semibold transition-colors ${memberTab === tab.value ? "text-blue-600" : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"}`}
+                >
+                  {tab.label}
+                  {memberTab === tab.value && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-blue-600" />}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="닉네임, User ID, Open ID 검색..." />
+              <div className="flex flex-wrap gap-2">
+                {memberTab !== "all" && (
+                  <div className="flex gap-2">
+                    <Input value={csCodeInput} onChange={e => setCsCodeInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter") { setCsCode(csCodeInput); setPage(1); } }} placeholder="CS Code 검색" className="h-8 w-36 text-sm font-mono" />
+                    <Button variant="outline" size="sm" className="h-8" onClick={() => { setCsCode(csCodeInput); setPage(1); }}><Search className="h-3.5 w-3.5 mr-1" />검색</Button>
+                  </div>
+                )}
+                <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1); }}>
+                  <SelectTrigger className="w-28 h-8 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {[10, 20, 50, 100].map(n => <SelectItem key={n} value={String(n)}>{n}개씩</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -285,6 +313,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                     <th className="text-left p-2">Provider</th>
                     <th className="text-left p-2">Registration Date</th>
                     <th className="text-left p-2">Last Activity</th>
+                    {memberTab !== "all" && <th className="text-left p-2">CS Code</th>}
                     <th className="text-left p-2">상태</th>
                     <th className="text-left p-2">처리</th>
                   </tr></thead>
@@ -296,6 +325,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                         <td className="p-2 text-xs text-muted-foreground">{u.loginMethod ?? "-"}</td>
                         <td className="p-2 text-xs text-muted-foreground">{fmt(u.createdAt)}</td>
                         <td className="p-2 text-xs text-muted-foreground">{fmt(u.lastSignedIn)}</td>
+                        {memberTab !== "all" && <td className="p-2 text-xs font-mono text-muted-foreground">{u.csCode ?? "-"}</td>}
                         <td className="p-2">
                           <span className={`text-xs px-1.5 py-0.5 rounded-full ${(u as any).status === "suspended" ? "bg-orange-100 text-orange-700" : (u as any).status === "banned" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
                             {(u as any).status === "suspended" ? "이용 정지" : (u as any).status === "banned" ? "영구 정지" : "정상"}

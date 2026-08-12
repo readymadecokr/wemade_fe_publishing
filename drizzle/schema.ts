@@ -10,6 +10,7 @@ export const users = mysqlTable("users", {
   status: mysqlEnum("status", ["active", "suspended", "banned"]).default("active").notNull(),
   suspendedUntil: timestamp("suspendedUntil"),
   suspendReason: text("suspendReason"),
+  csCode: varchar("csCode", { length: 32 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),

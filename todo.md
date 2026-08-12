@@ -44,3 +44,10 @@
 - [x] 충전 탭 UI: PDF 12페이지 - 상단 잔액 바(RU Cash | Bonus RU Cash), 상품 카드($금액/RUC/+Bonus 형식)
 - [x] 구매 내역 UI: PDF 14페이지 - 컬럼(게임코드/TIME/충전전 RUC/충전전 Bonus/PG/Price/충전량 RUC/충전량 Bonus/충전후 RUC/충전후 Bonus)
 - [x] 사용 내역 UI: PDF 16페이지 - 컬럼(게임코드/TIME/사용전 RUC/사용전 Bonus/Item Name/QTY/Item Price/Total Price/잔량 RUC/잔량 Bonus)
+
+## 관리자 회원관리 상태 탭 개편
+- [x] 상태 풀다운을 회원관리 상단 탭(회원 관리/이용 정지 관리/영구 정지 관리)으로 변경
+- [x] 회원 관리 탭에서 전체 회원 목록 표시
+- [x] 이용 정지 관리 탭에서 이용정지 회원만 목록 표시 및 CS Code 검색 추가
+- [x] 영구 정지 관리 탭에서 영구정지 회원만 목록 표시 및 CS Code 검색 추가
+- [x] 타입 검사 및 화면 동작 검증

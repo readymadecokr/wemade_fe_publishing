@@ -95,13 +95,15 @@ export const appRouter = router({
           sortBy: z.enum(["id", "name", "email", "createdAt", "lastSignedIn", "role"]).default("createdAt"),
           sortOrder: z.enum(["asc", "desc"]).default("desc"),
           roleFilter: z.enum(["all", "user", "admin"]).default("all"),
+          statusFilter: z.enum(["all", "active", "suspended", "banned"]).default("all"),
+          csCode: z.string().optional(),
         })
       )
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database not available");
 
-        const { page, pageSize, search, sortBy, sortOrder, roleFilter } = input;
+        const { page, pageSize, search, sortBy, sortOrder, roleFilter, statusFilter, csCode } = input;
         const offset = (page - 1) * pageSize;
 
         const whereConditions: unknown[] = [];
@@ -119,6 +121,14 @@ export const appRouter = router({
 
         if (roleFilter !== "all") {
           whereConditions.push(eq(users.role, roleFilter));
+        }
+
+        if (statusFilter !== "all") {
+          whereConditions.push(eq(users.status, statusFilter));
+        }
+
+        if (csCode && csCode.trim()) {
+          whereConditions.push(like(users.csCode, `%${csCode.trim()}%`));
         }
 
         const sortColumnMap = {
@@ -153,6 +163,7 @@ export const appRouter = router({
             status: users.status,
             suspendedUntil: users.suspendedUntil,
             suspendReason: users.suspendReason,
+            csCode: users.csCode,
             createdAt: users.createdAt,
             updatedAt: users.updatedAt,
             lastSignedIn: users.lastSignedIn,
@@ -616,11 +627,11 @@ export const appRouter = router({
   // ===== MEMBER MANAGEMENT (확장) =====
   memberAdmin: router({
     suspend: adminKeyProcedure
-      .input(z.object({ userId: z.number(), status: z.enum(['active', 'suspended', 'banned']), suspendedUntil: z.string().optional(), reason: z.string().optional() }))
+      .input(z.object({ userId: z.number(), status: z.enum(['active', 'suspended', 'banned']), suspendedUntil: z.string().optional(), reason: z.string().optional(), csCode: z.string().max(32).optional() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
-        await db.update(users).set({ status: input.status, suspendedUntil: input.suspendedUntil ? new Date(input.suspendedUntil) : null, suspendReason: input.reason ?? null }).where(eq(users.id, input.userId));
+        await db.update(users).set({ status: input.status, suspendedUntil: input.suspendedUntil ? new Date(input.suspendedUntil) : null, suspendReason: input.reason ?? null, csCode: input.status === 'active' ? null : input.csCode ?? null }).where(eq(users.id, input.userId));
         return { success: true };
       }),
     updateNickname: adminKeyProcedure

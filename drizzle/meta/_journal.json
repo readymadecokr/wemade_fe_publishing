@@ -50,6 +50,13 @@
       "when": 1786430004040,
       "tag": "0006_daily_phantom_reporter",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1786502001553,
+      "tag": "0007_cynical_anthem",
+      "breakpoints": true
     }
   ]
 }
