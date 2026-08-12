@@ -57,6 +57,13 @@
       "when": 1786502001553,
       "tag": "0007_cynical_anthem",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1786508154456,
+      "tag": "0008_shallow_xorn",
+      "breakpoints": true
     }
   ]
 }

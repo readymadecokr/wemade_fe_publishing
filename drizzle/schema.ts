@@ -19,6 +19,18 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
+export const memberRestrictionHistories = mysqlTable("memberRestrictionHistories", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: mysqlEnum("status", ["active", "suspended", "banned"]).notNull(),
+  csCode: varchar("csCode", { length: 32 }),
+  reason: text("reason"),
+  suspendedUntil: timestamp("suspendedUntil"),
+  appliedAt: timestamp("appliedAt").defaultNow().notNull(),
+});
+export type MemberRestrictionHistory = typeof memberRestrictionHistories.$inferSelect;
+export type InsertMemberRestrictionHistory = typeof memberRestrictionHistories.$inferInsert;
+
 export const files = mysqlTable("files", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),

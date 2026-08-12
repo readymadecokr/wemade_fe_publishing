@@ -3,7 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminKeyProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { users, banners, news, media, products, payments, pointLogs, coupons, couponUses, admins, statsEvents, games } from "../drizzle/schema";
+import { users, memberRestrictionHistories, banners, news, media, products, payments, pointLogs, coupons, couponUses, admins, statsEvents, games } from "../drizzle/schema";
 import { ruCashProducts, ruCashBalances, ruCashTransactions } from "../drizzle/schema";
 import { storagePut } from "./storage";
 import { asc, desc, eq, like, or, sql } from "drizzle-orm";
@@ -637,8 +637,24 @@ export const appRouter = router({
         if (!db) throw new Error('DB unavailable');
         const existing = await db.select({ csCode: users.csCode }).from(users).where(eq(users.id, input.userId)).limit(1);
         const fixedCsCode = input.status === 'active' ? null : existing[0]?.csCode ?? input.csCode ?? null;
-        await db.update(users).set({ status: input.status, suspendedUntil: input.suspendedUntil ? new Date(input.suspendedUntil) : null, suspendReason: input.reason ?? null, csCode: fixedCsCode }).where(eq(users.id, input.userId));
+        const suspendedUntil = input.suspendedUntil ? new Date(input.suspendedUntil) : null;
+        await db.update(users).set({ status: input.status, suspendedUntil, suspendReason: input.reason ?? null, csCode: fixedCsCode }).where(eq(users.id, input.userId));
+        await db.insert(memberRestrictionHistories).values({ userId: input.userId, status: input.status, csCode: fixedCsCode, reason: input.reason ?? null, suspendedUntil });
         return { success: true };
+      }),
+    restrictionHistory: adminKeyProcedure
+      .input(z.object({ userId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        return db.select({
+          id: memberRestrictionHistories.id,
+          status: memberRestrictionHistories.status,
+          csCode: memberRestrictionHistories.csCode,
+          reason: memberRestrictionHistories.reason,
+          suspendedUntil: memberRestrictionHistories.suspendedUntil,
+          appliedAt: memberRestrictionHistories.appliedAt,
+        }).from(memberRestrictionHistories).where(eq(memberRestrictionHistories.userId, input.userId)).orderBy(desc(memberRestrictionHistories.appliedAt));
       }),
     updateNickname: adminKeyProcedure
       .input(z.object({ userId: z.number(), name: z.string() }))

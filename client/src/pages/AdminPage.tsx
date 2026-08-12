@@ -193,6 +193,12 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
     queryFn: () => adminClient!.admin.listUsers.query({ page, pageSize, search, searchField, statusFilter: memberTab, sortBy: sortBy as any, sortOrder: sortOrder as any, roleFilter: roleFilter as any }),
     enabled: !!adminClient,
   });
+  const { data: restrictionHistory = [], isLoading: restrictionHistoryLoading } = useQuery({
+    queryKey: ["admin-member-restriction-history", selectedUser?.id],
+    queryFn: () => adminClient!.memberAdmin.restrictionHistory.query({ userId: selectedUser!.id }),
+    enabled: !!adminClient && !!selectedUser,
+  });
+  const latestSuspensionHistory = (restrictionHistory as any[]).find(item => item.status === "suspended");
 
   const updateNickMutation = useMutation({
     mutationFn: (input: { userId: number; name: string }) => adminClient!.memberAdmin.updateNickname.mutate(input),
@@ -285,7 +291,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                   <SelectContent>
                     <SelectItem value="name">Nickname</SelectItem>
                     <SelectItem value="id">User ID</SelectItem>
-                    {memberTab === "restricted" && <SelectItem value="csCode">CS Code</SelectItem>}
+                    <SelectItem value="csCode">CS Code</SelectItem>
                   </SelectContent>
                 </Select>
                 <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder={`${searchField === "name" ? "Nickname" : searchField === "id" ? "User ID" : "CS Code"} 검색`} />
@@ -311,7 +317,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                   <thead><tr className="border-b text-muted-foreground text-xs">
                     <th className="text-left p-2">User ID</th>
                     <th className="text-left p-2">Nickname</th>
-                    {memberTab !== "all" && <th className="text-left p-2">CS Code</th>}
+                    <th className="text-left p-2">CS Code</th>
                     <th className="text-left p-2">Provider</th>
                     <th className="text-left p-2">Registration Date</th>
                     <th className="text-left p-2">Last Activity</th>
@@ -323,7 +329,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                       <tr key={u.id} className="border-b hover:bg-accent/20 cursor-pointer" onClick={() => setSelectedUser(u)}>
                         <td className="p-2 text-xs text-muted-foreground font-mono">{u.id}</td>
                         <td className="p-2 font-medium">{u.name ?? "-"}</td>
-                        {memberTab !== "all" && <td className="p-2 text-xs font-mono text-muted-foreground">{u.csCode ?? "-"}</td>}
+                        <td className="p-2 text-xs font-mono text-muted-foreground">{u.csCode ?? "-"}</td>
                         <td className="p-2 text-xs text-muted-foreground">{u.loginMethod ?? "-"}</td>
                         <td className="p-2 text-xs text-muted-foreground">{fmt(u.createdAt)}</td>
                         <td className="p-2 text-xs text-muted-foreground">{fmt(u.lastSignedIn)}</td>
@@ -425,7 +431,43 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                   {(selectedUser as any).status === "suspended" ? "이용정지" :
                    (selectedUser as any).status === "banned" ? "영구정지" :
                    "정상"}
+                  {(selectedUser as any).status === "suspended" && (
+                    <span className="ml-3 text-xs font-normal text-slate-600 dark:text-slate-300">
+                      이용정지 기간: {fmt(latestSuspensionHistory?.appliedAt)} ~ {fmt(selectedUser.suspendedUntil)}
+                    </span>
+                  )}
                 </span>
+              </div>
+              <div className="py-3 space-y-2">
+                <span className="text-muted-foreground font-medium">이용제한 이력</span>
+                <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+                  <table className="w-full min-w-[560px] text-xs">
+                    <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-300">
+                      <tr>
+                        <th className="px-2 py-2 text-left font-medium">처리일시</th>
+                        <th className="px-2 py-2 text-left font-medium">구분</th>
+                        <th className="px-2 py-2 text-left font-medium">CS Code</th>
+                        <th className="px-2 py-2 text-left font-medium">이용정지 기간</th>
+                        <th className="px-2 py-2 text-left font-medium">사유</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {restrictionHistoryLoading ? (
+                        <tr><td colSpan={5} className="px-2 py-4 text-center text-muted-foreground">이력 조회 중...</td></tr>
+                      ) : !(restrictionHistory as any[]).length ? (
+                        <tr><td colSpan={5} className="px-2 py-4 text-center text-muted-foreground">이용제한 이력이 없습니다.</td></tr>
+                      ) : (restrictionHistory as any[]).map((history) => (
+                        <tr key={history.id} className="border-t border-slate-100 dark:border-slate-800">
+                          <td className="px-2 py-2 whitespace-nowrap text-muted-foreground">{fmt(history.appliedAt)}</td>
+                          <td className={`px-2 py-2 font-medium ${history.status === "banned" ? "text-red-600" : history.status === "suspended" ? "text-orange-600" : "text-slate-600 dark:text-slate-300"}`}>{history.status === "banned" ? "영구정지" : history.status === "suspended" ? "이용정지" : "제한 해제"}</td>
+                          <td className="px-2 py-2 font-mono text-muted-foreground">{history.csCode ?? "-"}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-muted-foreground">{history.status === "suspended" ? `${fmt(history.appliedAt)} ~ ${fmt(history.suspendedUntil)}` : history.status === "banned" ? "영구 제한" : "-"}</td>
+                          <td className="px-2 py-2 text-muted-foreground">{history.reason ?? "-"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
               {(selectedUser as any).suspendReason && (
                 <div className="grid grid-cols-3 gap-2 py-2.5">
