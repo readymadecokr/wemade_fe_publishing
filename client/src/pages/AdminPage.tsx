@@ -358,7 +358,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
       {/* 회원 상세 / 수정 모달 */}
       {/* 회원 정보 조회 + 닉네임 수정 통합 팝업 */}
       <Dialog open={!!selectedUser && !suspendForm} onOpenChange={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>
-        <DialogContent className="w-[calc(100vw-2rem)] max-w-4xl max-h-[92vh] overflow-y-auto">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:w-[calc(100vw-4rem)] sm:max-w-none xl:max-w-5xl max-h-[92vh] overflow-x-hidden overflow-y-auto">
           <DialogHeader>
             <DialogTitle>회원 정보 조회</DialogTitle>
             <DialogDescription>회원 상세 정보를 확인합니다.</DialogDescription>
@@ -423,7 +423,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               {/* 상태 */}
               <div className="grid grid-cols-3 gap-2 py-2.5">
                 <span className="text-muted-foreground font-medium">상태</span>
-                <span className={`col-span-2 font-medium ${
+                <span className={`col-span-2 min-w-0 break-words font-medium ${
                   (selectedUser as any).status === "suspended" ? "text-red-500" :
                   (selectedUser as any).status === "banned" ? "text-red-500" :
                   "text-foreground"
@@ -440,15 +440,15 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               </div>
               <div className="py-3 space-y-2">
                 <span className="text-muted-foreground font-medium">이용제한 이력</span>
-                <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
-                  <table className="w-full min-w-[560px] text-xs">
+                <div className="overflow-hidden rounded-md border border-slate-200 dark:border-slate-700">
+                  <table className="w-full table-fixed text-xs">
                     <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-300">
                       <tr>
-                        <th className="px-2 py-2 text-left font-medium">처리일시</th>
-                        <th className="px-2 py-2 text-left font-medium">구분</th>
-                        <th className="px-2 py-2 text-left font-medium">CS Code</th>
-                        <th className="px-2 py-2 text-left font-medium">이용정지 기간</th>
-                        <th className="px-2 py-2 text-left font-medium">사유</th>
+                        <th className="w-[17%] px-2 py-2 text-left font-medium">처리일시</th>
+                        <th className="w-[12%] px-2 py-2 text-left font-medium">구분</th>
+                        <th className="w-[17%] px-2 py-2 text-left font-medium">CS Code</th>
+                        <th className="w-[29%] px-2 py-2 text-left font-medium">이용정지 기간</th>
+                        <th className="w-[25%] px-2 py-2 text-left font-medium">사유</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -458,11 +458,11 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                         <tr><td colSpan={5} className="px-2 py-4 text-center text-muted-foreground">이용제한 이력이 없습니다.</td></tr>
                       ) : (restrictionHistory as any[]).map((history) => (
                         <tr key={history.id} className="border-t border-slate-100 dark:border-slate-800">
-                          <td className="px-2 py-2 whitespace-nowrap text-muted-foreground">{fmt(history.appliedAt)}</td>
-                          <td className={`px-2 py-2 font-medium ${history.status === "banned" ? "text-red-600" : history.status === "suspended" ? "text-orange-600" : "text-slate-600 dark:text-slate-300"}`}>{history.status === "banned" ? "영구정지" : history.status === "suspended" ? "이용정지" : "제한 해제"}</td>
-                          <td className="px-2 py-2 font-mono text-muted-foreground">{history.csCode ?? "-"}</td>
-                          <td className="px-2 py-2 whitespace-nowrap text-muted-foreground">{history.status === "suspended" ? `${fmt(history.appliedAt)} ~ ${fmt(history.suspendedUntil)}` : history.status === "banned" ? "영구 제한" : "-"}</td>
-                          <td className="px-2 py-2 text-muted-foreground">{history.reason ?? "-"}</td>
+                          <td className="px-2 py-2 break-words text-muted-foreground">{fmt(history.appliedAt)}</td>
+                          <td className={`px-2 py-2 break-words font-medium ${history.status === "banned" ? "text-red-600" : history.status === "suspended" ? "text-orange-600" : "text-slate-600 dark:text-slate-300"}`}>{history.status === "banned" ? "영구정지" : history.status === "suspended" ? "이용정지" : "제한 해제"}</td>
+                          <td className="px-2 py-2 break-all font-mono text-muted-foreground">{history.csCode ?? "-"}</td>
+                          <td className="px-2 py-2 break-words text-muted-foreground">{history.status === "suspended" ? `${fmt(history.appliedAt)} ~ ${fmt(history.suspendedUntil)}` : history.status === "banned" ? "영구 제한" : "-"}</td>
+                          <td className="px-2 py-2 break-words text-muted-foreground">{history.reason ?? "-"}</td>
                         </tr>
                       ))}
                     </tbody>
