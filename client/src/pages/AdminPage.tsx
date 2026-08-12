@@ -183,6 +183,13 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
   const [nickChecking, setNickChecking] = useState(false);
   const [suspendForm, setSuspendForm] = useState<{ status: string; reason: string; startDate: string; until: string; csCode: string; suspendDays: string } | null>(null);
   const [showSuspendPreview, setShowSuspendPreview] = useState(false);
+  const [memberRestrictionPreview, setMemberRestrictionPreview] = useState<{
+    status: "suspended" | "banned";
+    csCode: string;
+    reason: string;
+    appliedAt: Date | string | null;
+    suspendedUntil: Date | string | null;
+  } | null>(null);
   const generateCsCode = () => String(Math.floor(10000000000 + Math.random() * 90000000000));
   const nowDateTimeLocal = () => new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 16);
   const calcExpiry = (start: string, days: string) => {
@@ -204,6 +211,8 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
     enabled: !!adminClient && !!selectedUser,
   });
   const latestSuspensionHistory = (restrictionHistory as any[]).find(item => item.status === "suspended");
+  const currentRestrictionHistory = (restrictionHistory as any[]).find(item => item.status === selectedUser?.status && item.csCode === selectedUser?.csCode)
+    ?? (restrictionHistory as any[]).find(item => item.status === selectedUser?.status);
 
   const updateNickMutation = useMutation({
     mutationFn: (input: { userId: number; name: string }) => adminClient!.memberAdmin.updateNickname.mutate(input),
@@ -470,20 +479,39 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               {/* 상태 */}
               <div className="grid grid-cols-3 gap-2 py-2.5">
                 <span className="text-muted-foreground font-medium">상태</span>
-                <span className={`col-span-2 min-w-0 break-words font-medium ${
+                <div className={`col-span-2 flex min-w-0 flex-wrap items-center gap-3 font-medium ${
                   (selectedUser as any).status === "suspended" ? "text-red-500" :
                   (selectedUser as any).status === "banned" ? "text-red-500" :
                   "text-foreground"
                 }`}>
-                  {(selectedUser as any).status === "suspended" ? "이용정지" :
-                   (selectedUser as any).status === "banned" ? "영구정지" :
-                   "정상"}
+                  <span>
+                    {(selectedUser as any).status === "suspended" ? "이용정지" :
+                     (selectedUser as any).status === "banned" ? "영구정지" :
+                     "정상"}
+                  </span>
                   {(selectedUser as any).status === "suspended" && (
-                    <span className="ml-3 text-xs font-normal text-slate-600 dark:text-slate-300">
+                    <span className="text-xs font-normal text-slate-600 dark:text-slate-300">
                       기간: {fmt(latestSuspensionHistory?.appliedAt ?? selectedUser.updatedAt)} ~ {fmt(selectedUser.suspendedUntil)}
                     </span>
                   )}
-                </span>
+                  {((selectedUser as any).status === "suspended" || (selectedUser as any).status === "banned") && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-8 border-slate-400 bg-white px-4 text-slate-700 hover:bg-slate-50"
+                      onClick={() => setMemberRestrictionPreview({
+                        status: (selectedUser as any).status,
+                        csCode: selectedUser.csCode ?? currentRestrictionHistory?.csCode ?? "-",
+                        reason: (selectedUser as any).suspendReason ?? currentRestrictionHistory?.reason ?? "",
+                        appliedAt: currentRestrictionHistory?.appliedAt ?? selectedUser.updatedAt,
+                        suspendedUntil: (selectedUser as any).suspendedUntil ?? currentRestrictionHistory?.suspendedUntil ?? null,
+                      })}
+                    >
+                      팝업 미리보기
+                    </Button>
+                  )}
+                </div>
               </div>
               <div className="py-3 space-y-2">
                 <span className="text-muted-foreground font-medium">이용제한 이력</span>
@@ -547,6 +575,33 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
             >이용 제한</Button>
             <Button variant="outline" className="border border-slate-300" onClick={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>닫기</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 현재 회원 제재 팝업 미리보기 */}
+      <Dialog open={!!memberRestrictionPreview} onOpenChange={(open) => { if (!open) setMemberRestrictionPreview(null); }}>
+        <DialogContent className="max-w-md p-0 overflow-hidden">
+          <div className="bg-white p-7 text-slate-800">
+            <DialogHeader className="space-y-1 text-left">
+              <DialogTitle className="text-xl font-bold">접속 제한 안내</DialogTitle>
+              <DialogDescription>운영정책에 따라 이 계정의 접속이 제한되었습니다.</DialogDescription>
+            </DialogHeader>
+            {memberRestrictionPreview && (
+              <div className="mt-6 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm">
+                <div className="flex justify-between gap-4"><span className="font-medium text-slate-500">제한 상태</span><span className="font-semibold text-red-600">{memberRestrictionPreview.status === "banned" ? "영구정지" : "이용정지"}</span></div>
+                <div className="flex justify-between gap-4"><span className="font-medium text-slate-500">CS Code</span><span className="font-mono text-slate-800">{memberRestrictionPreview.csCode}</span></div>
+                {memberRestrictionPreview.status === "suspended" ? (
+                  <div className="flex justify-between gap-4"><span className="font-medium text-slate-500">이용 제한 기간</span><span className="text-right text-slate-800">{fmt(memberRestrictionPreview.appliedAt)} ~ {fmt(memberRestrictionPreview.suspendedUntil)}</span></div>
+                ) : (
+                  <div className="flex justify-between gap-4"><span className="font-medium text-slate-500">이용 제한 기간</span><span className="text-slate-800">영구 제한</span></div>
+                )}
+                <div className="space-y-1 border-t border-slate-200 pt-3"><span className="font-medium text-slate-500">제재 사유</span><p className="break-words text-slate-800">{memberRestrictionPreview.reason || "운영정책 위반"}</p></div>
+              </div>
+            )}
+            <div className="mt-6 flex justify-end">
+              <Button className="min-w-24 bg-blue-500 hover:bg-blue-600" onClick={() => setMemberRestrictionPreview(null)}>확인</Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 
