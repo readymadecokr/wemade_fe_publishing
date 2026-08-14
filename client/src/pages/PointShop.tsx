@@ -78,13 +78,6 @@ function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
           return (
             <button key={p.id} onClick={() => setSelected(p.id)} aria-label={`${fmtRuc(p.ruCashAmount)} rCoin 상품 선택`}
               className={`relative flex min-h-[184px] flex-col rounded-xl border p-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${isSelected ? "border-[#a51f24] bg-[#fffaf2] ring-1 ring-[#a51f24]" : "border-[#e3dfca] bg-[#faf8f0] hover:border-[#c6ba92]"}`}>
-              {(isBestSeller || isBestValue) && (
-                <img
-                  src={isBestSeller ? "/manus-storage/rcoin-badge-best-seller-clean_432b87e4.png" : "/manus-storage/rcoin-badge-best-value-clean_4ae2a914.png"}
-                  alt={isBestSeller ? "최다 판매" : "최고 혜택"}
-                  className="absolute right-2 top-1 z-10 h-auto w-20 drop-shadow-sm sm:w-24"
-                />
-              )}
               <div className="flex min-h-[112px] items-center gap-2 pt-2">
                 <div className="flex w-[43%] shrink-0 items-center justify-center self-stretch">
                   <img src={coinIcon} alt="rCoin coin" className="h-full w-full object-contain object-center" />
@@ -99,7 +92,16 @@ function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
                   <div className="mt-1 text-base font-semibold text-slate-600">rCoin</div>
                 </div>
               </div>
-              <div className="mt-auto w-full bg-[#ffcb05] px-3 py-2 text-center text-base font-black text-slate-950 sm:text-lg">${Number(p.priceUsd).toFixed(2)}</div>
+              <div className="relative mt-auto pt-5">
+                {(isBestSeller || isBestValue) && (
+                  <img
+                    src={isBestSeller ? "/manus-storage/rcoin-badge-best-seller-clean_432b87e4.png" : "/manus-storage/rcoin-badge-best-value-clean_4ae2a914.png"}
+                    alt={isBestSeller ? "최다 판매" : "최고 혜택"}
+                    className="absolute right-1 top-0 z-10 h-auto w-20 -translate-y-1/2 drop-shadow-md sm:w-24"
+                  />
+                )}
+                <div className="w-full rounded-lg border border-[#e4a100] bg-gradient-to-b from-[#fff09b] via-[#ffd52b] to-[#f2ad05] px-3 py-2 text-center text-base font-black text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(181,105,0,0.32),0_3px_0_rgba(188,117,0,0.56),0_5px_9px_rgba(171,111,0,0.24)] sm:text-lg">${Number(p.priceUsd).toFixed(2)}</div>
+              </div>
             </button>
           );
         })}
