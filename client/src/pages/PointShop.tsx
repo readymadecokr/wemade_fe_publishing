@@ -35,7 +35,7 @@ function Pagination({ page, totalPages, setPage }: { page: number; totalPages: n
 }
 
 // ─── 충전 탭 ─────────────────────────────────────────────────────────────────
-function ChargeTab() {
+function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
   const [selected, setSelected] = useState<number | null>(null);
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
   // 상품 id(sortOrder 기준 1~8)별로 각각 다른 코인 아이콘
@@ -44,31 +44,61 @@ function ChargeTab() {
     2: "/manus-storage/rcoin-product-2_76c3227d.png",
     3: "/manus-storage/rcoin-product-3_06989679.png",
     4: "/manus-storage/rcoin-product-4_6f3cd7af.png",
-    5: "/manus-storage/rcoin-product-5_a2a867b7.png",
-    6: "/manus-storage/rcoin-product-6_25c64a7c.png",
-    7: "/manus-storage/rcoin-product-7_81c1100a.png",
-    8: "/manus-storage/rcoin-product-8_d5c612f5.png",
+    5: "/manus-storage/rcoin-product-5_927cd157.png",
+    6: "/manus-storage/rcoin-product-6_3dda1dca.png",
+    7: "/manus-storage/rcoin-product-7_b84c7ef8.png",
+    8: "/manus-storage/rcoin-product-8_cfc87d76.png",
   };
   return (
-    <div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="space-y-6">
+      <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
+          <p className="text-xs font-black tracking-wide text-slate-500 uppercase">rCoin</p>
+          <p className="mt-1 text-3xl font-black text-[#a51f24]">{fmtRuc(ruCash)}</p>
+          <p className="mt-1 text-xs text-slate-400">유료 충전 캐시</p>
+        </div>
+        <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
+          <p className="text-xs font-black tracking-wide text-slate-500 uppercase">Bonus rCoin</p>
+          <p className="mt-1 text-3xl font-black text-green-700">{fmtRuc(bonusCash)}</p>
+          <p className="mt-1 text-xs text-slate-400">보너스 캐시 (우선 차감)</p>
+        </div>
+      </section>
+
+      <div className="flex flex-col gap-2 border-b border-slate-200 pb-4 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <p className="font-medium text-slate-600">통화 USD 단위 <span className="mx-1 text-slate-300">·</span> 지역 통화는 PG 결제 페이지에서 전환</p>
+        <p className="font-semibold text-slate-500">rCoin은 계정 귀속</p>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
         {(products as any[]).map((p: any) => {
           const isSelected = selected === p.id;
-          const total = p.ruCashAmount + p.bonusCashAmount;
           const coinIcon = COIN_ICONS[p.id] ?? "/manus-storage/rucash-p1-1usd_95e76acd.png";
+          const isBestSeller = p.id === 5;
+          const isBestValue = p.id === 8;
           return (
-            <button key={p.id} onClick={() => setSelected(p.id)}
-              className={`rounded-xl border-2 p-5 text-center transition-all hover:shadow-lg flex flex-col gap-1 ${isSelected ? "border-[#9b2020] bg-red-50 shadow-lg" : "border-slate-200 bg-white hover:border-red-300"}`}>
-              <div className="flex justify-center mb-1">
-                <img src={coinIcon} alt="rCoin coin" className="w-24 h-24 object-contain" />
-              </div>
-              <div className="text-xl font-black text-[#9b2020] leading-tight">{fmtRuc(total)}<span className="text-sm font-bold ml-1">rCoin</span></div>
-              {p.bonusCashAmount > 0 ? (
-                <div className="text-xs font-semibold text-green-600">{fmtRuc(p.ruCashAmount)} rCoin + {fmtRuc(p.bonusCashAmount)} Bonus rCoin</div>
-              ) : (
-                <div className="text-xs text-transparent">-</div>
+            <button key={p.id} onClick={() => setSelected(p.id)} aria-label={`${fmtRuc(p.ruCashAmount)} rCoin 상품 선택`}
+              className={`relative flex min-h-[226px] flex-col rounded-xl border p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${isSelected ? "border-[#a51f24] bg-[#fffaf2] ring-1 ring-[#a51f24]" : "border-[#e3dfca] bg-[#faf8f0] hover:border-[#c6ba92]"}`}>
+              {(isBestSeller || isBestValue) && (
+                <span className="absolute right-3 top-3 rotate-6 text-xs font-black text-[#c5352f]">{isBestSeller ? "최다 판매" : "최고 혜택"}</span>
               )}
-              <div className="text-base font-black text-slate-800 mt-1">{p.name}</div>
+              <div className="flex h-[92px] items-center justify-center pb-1 sm:h-[100px]">
+                <img src={coinIcon} alt="rCoin coin" className="h-full w-full object-contain object-center" />
+              </div>
+              <div className="mt-auto flex items-start gap-2">
+                <div>
+                  <div className="text-3xl font-black leading-none text-slate-900">{fmtRuc(p.ruCashAmount)}</div>
+                  <div className="mt-1 text-base font-semibold text-slate-600">rCoin</div>
+                </div>
+                {p.bonusCashAmount > 0 && (
+                  <span className="mt-1 rounded-lg bg-[#54866f] px-2 py-1 text-sm font-black text-white">+{fmtRuc(p.bonusCashAmount)}</span>
+                )}
+              </div>
+              {p.bonusCashAmount > 0 ? (
+                <div className="mt-1 text-xs font-bold text-green-700">Bonus rCoin 포함</div>
+              ) : (
+                <div className="mt-1 text-xs text-transparent">-</div>
+              )}
+              <div className="mt-3 text-2xl font-black text-slate-900">${Number(p.priceUsd).toFixed(2)}</div>
             </button>
           );
         })}
@@ -86,29 +116,6 @@ function ChargeTab() {
           <button className="px-6 py-2 bg-[#9b2020] hover:bg-[#7a1a1a] text-white font-bold rounded-lg text-sm transition-colors" onClick={() => alert("PG 결제 연동 후 이용 가능합니다.")}>충전하기</button>
         </div>
       )}
-    </div>
-  );
-}
-
-// ─── 현재 소지 상태 탭 ────────────────────────────────────────────────────────
-function StatusTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-6">
-          <div className="text-xs text-slate-500 mb-1 font-semibold uppercase tracking-wide">rCoin</div>
-          <div className="text-3xl font-black text-[#9b2020]">{fmtRuc(ruCash)}</div>
-          <div className="text-xs text-slate-400 mt-1">유료 충전 캐시</div>
-        </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-6">
-          <div className="text-xs text-slate-500 mb-1 font-semibold uppercase tracking-wide">Bonus rCoin</div>
-          <div className="text-3xl font-black text-green-700">{fmtRuc(bonusCash)}</div>
-          <div className="text-xs text-slate-400 mt-1">보너스 캐시 (우선 차감)</div>
-        </div>
-      </div>
-      <div className="text-xs text-slate-400 bg-slate-50 rounded-lg p-3">
-        ※ 사용 시 Bonus rCoin이 우선 차감되며, 부족분은 rCoin에서 차감됩니다.
-      </div>
     </div>
   );
 }
@@ -206,13 +213,12 @@ function UseHistoryTab() {
 // ─── 메인 Shop 페이지 ─────────────────────────────────────────────────────────
 export default function PointShop() {
   const [, setLocation] = useLocation();
-  const [tab, setTab] = useState<"status" | "charge" | "charge-history" | "use-history">("charge");
+  const [tab, setTab] = useState<"charge" | "charge-history" | "use-history">("charge");
   const { user } = useAuth();
   const { data: balance } = trpc.shop.myBalance.useQuery(undefined, { enabled: !!user });
   const ruCash = balance?.ruCash ?? 0;
   const bonusCash = balance?.bonusCash ?? 0;
   const menus: { key: typeof tab; label: string }[] = [
-    { key: "status", label: "현재 소지 상태" },
     { key: "charge", label: "충전" },
     { key: "charge-history", label: "구매 내역" },
     { key: "use-history", label: "사용 내역" },
@@ -227,7 +233,7 @@ export default function PointShop() {
       </div>
       <div className="container py-8">
         <div className="flex gap-6">
-          <aside className="w-44 shrink-0">
+          <aside className="hidden w-44 shrink-0 md:flex md:flex-col">
             <nav className="flex flex-col gap-1">
               {menus.map(m => (
                 <button key={m.key} onClick={() => setTab(m.key)}
@@ -236,18 +242,23 @@ export default function PointShop() {
                 </button>
               ))}
             </nav>
+            <button onClick={() => setLocation("/")} className="mt-auto inline-flex items-center gap-1 border-t border-slate-200 pt-6 text-left text-sm font-medium text-slate-500 transition-colors hover:text-[#9b2020]">
+              <ChevronLeft size={16} />Back to Home
+            </button>
           </aside>
           <main className="flex-1 min-w-0">
-            {tab === "status" && <StatusTab ruCash={ruCash} bonusCash={bonusCash} />}
-            {tab === "charge" && <ChargeTab />}
+            <div className="mb-4 flex gap-2 overflow-x-auto md:hidden">
+              {menus.map(m => (
+                <button key={m.key} onClick={() => setTab(m.key)} className={`shrink-0 rounded-lg px-4 py-2 text-sm font-semibold ${tab === m.key ? "bg-[#9b2020] text-white" : "border border-slate-200 bg-white text-slate-700"}`}>{m.label}</button>
+              ))}
+            </div>
+            {tab === "charge" && <ChargeTab ruCash={ruCash} bonusCash={bonusCash} />}
             {tab === "charge-history" && <ChargeHistoryTab />}
             {tab === "use-history" && <UseHistoryTab />}
           </main>
         </div>
-        <div className="mt-10 pt-6 border-t border-slate-200">
-          <button onClick={() => setLocation("/")} className="inline-flex items-center gap-1 text-slate-500 hover:text-[#9b2020] text-sm font-medium transition-colors">
-            <ChevronLeft size={16} />Back to Home
-          </button>
+        <div className="mt-10 border-t border-slate-200 pt-5 md:ml-[200px]">
+          <p className="text-sm font-medium text-slate-500">결제 즉시 지급 <span className="mx-2 text-slate-300">·</span> 환불 정책 안내 <span className="mx-2 text-slate-300">·</span> 문의하기</p>
         </div>
       </div>
     </Layout>
