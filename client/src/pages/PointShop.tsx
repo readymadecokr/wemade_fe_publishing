@@ -77,32 +77,29 @@ function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
           const isBestValue = p.id === 8;
           return (
             <button key={p.id} onClick={() => setSelected(p.id)} aria-label={`${fmtRuc(p.ruCashAmount)} rCoin 상품 선택`}
-              className={`relative flex min-h-[226px] flex-col rounded-xl border p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${isSelected ? "border-[#a51f24] bg-[#fffaf2] ring-1 ring-[#a51f24]" : "border-[#e3dfca] bg-[#faf8f0] hover:border-[#c6ba92]"}`}>
+              className={`relative flex min-h-[184px] flex-col rounded-xl border p-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${isSelected ? "border-[#a51f24] bg-[#fffaf2] ring-1 ring-[#a51f24]" : "border-[#e3dfca] bg-[#faf8f0] hover:border-[#c6ba92]"}`}>
               {(isBestSeller || isBestValue) && (
                 <img
                   src={isBestSeller ? "/manus-storage/rcoin-badge-best-seller-clean_432b87e4.png" : "/manus-storage/rcoin-badge-best-value-clean_4ae2a914.png"}
                   alt={isBestSeller ? "최다 판매" : "최고 혜택"}
-                  className="absolute right-2 top-2 z-10 h-auto w-20 drop-shadow-sm sm:w-24"
+                  className="absolute right-2 top-1 z-10 h-auto w-20 drop-shadow-sm sm:w-24"
                 />
               )}
-              <div className="flex h-[98px] items-center justify-center pb-1 sm:h-[108px]">
-                <img src={coinIcon} alt="rCoin coin" className="h-full w-full object-contain object-center" />
-              </div>
-              <div className="mt-auto flex items-start gap-2">
-                <div>
-                  <div className="text-3xl font-black leading-none text-slate-900">{fmtRuc(p.ruCashAmount)}</div>
+              <div className="flex min-h-[112px] items-center gap-2 pt-2">
+                <div className="flex w-[43%] shrink-0 items-center justify-center self-stretch">
+                  <img src={coinIcon} alt="rCoin coin" className="h-full w-full object-contain object-center" />
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col justify-center">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="text-2xl font-black leading-none text-slate-900 sm:text-3xl">{fmtRuc(p.ruCashAmount)}</span>
+                    {p.bonusCashAmount > 0 && (
+                      <span className="rounded-lg bg-[#54866f] px-2 py-1 text-sm font-black leading-none text-white">+{fmtRuc(p.bonusCashAmount)}</span>
+                    )}
+                  </div>
                   <div className="mt-1 text-base font-semibold text-slate-600">rCoin</div>
                 </div>
-                {p.bonusCashAmount > 0 && (
-                  <span className="mt-1 rounded-lg bg-[#54866f] px-2 py-1 text-sm font-black text-white">+{fmtRuc(p.bonusCashAmount)}</span>
-                )}
               </div>
-              {p.bonusCashAmount > 0 ? (
-                <div className="mt-1 text-xs font-bold text-green-700">Bonus rCoin 포함</div>
-              ) : (
-                <div className="mt-1 text-xs text-transparent">-</div>
-              )}
-              <div className="mt-3 text-2xl font-black text-slate-900">${Number(p.priceUsd).toFixed(2)}</div>
+              <div className="mt-auto w-full bg-[#ffcb05] px-3 py-2 text-center text-base font-black text-slate-950 sm:text-lg">${Number(p.priceUsd).toFixed(2)}</div>
             </button>
           );
         })}
