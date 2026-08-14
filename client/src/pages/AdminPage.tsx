@@ -1570,7 +1570,7 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
   const handleExcelCharge = () => {
     const items = (chargeData?.items ?? []) as any[];
     if (!items.length) { toast.error("내역이 없습니다."); return; }
-    const headers = ["회원", "게임코드", "TIME", "충전전 RUC", "충전전 Bonus", "PG", "Price(USD)", "충전량 RUC", "충전량 Bonus", "충전후 RUC", "충전후 Bonus"];
+    const headers = ["회원", "게임코드", "TIME", "충전전 rCoin", "충전전 Bonus rCoin", "PG", "Price(USD)", "충전량 rCoin", "충전량 Bonus rCoin", "충전후 rCoin", "충전후 Bonus rCoin"];
     const rows = items.map((r: any) => [r.user?.name ?? r.user?.openId ?? "-", r.tx.gameCode, new Date(r.tx.createdAt).toLocaleString("ko-KR"), r.tx.beforeRuCash, r.tx.beforeBonusCash, r.tx.pgName ?? "-", r.tx.priceUsd ?? "-", r.tx.ruCashDelta, r.tx.bonusCashDelta, r.tx.afterRuCash, r.tx.afterBonusCash]);
     const csv = [headers, ...rows].map(r => r.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
@@ -1580,7 +1580,7 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
   const handleExcelUse = () => {
     const items = (useData?.items ?? []) as any[];
     if (!items.length) { toast.error("내역이 없습니다."); return; }
-    const headers = ["회원", "게임코드", "TIME", "사용전 RUC", "사용전 Bonus", "Item Name", "QTY", "Item Price", "Total Price", "잔량 RUC", "잔량 Bonus"];
+    const headers = ["회원", "게임코드", "TIME", "사용전 rCoin", "사용전 Bonus rCoin", "Item Name", "QTY", "Item Price", "Total Price", "잔량 rCoin", "잔량 Bonus rCoin"];
     const rows = items.map((r: any) => [r.user?.name ?? r.user?.openId ?? "-", r.tx.gameCode, new Date(r.tx.createdAt).toLocaleString("ko-KR"), r.tx.beforeRuCash, r.tx.beforeBonusCash, r.tx.itemName ?? "-", r.tx.itemQty ?? 1, r.tx.itemPriceRuc ?? 0, r.tx.totalPriceRuc ?? 0, r.tx.afterRuCash, r.tx.afterBonusCash]);
     const csv = [headers, ...rows].map(r => r.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
@@ -1596,7 +1596,7 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
 
   return (
     <div className="space-y-6">
-      <SectionHeader title={form ? (form.id ? "상품 수정" : "상품 등록") : "Shop (RU Cash) 관리"} desc="RU Cash 충전 상품, 충전/사용 내역, 잔액을 관리합니다."
+      <SectionHeader title={form ? (form.id ? "상품 수정" : "상품 등록") : "Shop (rCoin) 관리"} desc="rCoin 충전 상품, 충전/사용 내역, 잔액을 관리합니다."
         action={!form ? (
           <div className="flex gap-2">
             {tab === "products" && <Button onClick={() => setForm(emptyProduct)}><Plus className="h-4 w-4 mr-1" />상품 등록</Button>}
@@ -1625,7 +1625,7 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead><tr className="border-b bg-slate-50 dark:bg-slate-800 text-xs text-muted-foreground">
-                      <th className="text-left p-2">순서</th><th className="text-left p-2">상품명</th><th className="text-right p-2">USD</th><th className="text-right p-2">RU Cash</th><th className="text-right p-2">Bonus</th><th className="text-left p-2">상태</th><th className="text-left p-2">수정</th><th className="text-left p-2">삭제</th>
+                      <th className="text-left p-2">순서</th><th className="text-left p-2">상품명</th><th className="text-right p-2">USD</th><th className="text-right p-2">rCoin</th><th className="text-right p-2">Bonus rCoin</th><th className="text-left p-2">상태</th><th className="text-left p-2">수정</th><th className="text-left p-2">삭제</th>
                     </tr></thead>
                     <tbody>
                       {(productsData.items as any[]).map((p: any) => (
@@ -1655,7 +1655,7 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead><tr className="border-b bg-slate-50 dark:bg-slate-800 text-muted-foreground">
-                        {["회원", "게임코드", "TIME", "충전전 RUC", "충전전 Bonus", "PG", "Price(USD)", "충전량 RUC", "충전량 Bonus", "충전후 RUC", "충전후 Bonus"].map(h => <th key={h} className="text-left p-2 whitespace-nowrap">{h}</th>)}
+                        {["회원", "게임코드", "TIME", "충전전 rCoin", "충전전 Bonus rCoin", "PG", "Price(USD)", "충전량 rCoin", "충전량 Bonus rCoin", "충전후 rCoin", "충전후 Bonus rCoin"].map(h => <th key={h} className="text-left p-2 whitespace-nowrap">{h}</th>)}
                       </tr></thead>
                       <tbody>
                         {(chargeData.items as any[]).map((r: any) => (
@@ -1690,7 +1690,7 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead><tr className="border-b bg-slate-50 dark:bg-slate-800 text-muted-foreground">
-                        {["회원", "게임코드", "TIME", "사용전 RUC", "사용전 Bonus", "Item Name", "QTY", "Item Price", "Total Price", "잔량 RUC", "잔량 Bonus"].map(h => <th key={h} className="text-left p-2 whitespace-nowrap">{h}</th>)}
+                        {["회원", "게임코드", "TIME", "사용전 rCoin", "사용전 Bonus rCoin", "Item Name", "QTY", "Item Price", "Total Price", "잔량 rCoin", "잔량 Bonus rCoin"].map(h => <th key={h} className="text-left p-2 whitespace-nowrap">{h}</th>)}
                       </tr></thead>
                       <tbody>
                         {(useData.items as any[]).map((r: any) => (
@@ -1730,7 +1730,7 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead><tr className="border-b bg-slate-50 dark:bg-slate-800 text-xs text-muted-foreground">
-                        <th className="text-left p-2">User ID</th><th className="text-left p-2">Nickname</th><th className="text-right p-2">RU Cash</th><th className="text-right p-2">Bonus RU Cash</th><th className="text-left p-2">최종 갱신</th>
+                        <th className="text-left p-2">User ID</th><th className="text-left p-2">Nickname</th><th className="text-right p-2">rCoin</th><th className="text-right p-2">Bonus rCoin</th><th className="text-left p-2">최종 갱신</th>
                       </tr></thead>
                       <tbody>
                         {(balancesData.items as any[]).map((r: any) => (
@@ -1758,8 +1758,8 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
             <div className="space-y-1 col-span-2"><label className="text-sm font-medium">상품명 *</label><Input value={form.name} onChange={e => setForm(f => f && ({ ...f, name: e.target.value }))} placeholder="예: USD 10" /></div>
             <div className="space-y-1"><label className="text-sm font-medium">USD 가격 *</label><Input type="number" step="0.01" value={form.priceUsd} onChange={e => setForm(f => f && ({ ...f, priceUsd: e.target.value }))} /></div>
             <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">RU Cash 지급량 *</label><Input type="number" value={form.ruCashAmount} onChange={e => setForm(f => f && ({ ...f, ruCashAmount: parseInt(e.target.value) || 0 }))} /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">Bonus RU Cash 지급량</label><Input type="number" value={form.bonusCashAmount} onChange={e => setForm(f => f && ({ ...f, bonusCashAmount: parseInt(e.target.value) || 0 }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">rCoin 지급량 *</label><Input type="number" value={form.ruCashAmount} onChange={e => setForm(f => f && ({ ...f, ruCashAmount: parseInt(e.target.value) || 0 }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">Bonus rCoin 지급량</label><Input type="number" value={form.bonusCashAmount} onChange={e => setForm(f => f && ({ ...f, bonusCashAmount: parseInt(e.target.value) || 0 }))} /></div>
             <div className="space-y-1 col-span-2"><label className="text-sm font-medium">이미지 URL</label><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." /></div>
             <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
           </div>
@@ -1773,11 +1773,11 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
       {/* 잔액 조정 모달 */}
       <Dialog open={!!adjustForm} onOpenChange={() => setAdjustForm(null)}>
         <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>RU Cash 잔액 조정</DialogTitle><DialogDescription>음수 입력 시 차감됩니다.</DialogDescription></DialogHeader>
+          <DialogHeader><DialogTitle>rCoin 잔액 조정</DialogTitle><DialogDescription>음수 입력 시 차감됩니다.</DialogDescription></DialogHeader>
           <div className="space-y-3 py-2">
             <div className="space-y-1"><label className="text-sm font-medium">회원 ID *</label><Input type="number" value={adjustForm?.userId ?? ""} onChange={e => setAdjustForm(f => f && ({ ...f, userId: e.target.value }))} placeholder="회원 숫자 ID" /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">RU Cash 조정량</label><Input type="number" value={adjustForm?.ruCashDelta ?? ""} onChange={e => setAdjustForm(f => f && ({ ...f, ruCashDelta: e.target.value }))} placeholder="100 또는 -100" /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">Bonus RU Cash 조정량</label><Input type="number" value={adjustForm?.bonusCashDelta ?? ""} onChange={e => setAdjustForm(f => f && ({ ...f, bonusCashDelta: e.target.value }))} placeholder="100 또는 -100" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">rCoin 조정량</label><Input type="number" value={adjustForm?.ruCashDelta ?? ""} onChange={e => setAdjustForm(f => f && ({ ...f, ruCashDelta: e.target.value }))} placeholder="100 또는 -100" /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">Bonus rCoin 조정량</label><Input type="number" value={adjustForm?.bonusCashDelta ?? ""} onChange={e => setAdjustForm(f => f && ({ ...f, bonusCashDelta: e.target.value }))} placeholder="100 또는 -100" /></div>
             <div className="space-y-1"><label className="text-sm font-medium">사유</label><Input value={adjustForm?.reason ?? ""} onChange={e => setAdjustForm(f => f && ({ ...f, reason: e.target.value }))} placeholder="조정 사유" /></div>
           </div>
           <DialogFooter>

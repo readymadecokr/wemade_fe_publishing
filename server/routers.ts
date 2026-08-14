@@ -805,7 +805,7 @@ export const appRouter = router({
       }),
   }),
 
-  // ===== SHOP (RU Cash) =====
+  // ===== SHOP (rCoin) =====
   shop: router({
     // 공개: 활성 상품 목록
     listProducts: publicProcedure.query(async () => {

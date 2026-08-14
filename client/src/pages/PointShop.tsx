@@ -60,11 +60,11 @@ function ChargeTab() {
             <button key={p.id} onClick={() => setSelected(p.id)}
               className={`rounded-xl border-2 p-5 text-center transition-all hover:shadow-lg flex flex-col gap-1 ${isSelected ? "border-[#9b2020] bg-red-50 shadow-lg" : "border-slate-200 bg-white hover:border-red-300"}`}>
               <div className="flex justify-center mb-1">
-                <img src={coinIcon} alt="RU Cash coin" className="w-24 h-24 object-contain" />
+                <img src={coinIcon} alt="rCoin coin" className="w-24 h-24 object-contain" />
               </div>
-              <div className="text-xl font-black text-[#9b2020] leading-tight">{fmtRuc(total)}<span className="text-sm font-bold ml-1">RUC</span></div>
+              <div className="text-xl font-black text-[#9b2020] leading-tight">{fmtRuc(total)}<span className="text-sm font-bold ml-1">rCoin</span></div>
               {p.bonusCashAmount > 0 ? (
-                <div className="text-xs font-semibold text-green-600">{fmtRuc(p.ruCashAmount)} RUC + {fmtRuc(p.bonusCashAmount)} Bonus</div>
+                <div className="text-xs font-semibold text-green-600">{fmtRuc(p.ruCashAmount)} rCoin + {fmtRuc(p.bonusCashAmount)} Bonus rCoin</div>
               ) : (
                 <div className="text-xs text-transparent">-</div>
               )}
@@ -80,7 +80,7 @@ function ChargeTab() {
               const p = (products as any[]).find((x: any) => x.id === selected);
               if (!p) return null;
               const total = p.ruCashAmount + p.bonusCashAmount;
-              return <span><strong>{p.name}</strong> 선택됨 — 합계 <strong className="text-[#9b2020]">{fmtRuc(total)} RUC</strong>{p.bonusCashAmount > 0 ? <span className="text-green-600"> ({fmtRuc(p.ruCashAmount)} + {fmtRuc(p.bonusCashAmount)} Bonus)</span> : ""}</span>;
+              return <span><strong>{p.name}</strong> 선택됨 — 합계 <strong className="text-[#9b2020]">{fmtRuc(total)} rCoin</strong>{p.bonusCashAmount > 0 ? <span className="text-green-600"> ({fmtRuc(p.ruCashAmount)} rCoin + {fmtRuc(p.bonusCashAmount)} Bonus rCoin)</span> : ""}</span>;
             })()}
           </div>
           <button className="px-6 py-2 bg-[#9b2020] hover:bg-[#7a1a1a] text-white font-bold rounded-lg text-sm transition-colors" onClick={() => alert("PG 결제 연동 후 이용 가능합니다.")}>충전하기</button>
@@ -96,18 +96,18 @@ function StatusTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="rounded-xl border border-slate-200 bg-white p-6">
-          <div className="text-xs text-slate-500 mb-1 font-semibold uppercase tracking-wide">RU Cash</div>
+          <div className="text-xs text-slate-500 mb-1 font-semibold uppercase tracking-wide">rCoin</div>
           <div className="text-3xl font-black text-[#9b2020]">{fmtRuc(ruCash)}</div>
           <div className="text-xs text-slate-400 mt-1">유료 충전 캐시</div>
         </div>
         <div className="rounded-xl border border-slate-200 bg-white p-6">
-          <div className="text-xs text-slate-500 mb-1 font-semibold uppercase tracking-wide">Bonus RU Cash</div>
+          <div className="text-xs text-slate-500 mb-1 font-semibold uppercase tracking-wide">Bonus rCoin</div>
           <div className="text-3xl font-black text-green-700">{fmtRuc(bonusCash)}</div>
           <div className="text-xs text-slate-400 mt-1">보너스 캐시 (우선 차감)</div>
         </div>
       </div>
       <div className="text-xs text-slate-400 bg-slate-50 rounded-lg p-3">
-        ※ 사용 시 Bonus RU Cash가 우선 차감되며, 부족분은 RU Cash에서 차감됩니다.
+        ※ 사용 시 Bonus rCoin이 우선 차감되며, 부족분은 rCoin에서 차감됩니다.
       </div>
     </div>
   );
@@ -120,7 +120,7 @@ function ChargeHistoryTab() {
   const items = (data?.items ?? []) as any[];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / 10));
-  const COLS = ["게임코드","TIME","충전전 RUC","충전전 Bonus","PG","Price","충전량 RUC","충전량 Bonus","충전후 RUC","충전후 Bonus"];
+  const COLS = ["게임코드","TIME","충전전 rCoin","충전전 Bonus rCoin","PG","Price","충전량 rCoin","충전량 Bonus rCoin","충전후 rCoin","충전후 Bonus rCoin"];
   return (
     <div className="space-y-4">
       <h2 className="text-base font-bold text-slate-800">구매 내역</h2>
@@ -165,7 +165,7 @@ function UseHistoryTab() {
   const items = (data?.items ?? []) as any[];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / 10));
-  const COLS = ["게임코드","TIME","사용전 RUC","사용전 Bonus","Item Name","QTY","Item Price","Total Price","잔량 RUC","잔량 Bonus"];
+  const COLS = ["게임코드","TIME","사용전 rCoin","사용전 Bonus rCoin","Item Name","QTY","Item Price","Total Price","잔량 rCoin","잔량 Bonus rCoin"];
   return (
     <div className="space-y-4">
       <h2 className="text-base font-bold text-slate-800">사용 내역</h2>
@@ -222,7 +222,7 @@ export default function PointShop() {
       <div className="bg-[#9b2020] text-white py-8">
         <div className="container">
           <h1 className="text-3xl font-black tracking-tight">Shop</h1>
-          <p className="text-red-200 text-sm mt-1">RU Cash 충전 및 사용 내역</p>
+          <p className="text-red-200 text-sm mt-1">rCoin 충전 및 사용 내역</p>
         </div>
       </div>
       <div className="container py-8">

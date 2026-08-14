@@ -30,7 +30,7 @@ export default function Layout({ children }: LayoutProps) {
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
   const userNickname = localStorage.getItem("rou_nickname") || "Adventurer";
 
-  // RU Cash 잔액 조회 (Manus OAuth 로그인 사용자용)
+  // rCoin 잔액 조회 (Manus OAuth 로그인 사용자용)
   const { data: ruBalance } = trpc.shop.myBalance.useQuery(undefined, {
     refetchOnWindowFocus: true,
     staleTime: 30000,
@@ -114,12 +114,12 @@ export default function Layout({ children }: LayoutProps) {
             {/* Auth Section */}
           {isLoggedIn ? (
             <div className="flex items-center gap-4">
-              {/* RU Cash 잔액 + 마이페이지 통합 표기 */}
+              {/* rCoin 잔액 + 마이페이지 통합 표기 */}
               <div className="flex items-center gap-0 rounded-lg border border-slate-200 bg-white dark:bg-slate-800 dark:border-slate-700 overflow-hidden text-xs font-semibold shadow-sm">
                 <Link href="/point-shop" className="flex items-center gap-1 px-3 py-2 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors cursor-pointer text-slate-700 dark:text-slate-200 whitespace-nowrap">
-                  <span>RU Cash: <span className="text-[#9b2020] font-black">{fmtRuc(ruCash)}</span></span>
+                  <span>rCoin: <span className="text-[#9b2020] font-black">{fmtRuc(ruCash)}</span></span>
                   <span className="mx-2 text-slate-300">|</span>
-                  <span>Bonus RU Cash: <span className="text-green-700 font-black">{fmtRuc(bonusCash)}</span></span>
+                  <span>Bonus rCoin: <span className="text-green-700 font-black">{fmtRuc(bonusCash)}</span></span>
                 </Link>
                 <Link href="/mypage" className="flex items-center px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors cursor-pointer border-l border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 whitespace-nowrap">
                   마이페이지
