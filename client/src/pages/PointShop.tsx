@@ -40,14 +40,14 @@ function ChargeTab() {
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
   // 상품 id(sortOrder 기준 1~8)별로 각각 다른 코인 아이콘
   const COIN_ICONS: Record<number, string> = {
-    1: "/manus-storage/ruc-icon-1usd_09fc8a3a.png",
-    2: "/manus-storage/ruc-icon-5usd_f7a70a7d.png",
-    3: "/manus-storage/ruc-icon-10usd_7656939d.png",
-    4: "/manus-storage/ruc-icon-15usd_486641fb.png",
-    5: "/manus-storage/ruc-icon-20usd_063daed7.png",
-    6: "/manus-storage/ruc-icon-30usd_c39cb4a0.png",
-    7: "/manus-storage/ruc-icon-50usd_eb003a6f.png",
-    8: "/manus-storage/ruc-icon-100usd_e953994f.png",
+    1: "/manus-storage/rcoin-product-1_e7ad5ad5.png",
+    2: "/manus-storage/rcoin-product-2_76c3227d.png",
+    3: "/manus-storage/rcoin-product-3_06989679.png",
+    4: "/manus-storage/rcoin-product-4_6f3cd7af.png",
+    5: "/manus-storage/rcoin-product-5_a2a867b7.png",
+    6: "/manus-storage/rcoin-product-6_25c64a7c.png",
+    7: "/manus-storage/rcoin-product-7_81c1100a.png",
+    8: "/manus-storage/rcoin-product-8_d5c612f5.png",
   };
   return (
     <div>
