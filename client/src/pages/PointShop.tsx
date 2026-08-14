@@ -41,9 +41,9 @@ function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
   // 상품 id(sortOrder 기준 1~8)별로 각각 다른 코인 아이콘
   const COIN_ICONS: Record<number, string> = {
     1: "/manus-storage/rcoin-product-1_e7ad5ad5.png",
-    2: "/manus-storage/rcoin-product-2_76c3227d.png",
-    3: "/manus-storage/rcoin-product-3_06989679.png",
-    4: "/manus-storage/rcoin-product-4_6f3cd7af.png",
+    2: "/manus-storage/rcoin-product-2_4cc21bdb.png",
+    3: "/manus-storage/rcoin-product-3_2343735f.png",
+    4: "/manus-storage/rcoin-product-4_018ea28a.png",
     5: "/manus-storage/rcoin-product-5_927cd157.png",
     6: "/manus-storage/rcoin-product-6_3dda1dca.png",
     7: "/manus-storage/rcoin-product-7_b84c7ef8.png",
@@ -79,9 +79,13 @@ function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
             <button key={p.id} onClick={() => setSelected(p.id)} aria-label={`${fmtRuc(p.ruCashAmount)} rCoin 상품 선택`}
               className={`relative flex min-h-[226px] flex-col rounded-xl border p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${isSelected ? "border-[#a51f24] bg-[#fffaf2] ring-1 ring-[#a51f24]" : "border-[#e3dfca] bg-[#faf8f0] hover:border-[#c6ba92]"}`}>
               {(isBestSeller || isBestValue) && (
-                <span className="absolute right-3 top-3 rotate-6 text-xs font-black text-[#c5352f]">{isBestSeller ? "최다 판매" : "최고 혜택"}</span>
+                <img
+                  src={isBestSeller ? "/manus-storage/rcoin-badge-best-seller-clean_432b87e4.png" : "/manus-storage/rcoin-badge-best-value-clean_4ae2a914.png"}
+                  alt={isBestSeller ? "최다 판매" : "최고 혜택"}
+                  className="absolute right-2 top-2 z-10 h-auto w-20 drop-shadow-sm sm:w-24"
+                />
               )}
-              <div className="flex h-[92px] items-center justify-center pb-1 sm:h-[100px]">
+              <div className="flex h-[98px] items-center justify-center pb-1 sm:h-[108px]">
                 <img src={coinIcon} alt="rCoin coin" className="h-full w-full object-contain object-center" />
               </div>
               <div className="mt-auto flex items-start gap-2">
