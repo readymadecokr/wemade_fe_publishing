@@ -39,16 +39,16 @@ function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
   const [selected, setSelected] = useState<number | null>(null);
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
   // 상품 id(sortOrder 기준 1~8)별로 각각 다른 코인 아이콘
-  const COIN_ICONS: Record<number, string> = {
-    1: "/manus-storage/rcoin-product-1_e7ad5ad5.png",
-    2: "/manus-storage/rcoin-product-2_4cc21bdb.png",
-    3: "/manus-storage/rcoin-product-3_2343735f.png",
-    4: "/manus-storage/rcoin-product-4_018ea28a.png",
-    5: "/manus-storage/rcoin-product-5_927cd157.png",
-    6: "/manus-storage/rcoin-product-6_3dda1dca.png",
-    7: "/manus-storage/rcoin-product-7_b84c7ef8.png",
-    8: "/manus-storage/rcoin-product-8_cfc87d76.png",
-  };
+const COIN_ICONS: Record<number, string> = {
+  1: "/manus-storage/rcoin-product-normalized-1_3a54dcfa.png",
+  2: "/manus-storage/rcoin-product-normalized-2_7f2e6fc8.png",
+  3: "/manus-storage/rcoin-product-normalized-3_a2066f09.png",
+  4: "/manus-storage/rcoin-product-normalized-4_c97d1b25.png",
+  5: "/manus-storage/rcoin-product-normalized-5_1f2fcd6a.png",
+  6: "/manus-storage/rcoin-product-normalized-6_f8d73a29.png",
+  7: "/manus-storage/rcoin-product-normalized-7_1846f0d0.png",
+  8: "/manus-storage/rcoin-product-normalized-8_0af9497e.png",
+};
   return (
     <div className="space-y-6">
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -75,9 +75,10 @@ function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
           const coinIcon = COIN_ICONS[p.id] ?? "/manus-storage/rucash-p1-1usd_95e76acd.png";
           const isBestSeller = p.id === 5;
           const isBestValue = p.id === 8;
+          const isLargestProduct = p.id === 8;
           return (
             <button key={p.id} onClick={() => setSelected(p.id)} aria-label={`${fmtRuc(p.ruCashAmount)} rCoin 상품 선택`}
-              className={`relative flex min-h-[174px] flex-col rounded-xl border p-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${isSelected ? "border-[#a51f24] bg-[#fffaf2] ring-1 ring-[#a51f24]" : "border-[#e3dfca] bg-[#faf8f0] hover:border-[#c6ba92]"}`}>
+              className={`relative flex h-[174px] flex-col rounded-xl border p-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${isSelected ? "border-[#a51f24] bg-[#fffaf2] ring-1 ring-[#a51f24]" : "border-[#e3dfca] bg-[#faf8f0] hover:border-[#c6ba92]"}`}>
               {(isBestSeller || isBestValue) && (
                 <img
                   src={isBestSeller ? "/manus-storage/rcoin-badge-best-seller-clean_432b87e4.png" : "/manus-storage/rcoin-badge-best-value-clean_4ae2a914.png"}
@@ -85,15 +86,15 @@ function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number })
                   className="absolute right-1 top-1 z-10 h-auto w-20 drop-shadow-md sm:w-24"
                 />
               )}
-              <div className="flex min-h-[104px] items-center gap-2 pt-1">
+              <div className="flex h-[104px] items-center gap-2 pt-1">
                 <div className="flex w-[43%] shrink-0 items-center justify-center self-stretch">
-                  <img src={coinIcon} alt="rCoin coin" className="h-full w-full object-contain object-center" />
+                  <img src={coinIcon} alt="rCoin coin" className="h-[84px] w-[84px] max-h-full max-w-full object-contain object-center" />
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-center">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-2xl font-black leading-none text-slate-900 sm:text-3xl">{fmtRuc(p.ruCashAmount)}</span>
+                  <div className="flex flex-nowrap items-center gap-1 whitespace-nowrap">
+                    <span className={`${isLargestProduct ? "text-xl sm:text-2xl" : "text-2xl sm:text-3xl"} shrink-0 font-black leading-none tracking-tight text-slate-900`}>{fmtRuc(p.ruCashAmount)}</span>
                     {p.bonusCashAmount > 0 && (
-                      <span className="rounded-lg bg-[#54866f] px-2 py-1 text-sm font-black leading-none text-white">+{fmtRuc(p.bonusCashAmount)}</span>
+                      <span className={`${isLargestProduct ? "px-1.5 py-0.5 text-xs" : "px-2 py-1 text-sm"} shrink-0 rounded-lg bg-[#54866f] font-black leading-none text-white`}>+{fmtRuc(p.bonusCashAmount)}</span>
                     )}
                   </div>
                   <div className="mt-1 text-base font-semibold text-slate-600">rCoin</div>
