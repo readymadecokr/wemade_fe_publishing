@@ -86,11 +86,11 @@ const COIN_ICONS: Record<number, string> = {
                   className="absolute -left-2 -top-3 z-10 h-auto w-20 drop-shadow-md sm:w-24"
                 />
               )}
-              <div className="-ml-1 flex h-[104px] items-center gap-1 pt-1">
-                <div className="flex w-[38%] shrink-0 items-center justify-start self-stretch min-[1280px]:w-[28%]">
+              <div className="flex h-[104px] items-center justify-center gap-3 px-2 pt-1">
+                <div className="flex w-[84px] shrink-0 items-center justify-center self-stretch">
                   <img src={coinIcon} alt="rCoin coin" className="h-[84px] w-[84px] max-h-full max-w-full object-contain object-center" />
                 </div>
-                <div className="flex min-w-0 flex-1 flex-col justify-center">
+                <div className="flex min-w-0 shrink-0 flex-col justify-center">
                   {hasBonus ? (
                     <>
                       <div className="flex flex-col min-[1280px]:flex-row min-[1280px]:items-center min-[1280px]:gap-1">
