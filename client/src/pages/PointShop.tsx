@@ -87,15 +87,17 @@ const COIN_ICONS: Record<number, string> = {
                 />
               )}
               <div className="-ml-1 flex h-[104px] items-center gap-1 pt-1">
-                <div className="flex w-[38%] shrink-0 items-center justify-start self-stretch">
+                <div className="flex w-[38%] shrink-0 items-center justify-start self-stretch min-[1280px]:w-[28%]">
                   <img src={coinIcon} alt="rCoin coin" className="h-[84px] w-[84px] max-h-full max-w-full object-contain object-center" />
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-center">
                   {isLargestProduct ? (
                     <>
-                      <span className="shrink-0 text-2xl font-black leading-none tracking-tight text-slate-900 lg:text-3xl">{fmtRuc(p.ruCashAmount)}</span>
-                      <span className="mt-1 w-fit shrink-0 rounded-lg bg-[#54866f] px-1.5 py-0.5 text-xs font-black leading-none text-white lg:px-2 lg:py-1 lg:text-sm">+{fmtRuc(p.bonusCashAmount)}</span>
-                      <div className="mt-2 text-base font-semibold text-slate-600">rCoin</div>
+                      <div className="flex flex-col min-[1280px]:flex-row min-[1280px]:items-center min-[1280px]:gap-1">
+                        <span className="shrink-0 text-2xl font-black leading-none tracking-tight text-slate-900 lg:text-3xl">{fmtRuc(p.ruCashAmount)}</span>
+                        <span className="mt-1 w-fit shrink-0 rounded-lg bg-[#54866f] px-1.5 py-0.5 text-xs font-black leading-none text-white min-[1280px]:mt-0 lg:px-2 lg:py-1 lg:text-sm">+{fmtRuc(p.bonusCashAmount)}</span>
+                      </div>
+                      <div className="mt-2 text-base font-semibold text-slate-600 min-[1280px]:mt-1">rCoin</div>
                     </>
                   ) : (
                     <>
