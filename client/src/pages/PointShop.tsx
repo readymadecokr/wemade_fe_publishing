@@ -75,7 +75,7 @@ const COIN_ICONS: Record<number, string> = {
           const coinIcon = COIN_ICONS[p.id] ?? "/manus-storage/rucash-p1-1usd_95e76acd.png";
           const isBestSeller = p.id === 5;
           const isBestValue = p.id === 8;
-          const isLargestProduct = p.id === 8;
+          const hasBonus = p.bonusCashAmount > 0;
           return (
             <button key={p.id} onClick={() => setSelected(p.id)} aria-label={`${fmtRuc(p.ruCashAmount)} rCoin 상품 선택`}
               className={`relative flex h-[174px] flex-col rounded-xl border p-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${isSelected ? "border-[#a51f24] bg-[#fffaf2] ring-1 ring-[#a51f24]" : "border-[#e3dfca] bg-[#faf8f0] hover:border-[#c6ba92]"}`}>
@@ -91,7 +91,7 @@ const COIN_ICONS: Record<number, string> = {
                   <img src={coinIcon} alt="rCoin coin" className="h-[84px] w-[84px] max-h-full max-w-full object-contain object-center" />
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-center">
-                  {isLargestProduct ? (
+                  {hasBonus ? (
                     <>
                       <div className="flex flex-col min-[1280px]:flex-row min-[1280px]:items-center min-[1280px]:gap-1">
                         <span className="shrink-0 text-2xl font-black leading-none tracking-tight text-slate-900 lg:text-3xl">{fmtRuc(p.ruCashAmount)}</span>
@@ -101,12 +101,7 @@ const COIN_ICONS: Record<number, string> = {
                     </>
                   ) : (
                     <>
-                      <div className="flex flex-nowrap items-center gap-1 whitespace-nowrap">
-                        <span className="shrink-0 text-2xl font-black leading-none tracking-tight text-slate-900 lg:text-3xl">{fmtRuc(p.ruCashAmount)}</span>
-                        {p.bonusCashAmount > 0 && (
-                          <span className="shrink-0 rounded-lg bg-[#54866f] px-1.5 py-0.5 text-xs font-black leading-none text-white lg:px-2 lg:py-1 lg:text-sm">+{fmtRuc(p.bonusCashAmount)}</span>
-                        )}
-                      </div>
+                      <span className="shrink-0 text-2xl font-black leading-none tracking-tight text-slate-900 lg:text-3xl">{fmtRuc(p.ruCashAmount)}</span>
                       <div className="mt-1 text-base font-semibold text-slate-600">rCoin</div>
                     </>
                   )}
