@@ -236,3 +236,8 @@
 - [x] 전체 탭에서 구매·사용 상세 이력을 시간순으로 통합
 - [x] 탭 우측 이력 검색 기능 추가
 - [x] 실제 회원 상세 화면과 거래 이력 API의 탭·검색·정렬 검증
+
+## 어드민 전체 이력 헤더 순서·표기
+- [x] 전체 이력 헤더를 Game Code·Time·rCoin Before·Bonus rCoin Before·PG·Price·rCoin Charged·Bonus rCoin Charged·rCoin After·Bonus rCoin After 순서로 변경
+- [x] Bonus Δ를 Bonus rCoin Charged로 변경
+- [x] 타입·DOM 테스트로 전체 이력 헤더 순서 검증

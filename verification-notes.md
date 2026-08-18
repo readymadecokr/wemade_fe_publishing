@@ -104,3 +104,5 @@ My Page의 Payment History·Points/Item Usage 화면을 스크린샷 기준으�
 회원 목록에서 실제 회원을 선택해 상세 화면을 렌더하는 jsdom 통합 테스트를 추가했다. 전체 탭에서 구매·사용 행이 함께 보이고, 사용이력 탭 전환 시 Item Name 컬럼·아이템 행이 표시되며, 전체 탭의 PayPal 검색 시 API 입력과 화면 행이 모두 변경되는 것을 확인했다. TypeScript와 Vitest 17건을 통과했다.
 
 adminKeyProcedure를 통과한 `memberAdmin.transactionHistory` tRPC caller를 직접 호출해 전체 이력의 createdAt 내림차순 응답과 PG명·아이템명·게임 코드 검색 결과를 검증했다. 실제 MembersSection jsdom 통합 테스트와 함께 TypeScript 및 Vitest 19건을 통과했다.
+
+전체 이력 탭의 헤더를 Game Code, Time, rCoin Before, Bonus rCoin Before, PG, Price, rCoin Charged, Bonus rCoin Charged, rCoin After, Bonus rCoin After 순서로 정렬했다. jsdom에서 10개 헤더의 순서와 Bonus Δ 표기 부재를 검증했으며 TypeScript와 Vitest 19건을 통과했다.

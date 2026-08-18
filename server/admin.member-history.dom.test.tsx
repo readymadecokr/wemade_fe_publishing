@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import React from "react";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { MemberHistoryControls, MemberTransactionTable } from "../client/src/pages/AdminPage";
@@ -36,11 +36,13 @@ describe("member detail transaction tables", () => {
     expect(screen.getByText("Kafra Card")).toBeTruthy();
   });
 
-  it("preserves both transaction types in the all-history table", () => {
+  it("uses the requested purchase-style column order in the all-history table", () => {
     render(<MemberTransactionTable items={[charge, usage]} tab="all" loading={false} />);
-    expect(screen.getByText("Type")).toBeTruthy();
-    expect(screen.getByText("구매")).toBeTruthy();
-    expect(screen.getByText("사용")).toBeTruthy();
+    const headers = within(screen.getByTestId("member-transaction-table")).getAllByRole("columnheader").map(header => header.textContent);
+    expect(headers).toEqual([
+      "Game Code", "Time", "rCoin Before", "Bonus rCoin Before", "PG", "Price", "rCoin Charged", "Bonus rCoin Charged", "rCoin After", "Bonus rCoin After",
+    ]);
+    expect(screen.queryByText("Bonus Δ")).toBeNull();
     expect(screen.getByText("PayPal")).toBeTruthy();
     expect(screen.getByText("Kafra Card")).toBeTruthy();
   });
