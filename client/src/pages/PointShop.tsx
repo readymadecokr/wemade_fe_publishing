@@ -114,8 +114,8 @@ function PurchaseDialog({
                 <div className="absolute right-0 top-[calc(100%+6px)] z-20 w-36 overflow-hidden rounded-md border border-slate-200 bg-white py-1 shadow-xl">
                   <p className="px-3 py-1 text-[10px] font-black uppercase tracking-wide text-slate-400">Price List</p>
                   {products.map((item) => (
-                    <button key={item.id} onClick={() => chooseProduct(item.id)} className={`flex w-full items-center justify-between px-3 py-1.5 text-left text-sm hover:bg-[#fff5df] ${item.id === product.id ? "bg-[#fff7e6] font-black text-[#a51f24]" : "text-slate-700"}`}>
-                      <span>{fmtRuc(item.ruCashAmount)} rCoin</span><span>${Number(item.priceUsd).toFixed(2)}</span>
+                    <button key={item.id} onClick={() => chooseProduct(item.id)} className={`flex w-full items-center justify-end px-3 py-1.5 text-right text-sm hover:bg-[#fff5df] ${item.id === product.id ? "bg-[#fff7e6] font-black text-[#a51f24]" : "text-slate-700"}`}>
+                      <span>${Number(item.priceUsd).toFixed(2)}</span>
                     </button>
                   ))}
                 </div>
