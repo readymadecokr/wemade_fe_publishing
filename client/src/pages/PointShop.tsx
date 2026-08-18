@@ -147,12 +147,9 @@ function PurchaseDialog({
         </div>
 
         <div className="border-t border-[#e4ded0] bg-white px-5 py-4">
-          <div className="flex gap-2">
-            <button onClick={() => onOpenChange(false)} className="rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50">Cancel</button>
-            <button onClick={() => { if (captchaChecked) window.alert("Available after PG payment integration."); }} disabled={!captchaChecked} className="flex-1 rounded-lg bg-[#182b40] py-3 text-base font-black text-white shadow-sm transition-colors hover:bg-[#0f2031] disabled:cursor-not-allowed disabled:bg-slate-300">
-              Pay USD ${Number(product.priceUsd).toFixed(2)}
-            </button>
-          </div>
+          <button onClick={() => { if (captchaChecked) window.alert("Available after PG payment integration."); }} disabled={!captchaChecked} className="w-full rounded-lg bg-[#182b40] py-3 text-base font-black text-white shadow-sm transition-colors hover:bg-[#0f2031] disabled:cursor-not-allowed disabled:bg-slate-300">
+            Pay USD ${Number(product.priceUsd).toFixed(2)}
+          </button>
         </div>
       </DialogContent>
     </Dialog>
