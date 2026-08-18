@@ -102,7 +102,7 @@ function PurchaseDialog({
             <div>
               <p className="text-2xl font-black tracking-tight text-slate-900 sm:text-[28px]">
                 {fmtRuc(product.ruCashAmount)} rCoin
-                {product.bonusCashAmount > 0 && <span className="ml-2 text-sm font-bold text-[#54866f]">+{fmtRuc(product.bonusCashAmount)} 보너스</span>}
+                {product.bonusCashAmount > 0 && <span className="ml-2 inline-block whitespace-nowrap text-[#54866f]">+{fmtRuc(product.bonusCashAmount)} Bonus rCoin</span>}
               </p>
             </div>
             <div className="relative shrink-0">
