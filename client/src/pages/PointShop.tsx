@@ -100,9 +100,9 @@ function PurchaseDialog({
         <div className="border-b border-[#ddd7c8] bg-white px-5 pb-4 pt-5">
           <div className="flex items-start justify-between gap-4 pr-8">
             <div>
-              <p className="text-2xl font-black tracking-tight text-slate-900 sm:text-[28px]">
+              <p className="whitespace-nowrap text-xl font-black tracking-tight text-slate-900 sm:text-[22px]">
                 {fmtRuc(product.ruCashAmount)} rCoin
-                {product.bonusCashAmount > 0 && <span className="ml-2 inline-block whitespace-nowrap text-[#54866f]">+{fmtRuc(product.bonusCashAmount)} Bonus rCoin</span>}
+                {product.bonusCashAmount > 0 && <span className="ml-2 text-[#54866f]">+{fmtRuc(product.bonusCashAmount)} Bonus</span>}
               </p>
             </div>
             <div className="relative shrink-0">
