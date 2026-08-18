@@ -49,6 +49,10 @@ describe("My Page nickname features", () => {
     await expect(caller.user.checkNickname({ name: anotherUser!.name! })).resolves.toEqual({
       isAvailable: false,
     });
+
+    await expect(caller.user.updateNickname({ name: anotherUser!.name! })).rejects.toThrow(
+      "Nickname is already in use",
+    );
   });
 
   it("renders User ID and English nickname search feedback in My Page", () => {
@@ -62,5 +66,7 @@ describe("My Page nickname features", () => {
     expect(source).toContain("This nickname is available.");
     expect(source).toContain("This nickname is already in use.");
     expect(source).toContain('nicknameCheckStatus !== "available"');
+    expect(source).toContain("checkedNickname !== newNickname.trim()");
+    expect(source).toContain('setNicknameCheckStatus("idle")');
   });
 });

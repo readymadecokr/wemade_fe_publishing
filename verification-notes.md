@@ -141,3 +141,7 @@ My Page Account Information에 Nickname 오른쪽 User ID 열을 추가하고, �
 실제 다른 회원(User ID 60001)의 닉네임을 User ID 1 컨텍스트에서 조회했을 때 `user.checkNickname`이 `isAvailable: false`를 반환하는 중복 케이스를 추가 검증했다. TypeScript와 Vitest 10건을 통과했다.
 
 구매·사용 내역 테이블의 `Bonus rCoin Charged`, `rCoin After` 등 긴 헤더를 줄바꿈 형태로 변경하고 `table-fixed`·`overflow-hidden`을 적용했다. 비로그인 브라우저에서는 내역이 비어 있어 실제 행 렌더링은 표시되지 않았지만, TypeScript와 헤더 줄바꿈·오버플로 클래스를 검증하는 Vitest를 포함해 11건의 테스트를 통과했다.
+
+브라우저 인수 없이 My Page 자동 검증을 완료했다. User ID 1의 현재 닉네임은 Search 결과 `isAvailable: true`이고, 다른 실제 회원(User ID 60001) 닉네임은 `isAvailable: false`이며 동일 이름 저장은 `Nickname is already in use` 오류로 차단된다. UI 소스 검증으로 User ID, Search 버튼, 파란색 사용 가능·빨간색 중복 메시지, 확인 전·중복 시 Save 비활성화와 입력 변경 시 재검색 요구를 확인했다. TypeScript와 Vitest 11건을 통과했다.
+
+jsdom 기반 React DOM 테스트를 추가해 My Page가 렌더된 상태에서 User ID가 표시되고, Change Nickname 팝업의 Search 클릭 후 `This nickname is available.` 표시와 Save 활성화, 입력 변경 후 Save 비활성화, 중복 Search 후 `This nickname is already in use.` 표시와 Save 비활성화 흐름을 검증했다. TypeScript와 Vitest 12건을 통과했다.
