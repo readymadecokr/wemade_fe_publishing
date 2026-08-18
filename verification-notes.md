@@ -92,3 +92,5 @@ Python Playwright의 실제 680px 뷰포트 검증에서 10,000 rCoin 카드 경
 
 1366px Shop 카드 화면에서 코인 이미지와 수량을 고정 폭 콘텐츠 묶음으로 중앙 정렬했다. 카드 내부의 코인 이미지 좌우 여백이 균형을 이루고, 수량 영역은 이미지에 가까워져 기존의 넓은 우측 공백이 줄어든 것을 확인했다.
 My Page의 Payment History·Points/Item Usage 화면을 스크린샷 기준으로 복원했다. Purchase History·Usage History 제목은 제거했고, 잔액 카드와 테이블을 `space-y-3` 간격으로 바로 연결했다. jsdom DOM 테스트에서 두 내역 전환, 10건·5건 페이지네이션, 제목 부재, Time 날짜·시간 2줄 표시, `history-layout`의 축소 간격과 테이블 렌더를 검증했다. TypeScript와 Vitest 6건을 통과했다.
+
+어드민 회원 목록에서 사용자를 선택하면 회원 목록을 대체하는 인페이지 회원 상세 화면이 렌더되도록 복원했다. 상세 화면 하단 버튼은 `justify-start`로 왼쪽 정렬하고 저장, 이전, 이용 제한 순서로 배치했다. TypeScript와 Vitest 8건을 통과했으며 자동 테스트에서 목록 선택 진입 구조·상세 페이지 제목·버튼 정렬·순서를 검증했다.

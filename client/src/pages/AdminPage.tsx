@@ -303,6 +303,55 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
     setSearchField("name");
   };
 
+  if (selectedUser && !suspendForm) {
+    return (
+      <div className="space-y-6">
+        <SectionHeader title="회원 상세" desc="회원 상세 정보를 확인하고 수정·제재 처리할 수 있습니다." action={
+          <Button variant="outline" size="sm" onClick={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>
+            <ChevronLeft className="mr-1 h-4 w-4" />회원 목록
+          </Button>
+        } />
+        <Card>
+          <CardContent className="p-6">
+            <div className="space-y-0 divide-y text-sm">
+              <div className="grid grid-cols-3 gap-2 py-3"><span className="font-medium text-muted-foreground">User ID</span><span className="col-span-2 font-mono">{selectedUser.id}</span></div>
+              <div className="grid grid-cols-3 gap-2 py-3"><span className="font-medium text-muted-foreground">Open ID</span><span className="col-span-2 break-all font-mono text-xs">{selectedUser.openId}</span></div>
+              <div className="grid grid-cols-3 gap-2 py-3 items-start">
+                <span className="pt-1.5 font-medium text-muted-foreground">Nickname</span>
+                <div className="col-span-2">
+                  <div className="flex gap-2">
+                    <Input value={editForm?.name ?? selectedUser.name ?? ""} onChange={e => { setEditForm({ name: e.target.value }); setNickCheckResult("idle"); }} className="h-8" />
+                    <Button size="sm" className="h-8 bg-blue-500 text-white hover:bg-blue-600" onClick={handleNickCheck} disabled={nickChecking || !(editForm?.name ?? selectedUser.name)}>{nickChecking ? "검색중" : "검색"}</Button>
+                  </div>
+                  <p className={`mt-1 h-4 text-xs font-medium ${nickCheckResult === "available" ? "text-blue-500" : nickCheckResult === "duplicate" ? "text-red-500" : "text-transparent"}`}>
+                    {nickCheckResult === "available" ? "사용 가능 합니다." : nickCheckResult === "duplicate" ? "이미 사용중인 닉네임 입니다" : " "}
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 py-3"><span className="font-medium text-muted-foreground">Provider</span><span className="col-span-2">{selectedUser.loginMethod ?? "-"}</span></div>
+              <div className="grid grid-cols-3 gap-2 py-3"><span className="font-medium text-muted-foreground">가입일</span><span className="col-span-2">{fmt(selectedUser.createdAt)}</span></div>
+              <div className="grid grid-cols-3 gap-2 py-3"><span className="font-medium text-muted-foreground">마지막 로그인</span><span className="col-span-2">{fmt(selectedUser.lastSignedIn)}</span></div>
+              <div className="grid grid-cols-3 gap-2 py-3"><span className="font-medium text-muted-foreground">상태</span><span className={`col-span-2 font-medium ${(selectedUser as any).status === "active" ? "" : "text-red-500"}`}>{(selectedUser as any).status === "suspended" ? "이용정지" : (selectedUser as any).status === "banned" ? "영구정지" : "정상"}</span></div>
+              <div className="py-4">
+                <p className="mb-2 font-medium text-muted-foreground">이용제한 이력</p>
+                <div className="overflow-hidden rounded-md border border-slate-200 dark:border-slate-700">
+                  <table className="w-full table-fixed text-xs"><thead className="bg-slate-50 text-slate-500 dark:bg-slate-800 dark:text-slate-300"><tr><th className="px-2 py-2 text-left">처리일시</th><th className="px-2 py-2 text-left">구분</th><th className="px-2 py-2 text-left">CS Code</th><th className="px-2 py-2 text-left">이용정지 기간</th><th className="px-2 py-2 text-left">사유</th></tr></thead>
+                    <tbody>{!(restrictionHistory as any[]).length ? <tr><td colSpan={5} className="px-2 py-4 text-center text-muted-foreground">이용제한 이력이 없습니다.</td></tr> : (restrictionHistory as any[]).map(history => <tr key={history.id} className="border-t"><td className="px-2 py-2">{fmt(history.appliedAt)}</td><td className="px-2 py-2">{history.status === "banned" ? "영구정지" : "이용정지"}</td><td className="px-2 py-2 font-mono">{history.csCode ?? "-"}</td><td className="px-2 py-2">{history.status === "suspended" ? `${fmt(history.appliedAt)} ~ ${fmt(history.suspendedUntil)}` : "영구 제한"}</td><td className="px-2 py-2">{history.reason ?? "-"}</td></tr>)}</tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 flex flex-wrap justify-start gap-2">
+              <Button variant="outline" className="border border-slate-300" disabled={updateNickMutation.isPending || nickCheckResult === "duplicate" || (!editForm && nickCheckResult === "idle")} onClick={() => { if (editForm) updateNickMutation.mutate({ userId: selectedUser.id, name: editForm.name }); }}>{updateNickMutation.isPending ? "저장 중..." : "저장"}</Button>
+              <Button variant="outline" className="border border-slate-300" onClick={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>이전</Button>
+              <Button className="bg-red-500 text-white hover:bg-red-600" onClick={() => { const now = nowDateTimeLocal(); setSuspendForm({ status: "suspended", reason: "", startDate: now, until: calcExpiry(now, "7"), csCode: generateCsCode(), suspendDays: "7" }); }}>이용 제한</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <SectionHeader title="회원 관리" desc="가입 회원 목록 조회, 정보 수정, 제재 처리" action={
