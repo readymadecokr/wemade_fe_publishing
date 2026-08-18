@@ -47,6 +47,19 @@ export const appRouter = router({
   }),
 
   user: router({
+    profile: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) throw new Error("Not authenticated");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const [profile] = await db
+        .select({ id: users.id, name: users.name, csCode: users.csCode })
+        .from(users)
+        .where(eq(users.id, ctx.user.id))
+        .limit(1);
+
+      return profile ?? null;
+    }),
     checkNickname: publicProcedure
       .input(z.object({ name: z.string().trim().min(2).max(20) }))
       .query(async ({ ctx, input }) => {

@@ -24,6 +24,11 @@ describe("My Page nickname features", () => {
       user: { id: 1 } as never,
     });
 
+    await expect(caller.user.profile()).resolves.toMatchObject({
+      id: 1,
+      name: user!.name,
+    });
+
     await expect(caller.user.checkNickname({ name: user!.name! })).resolves.toEqual({
       isAvailable: true,
     });

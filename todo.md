@@ -301,3 +301,8 @@
 - [x] 구매·사용 내역의 긴 rCoin 헤더를 2줄로 표시
 - [x] 테이블 가로 스크롤바 제거
 - [x] 타입 검사 및 구매·사용 내역 헤더 렌더링 검증
+
+## My Page 계정 식별 정보 순서
+- [x] Account Information을 User ID·Nickname·CS Code 순서로 표시
+- [x] 현재 사용자 CS Code 조회·표시 추가
+- [x] 타입·DOM 테스트로 계정 정보 순서 검증

@@ -25,6 +25,9 @@ vi.mock("@/lib/trpc", () => ({
       },
     },
     user: {
+      profile: {
+        useQuery: () => ({ data: { id: 1, name: "Ryan Kim", csCode: "90000000001" } }),
+      },
       updateNickname: {
         useMutation: () => ({ mutateAsync: mocks.updateNickname }),
       },
@@ -71,6 +74,12 @@ describe("My Page nickname search DOM flow", () => {
 
     expect((await screen.findAllByText("Ryan Kim")).length).toBeGreaterThanOrEqual(2);
     expect(screen.getAllByText("User ID").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText("CS Code").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByRole("columnheader").slice(0, 3).map((heading) => heading.textContent)).toEqual([
+      "User ID",
+      "Nickname",
+      "CS Code",
+    ]);
 
     await user.click(screen.getByRole("button", { name: /change nickname/i }));
     const input = screen.getByPlaceholderText("Enter new nickname");

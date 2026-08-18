@@ -53,6 +53,7 @@ export default function MyPage() {
 
   // DB에서 실제 createdAt 가져오기
   const { data: meData } = trpc.auth.me.useQuery();
+  const { data: profileData } = trpc.user.profile.useQuery(undefined, { enabled: isLoggedIn });
   const trpcUtils = trpc.useUtils();
   const updateNicknameMutation = trpc.user.updateNickname.useMutation();
 
@@ -394,8 +395,9 @@ export default function MyPage() {
                       <Table className="text-xs">
                         <TableHeader>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-transparent">
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Nickname</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">User ID</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Nickname</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">CS Code</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Provider</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Registration Date</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Last Account Activity</TableHead>
@@ -403,8 +405,9 @@ export default function MyPage() {
                         </TableHeader>
                         <TableBody>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5">
+                            <TableCell className="text-black/70 dark:text-white/70 font-mono">{profileData?.id ?? meData?.id ?? "-"}</TableCell>
                             <TableCell className="text-black dark:text-white font-medium">{userNickname}</TableCell>
-                            <TableCell className="text-black/70 dark:text-white/70 font-mono">{meData?.id ?? "-"}</TableCell>
+                            <TableCell className="text-black/70 dark:text-white/70 font-mono">{profileData?.csCode || "-"}</TableCell>
                             <TableCell>
                               {socialProvider === "Google" ? (
                                 <span className="inline-flex items-center gap-1 text-black dark:text-white">
@@ -433,12 +436,16 @@ export default function MyPage() {
                     {/* Mobile Card View */}
                     <div className="md:hidden space-y-3">
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Name</p>
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">User ID</p>
+                        <p className="text-sm text-black dark:text-white font-mono">{profileData?.id ?? meData?.id ?? "-"}</p>
+                      </div>
+                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Nickname</p>
                         <p className="text-sm text-black dark:text-white font-medium">{userNickname}</p>
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">User ID</p>
-                        <p className="text-sm text-black dark:text-white font-mono">{meData?.id ?? "-"}</p>
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">CS Code</p>
+                        <p className="text-sm text-black dark:text-white font-mono">{profileData?.csCode || "-"}</p>
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Provider</p>
