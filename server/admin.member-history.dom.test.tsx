@@ -1,0 +1,64 @@
+// @vitest-environment jsdom
+import React from "react";
+import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { MemberHistoryControls, MemberTransactionTable } from "../client/src/pages/AdminPage";
+
+const charge = {
+  id: 2, type: "charge", gameCode: "ROU", createdAt: new Date("2026-08-12T00:00:00Z"),
+  beforeRuCash: 100_000, beforeBonusCash: 1_000, ruCashDelta: 2_000, bonusCashDelta: 150,
+  afterRuCash: 102_000, afterBonusCash: 1_150, pgName: "PayPal", priceUsd: "5.00", status: "completed",
+};
+const usage = {
+  id: 1, type: "use", gameCode: "ROU", createdAt: new Date("2026-08-11T00:00:00Z"),
+  beforeRuCash: 102_000, beforeBonusCash: 1_150, ruCashDelta: 1_000, bonusCashDelta: 150,
+  afterRuCash: 101_000, afterBonusCash: 1_000, itemName: "Kafra Card", itemQty: 1, itemPriceRuc: 1_000, totalPriceRuc: 1_000, status: "completed",
+};
+
+describe("member detail transaction tables", () => {
+  afterEach(() => cleanup());
+
+  it("renders Payment History columns for the purchase tab", () => {
+    render(<MemberTransactionTable items={[charge]} tab="charge" loading={false} />);
+    expect(screen.getByText("PG")).toBeTruthy();
+    expect(screen.getByText("Price")).toBeTruthy();
+    expect(screen.getByText("rCoin Charged")).toBeTruthy();
+    expect(screen.getByText("PayPal")).toBeTruthy();
+    expect(screen.getByText("2,000")).toBeTruthy();
+  });
+
+  it("renders Points/Item Usage columns for the usage tab", () => {
+    render(<MemberTransactionTable items={[usage]} tab="use" loading={false} />);
+    expect(screen.getByText("Item Name")).toBeTruthy();
+    expect(screen.getByText("Qty")).toBeTruthy();
+    expect(screen.getByText("Total Price")).toBeTruthy();
+    expect(screen.getByText("Kafra Card")).toBeTruthy();
+  });
+
+  it("preserves both transaction types in the all-history table", () => {
+    render(<MemberTransactionTable items={[charge, usage]} tab="all" loading={false} />);
+    expect(screen.getByText("Type")).toBeTruthy();
+    expect(screen.getByText("구매")).toBeTruthy();
+    expect(screen.getByText("사용")).toBeTruthy();
+    expect(screen.getByText("PayPal")).toBeTruthy();
+    expect(screen.getByText("Kafra Card")).toBeTruthy();
+  });
+
+  it("switches tabs and submits the entered transaction search", async () => {
+    const user = userEvent.setup();
+    const submitSearch = vi.fn();
+    function ControlsHarness() {
+      const [tab, setTab] = React.useState<"all" | "charge" | "use">("all");
+      const [search, setSearch] = React.useState("");
+      return <><MemberHistoryControls tab={tab} searchInput={search} onTabChange={setTab} onSearchInputChange={setSearch} onSearch={() => submitSearch(search)} /><output data-testid="selected-tab">{tab}</output></>;
+    }
+    render(<ControlsHarness />);
+
+    await user.click(screen.getByRole("tab", { name: "사용이력" }));
+    expect(screen.getByTestId("selected-tab").textContent).toBe("use");
+    await user.type(screen.getByRole("textbox", { name: "회원 거래 이력 검색" }), "PayPal");
+    await user.click(screen.getByRole("button", { name: "검색" }));
+    expect(submitSearch).toHaveBeenLastCalledWith("PayPal");
+  });
+});

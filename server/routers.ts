@@ -6,6 +6,7 @@ import { getDb } from "./db";
 import { users, memberRestrictionHistories, banners, news, media, products, payments, pointLogs, coupons, couponUses, admins, statsEvents, games } from "../drizzle/schema";
 import { ruCashProducts, ruCashBalances, ruCashTransactions } from "../drizzle/schema";
 import { storagePut } from "./storage";
+import { filterMemberTransactionHistory } from "./memberHistory";
 import { asc, desc, eq, gte, like, lt, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -700,6 +701,22 @@ export const appRouter = router({
         }
 
         return histories;
+      }),
+    transactionHistory: adminKeyProcedure
+      .input(z.object({
+        userId: z.number(),
+        type: z.enum(["all", "charge", "use"]).default("all"),
+        search: z.string().trim().max(100).default(""),
+        page: z.number().min(1).default(1),
+        pageSize: z.number().min(1).max(100).default(10),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        const offset = (input.page - 1) * input.pageSize;
+        const rows = await db.select().from(ruCashTransactions).where(eq(ruCashTransactions.userId, input.userId));
+        const filteredRows = filterMemberTransactionHistory(rows, { type: input.type, search: input.search });
+        return { items: filteredRows.slice(offset, offset + input.pageSize), total: filteredRows.length };
       }),
     updateNickname: adminKeyProcedure
       .input(z.object({ userId: z.number(), name: z.string() }))

@@ -94,3 +94,13 @@ Python Playwright의 실제 680px 뷰포트 검증에서 10,000 rCoin 카드 경
 My Page의 Payment History·Points/Item Usage 화면을 스크린샷 기준으로 복원했다. Purchase History·Usage History 제목은 제거했고, 잔액 카드와 테이블을 `space-y-3` 간격으로 바로 연결했다. jsdom DOM 테스트에서 두 내역 전환, 10건·5건 페이지네이션, 제목 부재, Time 날짜·시간 2줄 표시, `history-layout`의 축소 간격과 테이블 렌더를 검증했다. TypeScript와 Vitest 6건을 통과했다.
 
 어드민 회원 목록에서 사용자를 선택하면 회원 목록을 대체하는 인페이지 회원 상세 화면이 렌더되도록 복원했다. 상세 화면 하단 버튼은 `justify-start`로 왼쪽 정렬하고 저장, 이전, 이용 제한 순서로 배치했다. TypeScript와 Vitest 8건을 통과했으며 자동 테스트에서 목록 선택 진입 구조·상세 페이지 제목·버튼 정렬·순서를 검증했다.
+
+회원 상세의 이용제한 이력 아래에 전체·구매이력·사용이력 탭을 추가했다. 전체는 회원의 charge·use 거래를 `createdAt` 내림차순으로 통합하며, 구매·사용 탭은 각각의 거래 유형만 표시한다. 게임 코드·PG·아이템명 검색과 10건 페이지네이션을 제공한다. TypeScript와 Vitest 10건을 통과했다.
+
+회원 상세의 구매이력은 Payment History와 같은 PG·Price·충전 전후 rCoin·Bonus rCoin 상세 컬럼을, 사용이력은 Points/Item Usage와 같은 Item Name·Qty·Item Price·Total Price·사용 전후 잔액 컬럼을 표시하도록 보완했다. 전체 탭은 두 유형의 상세 정보를 보존한 시간순 통합 표를 제공한다. jsdom에서 세 테이블의 탭별 상세 컬럼·행 렌더링을 검증했고 TypeScript와 Vitest 13건을 통과했다.
+
+회원 상세 거래 이력의 탭 클릭·검색 제출을 jsdom에서 검증하고, 서버에서 실제로 사용하는 이력 필터 함수의 전체/구매/사용 유형 필터·PG명/아이템명/게임 코드 검색·createdAt 내림차순 정렬 결과를 런타임 테스트로 확인했다. TypeScript와 Vitest 16건을 통과했다.
+
+회원 목록에서 실제 회원을 선택해 상세 화면을 렌더하는 jsdom 통합 테스트를 추가했다. 전체 탭에서 구매·사용 행이 함께 보이고, 사용이력 탭 전환 시 Item Name 컬럼·아이템 행이 표시되며, 전체 탭의 PayPal 검색 시 API 입력과 화면 행이 모두 변경되는 것을 확인했다. TypeScript와 Vitest 17건을 통과했다.
+
+adminKeyProcedure를 통과한 `memberAdmin.transactionHistory` tRPC caller를 직접 호출해 전체 이력의 createdAt 내림차순 응답과 PG명·아이템명·게임 코드 검색 결과를 검증했다. 실제 MembersSection jsdom 통합 테스트와 함께 TypeScript 및 Vitest 19건을 통과했다.
