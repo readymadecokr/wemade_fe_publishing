@@ -117,3 +117,5 @@ Shop 충전 화면에서 1,000 rCoin 상품 선택 버튼을 실행해 문서 �
 10,000 rCoin 구매 팝업에서 `+1,500 Bonus rCoin` 표기가 적용됐다. rCoin 제목과 Bonus rCoin 제목은 모두 28px·font-weight 900으로 동일하게 렌더링되며, 우측 USD 가격 버튼과도 겹치지 않는다.
 
 10,000 rCoin 구매 팝업 제목은 22px·`white-space: nowrap`으로 변경됐고, `+1,500 Bonus` 문구가 적용됐다. 텍스트 범위의 모든 렌더링 사각형이 동일한 상단 좌표(298px)를 가져 한 줄로 표시되며, 가격 버튼과도 겹치지 않는다.
+
+Shop 화면과 구매 팝업의 DOM 텍스트에서 한글 문자가 0건인 것을 확인했다. 결제 수단 제목은 `Select Payment Method`로 표시되며, 상품 장식 배지는 `Best Seller`·`Best Value` 영문 자산으로 교체됐다.
