@@ -312,3 +312,8 @@
 - [x] 프론트 My Page 계정 정보를 User ID·Nickname·Provider·Registration Date·Last Activity·Status·CS Code 순서로 변경
 - [x] 어드민 회원 목록 클릭 시 회원 상세 팝업 대신 상세 페이지로 전환
 - [x] 타입·DOM 테스트 및 회원 목록·상세 페이지 전환 검증
+
+## 어드민 회원 상세 하단 버튼
+- [x] 하단 버튼을 왼쪽 정렬로 변경
+- [x] 저장·이전·이용 제한 순서로 변경
+- [x] 타입·DOM 테스트로 버튼 순서·동작 검증

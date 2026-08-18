@@ -149,3 +149,5 @@ jsdom 기반 React DOM 테스트를 추가해 My Page가 렌더된 상태에서 
 My Page Account Information의 데스크톱·모바일 식별 정보 순서를 User ID, Nickname, CS Code로 변경했다. 현재 OAuth 사용자의 `user.profile` API가 ID·닉네임·CS Code를 조회하며, jsdom DOM 테스트에서 테이블 헤더의 첫 3개 순서와 CS Code 표시를 검증했다. TypeScript와 Vitest 12건을 통과했다.
 
 프론트 My Page 계정 정보 순서를 User ID, Nickname, Provider, Registration Date, Last Activity, Status, CS Code로 통일하고 실제 profile API의 Provider·가입일·마지막 활동·상태를 연결했다. 어드민 회원 목록은 User ID, Nickname, Provider, Registration Date, Last Activity, 상태, CS Code, 처리 순서로 재배치했으며, 행 클릭 시 목록을 숨기고 메인 콘텐츠의 회원 상세 화면·회원 목록 복귀 버튼을 표시하도록 전환했다. TypeScript와 Vitest 14건(프론트 jsdom 헤더 순서, 어드민 목록·상세 페이지 구조)을 통과했다.
+
+어드민 회원 상세 하단 버튼을 `justify-start`로 왼쪽 정렬하고 저장, 이전, 이용 제한 순서로 변경했다. TypeScript와 Vitest 15건을 통과했으며, 어드민 레이아웃 테스트에서 정렬 클래스와 세 버튼의 소스 순서를 검증했다.

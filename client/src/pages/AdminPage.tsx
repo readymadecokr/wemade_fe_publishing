@@ -557,7 +557,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               )}
             </div>
           )}
-          <div className="mt-6 flex flex-wrap justify-end gap-2">
+          <div className="mt-6 flex flex-wrap justify-start gap-2">
             <Button
               variant="outline"
               className="border border-slate-300"
@@ -570,6 +570,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
             >
               {updateNickMutation.isPending ? "저장 중..." : "저장"}
             </Button>
+            <Button variant="outline" className="border border-slate-300" onClick={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>이전</Button>
             <Button
               className="bg-red-500 hover:bg-red-600 text-white"
               onClick={() => {
@@ -578,7 +579,6 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                 setSuspendForm({ status: "suspended", reason: "", startDate: now, until: expiry, csCode: generateCsCode(), suspendDays: "7" });
               }}
             >이용 제한</Button>
-            <Button variant="outline" className="border border-slate-300" onClick={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>닫기</Button>
           </div>
             </CardContent>
           </Card>
