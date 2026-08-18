@@ -83,7 +83,7 @@ const COIN_ICONS: Record<number, string> = {
                 <img
                   src={isBestSeller ? "/manus-storage/rcoin-badge-best-seller-clean_432b87e4.png" : "/manus-storage/rcoin-badge-best-value-clean_4ae2a914.png"}
                   alt={isBestSeller ? "최다 판매" : "최고 혜택"}
-                  className="absolute -left-2 -top-3 z-10 h-auto w-20 drop-shadow-md sm:w-24"
+                  className="absolute -left-2 -top-3 z-10 h-7 w-24 object-fill drop-shadow-md sm:h-8 sm:w-28"
                 />
               )}
               <div className="flex h-[104px] items-center justify-center gap-3 px-2 pt-1">
