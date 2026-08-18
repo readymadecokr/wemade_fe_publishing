@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { ChevronLeft } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, ShieldCheck } from "lucide-react";
 import Layout from "@/components/Layout";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 function fmtRuc(n: number): string { return Math.min(n, 9999999).toLocaleString("en-US"); }
 function fmtAbs(n: number): string { return Math.min(Math.abs(n), 9999999).toLocaleString("en-US"); }
@@ -35,6 +36,132 @@ function BalanceSummary({ ruCash, bonusCash }: { ruCash: number; bonusCash: numb
   );
 }
 
+type PaymentMethod = {
+  id: string;
+  name: string;
+  region: string;
+  recommended?: boolean;
+};
+
+const primaryPaymentMethods: PaymentMethod[] = [
+  { id: "goc", name: "GOC Pay", region: "동남아 · 지역 대표", recommended: true },
+  { id: "xsolla", name: "Xsolla", region: "글로벌" },
+  { id: "paypal", name: "PayPal", region: "글로벌" },
+];
+
+const extraPaymentMethods: PaymentMethod[] = [
+  { id: "mycard", name: "MyCard", region: "대만 · 홍콩 · 마카오" },
+  { id: "ebanx", name: "EBANX", region: "남미" },
+  { id: "payermax", name: "PayerMax", region: "글로벌" },
+];
+
+function PurchaseDialog({
+  products,
+  productId,
+  open,
+  onOpenChange,
+  onSelectProduct,
+}: {
+  products: any[];
+  productId: number | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSelectProduct: (id: number) => void;
+}) {
+  const [selectedMethod, setSelectedMethod] = useState("goc");
+  const [showMoreMethods, setShowMoreMethods] = useState(false);
+  const [showPriceList, setShowPriceList] = useState(false);
+  const [captchaChecked, setCaptchaChecked] = useState(false);
+  const product = products.find((item) => item.id === productId);
+  const paymentMethods = showMoreMethods ? [...primaryPaymentMethods, ...extraPaymentMethods] : primaryPaymentMethods;
+
+  useEffect(() => {
+    if (!open) return;
+    setSelectedMethod("goc");
+    setShowMoreMethods(false);
+    setShowPriceList(false);
+    setCaptchaChecked(false);
+  }, [open, productId]);
+
+  if (!product) return null;
+
+  const chooseProduct = (id: number) => {
+    onSelectProduct(id);
+    setShowPriceList(false);
+    setCaptchaChecked(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent showCloseButton className="max-h-[90vh] overflow-y-auto border border-[#d7d3c6] bg-[#fffdf8] p-0 text-slate-800 sm:max-w-[470px]">
+        <DialogTitle className="sr-only">rCoin 결제 수단 선택</DialogTitle>
+        <DialogDescription className="sr-only">선택한 rCoin 상품의 결제 수단과 결제 금액을 확인합니다.</DialogDescription>
+
+        <div className="border-b border-[#ddd7c8] bg-white px-5 pb-4 pt-5">
+          <div className="flex items-start justify-between gap-4 pr-8">
+            <div>
+              <p className="text-lg font-black text-slate-900">
+                {fmtRuc(product.ruCashAmount)} rCoin
+                {product.bonusCashAmount > 0 && <span className="ml-2 text-sm font-bold text-[#54866f]">+{fmtRuc(product.bonusCashAmount)} 보너스</span>}
+              </p>
+              <p className="mt-1 text-xs font-medium text-slate-500">선택 상품 · 즉시 지급</p>
+            </div>
+            <div className="relative shrink-0">
+              <button onClick={() => setShowPriceList((value) => !value)} className="flex items-center gap-1 rounded-md border border-[#d6cfbe] bg-[#fffefb] px-3 py-1.5 text-base font-black text-[#a51f24] shadow-sm">
+                ${Number(product.priceUsd).toFixed(2)} <ChevronDown size={15} className={`transition-transform ${showPriceList ? "rotate-180" : ""}`} />
+              </button>
+              {showPriceList && (
+                <div className="absolute right-0 top-[calc(100%+6px)] z-20 w-36 overflow-hidden rounded-md border border-slate-200 bg-white py-1 shadow-xl">
+                  <p className="px-3 py-1 text-[10px] font-black uppercase tracking-wide text-slate-400">Price List</p>
+                  {products.map((item) => (
+                    <button key={item.id} onClick={() => chooseProduct(item.id)} className={`flex w-full items-center justify-between px-3 py-1.5 text-left text-sm hover:bg-[#fff5df] ${item.id === product.id ? "bg-[#fff7e6] font-black text-[#a51f24]" : "text-slate-700"}`}>
+                      <span>{fmtRuc(item.ruCashAmount)} rCoin</span><span>${Number(item.priceUsd).toFixed(2)}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-3 px-5 py-5">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-black text-slate-800">결제 수단 선택</h3>
+            <span className="text-xs text-slate-400">지역별 이용 가능</span>
+          </div>
+          <div className="space-y-2">
+            {paymentMethods.map((method) => {
+              const isSelected = selectedMethod === method.id;
+              return (
+                <button key={method.id} onClick={() => setSelectedMethod(method.id)} className={`flex w-full items-center justify-between rounded-lg border px-3.5 py-3 text-left transition-colors ${isSelected ? "border-[#54866f] bg-[#edf6f1] ring-1 ring-[#54866f]" : "border-slate-200 bg-white hover:border-[#b9b098]"}`}>
+                  <span className="flex items-center gap-2.5"><span className={`flex h-5 w-5 items-center justify-center rounded-full border ${isSelected ? "border-[#54866f] bg-[#54866f] text-white" : "border-slate-300"}`}>{isSelected && <Check size={13} strokeWidth={3} />}</span><strong>{method.name}</strong></span>
+                  <span className="flex items-center gap-2 text-xs text-slate-500">{method.region}{method.recommended && <span className="rounded-full bg-[#54866f] px-2 py-0.5 font-black text-white">추천</span>}</span>
+                </button>
+              );
+            })}
+          </div>
+          {!showMoreMethods && <button onClick={() => setShowMoreMethods(true)} className="w-full py-1 text-left text-sm font-bold text-[#a51f24] hover:underline">다른 결제 수단 3개 더 보기 <span className="ml-1">▾</span></button>}
+
+          <button onClick={() => setCaptchaChecked((value) => !value)} className={`flex w-full items-center justify-between rounded-lg border px-3.5 py-3 text-left ${captchaChecked ? "border-[#54866f] bg-[#f2faf5]" : "border-slate-200 bg-white"}`}>
+            <span className="flex items-center gap-2.5 text-sm font-medium"><span className={`flex h-5 w-5 items-center justify-center border ${captchaChecked ? "border-[#54866f] bg-[#54866f] text-white" : "border-slate-400"}`}>{captchaChecked && <Check size={14} strokeWidth={3} />}</span>로봇이 아닙니다</span>
+            <span className="flex items-center gap-1 text-xs text-slate-400"><ShieldCheck size={15} /> reCAPTCHA</span>
+          </button>
+        </div>
+
+        <div className="border-t border-[#e4ded0] bg-white px-5 py-4">
+          <div className="flex gap-2">
+            <button onClick={() => onOpenChange(false)} className="rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50">취소</button>
+            <button onClick={() => { if (captchaChecked) window.alert("PG 결제 연동 후 이용 가능합니다."); }} disabled={!captchaChecked} className="flex-1 rounded-lg bg-[#182b40] py-3 text-base font-black text-white shadow-sm transition-colors hover:bg-[#0f2031] disabled:cursor-not-allowed disabled:bg-slate-300">
+              USD ${Number(product.priceUsd).toFixed(2)} 결제하기
+            </button>
+          </div>
+          <p className="mt-2 text-center text-[11px] text-slate-400">결제 완료 후 rCoin이 즉시 지급됩니다.</p>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // ─── 공통 페이지네이션 ────────────────────────────────────────────────────────
 function Pagination({ page, totalPages, setPage }: { page: number; totalPages: number; setPage: (p: number) => void }) {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -54,6 +181,7 @@ function Pagination({ page, totalPages, setPage }: { page: number; totalPages: n
 // ─── 충전 탭 ─────────────────────────────────────────────────────────────────
 function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
   const [selected, setSelected] = useState<number | null>(null);
+  const [purchaseOpen, setPurchaseOpen] = useState(false);
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
   // 상품 id(sortOrder 기준 1~8)별로 각각 다른 코인 아이콘
 const COIN_ICONS: Record<number, string> = {
@@ -83,7 +211,7 @@ const COIN_ICONS: Record<number, string> = {
           const isBestValue = p.id === 8;
           const hasBonus = p.bonusCashAmount > 0;
           return (
-            <button key={p.id} onClick={() => setSelected(p.id)} aria-label={`${fmtRuc(p.ruCashAmount)} rCoin 상품 선택`}
+            <button key={p.id} onClick={() => { setSelected(p.id); setPurchaseOpen(true); }} aria-label={`${fmtRuc(p.ruCashAmount)} rCoin 상품 선택`}
               className={`relative flex h-[174px] flex-col rounded-xl border p-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${isSelected ? "border-[#a51f24] bg-[#fffaf2] ring-1 ring-[#a51f24]" : "border-[#e3dfca] bg-[#faf8f0] hover:border-[#c6ba92]"}`}>
               {(isBestSeller || isBestValue) && (
                 <img
@@ -120,19 +248,13 @@ const COIN_ICONS: Record<number, string> = {
           );
         })}
       </div>
-      {selected && (
-        <div className="mt-6 flex items-center gap-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-          <div className="flex-1 text-sm text-slate-700">
-            {(() => {
-              const p = (products as any[]).find((x: any) => x.id === selected);
-              if (!p) return null;
-              const total = p.ruCashAmount + p.bonusCashAmount;
-              return <span><strong>{p.name}</strong> 선택됨 — 합계 <strong className="text-[#9b2020]">{fmtRuc(total)} rCoin</strong>{p.bonusCashAmount > 0 ? <span className="text-green-600"> ({fmtRuc(p.ruCashAmount)} rCoin + {fmtRuc(p.bonusCashAmount)} Bonus rCoin)</span> : ""}</span>;
-            })()}
-          </div>
-          <button className="px-6 py-2 bg-[#9b2020] hover:bg-[#7a1a1a] text-white font-bold rounded-lg text-sm transition-colors" onClick={() => alert("PG 결제 연동 후 이용 가능합니다.")}>충전하기</button>
-        </div>
-      )}
+      <PurchaseDialog
+        products={products as any[]}
+        productId={selected}
+        open={purchaseOpen}
+        onOpenChange={setPurchaseOpen}
+        onSelectProduct={setSelected}
+      />
     </div>
   );
 }
