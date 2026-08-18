@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import SignInPanel from "@/components/SignInPanel";
 import { TermsContent, PrivacyContent, CaliforniaContent } from "@/components/PolicyContent";
+import { getLoginUrl } from "@/const";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -88,25 +89,7 @@ export default function Login() {
   const handleSocialClick = (provider: "Google" | "Apple" | "Facebook") => {
     setSocialProvider(provider);
     toast.info(`Connecting ${provider} social account...`);
-    
-    // Simulate API call to check if user is already registered
-    setTimeout(() => {
-      // PPTX 기획안 11번 슬라이드: 가입이 안 된 상태라면 가입부터 진행됨, 별도 register 버튼 불필요
-      const isRegistered = localStorage.getItem(`rou_registered_${provider.toLowerCase()}`) === "true";
-      
-      if (isRegistered) {
-        // Log in immediately
-        localStorage.setItem("rou_logged_in", "true");
-        localStorage.setItem("rou_nickname", localStorage.getItem(`rou_nickname_${provider.toLowerCase()}`) || generateRandomNickname());
-        localStorage.setItem("rou_social_provider", provider);
-        toast.success(`Successfully signed in with ${provider}!`);
-        setLocation("/");
-      } else {
-        // Go to social registration flow
-        setStep("register_social");
-        toast.success(`${provider} account verified! Please complete your profile.`);
-      }
-    }, 1000);
+    window.location.href = getLoginUrl();
   };
 
   // Handle Guest Mode — go to Verify & Accept first

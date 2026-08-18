@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 export default function MyPage() {
   const [, setLocation] = useLocation();
@@ -23,6 +24,7 @@ export default function MyPage() {
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [couponCode, setCouponCode] = useState("");
+  const { isAuthenticated, logout } = useAuth();
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
 
   // Generate random nickname (10 characters: letters + numbers)
@@ -45,7 +47,7 @@ export default function MyPage() {
     return nickname.split('').sort(() => Math.random() - 0.5).join('');
   };
 
-  const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
+  const isLoggedIn = isAuthenticated;
 
   // DB에서 실제 createdAt 가져오기
   const { data: meData } = trpc.auth.me.useQuery();
@@ -190,7 +192,8 @@ export default function MyPage() {
     }, 1000);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logout();
     localStorage.removeItem("rou_logged_in");
     localStorage.removeItem("rou_nickname");
     localStorage.removeItem("rou_guest_mode");

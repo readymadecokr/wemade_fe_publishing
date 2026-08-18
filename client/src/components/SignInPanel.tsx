@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Shield, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { getLoginUrl } from "@/const";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -26,21 +27,8 @@ export default function SignInPanel({ onLoginSuccess }: SignInPanelProps) {
 
   const handleSocialClick = (provider: "Google" | "Apple" | "Facebook") => {
     toast.info(`Connecting ${provider} social account...`);
-    setTimeout(() => {
-      const isRegistered = localStorage.getItem(`rou_registered_${provider.toLowerCase()}`) === "true";
-      if (isRegistered) {
-        localStorage.setItem("rou_logged_in", "true");
-        localStorage.setItem("rou_nickname", localStorage.getItem(`rou_nickname_${provider.toLowerCase()}`) || generateRandomNickname());
-        localStorage.setItem("rou_social_provider", provider);
-        toast.success(`Successfully signed in with ${provider}!`);
-        onLoginSuccess?.();
-        window.location.reload();
-      } else {
-        // New user — go to full registration page
-        setLocation("/login");
-        onLoginSuccess?.();
-      }
-    }, 1000);
+    onLoginSuccess?.();
+    window.location.href = getLoginUrl();
   };
 
   const handleGuestMode = () => {

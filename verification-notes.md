@@ -127,3 +127,11 @@ Shop 화면과 구매 팝업의 DOM 텍스트에서 한글 문자가 0건인 것
 최대 너비를 520px로 조정한 뒤 10,000 rCoin 구매 팝업의 실제 가로폭은 494px로 렌더링됐다. dialog의 `scrollWidth`와 `clientWidth`가 모두 518px이고, x축 및 페이지 가로 오버플로가 모두 없어 하단 가로 스크롤바가 생성되지 않는다.
 
 최대 너비를 500px로 조정한 뒤 10,000 rCoin 구매 팝업의 실제 가로폭은 481px로 렌더링됐다. dialog의 `scrollWidth`와 `clientWidth`가 모두 498px이고, x축 및 페이지 가로 오버플로가 모두 없어 하단 가로 스크롤바가 생성되지 않는다.
+
+화면에 표시된 `387XBIYBZ7`은 데이터베이스의 Open ID 식별자가 아니며, 실제 대상은 Open ID `ht9VTLxcZT8zXDqDVqnxmM`(User ID 1)로 확인됐다.
+
+Open ID `ht9VTLxcZT8zXDqDVqnxmM`(User ID 1, Ryan Kim)의 데이터베이스 잔액은 rCoin 1,000,000 및 Bonus rCoin 1,000,000으로 직접 확인했다. 기존 로컬 시뮬레이션 로그인은 서버 세션이 없어 `shop.myBalance`가 0을 반환할 수 있었으므로, 헤더·마이페이지 로그인 상태와 소셜 로그인 동작을 OAuth 세션 기준으로 전환했다. TypeScript와 Vitest 5건을 통과했다.
+
+동일 Open ID의 `Admin Balance Recovery` 이력은 존재하지 않았다. 이는 잔액이 실제로 사라진 것이 아니라, 로컬 로그인 상태가 OAuth 세션 없이 표시되어 `shop.myBalance`가 0을 반환한 화면 표시 문제였다는 점과 일치한다. OAuth User ID 1 컨텍스트에서 `shop.myBalance`는 rCoin 1,000,000 및 Bonus rCoin 1,000,000을 반환하는 통합 Vitest로 검증했다.
+
+브라우저에서 `rou_logged_in=true` 로컬 플래그만 설정한 뒤 화면을 다시 열어도, OAuth 세션이 없으면 헤더는 `Sign In / Sign Up`을 표시하고 `rCoin: 0`을 표시하지 않는 것을 확인했다. 이는 실제 OAuth 로그인 계정만 rCoin 잔액 API를 조회하도록 전환됐음을 검증한다.

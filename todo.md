@@ -278,3 +278,14 @@
 ## Shop 구매 팝업 최대 너비 500px 조정
 - [x] 구매 팝업 최대 가로폭을 500px로 변경
 - [x] 타입 검사 및 가로 오버플로 렌더링 검증
+
+## 계정 rCoin 잔액 복구
+- [x] Open ID ht9VTLxcZT8zXDqDVqnxmM 계정의 현재 rCoin 및 Bonus rCoin 잔액 조회
+- [x] rCoin과 Bonus rCoin을 각각 1,000,000으로 설정
+- [x] Open ID 기준 `shop.myBalance` 응답값 1,000,000 / 1,000,000 검증
+
+## rCoin 잔액 화면 표시 불일치
+- [x] 로컬 시뮬레이션 로그인과 OAuth 세션 불일치 해소
+- [x] OAuth 로그인 계정 기준으로 1,000,000 rCoin 및 Bonus rCoin 표시 연결
+- [x] Home 화면의 로그인 상태를 OAuth 세션으로 통일
+- [x] TypeScript·Vitest 및 OAuth User ID 1 잔액 API 검증
