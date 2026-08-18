@@ -13,6 +13,110 @@ import Layout from "@/components/Layout";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 
+type HistoryKind = "purchase" | "usage";
+
+function fmtHistoryNumber(value: number | null | undefined) {
+  return Number(value ?? 0).toLocaleString();
+}
+
+function fmtHistoryDate(value: Date | string | null | undefined) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const hh = String(date.getHours()).padStart(2, "0");
+  const min = String(date.getMinutes()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}\n${hh}:${min}`;
+}
+
+function MyPageHistory({ kind }: { kind: HistoryKind }) {
+  const [page, setPage] = useState(1);
+  const { data: balance } = trpc.shop.myBalance.useQuery();
+  const { data: purchaseData } = trpc.shop.myChargeHistory.useQuery({ page, pageSize: 10 }, { enabled: kind === "purchase" });
+  const { data: usageData } = trpc.shop.myUseHistory.useQuery({ page, pageSize: 10 }, { enabled: kind === "usage" });
+  const data = kind === "purchase" ? purchaseData : usageData;
+  const items = (data?.items ?? []) as any[];
+  const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / 10));
+  const isPurchase = kind === "purchase";
+  const columns = isPurchase
+    ? ["Game\nCode", "Time", "rCoin\nBefore", "Bonus rCoin\nBefore", "PG", "Price", "rCoin\nCharged", "Bonus rCoin\nCharged", "rCoin\nAfter", "Bonus rCoin\nAfter"]
+    : ["Game\nCode", "Time", "rCoin\nBefore", "Bonus rCoin\nBefore", "Item\nName", "Qty", "Item\nPrice", "Total\nPrice", "rCoin\nAfter", "Bonus rCoin\nAfter"];
+
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">rCoin</p>
+          <p className="mt-1 text-3xl font-black text-[#9b2020]">{fmtHistoryNumber(balance?.ruCash)}</p>
+          <p className="mt-1 text-xs text-slate-400">Paid Currency</p>
+        </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Bonus rCoin</p>
+          <p className="mt-1 text-3xl font-black text-green-700">{fmtHistoryNumber(balance?.bonusCash)}</p>
+          <p className="mt-1 text-xs text-slate-400">Bonus Currency (Used First)</p>
+        </div>
+      </div>
+
+      <h2 className="text-lg font-bold text-slate-900">{isPurchase ? "Purchase History" : "Usage History"}</h2>
+      {!items.length ? (
+        <div className="rounded-2xl border border-slate-200 bg-white py-14 text-center text-sm text-slate-400">No {isPurchase ? "purchase" : "usage"} history available.</div>
+      ) : (
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          <table className="w-full table-fixed border-collapse text-[11px] sm:text-xs">
+            <thead>
+              <tr className="bg-[#9b2020] text-white">
+                {columns.map((column, index) => (
+                  <th key={column} className={`px-1 py-2 text-center font-semibold whitespace-pre-line leading-tight ${index === 1 ? "w-[94px]" : ""} border-r border-red-800 last:border-r-0`}>{column}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((tx) => (
+                <tr key={tx.id} className="border-b border-slate-200 last:border-b-0 hover:bg-slate-50">
+                  <td className="px-1 py-2 text-center font-medium text-[#9b2020]">{tx.gameCode ?? "ROU"}</td>
+                  <td className="w-[94px] px-1 py-2 text-center whitespace-pre-line break-words leading-4 text-slate-700">{fmtHistoryDate(tx.createdAt)}</td>
+                  <td className="px-1 py-2 text-right">{fmtHistoryNumber(tx.beforeRuCash)}</td>
+                  <td className="px-1 py-2 text-right text-green-700">{fmtHistoryNumber(tx.beforeBonusCash)}</td>
+                  {isPurchase ? (
+                    <>
+                      <td className="px-1 py-2 text-center">{tx.pgName ?? "-"}</td>
+                      <td className="px-1 py-2 text-right">{tx.priceUsd ? `$${Number(tx.priceUsd).toFixed(0)}` : "-"}</td>
+                      <td className="px-1 py-2 text-right font-bold text-[#9b2020]">{fmtHistoryNumber(Math.abs(tx.ruCashDelta ?? 0))}</td>
+                      <td className="px-1 py-2 text-right font-bold text-green-700">{fmtHistoryNumber(Math.abs(tx.bonusCashDelta ?? 0))}</td>
+                    </>
+                  ) : (
+                    <>
+                      <td className="px-1 py-2 text-center break-words">{tx.itemName ?? "-"}</td>
+                      <td className="px-1 py-2 text-right">{tx.itemQty ?? 1}</td>
+                      <td className="px-1 py-2 text-right">{fmtHistoryNumber(Math.abs(tx.itemPriceRuc ?? 0))}</td>
+                      <td className="px-1 py-2 text-right font-bold">{fmtHistoryNumber(Math.abs(tx.totalPriceRuc ?? 0))}</td>
+                    </>
+                  )}
+                  <td className="px-1 py-2 text-right font-bold">{fmtHistoryNumber(tx.afterRuCash)}</td>
+                  <td className="px-1 py-2 text-right font-bold text-green-700">{fmtHistoryNumber(tx.afterBonusCash)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex flex-wrap justify-center gap-1">
+          <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(1)}>«</Button>
+          <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>‹</Button>
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map((number) => (
+            <Button key={number} size="sm" variant={page === number ? "default" : "outline"} onClick={() => setPage(number)}>{number}</Button>
+          ))}
+          <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage((current) => Math.min(totalPages, current + 1))}>›</Button>
+          <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(totalPages)}>»</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function MyPage() {
   const [, setLocation] = useLocation();
   const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
@@ -26,6 +130,7 @@ export default function MyPage() {
   const [checkedNickname, setCheckedNickname] = useState("");
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [couponCode, setCouponCode] = useState("");
+  const [activeSection, setActiveSection] = useState<"account" | HistoryKind>("account");
   const { isAuthenticated, logout } = useAuth();
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
 
@@ -305,11 +410,11 @@ export default function MyPage() {
 
                 {/* Navigation Menu */}
                 <nav className="space-y-2">
-                  <button onClick={() => toast.info("Payment history feature coming soon.")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-sm font-medium">
+                  <button onClick={() => setActiveSection("purchase")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "purchase" ? "bg-[#9b2020] text-white" : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"}`}>
                     <CreditCard size={16} className="text-black dark:text-white" />
                     <span>Payment History</span>
                   </button>
-                  <button onClick={() => toast.info("Usage history feature coming soon.")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-sm font-medium">
+                  <button onClick={() => setActiveSection("usage")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "usage" ? "bg-[#9b2020] text-white" : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"}`}>
                     <Clock size={16} className="text-black dark:text-white" />
                     <span>Points/Item Usage</span>
                   </button>
@@ -343,7 +448,11 @@ export default function MyPage() {
 
             {/* Right Content Area */}
             <div className="lg:col-span-3">
-              {showWithdrawDialog ? (
+              {activeSection === "purchase" ? (
+                <MyPageHistory key="purchase" kind="purchase" />
+              ) : activeSection === "usage" ? (
+                <MyPageHistory key="usage" kind="usage" />
+              ) : showWithdrawDialog ? (
                 // Withdrawal Dialog
                 <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50">
                     <h3 className="text-lg font-bold text-black dark:text-white mb-4 flex items-center gap-2">

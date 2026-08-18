@@ -317,3 +317,10 @@
 - [x] 하단 버튼을 왼쪽 정렬로 변경
 - [x] 저장·이전·이용 제한 순서로 변경
 - [x] 타입·DOM 테스트로 버튼 순서·동작 검증
+
+## My Page 내역 이관 및 Shop 탭 정리
+- [x] Payment History에 Purchase History 10건 페이지네이션 추가
+- [x] Points/Item Usage에 Usage History 10건 페이지네이션 추가
+- [x] Shop Purchase History·Usage History 탭 제거
+- [x] 내역 테이블 Time 열 오버플로 보정
+- [x] 타입·DOM 테스트 및 페이지네이션·Time 열 검증

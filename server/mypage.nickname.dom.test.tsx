@@ -15,6 +15,23 @@ const mocks = vi.hoisted(() => ({
     error: vi.fn(),
     info: vi.fn(),
   },
+  historyItems: (page: number, kind: "purchase" | "usage") => Array.from({ length: page === 1 ? 10 : 5 }, (_, index) => ({
+    id: `${kind}-${page}-${index + 1}`,
+    gameCode: "ROU",
+    createdAt: new Date(`2026-08-${String(12 - index).padStart(2, "0")}T00:00:00Z`),
+    beforeRuCash: 100_000,
+    beforeBonusCash: 1_000,
+    afterRuCash: 102_000,
+    afterBonusCash: 1_150,
+    pgName: "PayPal",
+    priceUsd: 5,
+    ruCashDelta: 2_000,
+    bonusCashDelta: 150,
+    itemName: "Kafra Card",
+    itemQty: 1,
+    itemPriceRuc: 1_000,
+    totalPriceRuc: 1_000,
+  })),
 }));
 
 vi.mock("@/lib/trpc", () => ({
@@ -43,6 +60,17 @@ vi.mock("@/lib/trpc", () => ({
       },
       withdraw: {
         useMutation: () => ({ mutateAsync: vi.fn() }),
+      },
+    },
+    shop: {
+      myBalance: {
+        useQuery: () => ({ data: { ruCash: 1_000_000, bonusCash: 1_000_000 } }),
+      },
+      myChargeHistory: {
+        useQuery: ({ page }: { page: number }) => ({ data: { items: mocks.historyItems(page, "purchase"), total: 15 } }),
+      },
+      myUseHistory: {
+        useQuery: ({ page }: { page: number }) => ({ data: { items: mocks.historyItems(page, "usage"), total: 15 } }),
       },
     },
     useUtils: () => ({
@@ -113,5 +141,22 @@ describe("My Page nickname search DOM flow", () => {
     await user.click(search);
     expect(await screen.findByText("This nickname is already in use.")).toBeTruthy();
     expect(save.hasAttribute("disabled")).toBe(true);
+  });
+
+  it("shows paginated purchase and usage histories with wrapped Time values", async () => {
+    const user = userEvent.setup();
+    render(<MyPage />);
+
+    await user.click(screen.getAllByRole("button", { name: "Payment History" }).at(-1)!);
+    expect(await screen.findByRole("heading", { name: "Purchase History" })).toBeTruthy();
+    expect(screen.getAllByText("ROU")).toHaveLength(10);
+    expect(screen.getByText("2026-08-12", { exact: false }).textContent).toContain("00:00");
+
+    await user.click(screen.getByRole("button", { name: "2" }));
+    await waitFor(() => expect(screen.getAllByText("ROU")).toHaveLength(5));
+
+    await user.click(screen.getAllByRole("button", { name: "Points/Item Usage" }).at(-1)!);
+    expect(await screen.findByRole("heading", { name: "Usage History" })).toBeTruthy();
+    expect(screen.getAllByText("Kafra Card")).toHaveLength(10);
   });
 });

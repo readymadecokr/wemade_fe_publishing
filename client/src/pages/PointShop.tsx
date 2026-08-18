@@ -348,15 +348,13 @@ function UseHistoryTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: numbe
 // ─── Main Shop page ───────────────────────────────────────────────────────────
 export default function PointShop() {
   const [, setLocation] = useLocation();
-  const [tab, setTab] = useState<"charge" | "charge-history" | "use-history">("charge");
+  const [tab, setTab] = useState<"charge">("charge");
   const { user } = useAuth();
   const { data: balance } = trpc.shop.myBalance.useQuery(undefined, { enabled: !!user });
   const ruCash = balance?.ruCash ?? 0;
   const bonusCash = balance?.bonusCash ?? 0;
   const menus: { key: typeof tab; label: string }[] = [
     { key: "charge", label: "Top Up" },
-    { key: "charge-history", label: "Purchase History" },
-    { key: "use-history", label: "Usage History" },
   ];
   return (
     <Layout>
@@ -388,8 +386,6 @@ export default function PointShop() {
               ))}
             </div>
             {tab === "charge" && <ChargeTab ruCash={ruCash} bonusCash={bonusCash} />}
-            {tab === "charge-history" && <ChargeHistoryTab ruCash={ruCash} bonusCash={bonusCash} />}
-            {tab === "use-history" && <UseHistoryTab ruCash={ruCash} bonusCash={bonusCash} />}
           </main>
         </div>
         <div className="mt-10 border-t border-slate-200 pt-5 md:ml-[200px]">

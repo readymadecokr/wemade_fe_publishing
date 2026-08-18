@@ -151,3 +151,5 @@ My Page Account Information의 데스크톱·모바일 식별 정보 순서를 U
 프론트 My Page 계정 정보 순서를 User ID, Nickname, Provider, Registration Date, Last Activity, Status, CS Code로 통일하고 실제 profile API의 Provider·가입일·마지막 활동·상태를 연결했다. 어드민 회원 목록은 User ID, Nickname, Provider, Registration Date, Last Activity, 상태, CS Code, 처리 순서로 재배치했으며, 행 클릭 시 목록을 숨기고 메인 콘텐츠의 회원 상세 화면·회원 목록 복귀 버튼을 표시하도록 전환했다. TypeScript와 Vitest 14건(프론트 jsdom 헤더 순서, 어드민 목록·상세 페이지 구조)을 통과했다.
 
 어드민 회원 상세 하단 버튼을 `justify-start`로 왼쪽 정렬하고 저장, 이전, 이용 제한 순서로 변경했다. TypeScript와 Vitest 15건을 통과했으며, 어드민 레이아웃 테스트에서 정렬 클래스와 세 버튼의 소스 순서를 검증했다.
+
+My Page의 Payment History와 Points/Item Usage를 각각 Purchase History·Usage History 화면으로 연결했다. 두 화면은 기존 사용자별 Shop 이력 API를 10건 단위로 조회하며, 10건 초과 시 페이지 이동 버튼을 제공한다. Time 값은 날짜·시간을 두 줄로 렌더해 열 경계를 넘지 않도록 보정했다. Shop은 Top Up 메뉴만 유지하고 Purchase History·Usage History 탭을 제거했다. jsdom에서 Purchase·Usage 전환, 10건/5건 페이지네이션, Time 줄바꿈을 검증했으며 TypeScript와 Vitest 18건을 통과했다.
