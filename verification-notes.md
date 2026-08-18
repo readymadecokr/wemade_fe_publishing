@@ -121,3 +121,5 @@ Shop 충전 화면에서 1,000 rCoin 상품 선택 버튼을 실행해 문서 �
 Shop 화면과 구매 팝업의 DOM 텍스트에서 한글 문자가 0건인 것을 확인했다. 결제 수단 제목은 `Select Payment Method`로 표시되며, 상품 장식 배지는 `Best Seller`·`Best Value` 영문 자산으로 교체됐다.
 
 500 rCoin 구매 팝업에서 하단 `Cancel` 버튼이 제거됐고, `Pay USD` 결제 버튼이 팝업 하단 콘텐츠 폭 전체를 차지하는 것을 확인했다. 우측 상단 X 버튼을 실제로 클릭한 뒤 450ms 후 DOM을 재확인하여 `role="dialog"` 요소가 0건인 것을 확인했다.
+
+10,000 rCoin 구매 팝업의 실제 가로폭은 513px로 확장됐다. dialog의 `scrollWidth`와 `clientWidth`가 모두 538px이고 `overflow-x: hidden`이며, 페이지 자체의 가로 오버플로도 없어 하단 가로 스크롤바가 생성되지 않는다.
