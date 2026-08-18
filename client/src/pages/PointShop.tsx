@@ -100,11 +100,10 @@ function PurchaseDialog({
         <div className="border-b border-[#ddd7c8] bg-white px-5 pb-4 pt-5">
           <div className="flex items-start justify-between gap-4 pr-8">
             <div>
-              <p className="text-lg font-black text-slate-900">
+              <p className="text-2xl font-black tracking-tight text-slate-900 sm:text-[28px]">
                 {fmtRuc(product.ruCashAmount)} rCoin
                 {product.bonusCashAmount > 0 && <span className="ml-2 text-sm font-bold text-[#54866f]">+{fmtRuc(product.bonusCashAmount)} 보너스</span>}
               </p>
-              <p className="mt-1 text-xs font-medium text-slate-500">선택 상품 · 즉시 지급</p>
             </div>
             <div className="relative shrink-0">
               <button onClick={() => setShowPriceList((value) => !value)} className="flex items-center gap-1 rounded-md border border-[#d6cfbe] bg-[#fffefb] px-3 py-1.5 text-base font-black text-[#a51f24] shadow-sm">
@@ -125,9 +124,8 @@ function PurchaseDialog({
         </div>
 
         <div className="space-y-3 px-5 py-5">
-          <div className="flex items-center justify-between">
+          <div>
             <h3 className="text-base font-black text-slate-800">결제 수단 선택</h3>
-            <span className="text-xs text-slate-400">지역별 이용 가능</span>
           </div>
           <div className="space-y-2">
             {paymentMethods.map((method) => {
@@ -155,7 +153,6 @@ function PurchaseDialog({
               USD ${Number(product.priceUsd).toFixed(2)} 결제하기
             </button>
           </div>
-          <p className="mt-2 text-center text-[11px] text-slate-400">결제 완료 후 rCoin이 즉시 지급됩니다.</p>
         </div>
       </DialogContent>
     </Dialog>
