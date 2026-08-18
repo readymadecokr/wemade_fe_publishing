@@ -2,7 +2,7 @@
 import React from "react";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { MemberHistoryControls, MemberTransactionTable } from "../client/src/pages/AdminPage";
 
 const charge = {
@@ -17,7 +17,14 @@ const usage = {
 };
 
 describe("member detail transaction tables", () => {
-  afterEach(() => cleanup());
+afterEach(() => cleanup());
+
+beforeAll(() => {
+  Object.defineProperty(HTMLElement.prototype, "hasPointerCapture", { configurable: true, value: () => false });
+  Object.defineProperty(HTMLElement.prototype, "setPointerCapture", { configurable: true, value: () => {} });
+  Object.defineProperty(HTMLElement.prototype, "releasePointerCapture", { configurable: true, value: () => {} });
+  Object.defineProperty(HTMLElement.prototype, "scrollIntoView", { configurable: true, value: () => {} });
+});
 
   it("renders Payment History columns for the purchase tab", () => {
     render(<MemberTransactionTable items={[charge]} tab="charge" loading={false} />);
@@ -68,5 +75,7 @@ describe("member detail transaction tables", () => {
     await user.type(screen.getByLabelText("거래 이력 시작일"), "2026-08-10");
     expect(screen.getByTestId("filter-state").textContent).toContain("2026-08-10");
     expect(screen.getByRole("combobox", { name: "거래 이력 페이지 크기" }).textContent).toContain("20개씩");
+    await user.click(screen.getByRole("combobox", { name: "거래 이력 페이지 크기" }));
+    expect(await screen.findByRole("option", { name: "100개씩" })).toBeTruthy();
   });
 });

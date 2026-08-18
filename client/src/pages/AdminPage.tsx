@@ -171,7 +171,7 @@ export function MemberHistoryControls({ tab, searchInput, startDate, endDate, pa
         </div>
         <Select value={String(pageSize)} onValueChange={value => onPageSizeChange(Number(value))}>
           <SelectTrigger className="h-8 w-28 text-sm lg:ml-auto" aria-label="거래 이력 페이지 크기"><SelectValue /></SelectTrigger>
-          <SelectContent>{[10, 20, 50].map(value => <SelectItem key={value} value={String(value)}>{value}개씩</SelectItem>)}</SelectContent>
+          <SelectContent>{[10, 20, 50, 100].map(value => <SelectItem key={value} value={String(value)}>{value}개씩</SelectItem>)}</SelectContent>
         </Select>
       </div>
     </div>
