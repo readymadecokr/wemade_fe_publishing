@@ -136,11 +136,17 @@ function Pagination({ page, total, pageSize, onChange }: { page: number; total: 
   );
 }
 
-export function MemberHistoryControls({ tab, searchInput, onTabChange, onSearchInputChange, onSearch }: {
+export function MemberHistoryControls({ tab, searchInput, startDate, endDate, pageSize, onTabChange, onSearchInputChange, onStartDateChange, onEndDateChange, onPageSizeChange, onSearch }: {
   tab: "all" | "charge" | "use";
   searchInput: string;
+  startDate: string;
+  endDate: string;
+  pageSize: number;
   onTabChange: (tab: "all" | "charge" | "use") => void;
   onSearchInputChange: (value: string) => void;
+  onStartDateChange: (value: string) => void;
+  onEndDateChange: (value: string) => void;
+  onPageSizeChange: (value: number) => void;
   onSearch: () => void;
 }) {
   const tabs = [
@@ -149,13 +155,24 @@ export function MemberHistoryControls({ tab, searchInput, onTabChange, onSearchI
     { key: "use" as const, label: "사용이력" },
   ];
   return (
-    <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mb-3">
       <div className="flex border-b border-slate-200 dark:border-slate-700" role="tablist" aria-label="회원 거래 이력">
         {tabs.map(item => <button key={item.key} type="button" role="tab" aria-selected={tab === item.key} onClick={() => onTabChange(item.key)} className={`relative px-4 py-2 text-sm font-semibold ${tab === item.key ? "text-blue-600" : "text-slate-500 hover:text-slate-800"}`}>{item.label}{tab === item.key && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-blue-600" />}</button>)}
       </div>
-      <div className="flex w-full gap-2 sm:w-80">
-        <Input value={searchInput} onChange={e => onSearchInputChange(e.target.value)} onKeyDown={e => { if (e.key === "Enter") onSearch(); }} placeholder="게임 코드, PG, 아이템명 검색" className="h-8 text-sm" aria-label="회원 거래 이력 검색" />
-        <Button size="sm" className="h-8 shrink-0" onClick={onSearch}>검색</Button>
+      <div className="mt-3 flex flex-col gap-2 lg:flex-row lg:items-center">
+        <div className="flex flex-wrap items-center gap-2">
+          <Input type="date" value={startDate} onChange={e => onStartDateChange(e.target.value)} className="h-8 w-36 text-sm" aria-label="거래 이력 시작일" />
+          <span className="text-slate-400">~</span>
+          <Input type="date" value={endDate} onChange={e => onEndDateChange(e.target.value)} className="h-8 w-36 text-sm" aria-label="거래 이력 종료일" />
+        </div>
+        <div className="flex w-full gap-2 lg:w-80">
+          <Input value={searchInput} onChange={e => onSearchInputChange(e.target.value)} onKeyDown={e => { if (e.key === "Enter") onSearch(); }} placeholder="게임 코드, PG, 아이템명 검색" className="h-8 text-sm" aria-label="회원 거래 이력 검색" />
+          <Button size="sm" className="h-8 shrink-0" onClick={onSearch}>검색</Button>
+        </div>
+        <Select value={String(pageSize)} onValueChange={value => onPageSizeChange(Number(value))}>
+          <SelectTrigger className="h-8 w-28 text-sm lg:ml-auto" aria-label="거래 이력 페이지 크기"><SelectValue /></SelectTrigger>
+          <SelectContent>{[10, 20, 50].map(value => <SelectItem key={value} value={String(value)}>{value}개씩</SelectItem>)}</SelectContent>
+        </Select>
       </div>
     </div>
   );
@@ -238,6 +255,9 @@ export function MembersSection({ adminClient }: { adminClient: ReturnType<typeof
   const [memberHistorySearchInput, setMemberHistorySearchInput] = useState("");
   const [memberHistorySearch, setMemberHistorySearch] = useState("");
   const [memberHistoryPage, setMemberHistoryPage] = useState(1);
+  const [memberHistoryPageSize, setMemberHistoryPageSize] = useState(20);
+  const [memberHistoryStartDate, setMemberHistoryStartDate] = useState("");
+  const [memberHistoryEndDate, setMemberHistoryEndDate] = useState("");
   const [suspendForm, setSuspendForm] = useState<{ status: string; reason: string; startDate: string; until: string; csCode: string; suspendDays: string } | null>(null);
   const [showSuspendPreview, setShowSuspendPreview] = useState(false);
   const [memberRestrictionPreview, setMemberRestrictionPreview] = useState<{
@@ -268,8 +288,8 @@ export function MembersSection({ adminClient }: { adminClient: ReturnType<typeof
     enabled: !!adminClient && !!selectedUser,
   });
   const { data: memberTransactionHistory, isLoading: memberTransactionHistoryLoading } = useQuery({
-    queryKey: ["admin-member-transaction-history", selectedUser?.id, memberHistoryTab, memberHistorySearch, memberHistoryPage],
-    queryFn: () => adminClient!.memberAdmin.transactionHistory.query({ userId: selectedUser!.id, type: memberHistoryTab, search: memberHistorySearch, page: memberHistoryPage, pageSize: 10 }),
+    queryKey: ["admin-member-transaction-history", selectedUser?.id, memberHistoryTab, memberHistorySearch, memberHistoryStartDate, memberHistoryEndDate, memberHistoryPage, memberHistoryPageSize],
+    queryFn: () => adminClient!.memberAdmin.transactionHistory.query({ userId: selectedUser!.id, type: memberHistoryTab, search: memberHistorySearch, startDate: memberHistoryStartDate || undefined, endDate: memberHistoryEndDate || undefined, page: memberHistoryPage, pageSize: memberHistoryPageSize }),
     enabled: !!adminClient && !!selectedUser,
   });
   const latestSuspensionHistory = (restrictionHistory as any[]).find(item => item.status === "suspended");
@@ -403,9 +423,9 @@ export function MembersSection({ adminClient }: { adminClient: ReturnType<typeof
                 </div>
               </div>
               <div className="py-4">
-                <MemberHistoryControls tab={memberHistoryTab} searchInput={memberHistorySearchInput} onTabChange={nextTab => { setMemberHistoryTab(nextTab); setMemberHistoryPage(1); }} onSearchInputChange={setMemberHistorySearchInput} onSearch={() => { setMemberHistorySearch(memberHistorySearchInput); setMemberHistoryPage(1); }} />
+                <MemberHistoryControls tab={memberHistoryTab} searchInput={memberHistorySearchInput} startDate={memberHistoryStartDate} endDate={memberHistoryEndDate} pageSize={memberHistoryPageSize} onTabChange={nextTab => { setMemberHistoryTab(nextTab); setMemberHistoryPage(1); }} onSearchInputChange={setMemberHistorySearchInput} onStartDateChange={value => { setMemberHistoryStartDate(value); setMemberHistoryPage(1); }} onEndDateChange={value => { setMemberHistoryEndDate(value); setMemberHistoryPage(1); }} onPageSizeChange={value => { setMemberHistoryPageSize(value); setMemberHistoryPage(1); }} onSearch={() => { setMemberHistorySearch(memberHistorySearchInput); setMemberHistoryPage(1); }} />
                 <MemberTransactionTable items={memberTransactionHistory?.items ?? []} tab={memberHistoryTab} loading={memberTransactionHistoryLoading} />
-                <Pagination page={memberHistoryPage} total={memberTransactionHistory?.total ?? 0} pageSize={10} onChange={setMemberHistoryPage} />
+                <Pagination page={memberHistoryPage} total={memberTransactionHistory?.total ?? 0} pageSize={memberHistoryPageSize} onChange={setMemberHistoryPage} />
               </div>
             </div>
             <div className="mt-6 flex flex-wrap justify-start gap-2">

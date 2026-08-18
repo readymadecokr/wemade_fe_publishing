@@ -39,7 +39,7 @@ describe("admin member detail transaction history integration", () => {
     await screen.findByText("회원 상세");
     await screen.findByText("PayPal");
     expect(screen.getByText("Kafra Card")).toBeTruthy();
-    expect(transactionHistory).toHaveBeenLastCalledWith(expect.objectContaining({ type: "all", search: "" }));
+    expect(transactionHistory).toHaveBeenLastCalledWith(expect.objectContaining({ type: "all", search: "", pageSize: 20 }));
 
     await user.click(screen.getByRole("tab", { name: "사용이력" }));
     await screen.findByText("Item Name");

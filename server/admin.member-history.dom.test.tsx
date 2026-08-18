@@ -53,7 +53,10 @@ describe("member detail transaction tables", () => {
     function ControlsHarness() {
       const [tab, setTab] = React.useState<"all" | "charge" | "use">("all");
       const [search, setSearch] = React.useState("");
-      return <><MemberHistoryControls tab={tab} searchInput={search} onTabChange={setTab} onSearchInputChange={setSearch} onSearch={() => submitSearch(search)} /><output data-testid="selected-tab">{tab}</output></>;
+      const [startDate, setStartDate] = React.useState("");
+      const [endDate, setEndDate] = React.useState("");
+      const [pageSize, setPageSize] = React.useState(20);
+      return <><MemberHistoryControls tab={tab} searchInput={search} startDate={startDate} endDate={endDate} pageSize={pageSize} onTabChange={setTab} onSearchInputChange={setSearch} onStartDateChange={setStartDate} onEndDateChange={setEndDate} onPageSizeChange={setPageSize} onSearch={() => submitSearch(search)} /><output data-testid="selected-tab">{tab}</output><output data-testid="filter-state">{startDate}|{endDate}|{pageSize}</output></>;
     }
     render(<ControlsHarness />);
 
@@ -62,5 +65,8 @@ describe("member detail transaction tables", () => {
     await user.type(screen.getByRole("textbox", { name: "회원 거래 이력 검색" }), "PayPal");
     await user.click(screen.getByRole("button", { name: "검색" }));
     expect(submitSearch).toHaveBeenLastCalledWith("PayPal");
+    await user.type(screen.getByLabelText("거래 이력 시작일"), "2026-08-10");
+    expect(screen.getByTestId("filter-state").textContent).toContain("2026-08-10");
+    expect(screen.getByRole("combobox", { name: "거래 이력 페이지 크기" }).textContent).toContain("20개씩");
   });
 });

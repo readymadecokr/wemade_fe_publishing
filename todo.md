@@ -241,3 +241,9 @@
 - [x] 전체 이력 헤더를 Game Code·Time·rCoin Before·Bonus rCoin Before·PG·Price·rCoin Charged·Bonus rCoin Charged·rCoin After·Bonus rCoin After 순서로 변경
 - [x] Bonus Δ를 Bonus rCoin Charged로 변경
 - [x] 타입·DOM 테스트로 전체 이력 헤더 순서 검증
+
+## 어드민 회원 상세 거래 이력 필터·페이지 크기
+- [x] 전체·구매·사용 이력에 기간 검색 API 필터 추가
+- [x] 이력 탭 아래 시작일·종료일·검색·20개씩 보기 UI 추가
+- [x] 페이지 크기·기간·검색 변경 시 페이지네이션 연동
+- [x] 타입·DOM·API 테스트로 필터·페이지 크기 동작 검증

@@ -707,6 +707,8 @@ export const appRouter = router({
         userId: z.number(),
         type: z.enum(["all", "charge", "use"]).default("all"),
         search: z.string().trim().max(100).default(""),
+        startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+        endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
         page: z.number().min(1).default(1),
         pageSize: z.number().min(1).max(100).default(10),
       }))
@@ -715,7 +717,7 @@ export const appRouter = router({
         if (!db) throw new Error("DB unavailable");
         const offset = (input.page - 1) * input.pageSize;
         const rows = await db.select().from(ruCashTransactions).where(eq(ruCashTransactions.userId, input.userId));
-        const filteredRows = filterMemberTransactionHistory(rows, { type: input.type, search: input.search });
+        const filteredRows = filterMemberTransactionHistory(rows, { type: input.type, search: input.search, startDate: input.startDate, endDate: input.endDate });
         return { items: filteredRows.slice(offset, offset + input.pageSize), total: filteredRows.length };
       }),
     updateNickname: adminKeyProcedure

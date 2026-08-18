@@ -106,3 +106,5 @@ My Page의 Payment History·Points/Item Usage 화면을 스크린샷 기준으�
 adminKeyProcedure를 통과한 `memberAdmin.transactionHistory` tRPC caller를 직접 호출해 전체 이력의 createdAt 내림차순 응답과 PG명·아이템명·게임 코드 검색 결과를 검증했다. 실제 MembersSection jsdom 통합 테스트와 함께 TypeScript 및 Vitest 19건을 통과했다.
 
 전체 이력 탭의 헤더를 Game Code, Time, rCoin Before, Bonus rCoin Before, PG, Price, rCoin Charged, Bonus rCoin Charged, rCoin After, Bonus rCoin After 순서로 정렬했다. jsdom에서 10개 헤더의 순서와 Bonus Δ 표기 부재를 검증했으며 TypeScript와 Vitest 19건을 통과했다.
+
+회원 상세 거래 이력 탭 아래에 시작일·종료일, 게임 코드·PG·아이템명 검색, 10/20/50개씩 보기 제어를 배치했다. 기본 페이지 크기는 20개이며, 탭·기간·검색·페이지 크기 변경 시 첫 페이지로 돌아간다. 직접 tRPC 프로시저 테스트로 선택 기간의 포함 범위 필터를 확인했고 TypeScript와 Vitest 20건을 통과했다.

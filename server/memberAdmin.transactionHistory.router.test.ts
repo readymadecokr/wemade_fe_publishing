@@ -41,4 +41,12 @@ describe("memberAdmin.transactionHistory router", () => {
     expect(itemResult.items.map(item => item.itemName)).toEqual(["Kafra Card"]);
     expect(gameResult.items.map(item => item.gameCode)).toEqual(["ABC"]);
   });
+
+  it("filters the procedure response by the inclusive selected date range", async () => {
+    mockGetDb.mockResolvedValue(mockDbWithRows(rows));
+    const result = await createAdminCaller().memberAdmin.transactionHistory({ userId: 77, type: "all", search: "", startDate: "2026-08-11", endDate: "2026-08-11", page: 1, pageSize: 20 });
+
+    expect(result.items.map(item => item.id)).toEqual([3]);
+    expect(result.total).toBe(1);
+  });
 });
