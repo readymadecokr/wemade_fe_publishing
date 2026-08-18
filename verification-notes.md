@@ -125,3 +125,5 @@ Shop 화면과 구매 팝업의 DOM 텍스트에서 한글 문자가 0건인 것
 10,000 rCoin 구매 팝업의 실제 가로폭은 513px로 확장됐다. dialog의 `scrollWidth`와 `clientWidth`가 모두 538px이고 `overflow-x: hidden`이며, 페이지 자체의 가로 오버플로도 없어 하단 가로 스크롤바가 생성되지 않는다.
 
 최대 너비를 520px로 조정한 뒤 10,000 rCoin 구매 팝업의 실제 가로폭은 494px로 렌더링됐다. dialog의 `scrollWidth`와 `clientWidth`가 모두 518px이고, x축 및 페이지 가로 오버플로가 모두 없어 하단 가로 스크롤바가 생성되지 않는다.
+
+최대 너비를 500px로 조정한 뒤 10,000 rCoin 구매 팝업의 실제 가로폭은 481px로 렌더링됐다. dialog의 `scrollWidth`와 `clientWidth`가 모두 498px이고, x축 및 페이지 가로 오버플로가 모두 없어 하단 가로 스크롤바가 생성되지 않는다.
