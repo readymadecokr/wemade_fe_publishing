@@ -11,91 +11,81 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import { trpc } from "@/lib/trpc";
-import { useAuth } from "@/_core/hooks/useAuth";
 
-type HistoryKind = "purchase" | "usage";
+type HistorySection = "purchase" | "usage";
 
-function fmtHistoryNumber(value: number | null | undefined) {
-  return Number(value ?? 0).toLocaleString();
-}
+const formatHistoryNumber = (value: number | null | undefined) => Number(value ?? 0).toLocaleString();
 
-function fmtHistoryDate(value: Date | string | null | undefined) {
-  if (!value) return "-";
+function HistoryTime({ value }: { value: Date | string | null | undefined }) {
+  if (!value) return <>-</>;
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "-";
+  if (Number.isNaN(date.getTime())) return <>-</>;
   const yyyy = date.getFullYear();
   const mm = String(date.getMonth() + 1).padStart(2, "0");
   const dd = String(date.getDate()).padStart(2, "0");
   const hh = String(date.getHours()).padStart(2, "0");
   const min = String(date.getMinutes()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}\n${hh}:${min}`;
+  return <><span>{yyyy}-{mm}-{dd}</span><br /><span>{hh}:{min}</span></>;
 }
 
-function MyPageHistory({ kind }: { kind: HistoryKind }) {
+function MyPageHistory({ section }: { section: HistorySection }) {
   const [page, setPage] = useState(1);
   const { data: balance } = trpc.shop.myBalance.useQuery();
-  const { data: purchaseData } = trpc.shop.myChargeHistory.useQuery({ page, pageSize: 10 }, { enabled: kind === "purchase" });
-  const { data: usageData } = trpc.shop.myUseHistory.useQuery({ page, pageSize: 10 }, { enabled: kind === "usage" });
-  const data = kind === "purchase" ? purchaseData : usageData;
+  const { data: purchaseHistory } = trpc.shop.myChargeHistory.useQuery({ page, pageSize: 10 }, { enabled: section === "purchase" });
+  const { data: usageHistory } = trpc.shop.myUseHistory.useQuery({ page, pageSize: 10 }, { enabled: section === "usage" });
+  const data = section === "purchase" ? purchaseHistory : usageHistory;
   const items = (data?.items ?? []) as any[];
   const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / 10));
-  const isPurchase = kind === "purchase";
-  const columns = isPurchase
+  const isPurchase = section === "purchase";
+  const headers = isPurchase
     ? ["Game\nCode", "Time", "rCoin\nBefore", "Bonus rCoin\nBefore", "PG", "Price", "rCoin\nCharged", "Bonus rCoin\nCharged", "rCoin\nAfter", "Bonus rCoin\nAfter"]
     : ["Game\nCode", "Time", "rCoin\nBefore", "Bonus rCoin\nBefore", "Item\nName", "Qty", "Item\nPrice", "Total\nPrice", "rCoin\nAfter", "Bonus rCoin\nAfter"];
 
   return (
-    <div className="space-y-5">
+    <div data-testid="history-layout" className="space-y-3">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-bold uppercase tracking-wide text-slate-500">rCoin</p>
-          <p className="mt-1 text-3xl font-black text-[#9b2020]">{fmtHistoryNumber(balance?.ruCash)}</p>
+          <p className="mt-1 text-3xl font-black text-[#9b2020]">{formatHistoryNumber(balance?.ruCash)}</p>
           <p className="mt-1 text-xs text-slate-400">Paid Currency</p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Bonus rCoin</p>
-          <p className="mt-1 text-3xl font-black text-green-700">{fmtHistoryNumber(balance?.bonusCash)}</p>
+          <p className="mt-1 text-3xl font-black text-green-700">{formatHistoryNumber(balance?.bonusCash)}</p>
           <p className="mt-1 text-xs text-slate-400">Bonus Currency (Used First)</p>
         </div>
       </div>
 
-      <h2 className="text-lg font-bold text-slate-900">{isPurchase ? "Purchase History" : "Usage History"}</h2>
       {!items.length ? (
         <div className="rounded-2xl border border-slate-200 bg-white py-14 text-center text-sm text-slate-400">No {isPurchase ? "purchase" : "usage"} history available.</div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <div data-testid="history-table" className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
           <table className="w-full table-fixed border-collapse text-[11px] sm:text-xs">
             <thead>
               <tr className="bg-[#9b2020] text-white">
-                {columns.map((column, index) => (
-                  <th key={column} className={`px-1 py-2 text-center font-semibold whitespace-pre-line leading-tight ${index === 1 ? "w-[94px]" : ""} border-r border-red-800 last:border-r-0`}>{column}</th>
-                ))}
+                {headers.map((header, index) => <th key={header} className={`border-r border-red-800 px-1 py-2 text-center font-semibold whitespace-pre-line leading-tight last:border-r-0 ${index === 1 ? "w-[92px]" : ""}`}>{header}</th>)}
               </tr>
             </thead>
             <tbody>
               {items.map((tx) => (
                 <tr key={tx.id} className="border-b border-slate-200 last:border-b-0 hover:bg-slate-50">
                   <td className="px-1 py-2 text-center font-medium text-[#9b2020]">{tx.gameCode ?? "ROU"}</td>
-                  <td className="w-[94px] px-1 py-2 text-center whitespace-pre-line break-words leading-4 text-slate-700">{fmtHistoryDate(tx.createdAt)}</td>
-                  <td className="px-1 py-2 text-right">{fmtHistoryNumber(tx.beforeRuCash)}</td>
-                  <td className="px-1 py-2 text-right text-green-700">{fmtHistoryNumber(tx.beforeBonusCash)}</td>
-                  {isPurchase ? (
-                    <>
-                      <td className="px-1 py-2 text-center">{tx.pgName ?? "-"}</td>
-                      <td className="px-1 py-2 text-right">{tx.priceUsd ? `$${Number(tx.priceUsd).toFixed(0)}` : "-"}</td>
-                      <td className="px-1 py-2 text-right font-bold text-[#9b2020]">{fmtHistoryNumber(Math.abs(tx.ruCashDelta ?? 0))}</td>
-                      <td className="px-1 py-2 text-right font-bold text-green-700">{fmtHistoryNumber(Math.abs(tx.bonusCashDelta ?? 0))}</td>
-                    </>
-                  ) : (
-                    <>
-                      <td className="px-1 py-2 text-center break-words">{tx.itemName ?? "-"}</td>
-                      <td className="px-1 py-2 text-right">{tx.itemQty ?? 1}</td>
-                      <td className="px-1 py-2 text-right">{fmtHistoryNumber(Math.abs(tx.itemPriceRuc ?? 0))}</td>
-                      <td className="px-1 py-2 text-right font-bold">{fmtHistoryNumber(Math.abs(tx.totalPriceRuc ?? 0))}</td>
-                    </>
-                  )}
-                  <td className="px-1 py-2 text-right font-bold">{fmtHistoryNumber(tx.afterRuCash)}</td>
-                  <td className="px-1 py-2 text-right font-bold text-green-700">{fmtHistoryNumber(tx.afterBonusCash)}</td>
+                  <td className="w-[92px] px-1 py-2 text-center leading-4 text-slate-700"><HistoryTime value={tx.createdAt} /></td>
+                  <td className="px-1 py-2 text-right">{formatHistoryNumber(tx.beforeRuCash)}</td>
+                  <td className="px-1 py-2 text-right text-green-700">{formatHistoryNumber(tx.beforeBonusCash)}</td>
+                  {isPurchase ? <>
+                    <td className="px-1 py-2 text-center">{tx.pgName ?? "-"}</td>
+                    <td className="px-1 py-2 text-right">{tx.priceUsd ? `$${Number(tx.priceUsd).toFixed(0)}` : "-"}</td>
+                    <td className="px-1 py-2 text-right font-bold text-[#9b2020]">{formatHistoryNumber(Math.abs(tx.ruCashDelta ?? 0))}</td>
+                    <td className="px-1 py-2 text-right font-bold text-green-700">{formatHistoryNumber(Math.abs(tx.bonusCashDelta ?? 0))}</td>
+                  </> : <>
+                    <td className="px-1 py-2 text-center break-words">{tx.itemName ?? "-"}</td>
+                    <td className="px-1 py-2 text-right">{tx.itemQty ?? 1}</td>
+                    <td className="px-1 py-2 text-right">{formatHistoryNumber(Math.abs(tx.itemPriceRuc ?? 0))}</td>
+                    <td className="px-1 py-2 text-right font-bold">{formatHistoryNumber(Math.abs(tx.totalPriceRuc ?? 0))}</td>
+                  </>}
+                  <td className="px-1 py-2 text-right font-bold">{formatHistoryNumber(tx.afterRuCash)}</td>
+                  <td className="px-1 py-2 text-right font-bold text-green-700">{formatHistoryNumber(tx.afterBonusCash)}</td>
                 </tr>
               ))}
             </tbody>
@@ -103,12 +93,10 @@ function MyPageHistory({ kind }: { kind: HistoryKind }) {
         </div>
       )}
       {totalPages > 1 && (
-        <div className="flex flex-wrap justify-center gap-1">
+        <div className="flex flex-wrap justify-center gap-1 pt-1">
           <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(1)}>«</Button>
           <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>‹</Button>
-          {Array.from({ length: totalPages }, (_, index) => index + 1).map((number) => (
-            <Button key={number} size="sm" variant={page === number ? "default" : "outline"} onClick={() => setPage(number)}>{number}</Button>
-          ))}
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map((number) => <Button key={number} size="sm" variant={page === number ? "default" : "outline"} onClick={() => setPage(number)}>{number}</Button>)}
           <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage((current) => Math.min(totalPages, current + 1))}>›</Button>
           <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(totalPages)}>»</Button>
         </div>
@@ -126,13 +114,10 @@ export default function MyPage() {
   const [showNicknameEdit, setShowNicknameEdit] = useState(false);
   const [newNickname, setNewNickname] = useState("");
   const [isEditingNickname, setIsEditingNickname] = useState(false);
-  const [nicknameCheckStatus, setNicknameCheckStatus] = useState<"idle" | "checking" | "available" | "duplicate" | "invalid">("idle");
-  const [checkedNickname, setCheckedNickname] = useState("");
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [couponCode, setCouponCode] = useState("");
-  const [activeSection, setActiveSection] = useState<"account" | HistoryKind>("account");
-  const { isAuthenticated, logout } = useAuth();
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+  const [activeSection, setActiveSection] = useState<"account" | HistorySection>("account");
 
   // Generate random nickname (10 characters: letters + numbers)
   const generateRandomNickname = (): string => {
@@ -154,13 +139,10 @@ export default function MyPage() {
     return nickname.split('').sort(() => Math.random() - 0.5).join('');
   };
 
-  const isLoggedIn = isAuthenticated;
+  const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
 
   // DB에서 실제 createdAt 가져오기
   const { data: meData } = trpc.auth.me.useQuery();
-  const { data: profileData } = trpc.user.profile.useQuery(undefined, { enabled: isLoggedIn });
-  const trpcUtils = trpc.useUtils();
-  const updateNicknameMutation = trpc.user.updateNickname.useMutation();
 
   const formatRegistrationDate = (date: Date | string | null | undefined): string => {
     if (!date) return "-";
@@ -177,9 +159,8 @@ export default function MyPage() {
 
   // DB createdAt 우선, 없으면 localStorage rou_agreed_at fallback
   const registrationDate = (() => {
-    const createdAt = profileData?.createdAt ?? meData?.createdAt;
-    if (createdAt) {
-      const d = createdAt instanceof Date ? createdAt : new Date(createdAt as unknown as string);
+    if (meData?.createdAt) {
+      const d = meData.createdAt instanceof Date ? meData.createdAt : new Date(meData.createdAt as unknown as string);
       if (!isNaN(d.getTime())) return formatRegistrationDate(d);
     }
     const raw = localStorage.getItem("rou_agreed_at");
@@ -189,8 +170,6 @@ export default function MyPage() {
     }
     return "-";
   })();
-  const lastActivity = profileData?.lastSignedIn ? formatRegistrationDate(profileData.lastSignedIn) : "-";
-  const profileStatus = profileData?.status === "suspended" ? "Suspended" : profileData?.status === "banned" ? "Permanently Banned" : "Active";
 
   // Format agreed_at as "Agreed on: MM/DD/YYYY H:MM AM/PM"
   const agreedDateStr = (() => {
@@ -236,14 +215,7 @@ export default function MyPage() {
     localStorage.setItem("rou_nickname", newNickname);
     return newNickname;
   });
-  useEffect(() => {
-    if (!meData?.name) return;
-    setUserNickname(meData.name);
-    localStorage.setItem("rou_nickname", meData.name);
-  }, [meData?.name]);
-  const socialProvider = profileData?.loginMethod
-    ? `${profileData.loginMethod.charAt(0).toUpperCase()}${profileData.loginMethod.slice(1)}`
-    : localStorage.getItem("rou_social_provider") || "Guest";
+  const socialProvider = localStorage.getItem("rou_social_provider") || "Guest";
 
   // Get login type display info
   const getLoginTypeInfo = () => {
@@ -277,52 +249,16 @@ export default function MyPage() {
     );
   }
 
-  const handleNicknameCheck = async () => {
-    const normalizedNickname = newNickname.trim();
-    if (normalizedNickname.length < 2 || normalizedNickname.length > 20) {
-      setNicknameCheckStatus("invalid");
-      setCheckedNickname("");
-      return;
-    }
-
-    setNicknameCheckStatus("checking");
-    try {
-      const result = await trpcUtils.user.checkNickname.fetch({ name: normalizedNickname });
-      setNicknameCheckStatus(result.isAvailable ? "available" : "duplicate");
-      setCheckedNickname(normalizedNickname);
-    } catch (error) {
-      setNicknameCheckStatus("idle");
-      toast.error(error instanceof Error ? error.message : "Unable to check nickname availability.");
-    }
-  };
-
-  const handleNicknameChange = async () => {
-    const normalizedNickname = newNickname.trim();
-    if (normalizedNickname.length < 2 || normalizedNickname.length > 20) {
+  const handleNicknameChange = () => {
+    if (newNickname.length < 2 || newNickname.length > 20) {
       toast.error("Nickname must be between 2 and 20 characters.");
       return;
     }
-    if (nicknameCheckStatus !== "available" || checkedNickname !== normalizedNickname) {
-      toast.error("Please search and confirm nickname availability first.");
-      return;
-    }
-
-    setIsEditingNickname(true);
-    try {
-      const result = await updateNicknameMutation.mutateAsync({ name: normalizedNickname });
-      setUserNickname(result.name);
-      localStorage.setItem("rou_nickname", result.name);
-      await trpcUtils.auth.me.invalidate();
-      toast.success(`Nickname changed to ${result.name}!`);
-      setShowNicknameEdit(false);
-      setNewNickname("");
-      setNicknameCheckStatus("idle");
-      setCheckedNickname("");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to change nickname.");
-    } finally {
-      setIsEditingNickname(false);
-    }
+    setUserNickname(newNickname);
+    localStorage.setItem("rou_nickname", newNickname);
+    toast.success(`Nickname changed to ${newNickname}!`);
+    setShowNicknameEdit(false);
+    setNewNickname("");
   };
 
   const handleCouponSubmit = async () => {
@@ -348,8 +284,7 @@ export default function MyPage() {
     }, 1000);
   };
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
     localStorage.removeItem("rou_logged_in");
     localStorage.removeItem("rou_nickname");
     localStorage.removeItem("rou_guest_mode");
@@ -402,7 +337,7 @@ export default function MyPage() {
                     size="sm"
                     variant="outline"
                     className="mt-3 w-full text-xs border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5"
-                    onClick={() => { setShowNicknameEdit(true); setNewNickname(userNickname); setNicknameCheckStatus("idle"); setCheckedNickname(""); }}
+                    onClick={() => { setShowNicknameEdit(true); setNewNickname(userNickname); }}
                   >
                     <Edit2 size={12} className="mr-1" /> Change Nickname
                   </Button>
@@ -411,11 +346,11 @@ export default function MyPage() {
                 {/* Navigation Menu */}
                 <nav className="space-y-2">
                   <button onClick={() => setActiveSection("purchase")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "purchase" ? "bg-[#9b2020] text-white" : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"}`}>
-                    <CreditCard size={16} className="text-black dark:text-white" />
+                    <CreditCard size={16} className={activeSection === "purchase" ? "text-white" : "text-black dark:text-white"} />
                     <span>Payment History</span>
                   </button>
                   <button onClick={() => setActiveSection("usage")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "usage" ? "bg-[#9b2020] text-white" : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"}`}>
-                    <Clock size={16} className="text-black dark:text-white" />
+                    <Clock size={16} className={activeSection === "usage" ? "text-white" : "text-black dark:text-white"} />
                     <span>Points/Item Usage</span>
                   </button>
                   <button onClick={() => toast.info("Customer inquiry feature coming soon.")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-sm font-medium">
@@ -449,9 +384,9 @@ export default function MyPage() {
             {/* Right Content Area */}
             <div className="lg:col-span-3">
               {activeSection === "purchase" ? (
-                <MyPageHistory key="purchase" kind="purchase" />
+                <MyPageHistory key="purchase" section="purchase" />
               ) : activeSection === "usage" ? (
-                <MyPageHistory key="usage" kind="usage" />
+                <MyPageHistory key="usage" section="usage" />
               ) : showWithdrawDialog ? (
                 // Withdrawal Dialog
                 <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50">
@@ -509,18 +444,14 @@ export default function MyPage() {
                       <Table className="text-xs">
                         <TableHeader>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-transparent">
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">User ID</TableHead>
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Nickname</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Name</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Provider</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Registration Date</TableHead>
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Last Activity</TableHead>
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Status</TableHead>
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">CS Code</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Last Account Activity</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5">
-                            <TableCell className="text-black/70 dark:text-white/70 font-mono">{profileData?.id ?? meData?.id ?? "-"}</TableCell>
                             <TableCell className="text-black dark:text-white font-medium">{userNickname}</TableCell>
                             <TableCell>
                               {socialProvider === "Google" ? (
@@ -541,9 +472,7 @@ export default function MyPage() {
                               )}
                             </TableCell>
                             <TableCell className="text-black/70 dark:text-white/70">{registrationDate}</TableCell>
-                            <TableCell className="text-black/70 dark:text-white/70">{lastActivity}</TableCell>
-                            <TableCell className={`font-medium ${profileData?.status === "active" || !profileData?.status ? "text-green-600" : "text-red-600"}`}>{profileStatus}</TableCell>
-                            <TableCell className="text-black/70 dark:text-white/70 font-mono">{profileData?.csCode || "-"}</TableCell>
+                            <TableCell className="text-black/70 dark:text-white/70">South Korea • 06/19/2026 • 05:49 AM</TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
@@ -552,11 +481,7 @@ export default function MyPage() {
                     {/* Mobile Card View */}
                     <div className="md:hidden space-y-3">
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">User ID</p>
-                        <p className="text-sm text-black dark:text-white font-mono">{profileData?.id ?? meData?.id ?? "-"}</p>
-                      </div>
-                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Nickname</p>
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Name</p>
                         <p className="text-sm text-black dark:text-white font-medium">{userNickname}</p>
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
@@ -585,16 +510,8 @@ export default function MyPage() {
                         <p className="text-sm text-black dark:text-white">{registrationDate}</p>
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Last Activity</p>
-                        <p className="text-sm text-black dark:text-white">{lastActivity}</p>
-                      </div>
-                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Status</p>
-                        <p className={`text-sm font-medium ${profileData?.status === "active" || !profileData?.status ? "text-green-600" : "text-red-600"}`}>{profileStatus}</p>
-                      </div>
-                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">CS Code</p>
-                        <p className="text-sm text-black dark:text-white font-mono">{profileData?.csCode || "-"}</p>
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Last Account Activity</p>
+                        <p className="text-sm text-black dark:text-white">South Korea • 06/19/2026 • 05:49 AM</p>
                       </div>
                     </div>
                   </div>
@@ -690,38 +607,28 @@ export default function MyPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-[#131313] rounded-2xl p-6 max-w-sm w-full border border-white/10 dark:border-slate-700/50">
             <h3 className="text-lg font-bold text-black dark:text-white mb-4">Change Nickname</h3>
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                placeholder="Enter new nickname"
-                value={newNickname}
-                onChange={(e) => { setNewNickname(e.target.value); setNicknameCheckStatus("idle"); setCheckedNickname(""); }}
-                maxLength={20}
-                className="bg-white dark:bg-slate-800 border-black/20 dark:border-white/20 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40"
-              />
-              <Button type="button" onClick={handleNicknameCheck} disabled={nicknameCheckStatus === "checking"} className="shrink-0 bg-blue-500 hover:bg-blue-600 text-white px-5">
-                {nicknameCheckStatus === "checking" ? "Checking..." : "Search"}
-              </Button>
-            </div>
-            <div className="min-h-5 mt-1 mb-3 text-xs font-medium">
-              {nicknameCheckStatus === "available" && <p className="text-blue-500">This nickname is available.</p>}
-              {nicknameCheckStatus === "duplicate" && <p className="text-red-500">This nickname is already in use.</p>}
-              {nicknameCheckStatus === "invalid" && <p className="text-red-500">Nickname must be between 2 and 20 characters.</p>}
-            </div>
+            <Input
+              type="text"
+              placeholder="Enter new nickname"
+              value={newNickname}
+              onChange={(e) => setNewNickname(e.target.value)}
+              maxLength={20}
+              className="mb-4 bg-white dark:bg-slate-800 border-black/20 dark:border-white/20 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40"
+            />
             <p className="text-xs text-black dark:text-white mb-4">
               {newNickname.length}/20 characters (minimum 2)
             </p>
             <div className="flex gap-3">
               <Button
                 variant="outline"
-                onClick={() => { setShowNicknameEdit(false); setNicknameCheckStatus("idle"); setCheckedNickname(""); }}
+                onClick={() => setShowNicknameEdit(false)}
                 className="flex-1 border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleNicknameChange}
-                disabled={isEditingNickname || nicknameCheckStatus !== "available" || checkedNickname !== newNickname.trim()}
+                disabled={isEditingNickname}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {isEditingNickname ? "Saving..." : "Save"}

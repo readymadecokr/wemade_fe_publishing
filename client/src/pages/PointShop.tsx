@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
-import { Check, ChevronDown, ChevronLeft, ShieldCheck } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import Layout from "@/components/Layout";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 function fmtRuc(n: number): string { return Math.min(n, 9999999).toLocaleString("en-US"); }
 function fmtAbs(n: number): string { return Math.min(Math.abs(n), 9999999).toLocaleString("en-US"); }
@@ -19,144 +18,7 @@ function fmtDate(d: Date | string | null | undefined): string {
   return `${y}-${mo}-${day} ${h}:${mi}`;
 }
 
-function BalanceSummary({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
-  return (
-    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
-        <p className="text-xs font-black uppercase tracking-wide text-slate-500">rCoin</p>
-        <p className="mt-1 text-3xl font-black text-[#a51f24]">{fmtRuc(ruCash)}</p>
-        <p className="mt-1 text-xs text-slate-400">Paid Currency</p>
-      </div>
-      <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
-        <p className="text-xs font-black uppercase tracking-wide text-slate-500">Bonus rCoin</p>
-        <p className="mt-1 text-3xl font-black text-green-700">{fmtRuc(bonusCash)}</p>
-        <p className="mt-1 text-xs text-slate-400">Bonus Currency (Used First)</p>
-      </div>
-    </section>
-  );
-}
-
-type PaymentMethod = {
-  id: string;
-  name: string;
-  region: string;
-  recommended?: boolean;
-};
-
-const primaryPaymentMethods: PaymentMethod[] = [
-  { id: "goc", name: "GOC Pay", region: "Southeast Asia · Regional", recommended: true },
-  { id: "xsolla", name: "Xsolla", region: "Global" },
-  { id: "paypal", name: "PayPal", region: "Global" },
-];
-
-const extraPaymentMethods: PaymentMethod[] = [
-  { id: "mycard", name: "MyCard", region: "Taiwan · Hong Kong · Macau" },
-  { id: "ebanx", name: "EBANX", region: "Latin America" },
-  { id: "payermax", name: "PayerMax", region: "Global" },
-];
-
-function PurchaseDialog({
-  products,
-  productId,
-  open,
-  onOpenChange,
-  onSelectProduct,
-}: {
-  products: any[];
-  productId: number | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSelectProduct: (id: number) => void;
-}) {
-  const [selectedMethod, setSelectedMethod] = useState("goc");
-  const [showMoreMethods, setShowMoreMethods] = useState(false);
-  const [showPriceList, setShowPriceList] = useState(false);
-  const [captchaChecked, setCaptchaChecked] = useState(false);
-  const product = products.find((item) => item.id === productId);
-  const paymentMethods = showMoreMethods ? [...primaryPaymentMethods, ...extraPaymentMethods] : primaryPaymentMethods;
-
-  useEffect(() => {
-    if (!open) return;
-    setSelectedMethod("goc");
-    setShowMoreMethods(false);
-    setShowPriceList(false);
-    setCaptchaChecked(false);
-  }, [open, productId]);
-
-  if (!product) return null;
-
-  const chooseProduct = (id: number) => {
-    onSelectProduct(id);
-    setShowPriceList(false);
-    setCaptchaChecked(false);
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton className="w-[calc(100%-1rem)] max-h-[90vh] overflow-x-hidden overflow-y-auto border border-[#d7d3c6] bg-[#fffdf8] p-0 text-slate-800 sm:max-w-[500px]">
-        <DialogTitle className="sr-only">Select rCoin Payment Method</DialogTitle>
-        <DialogDescription className="sr-only">Select a payment method and confirm the payment amount for the selected rCoin product.</DialogDescription>
-
-        <div className="border-b border-[#ddd7c8] bg-white px-5 pb-4 pt-5">
-          <div className="flex items-start justify-between gap-4 pr-8">
-            <div>
-              <p className="whitespace-nowrap text-xl font-black tracking-tight text-slate-900 sm:text-[22px]">
-                {fmtRuc(product.ruCashAmount)} rCoin
-                {product.bonusCashAmount > 0 && <span className="ml-2 text-[#54866f]">+{fmtRuc(product.bonusCashAmount)} Bonus</span>}
-              </p>
-            </div>
-            <div className="relative shrink-0">
-              <button onClick={() => setShowPriceList((value) => !value)} className="flex items-center gap-1 rounded-md border border-[#d6cfbe] bg-[#fffefb] px-3 py-1.5 text-base font-black text-[#a51f24] shadow-sm">
-                ${Number(product.priceUsd).toFixed(2)} <ChevronDown size={15} className={`transition-transform ${showPriceList ? "rotate-180" : ""}`} />
-              </button>
-              {showPriceList && (
-                <div className="absolute right-0 top-[calc(100%+6px)] z-20 w-36 overflow-hidden rounded-md border border-slate-200 bg-white py-1 shadow-xl">
-                  <p className="px-3 py-1 text-[10px] font-black uppercase tracking-wide text-slate-400">Price List</p>
-                  {products.map((item) => (
-                    <button key={item.id} onClick={() => chooseProduct(item.id)} className={`flex w-full items-center justify-end px-3 py-1.5 text-right text-sm hover:bg-[#fff5df] ${item.id === product.id ? "bg-[#fff7e6] font-black text-[#a51f24]" : "text-slate-700"}`}>
-                      <span>${Number(item.priceUsd).toFixed(2)}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-3 px-5 py-5">
-          <div>
-            <h3 className="text-base font-black text-slate-800">Select Payment Method</h3>
-          </div>
-          <div className="space-y-2">
-            {paymentMethods.map((method) => {
-              const isSelected = selectedMethod === method.id;
-              return (
-                <button key={method.id} onClick={() => setSelectedMethod(method.id)} className={`flex w-full items-center justify-between rounded-lg border px-3.5 py-3 text-left transition-colors ${isSelected ? "border-[#54866f] bg-[#edf6f1] ring-1 ring-[#54866f]" : "border-slate-200 bg-white hover:border-[#b9b098]"}`}>
-                  <span className="flex items-center gap-2.5"><span className={`flex h-5 w-5 items-center justify-center rounded-full border ${isSelected ? "border-[#54866f] bg-[#54866f] text-white" : "border-slate-300"}`}>{isSelected && <Check size={13} strokeWidth={3} />}</span><strong>{method.name}</strong></span>
-                  <span className="flex items-center gap-2 text-xs text-slate-500">{method.region}{method.recommended && <span className="rounded-full bg-[#54866f] px-2 py-0.5 font-black text-white">Recommended</span>}</span>
-                </button>
-              );
-            })}
-          </div>
-          {!showMoreMethods && <button onClick={() => setShowMoreMethods(true)} className="w-full py-1 text-left text-sm font-bold text-[#a51f24] hover:underline">Show 3 More Payment Methods <span className="ml-1">▾</span></button>}
-
-          <button onClick={() => setCaptchaChecked((value) => !value)} className={`flex w-full items-center justify-between rounded-lg border px-3.5 py-3 text-left ${captchaChecked ? "border-[#54866f] bg-[#f2faf5]" : "border-slate-200 bg-white"}`}>
-            <span className="flex items-center gap-2.5 text-sm font-medium"><span className={`flex h-5 w-5 items-center justify-center border ${captchaChecked ? "border-[#54866f] bg-[#54866f] text-white" : "border-slate-400"}`}>{captchaChecked && <Check size={14} strokeWidth={3} />}</span>I'm not a robot</span>
-            <span className="flex items-center gap-1 text-xs text-slate-400"><ShieldCheck size={15} /> reCAPTCHA</span>
-          </button>
-        </div>
-
-        <div className="border-t border-[#e4ded0] bg-white px-5 py-4">
-          <button onClick={() => { if (captchaChecked) window.alert("Available after PG payment integration."); }} disabled={!captchaChecked} className="w-full rounded-lg bg-[#182b40] py-3 text-base font-black text-white shadow-sm transition-colors hover:bg-[#0f2031] disabled:cursor-not-allowed disabled:bg-slate-300">
-            Pay USD ${Number(product.priceUsd).toFixed(2)}
-          </button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-// ─── Shared pagination ────────────────────────────────────────────────────────
+// ─── 공통 페이지네이션 ────────────────────────────────────────────────────────
 function Pagination({ page, totalPages, setPage }: { page: number; totalPages: number; setPage: (p: number) => void }) {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
   return (
@@ -172,12 +34,11 @@ function Pagination({ page, totalPages, setPage }: { page: number; totalPages: n
   );
 }
 
-// ─── Top-up tab ───────────────────────────────────────────────────────────────
+// ─── 충전 탭 ─────────────────────────────────────────────────────────────────
 function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
   const [selected, setSelected] = useState<number | null>(null);
-  const [purchaseOpen, setPurchaseOpen] = useState(false);
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
-  // A distinct coin icon for each product ID (sort order 1 through 8).
+  // 상품 id(sortOrder 기준 1~8)별로 각각 다른 코인 아이콘
 const COIN_ICONS: Record<number, string> = {
   1: "/manus-storage/rcoin-product-normalized-1_3a54dcfa.png",
   2: "/manus-storage/rcoin-product-normalized-2_7f2e6fc8.png",
@@ -190,11 +51,22 @@ const COIN_ICONS: Record<number, string> = {
 };
   return (
     <div className="space-y-6">
-      <BalanceSummary ruCash={ruCash} bonusCash={bonusCash} />
+      <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
+          <p className="text-xs font-black tracking-wide text-slate-500 uppercase">rCoin</p>
+          <p className="mt-1 text-3xl font-black text-[#a51f24]">{fmtRuc(ruCash)}</p>
+          <p className="mt-1 text-xs text-slate-400">유료 충전 캐시</p>
+        </div>
+        <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
+          <p className="text-xs font-black tracking-wide text-slate-500 uppercase">Bonus rCoin</p>
+          <p className="mt-1 text-3xl font-black text-green-700">{fmtRuc(bonusCash)}</p>
+          <p className="mt-1 text-xs text-slate-400">보너스 캐시 (우선 차감)</p>
+        </div>
+      </section>
 
       <div className="flex flex-col gap-2 border-b border-slate-200 pb-4 text-sm sm:flex-row sm:items-center sm:justify-between">
-        <p className="font-medium text-slate-600">Currency: USD <span className="mx-1 text-slate-300">·</span> Local currency is selected on the PG payment page</p>
-        <p className="font-semibold text-slate-500">rCoin is account-bound</p>
+        <p className="font-medium text-slate-600">통화 USD 단위 <span className="mx-1 text-slate-300">·</span> 지역 통화는 PG 결제 페이지에서 전환</p>
+        <p className="font-semibold text-slate-500">rCoin은 계정 귀속</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
@@ -205,20 +77,20 @@ const COIN_ICONS: Record<number, string> = {
           const isBestValue = p.id === 8;
           const hasBonus = p.bonusCashAmount > 0;
           return (
-            <button key={p.id} onClick={() => { setSelected(p.id); setPurchaseOpen(true); }} aria-label={`Select ${fmtRuc(p.ruCashAmount)} rCoin`}
+            <button key={p.id} onClick={() => setSelected(p.id)} aria-label={`${fmtRuc(p.ruCashAmount)} rCoin 상품 선택`}
               className={`relative flex h-[174px] flex-col rounded-xl border p-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${isSelected ? "border-[#a51f24] bg-[#fffaf2] ring-1 ring-[#a51f24]" : "border-[#e3dfca] bg-[#faf8f0] hover:border-[#c6ba92]"}`}>
               {(isBestSeller || isBestValue) && (
                 <img
-                  src={isBestSeller ? "/manus-storage/rcoin-badge-best-seller-en_7dc69c02.png" : "/manus-storage/rcoin-badge-best-value-en_3cd7fa6b.png"}
-                  alt={isBestSeller ? "Best Seller" : "Best Value"}
-                  className="absolute -left-2 -top-3 z-10 h-auto w-24 object-contain drop-shadow-md sm:w-28"
+                  src={isBestSeller ? "/manus-storage/rcoin-badge-best-seller-clean_432b87e4.png" : "/manus-storage/rcoin-badge-best-value-clean_4ae2a914.png"}
+                  alt={isBestSeller ? "최다 판매" : "최고 혜택"}
+                  className="absolute -left-2 -top-3 z-10 h-auto w-20 drop-shadow-md sm:w-24"
                 />
               )}
               <div className="flex h-[104px] items-center justify-center gap-3 px-2 pt-1">
                 <div className="flex w-[84px] shrink-0 items-center justify-center self-stretch">
                   <img src={coinIcon} alt="rCoin coin" className="h-[84px] w-[84px] max-h-full max-w-full object-contain object-center" />
                 </div>
-                <div className={`flex min-w-0 shrink-0 flex-col justify-center ${p.id === 8 ? "-translate-x-2 min-[1280px]:-translate-x-3" : ""}`}>
+                <div className="flex min-w-0 shrink-0 flex-col justify-center">
                   {hasBonus ? (
                     <>
                       <div className="flex flex-col min-[1280px]:flex-row min-[1280px]:items-center min-[1280px]:gap-1">
@@ -242,37 +114,42 @@ const COIN_ICONS: Record<number, string> = {
           );
         })}
       </div>
-      <PurchaseDialog
-        products={products as any[]}
-        productId={selected}
-        open={purchaseOpen}
-        onOpenChange={setPurchaseOpen}
-        onSelectProduct={setSelected}
-      />
+      {selected && (
+        <div className="mt-6 flex items-center gap-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <div className="flex-1 text-sm text-slate-700">
+            {(() => {
+              const p = (products as any[]).find((x: any) => x.id === selected);
+              if (!p) return null;
+              const total = p.ruCashAmount + p.bonusCashAmount;
+              return <span><strong>{p.name}</strong> 선택됨 — 합계 <strong className="text-[#9b2020]">{fmtRuc(total)} rCoin</strong>{p.bonusCashAmount > 0 ? <span className="text-green-600"> ({fmtRuc(p.ruCashAmount)} rCoin + {fmtRuc(p.bonusCashAmount)} Bonus rCoin)</span> : ""}</span>;
+            })()}
+          </div>
+          <button className="px-6 py-2 bg-[#9b2020] hover:bg-[#7a1a1a] text-white font-bold rounded-lg text-sm transition-colors" onClick={() => alert("PG 결제 연동 후 이용 가능합니다.")}>충전하기</button>
+        </div>
+      )}
     </div>
   );
 }
 
-// ─── Purchase history tab ─────────────────────────────────────────────────────
-function ChargeHistoryTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
+// ─── 구매 내역 탭 ─────────────────────────────────────────────────────────────
+function ChargeHistoryTab() {
   const [page, setPage] = useState(1);
   const { data } = trpc.shop.myChargeHistory.useQuery({ page, pageSize: 10 });
   const items = (data?.items ?? []) as any[];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / 10));
-  const COLS = ["Game\nCode","Time","rCoin\nBefore","Bonus rCoin\nBefore","PG","Price","rCoin\nCharged","Bonus rCoin\nCharged","rCoin\nAfter","Bonus rCoin\nAfter"];
+  const COLS = ["게임코드","TIME","충전전 rCoin","충전전 Bonus rCoin","PG","Price","충전량 rCoin","충전량 Bonus rCoin","충전후 rCoin","충전후 Bonus rCoin"];
   return (
     <div className="space-y-4">
-      <BalanceSummary ruCash={ruCash} bonusCash={bonusCash} />
-      <h2 className="text-base font-bold text-slate-800">Purchase History</h2>
+      <h2 className="text-base font-bold text-slate-800">구매 내역</h2>
       {!items.length ? (
-        <div className="text-center py-12 text-slate-400 text-sm">No purchase history available.</div>
+        <div className="text-center py-12 text-slate-400 text-sm">충전 내역이 없습니다.</div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-slate-200">
-          <table className="w-full table-fixed text-xs border-collapse">
+        <div className="overflow-x-auto rounded-xl border border-slate-200">
+          <table className="w-full text-xs border-collapse">
             <thead>
               <tr className="bg-[#9b2020] text-white">
-                {COLS.map(c => <th key={c} className="px-2 py-2.5 text-center font-semibold whitespace-pre-line leading-tight border-r border-red-700 last:border-r-0">{c}</th>)}
+                {COLS.map(c => <th key={c} className="px-3 py-2.5 text-left font-semibold whitespace-nowrap border-r border-red-700 last:border-r-0">{c}</th>)}
               </tr>
             </thead>
             <tbody>
@@ -299,26 +176,25 @@ function ChargeHistoryTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: nu
   );
 }
 
-// ─── Usage history tab ────────────────────────────────────────────────────────
-function UseHistoryTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
+// ─── 사용 내역 탭 ─────────────────────────────────────────────────────────────
+function UseHistoryTab() {
   const [page, setPage] = useState(1);
   const { data } = trpc.shop.myUseHistory.useQuery({ page, pageSize: 10 });
   const items = (data?.items ?? []) as any[];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / 10));
-  const COLS = ["Game\nCode","Time","rCoin\nBefore","Bonus rCoin\nBefore","Item\nName","Qty","Item\nPrice","Total\nPrice","rCoin\nAfter","Bonus rCoin\nAfter"];
+  const COLS = ["게임코드","TIME","사용전 rCoin","사용전 Bonus rCoin","Item Name","QTY","Item Price","Total Price","잔량 rCoin","잔량 Bonus rCoin"];
   return (
     <div className="space-y-4">
-      <BalanceSummary ruCash={ruCash} bonusCash={bonusCash} />
-      <h2 className="text-base font-bold text-slate-800">Usage History</h2>
+      <h2 className="text-base font-bold text-slate-800">사용 내역</h2>
       {!items.length ? (
-        <div className="text-center py-12 text-slate-400 text-sm">No usage history available.</div>
+        <div className="text-center py-12 text-slate-400 text-sm">사용 내역이 없습니다.</div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-slate-200">
-          <table className="w-full table-fixed text-xs border-collapse">
+        <div className="overflow-x-auto rounded-xl border border-slate-200">
+          <table className="w-full text-xs border-collapse">
             <thead>
               <tr className="bg-[#9b2020] text-white">
-                {COLS.map(c => <th key={c} className="px-2 py-2.5 text-center font-semibold whitespace-pre-line leading-tight border-r border-red-700 last:border-r-0">{c}</th>)}
+                {COLS.map(c => <th key={c} className="px-3 py-2.5 text-left font-semibold whitespace-nowrap border-r border-red-700 last:border-r-0">{c}</th>)}
               </tr>
             </thead>
             <tbody>
@@ -345,7 +221,7 @@ function UseHistoryTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: numbe
   );
 }
 
-// ─── Main Shop page ───────────────────────────────────────────────────────────
+// ─── 메인 Shop 페이지 ─────────────────────────────────────────────────────────
 export default function PointShop() {
   const [, setLocation] = useLocation();
   const [tab, setTab] = useState<"charge">("charge");
@@ -354,14 +230,14 @@ export default function PointShop() {
   const ruCash = balance?.ruCash ?? 0;
   const bonusCash = balance?.bonusCash ?? 0;
   const menus: { key: typeof tab; label: string }[] = [
-    { key: "charge", label: "Top Up" },
+    { key: "charge", label: "충전" },
   ];
   return (
     <Layout>
       <div className="bg-[#9b2020] text-white py-8">
         <div className="container">
           <h1 className="text-3xl font-black tracking-tight">Shop</h1>
-          <p className="text-red-200 text-sm mt-1">rCoin Top-Up and Usage History</p>
+          <p className="text-red-200 text-sm mt-1">rCoin 충전 및 사용 내역</p>
         </div>
       </div>
       <div className="container py-8">
@@ -389,7 +265,7 @@ export default function PointShop() {
           </main>
         </div>
         <div className="mt-10 border-t border-slate-200 pt-5 md:ml-[200px]">
-          <p className="text-sm font-medium text-slate-500">Instant delivery <span className="mx-2 text-slate-300">·</span> Refund policy <span className="mx-2 text-slate-300">·</span> Contact us</p>
+          <p className="text-sm font-medium text-slate-500">결제 즉시 지급 <span className="mx-2 text-slate-300">·</span> 환불 정책 안내 <span className="mx-2 text-slate-300">·</span> 문의하기</p>
         </div>
       </div>
     </Layout>

@@ -1,23 +1,28 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const myPageSource = readFileSync(new URL("../client/src/pages/MyPage.tsx", import.meta.url), "utf8");
-const pointShopSource = readFileSync(new URL("../client/src/pages/PointShop.tsx", import.meta.url), "utf8");
+const myPage = readFileSync(new URL("../client/src/pages/MyPage.tsx", import.meta.url), "utf8");
+const pointShop = readFileSync(new URL("../client/src/pages/PointShop.tsx", import.meta.url), "utf8");
 
-describe("My Page history migration and Shop tab cleanup", () => {
-  it("uses the Shop history APIs with 10-item pages and constrains the Time column", () => {
-    expect(myPageSource).toContain('myChargeHistory.useQuery({ page, pageSize: 10 }');
-    expect(myPageSource).toContain('myUseHistory.useQuery({ page, pageSize: 10 }');
-    expect(myPageSource).toContain('w-[94px] px-1 py-2 text-center whitespace-pre-line break-words leading-4');
+describe("My Page history layout", () => {
+  it("uses 10-item history pages without a Purchase or Usage section heading", () => {
+    const historyStart = myPage.indexOf("function MyPageHistory");
+    const historyEnd = myPage.indexOf("export default function MyPage");
+    const historySource = myPage.slice(historyStart, historyEnd);
+
+    expect(historySource).toContain("myChargeHistory.useQuery({ page, pageSize: 10 }");
+    expect(historySource).toContain("myUseHistory.useQuery({ page, pageSize: 10 }");
+    expect(historySource).toContain('className="space-y-3"');
+    expect(historySource).not.toMatch(/<h[1-6][^>]*>\{?isPurchase \? \"Purchase History\"/);
   });
 
-  it("keeps only Top Up in the Shop navigation", () => {
-    const menuStart = pointShopSource.indexOf('const menus: { key: typeof tab; label: string }[] = [');
-    const menuEnd = pointShopSource.indexOf('];', menuStart);
-    const menuSource = pointShopSource.slice(menuStart, menuEnd);
+  it("keeps only the Top Up view in the Shop navigation", () => {
+    const menuStart = pointShop.indexOf("const menus:");
+    const menuEnd = pointShop.indexOf("];", menuStart);
+    const menuSource = pointShop.slice(menuStart, menuEnd);
 
-    expect(menuSource).toContain('label: "Top Up"');
-    expect(menuSource).not.toContain("Purchase History");
-    expect(menuSource).not.toContain("Usage History");
+    expect(menuSource).toContain('key: "charge"');
+    expect(menuSource).not.toContain('key: "charge-history"');
+    expect(menuSource).not.toContain('key: "use-history"');
   });
 });

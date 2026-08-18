@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { useTheme } from "@/contexts/ThemeContext";
 import PrivacySettingsDialog from "./PrivacySettingsDialog";
 import { trpc } from "@/lib/trpc";
-import { useAuth } from "@/_core/hooks/useAuth";
 
 function fmtRuc(n: number): string { return Math.min(n, 9999999).toLocaleString("en-US"); }
 
@@ -27,17 +26,14 @@ export default function Layout({ children }: LayoutProps) {
   const [showTTKeyDialog, setShowTTKeyDialog] = useState(false);
   const [showComingSoonDialog, setShowComingSoonDialog] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const { user, isAuthenticated, logout } = useAuth();
 
-  const isLoggedIn = isAuthenticated;
-  const userNickname = user?.name || "Adventurer";
+  const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
+  const userNickname = localStorage.getItem("rou_nickname") || "Adventurer";
 
   // rCoin 잔액 조회 (Manus OAuth 로그인 사용자용)
   const { data: ruBalance } = trpc.shop.myBalance.useQuery(undefined, {
-    enabled: isLoggedIn,
-    refetchOnMount: "always",
     refetchOnWindowFocus: true,
-    staleTime: 0,
+    staleTime: 30000,
   });
   const ruCash = ruBalance?.ruCash ?? 0;
   const bonusCash = ruBalance?.bonusCash ?? 0;
@@ -50,8 +46,7 @@ export default function Layout({ children }: LayoutProps) {
     void cookieConsent;
   }, []);
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
     localStorage.removeItem("rou_logged_in");
     localStorage.removeItem("rou_nickname");
     localStorage.removeItem("rou_social_provider");

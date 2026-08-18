@@ -7,7 +7,6 @@ import Layout from "@/components/Layout";
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { useAuth } from "@/_core/hooks/useAuth";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -29,9 +28,8 @@ export default function Home() {
   const [showTTEndedDialog, setShowTTEndedDialog] = useState(false);
   const [ttKeyInput, setTTKeyInput] = useState("");
   const [ttKeyError, setTTKeyError] = useState("");
-  const { isAuthenticated } = useAuth();
 
-  const isLoggedIn = isAuthenticated;
+  const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
   const isTTKeyVerified = localStorage.getItem("rou_ttkey_verified") === "true";
 
   // DB에서 배너 데이터 가져오기 (fallback: 하드코딩 배너)
