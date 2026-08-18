@@ -123,3 +123,5 @@ Shop 화면과 구매 팝업의 DOM 텍스트에서 한글 문자가 0건인 것
 500 rCoin 구매 팝업에서 하단 `Cancel` 버튼이 제거됐고, `Pay USD` 결제 버튼이 팝업 하단 콘텐츠 폭 전체를 차지하는 것을 확인했다. 우측 상단 X 버튼을 실제로 클릭한 뒤 450ms 후 DOM을 재확인하여 `role="dialog"` 요소가 0건인 것을 확인했다.
 
 10,000 rCoin 구매 팝업의 실제 가로폭은 513px로 확장됐다. dialog의 `scrollWidth`와 `clientWidth`가 모두 538px이고 `overflow-x: hidden`이며, 페이지 자체의 가로 오버플로도 없어 하단 가로 스크롤바가 생성되지 않는다.
+
+최대 너비를 520px로 조정한 뒤 10,000 rCoin 구매 팝업의 실제 가로폭은 494px로 렌더링됐다. dialog의 `scrollWidth`와 `clientWidth`가 모두 518px이고, x축 및 페이지 가로 오버플로가 모두 없어 하단 가로 스크롤바가 생성되지 않는다.

@@ -93,7 +93,7 @@ function PurchaseDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton className="w-[calc(100%-1rem)] max-h-[90vh] overflow-x-hidden overflow-y-auto border border-[#d7d3c6] bg-[#fffdf8] p-0 text-slate-800 sm:max-w-[540px]">
+      <DialogContent showCloseButton className="w-[calc(100%-1rem)] max-h-[90vh] overflow-x-hidden overflow-y-auto border border-[#d7d3c6] bg-[#fffdf8] p-0 text-slate-800 sm:max-w-[520px]">
         <DialogTitle className="sr-only">Select rCoin Payment Method</DialogTitle>
         <DialogDescription className="sr-only">Select a payment method and confirm the payment amount for the selected rCoin product.</DialogDescription>
 
