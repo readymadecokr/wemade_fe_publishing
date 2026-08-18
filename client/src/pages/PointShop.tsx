@@ -18,6 +18,23 @@ function fmtDate(d: Date | string | null | undefined): string {
   return `${y}-${mo}-${day} ${h}:${mi}`;
 }
 
+function BalanceSummary({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
+  return (
+    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
+        <p className="text-xs font-black uppercase tracking-wide text-slate-500">rCoin</p>
+        <p className="mt-1 text-3xl font-black text-[#a51f24]">{fmtRuc(ruCash)}</p>
+        <p className="mt-1 text-xs text-slate-400">유료 충전 캐시</p>
+      </div>
+      <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
+        <p className="text-xs font-black uppercase tracking-wide text-slate-500">Bonus rCoin</p>
+        <p className="mt-1 text-3xl font-black text-green-700">{fmtRuc(bonusCash)}</p>
+        <p className="mt-1 text-xs text-slate-400">보너스 캐시 (우선 차감)</p>
+      </div>
+    </section>
+  );
+}
+
 // ─── 공통 페이지네이션 ────────────────────────────────────────────────────────
 function Pagination({ page, totalPages, setPage }: { page: number; totalPages: number; setPage: (p: number) => void }) {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -51,18 +68,7 @@ const COIN_ICONS: Record<number, string> = {
 };
   return (
     <div className="space-y-6">
-      <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
-          <p className="text-xs font-black tracking-wide text-slate-500 uppercase">rCoin</p>
-          <p className="mt-1 text-3xl font-black text-[#a51f24]">{fmtRuc(ruCash)}</p>
-          <p className="mt-1 text-xs text-slate-400">유료 충전 캐시</p>
-        </div>
-        <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
-          <p className="text-xs font-black tracking-wide text-slate-500 uppercase">Bonus rCoin</p>
-          <p className="mt-1 text-3xl font-black text-green-700">{fmtRuc(bonusCash)}</p>
-          <p className="mt-1 text-xs text-slate-400">보너스 캐시 (우선 차감)</p>
-        </div>
-      </section>
+      <BalanceSummary ruCash={ruCash} bonusCash={bonusCash} />
 
       <div className="flex flex-col gap-2 border-b border-slate-200 pb-4 text-sm sm:flex-row sm:items-center sm:justify-between">
         <p className="font-medium text-slate-600">통화 USD 단위 <span className="mx-1 text-slate-300">·</span> 지역 통화는 PG 결제 페이지에서 전환</p>
@@ -83,14 +89,14 @@ const COIN_ICONS: Record<number, string> = {
                 <img
                   src={isBestSeller ? "/manus-storage/rcoin-badge-best-seller-clean_432b87e4.png" : "/manus-storage/rcoin-badge-best-value-clean_4ae2a914.png"}
                   alt={isBestSeller ? "최다 판매" : "최고 혜택"}
-                  className="absolute -left-2 -top-3 z-10 h-7 w-24 object-fill drop-shadow-md sm:h-8 sm:w-28"
+                  className="absolute -left-2 -top-3 z-10 h-auto w-24 object-contain drop-shadow-md sm:w-28"
                 />
               )}
               <div className="flex h-[104px] items-center justify-center gap-3 px-2 pt-1">
                 <div className="flex w-[84px] shrink-0 items-center justify-center self-stretch">
                   <img src={coinIcon} alt="rCoin coin" className="h-[84px] w-[84px] max-h-full max-w-full object-contain object-center" />
                 </div>
-                <div className="flex min-w-0 shrink-0 flex-col justify-center">
+                <div className={`flex min-w-0 shrink-0 flex-col justify-center ${p.id === 8 ? "-translate-x-2 min-[1280px]:-translate-x-3" : ""}`}>
                   {hasBonus ? (
                     <>
                       <div className="flex flex-col min-[1280px]:flex-row min-[1280px]:items-center min-[1280px]:gap-1">
@@ -132,7 +138,7 @@ const COIN_ICONS: Record<number, string> = {
 }
 
 // ─── 구매 내역 탭 ─────────────────────────────────────────────────────────────
-function ChargeHistoryTab() {
+function ChargeHistoryTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
   const [page, setPage] = useState(1);
   const { data } = trpc.shop.myChargeHistory.useQuery({ page, pageSize: 10 });
   const items = (data?.items ?? []) as any[];
@@ -141,6 +147,7 @@ function ChargeHistoryTab() {
   const COLS = ["게임코드","TIME","충전전 rCoin","충전전 Bonus rCoin","PG","Price","충전량 rCoin","충전량 Bonus rCoin","충전후 rCoin","충전후 Bonus rCoin"];
   return (
     <div className="space-y-4">
+      <BalanceSummary ruCash={ruCash} bonusCash={bonusCash} />
       <h2 className="text-base font-bold text-slate-800">구매 내역</h2>
       {!items.length ? (
         <div className="text-center py-12 text-slate-400 text-sm">충전 내역이 없습니다.</div>
@@ -177,7 +184,7 @@ function ChargeHistoryTab() {
 }
 
 // ─── 사용 내역 탭 ─────────────────────────────────────────────────────────────
-function UseHistoryTab() {
+function UseHistoryTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
   const [page, setPage] = useState(1);
   const { data } = trpc.shop.myUseHistory.useQuery({ page, pageSize: 10 });
   const items = (data?.items ?? []) as any[];
@@ -186,6 +193,7 @@ function UseHistoryTab() {
   const COLS = ["게임코드","TIME","사용전 rCoin","사용전 Bonus rCoin","Item Name","QTY","Item Price","Total Price","잔량 rCoin","잔량 Bonus rCoin"];
   return (
     <div className="space-y-4">
+      <BalanceSummary ruCash={ruCash} bonusCash={bonusCash} />
       <h2 className="text-base font-bold text-slate-800">사용 내역</h2>
       {!items.length ? (
         <div className="text-center py-12 text-slate-400 text-sm">사용 내역이 없습니다.</div>
@@ -264,8 +272,8 @@ export default function PointShop() {
               ))}
             </div>
             {tab === "charge" && <ChargeTab ruCash={ruCash} bonusCash={bonusCash} />}
-            {tab === "charge-history" && <ChargeHistoryTab />}
-            {tab === "use-history" && <UseHistoryTab />}
+            {tab === "charge-history" && <ChargeHistoryTab ruCash={ruCash} bonusCash={bonusCash} />}
+            {tab === "use-history" && <UseHistoryTab ruCash={ruCash} bonusCash={bonusCash} />}
           </main>
         </div>
         <div className="mt-10 border-t border-slate-200 pt-5 md:ml-[200px]">
