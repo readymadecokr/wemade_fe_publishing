@@ -306,3 +306,9 @@
 - [x] Account Information을 User ID·Nickname·CS Code 순서로 표시
 - [x] 현재 사용자 CS Code 조회·표시 추가
 - [x] 타입·DOM 테스트로 계정 정보 순서 검증
+
+## 어드민·프론트 계정 정보 및 회원 상세 전환
+- [x] 어드민 회원 목록을 User ID·Nickname·Provider·Registration Date·Last Activity·Status·CS Code·Action 순서로 변경
+- [x] 프론트 My Page 계정 정보를 User ID·Nickname·Provider·Registration Date·Last Activity·Status·CS Code 순서로 변경
+- [x] 어드민 회원 목록 클릭 시 회원 상세 팝업 대신 상세 페이지로 전환
+- [x] 타입·DOM 테스트 및 회원 목록·상세 페이지 전환 검증

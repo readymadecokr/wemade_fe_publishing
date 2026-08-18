@@ -269,15 +269,15 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
         registrationEndDate,
       }), (current, totalPages) => setExcelProgress({ current, total: totalPages }), 50000);
       if (!exportRows.length) { toast.error("선택한 기간에 다운로드할 회원이 없습니다."); return; }
-      const headers = ["User ID", "Nickname", "CS Code", "Provider", "Registration Date", "Last Activity", "상태"];
+      const headers = ["User ID", "Nickname", "Provider", "Registration Date", "Last Activity", "상태", "CS Code"];
       const rows = exportRows.map((u) => [
         u.id,
         u.name ?? "-",
-        u.csCode ?? "-",
         u.loginMethod ?? "-",
         fmt(u.createdAt),
         fmt(u.lastSignedIn),
         (u as any).status === "suspended" ? "이용정지" : (u as any).status === "banned" ? "영구정지" : "정상",
+        u.csCode ?? "-",
       ]);
       const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
       const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
@@ -305,6 +305,8 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
 
   return (
     <div className="space-y-6">
+      {!selectedUser && (
+        <>
       <SectionHeader title="회원 관리" desc="가입 회원 목록 조회, 정보 수정, 제재 처리" action={
         <div className="flex gap-2">
           <Button className="bg-green-600 hover:bg-green-700 text-white h-9 text-sm" onClick={handleExcelDownload} disabled={isExcelDownloading}>{isExcelDownloading ? (excelProgress ? `저장 중... (${excelProgress.current}/${excelProgress.total})` : "저장 준비 중...") : "Excel 저장"}</Button>
@@ -373,11 +375,11 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                   <thead><tr className="border-b text-muted-foreground text-xs">
                     <th className="text-left p-2">User ID</th>
                     <th className="text-left p-2">Nickname</th>
-                    <th className="text-left p-2">CS Code</th>
                     <th className="text-left p-2">Provider</th>
                     <th className="text-left p-2">Registration Date</th>
                     <th className="text-left p-2">Last Activity</th>
                     <th className="text-left p-2">상태</th>
+                    <th className="text-left p-2">CS Code</th>
                     <th className="text-left p-2">처리</th>
                   </tr></thead>
                   <tbody>
@@ -385,7 +387,6 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                       <tr key={u.id} className="border-b hover:bg-accent/20 cursor-pointer" onClick={() => setSelectedUser(u)}>
                         <td className="p-2 text-xs text-muted-foreground font-mono">{u.id}</td>
                         <td className="p-2 font-medium">{u.name ?? "-"}</td>
-                        <td className="p-2 text-xs font-mono text-muted-foreground">{u.csCode ?? "-"}</td>
                         <td className="p-2 text-xs text-muted-foreground">{u.loginMethod ?? "-"}</td>
                         <td className="p-2 text-xs text-muted-foreground">{fmt(u.createdAt)}</td>
                         <td className="p-2 text-xs text-muted-foreground">{fmt(u.lastSignedIn)}</td>
@@ -394,6 +395,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
                             {(u as any).status === "suspended" ? "이용 정지" : (u as any).status === "banned" ? "영구 정지" : "정상"}
                           </span>
                         </td>
+                        <td className="p-2 text-xs font-mono text-muted-foreground">{u.csCode ?? "-"}</td>
                         <td className="p-2" onClick={e => e.stopPropagation()}>
                           <div className="flex gap-1">
                             <Button variant="outline" size="sm" className="h-7 text-xs border border-slate-300" onClick={() => { setSelectedUser(u); }}>수정</Button>
@@ -410,15 +412,18 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
           )}
         </CardContent>
       </Card>
+        </>
+      )}
 
-      {/* 회원 상세 / 수정 모달 */}
-      {/* 회원 정보 조회 + 닉네임 수정 통합 팝업 */}
-      <Dialog open={!!selectedUser && !suspendForm} onOpenChange={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>
-        <DialogContent className="w-[calc(100vw-2rem)] sm:w-[calc(100vw-4rem)] sm:max-w-none xl:max-w-5xl max-h-[92vh] overflow-x-hidden overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>회원 정보 조회</DialogTitle>
-            <DialogDescription>회원 상세 정보를 확인합니다.</DialogDescription>
-          </DialogHeader>
+      {selectedUser && !suspendForm && (
+        <section className="max-w-5xl mx-auto space-y-5">
+          <SectionHeader title="회원 상세" desc="회원 상세 정보를 확인하고 수정·제재 처리할 수 있습니다." action={
+            <Button variant="outline" onClick={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }} className="gap-1.5">
+              <ChevronLeft className="h-4 w-4" /> 회원 목록
+            </Button>
+          } />
+          <Card>
+            <CardContent className="p-6">
           {selectedUser && (
             <div className="space-y-0 text-sm divide-y">
               {/* ID */}
@@ -552,7 +557,7 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               )}
             </div>
           )}
-          <DialogFooter>
+          <div className="mt-6 flex flex-wrap justify-end gap-2">
             <Button
               variant="outline"
               className="border border-slate-300"
@@ -574,9 +579,11 @@ function MembersSection({ adminClient }: { adminClient: ReturnType<typeof create
               }}
             >이용 제한</Button>
             <Button variant="outline" className="border border-slate-300" onClick={() => { setSelectedUser(null); setEditForm(null); setNickCheckResult("idle"); }}>닫기</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+            </CardContent>
+          </Card>
+        </section>
+      )}
 
       {/* 현재 회원 제재 팝업 미리보기 */}
       <Dialog open={!!memberRestrictionPreview} onOpenChange={(open) => { if (!open) setMemberRestrictionPreview(null); }}>

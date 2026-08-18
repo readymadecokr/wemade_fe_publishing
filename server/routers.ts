@@ -53,7 +53,15 @@ export const appRouter = router({
       if (!db) throw new Error("Database not available");
 
       const [profile] = await db
-        .select({ id: users.id, name: users.name, csCode: users.csCode })
+        .select({
+          id: users.id,
+          name: users.name,
+          csCode: users.csCode,
+          loginMethod: users.loginMethod,
+          createdAt: users.createdAt,
+          lastSignedIn: users.lastSignedIn,
+          status: users.status,
+        })
         .from(users)
         .where(eq(users.id, ctx.user.id))
         .limit(1);

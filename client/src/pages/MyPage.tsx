@@ -72,8 +72,9 @@ export default function MyPage() {
 
   // DB createdAt 우선, 없으면 localStorage rou_agreed_at fallback
   const registrationDate = (() => {
-    if (meData?.createdAt) {
-      const d = meData.createdAt instanceof Date ? meData.createdAt : new Date(meData.createdAt as unknown as string);
+    const createdAt = profileData?.createdAt ?? meData?.createdAt;
+    if (createdAt) {
+      const d = createdAt instanceof Date ? createdAt : new Date(createdAt as unknown as string);
       if (!isNaN(d.getTime())) return formatRegistrationDate(d);
     }
     const raw = localStorage.getItem("rou_agreed_at");
@@ -83,6 +84,8 @@ export default function MyPage() {
     }
     return "-";
   })();
+  const lastActivity = profileData?.lastSignedIn ? formatRegistrationDate(profileData.lastSignedIn) : "-";
+  const profileStatus = profileData?.status === "suspended" ? "Suspended" : profileData?.status === "banned" ? "Permanently Banned" : "Active";
 
   // Format agreed_at as "Agreed on: MM/DD/YYYY H:MM AM/PM"
   const agreedDateStr = (() => {
@@ -133,7 +136,9 @@ export default function MyPage() {
     setUserNickname(meData.name);
     localStorage.setItem("rou_nickname", meData.name);
   }, [meData?.name]);
-  const socialProvider = localStorage.getItem("rou_social_provider") || "Guest";
+  const socialProvider = profileData?.loginMethod
+    ? `${profileData.loginMethod.charAt(0).toUpperCase()}${profileData.loginMethod.slice(1)}`
+    : localStorage.getItem("rou_social_provider") || "Guest";
 
   // Get login type display info
   const getLoginTypeInfo = () => {
@@ -397,17 +402,17 @@ export default function MyPage() {
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-transparent">
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">User ID</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Nickname</TableHead>
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">CS Code</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Provider</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Registration Date</TableHead>
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Last Account Activity</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Last Activity</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Status</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">CS Code</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5">
                             <TableCell className="text-black/70 dark:text-white/70 font-mono">{profileData?.id ?? meData?.id ?? "-"}</TableCell>
                             <TableCell className="text-black dark:text-white font-medium">{userNickname}</TableCell>
-                            <TableCell className="text-black/70 dark:text-white/70 font-mono">{profileData?.csCode || "-"}</TableCell>
                             <TableCell>
                               {socialProvider === "Google" ? (
                                 <span className="inline-flex items-center gap-1 text-black dark:text-white">
@@ -427,7 +432,9 @@ export default function MyPage() {
                               )}
                             </TableCell>
                             <TableCell className="text-black/70 dark:text-white/70">{registrationDate}</TableCell>
-                            <TableCell className="text-black/70 dark:text-white/70">South Korea • 06/19/2026 • 05:49 AM</TableCell>
+                            <TableCell className="text-black/70 dark:text-white/70">{lastActivity}</TableCell>
+                            <TableCell className={`font-medium ${profileData?.status === "active" || !profileData?.status ? "text-green-600" : "text-red-600"}`}>{profileStatus}</TableCell>
+                            <TableCell className="text-black/70 dark:text-white/70 font-mono">{profileData?.csCode || "-"}</TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
@@ -442,10 +449,6 @@ export default function MyPage() {
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Nickname</p>
                         <p className="text-sm text-black dark:text-white font-medium">{userNickname}</p>
-                      </div>
-                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">CS Code</p>
-                        <p className="text-sm text-black dark:text-white font-mono">{profileData?.csCode || "-"}</p>
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Provider</p>
@@ -473,8 +476,16 @@ export default function MyPage() {
                         <p className="text-sm text-black dark:text-white">{registrationDate}</p>
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Last Account Activity</p>
-                        <p className="text-sm text-black dark:text-white">South Korea • 06/19/2026 • 05:49 AM</p>
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Last Activity</p>
+                        <p className="text-sm text-black dark:text-white">{lastActivity}</p>
+                      </div>
+                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Status</p>
+                        <p className={`text-sm font-medium ${profileData?.status === "active" || !profileData?.status ? "text-green-600" : "text-red-600"}`}>{profileStatus}</p>
+                      </div>
+                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">CS Code</p>
+                        <p className="text-sm text-black dark:text-white font-mono">{profileData?.csCode || "-"}</p>
                       </div>
                     </div>
                   </div>

@@ -26,7 +26,17 @@ vi.mock("@/lib/trpc", () => ({
     },
     user: {
       profile: {
-        useQuery: () => ({ data: { id: 1, name: "Ryan Kim", csCode: "90000000001" } }),
+        useQuery: () => ({
+          data: {
+            id: 1,
+            name: "Ryan Kim",
+            csCode: "90000000001",
+            loginMethod: "google",
+            createdAt: new Date("2026-06-22T06:38:00Z"),
+            lastSignedIn: new Date("2026-08-18T06:05:00Z"),
+            status: "active",
+          },
+        }),
       },
       updateNickname: {
         useMutation: () => ({ mutateAsync: mocks.updateNickname }),
@@ -75,9 +85,13 @@ describe("My Page nickname search DOM flow", () => {
     expect((await screen.findAllByText("Ryan Kim")).length).toBeGreaterThanOrEqual(2);
     expect(screen.getAllByText("User ID").length).toBeGreaterThanOrEqual(2);
     expect(screen.getAllByText("CS Code").length).toBeGreaterThanOrEqual(2);
-    expect(screen.getAllByRole("columnheader").slice(0, 3).map((heading) => heading.textContent)).toEqual([
+    expect(screen.getAllByRole("columnheader").slice(0, 7).map((heading) => heading.textContent)).toEqual([
       "User ID",
       "Nickname",
+      "Provider",
+      "Registration Date",
+      "Last Activity",
+      "Status",
       "CS Code",
     ]);
 
