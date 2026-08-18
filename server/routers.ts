@@ -47,6 +47,41 @@ export const appRouter = router({
   }),
 
   user: router({
+    checkNickname: publicProcedure
+      .input(z.object({ name: z.string().trim().min(2).max(20) }))
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user) throw new Error("Not authenticated");
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const [existing] = await db
+          .select({ id: users.id })
+          .from(users)
+          .where(eq(users.name, input.name))
+          .limit(1);
+
+        return { isAvailable: !existing || existing.id === ctx.user.id };
+      }),
+    updateNickname: publicProcedure
+      .input(z.object({ name: z.string().trim().min(2).max(20) }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new Error("Not authenticated");
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const [existing] = await db
+          .select({ id: users.id })
+          .from(users)
+          .where(eq(users.name, input.name))
+          .limit(1);
+
+        if (existing && existing.id !== ctx.user.id) {
+          throw new Error("Nickname is already in use");
+        }
+
+        await db.update(users).set({ name: input.name }).where(eq(users.id, ctx.user.id));
+        return { success: true, name: input.name };
+      }),
     // 탈퇴 처리 — withdrawnAt 저장
     withdraw: publicProcedure.mutation(async ({ ctx }) => {
       if (!ctx.user) throw new Error("Not authenticated");

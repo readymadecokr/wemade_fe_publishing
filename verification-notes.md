@@ -135,3 +135,9 @@ Open ID `ht9VTLxcZT8zXDqDVqnxmM`(User ID 1, Ryan Kim)의 데이터베이스 잔�
 동일 Open ID의 `Admin Balance Recovery` 이력은 존재하지 않았다. 이는 잔액이 실제로 사라진 것이 아니라, 로컬 로그인 상태가 OAuth 세션 없이 표시되어 `shop.myBalance`가 0을 반환한 화면 표시 문제였다는 점과 일치한다. OAuth User ID 1 컨텍스트에서 `shop.myBalance`는 rCoin 1,000,000 및 Bonus rCoin 1,000,000을 반환하는 통합 Vitest로 검증했다.
 
 브라우저에서 `rou_logged_in=true` 로컬 플래그만 설정한 뒤 화면을 다시 열어도, OAuth 세션이 없으면 헤더는 `Sign In / Sign Up`을 표시하고 `rCoin: 0`을 표시하지 않는 것을 확인했다. 이는 실제 OAuth 로그인 계정만 rCoin 잔액 API를 조회하도록 전환됐음을 검증한다.
+
+My Page Account Information에 Nickname 오른쪽 User ID 열을 추가하고, 모바일 카드에도 User ID를 표시했다. Change Nickname 팝업은 Search 버튼으로 현재 OAuth 사용자 기준 중복을 확인하며, `This nickname is available.`(파란색) 또는 `This nickname is already in use.`(빨간색)를 입력창 아래에 표시한다. 확인 전·중복 시에는 Save가 비활성화된다. TypeScript와 Vitest 9건을 통과했고 User ID 1의 현재 닉네임은 중복 없이 사용 가능한 것으로 API 통합 테스트했다.
+
+실제 다른 회원(User ID 60001)의 닉네임을 User ID 1 컨텍스트에서 조회했을 때 `user.checkNickname`이 `isAvailable: false`를 반환하는 중복 케이스를 추가 검증했다. TypeScript와 Vitest 10건을 통과했다.
+
+구매·사용 내역 테이블의 `Bonus rCoin Charged`, `rCoin After` 등 긴 헤더를 줄바꿈 형태로 변경하고 `table-fixed`·`overflow-hidden`을 적용했다. 비로그인 브라우저에서는 내역이 비어 있어 실제 행 렌더링은 표시되지 않았지만, TypeScript와 헤더 줄바꿈·오버플로 클래스를 검증하는 Vitest를 포함해 11건의 테스트를 통과했다.

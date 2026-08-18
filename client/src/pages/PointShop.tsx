@@ -260,7 +260,7 @@ function ChargeHistoryTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: nu
   const items = (data?.items ?? []) as any[];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / 10));
-  const COLS = ["Game Code","Time","rCoin Before","Bonus rCoin Before","PG","Price","rCoin Charged","Bonus rCoin Charged","rCoin After","Bonus rCoin After"];
+  const COLS = ["Game\nCode","Time","rCoin\nBefore","Bonus rCoin\nBefore","PG","Price","rCoin\nCharged","Bonus rCoin\nCharged","rCoin\nAfter","Bonus rCoin\nAfter"];
   return (
     <div className="space-y-4">
       <BalanceSummary ruCash={ruCash} bonusCash={bonusCash} />
@@ -268,11 +268,11 @@ function ChargeHistoryTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: nu
       {!items.length ? (
         <div className="text-center py-12 text-slate-400 text-sm">No purchase history available.</div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200">
-          <table className="w-full text-xs border-collapse">
+        <div className="overflow-hidden rounded-xl border border-slate-200">
+          <table className="w-full table-fixed text-xs border-collapse">
             <thead>
               <tr className="bg-[#9b2020] text-white">
-                {COLS.map(c => <th key={c} className="px-3 py-2.5 text-left font-semibold whitespace-nowrap border-r border-red-700 last:border-r-0">{c}</th>)}
+                {COLS.map(c => <th key={c} className="px-2 py-2.5 text-center font-semibold whitespace-pre-line leading-tight border-r border-red-700 last:border-r-0">{c}</th>)}
               </tr>
             </thead>
             <tbody>
@@ -306,7 +306,7 @@ function UseHistoryTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: numbe
   const items = (data?.items ?? []) as any[];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / 10));
-  const COLS = ["Game Code","Time","rCoin Before","Bonus rCoin Before","Item Name","Qty","Item Price","Total Price","rCoin Balance","Bonus rCoin Balance"];
+  const COLS = ["Game\nCode","Time","rCoin\nBefore","Bonus rCoin\nBefore","Item\nName","Qty","Item\nPrice","Total\nPrice","rCoin\nAfter","Bonus rCoin\nAfter"];
   return (
     <div className="space-y-4">
       <BalanceSummary ruCash={ruCash} bonusCash={bonusCash} />
@@ -314,11 +314,11 @@ function UseHistoryTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: numbe
       {!items.length ? (
         <div className="text-center py-12 text-slate-400 text-sm">No usage history available.</div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200">
-          <table className="w-full text-xs border-collapse">
+        <div className="overflow-hidden rounded-xl border border-slate-200">
+          <table className="w-full table-fixed text-xs border-collapse">
             <thead>
               <tr className="bg-[#9b2020] text-white">
-                {COLS.map(c => <th key={c} className="px-3 py-2.5 text-left font-semibold whitespace-nowrap border-r border-red-700 last:border-r-0">{c}</th>)}
+                {COLS.map(c => <th key={c} className="px-2 py-2.5 text-center font-semibold whitespace-pre-line leading-tight border-r border-red-700 last:border-r-0">{c}</th>)}
               </tr>
             </thead>
             <tbody>

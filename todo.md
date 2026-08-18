@@ -289,3 +289,14 @@
 - [x] OAuth 로그인 계정 기준으로 1,000,000 rCoin 및 Bonus rCoin 표시 연결
 - [x] Home 화면의 로그인 상태를 OAuth 세션으로 통일
 - [x] TypeScript·Vitest 및 OAuth User ID 1 잔액 API 검증
+
+## My Page User ID·닉네임 중복 확인
+- [x] Account Information의 Nickname 오른쪽에 User ID 표시
+- [x] 닉네임 중복 확인 API 및 Search 버튼 추가
+- [x] 사용 가능·중복 사용 중 영문 결과 표시와 Save 버튼 제어
+- [ ] 실제 로그인 My Page의 User ID·닉네임 Search 화면 동작 검증
+
+## Shop 내역 테이블 가로 오버플로 보완
+- [x] 구매·사용 내역의 긴 rCoin 헤더를 2줄로 표시
+- [x] 테이블 가로 스크롤바 제거
+- [x] 타입 검사 및 구매·사용 내역 헤더 렌더링 검증

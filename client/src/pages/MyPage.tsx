@@ -22,6 +22,8 @@ export default function MyPage() {
   const [showNicknameEdit, setShowNicknameEdit] = useState(false);
   const [newNickname, setNewNickname] = useState("");
   const [isEditingNickname, setIsEditingNickname] = useState(false);
+  const [nicknameCheckStatus, setNicknameCheckStatus] = useState<"idle" | "checking" | "available" | "duplicate" | "invalid">("idle");
+  const [checkedNickname, setCheckedNickname] = useState("");
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const { isAuthenticated, logout } = useAuth();
@@ -51,6 +53,8 @@ export default function MyPage() {
 
   // DB에서 실제 createdAt 가져오기
   const { data: meData } = trpc.auth.me.useQuery();
+  const trpcUtils = trpc.useUtils();
+  const updateNicknameMutation = trpc.user.updateNickname.useMutation();
 
   const formatRegistrationDate = (date: Date | string | null | undefined): string => {
     if (!date) return "-";
@@ -123,6 +127,11 @@ export default function MyPage() {
     localStorage.setItem("rou_nickname", newNickname);
     return newNickname;
   });
+  useEffect(() => {
+    if (!meData?.name) return;
+    setUserNickname(meData.name);
+    localStorage.setItem("rou_nickname", meData.name);
+  }, [meData?.name]);
   const socialProvider = localStorage.getItem("rou_social_provider") || "Guest";
 
   // Get login type display info
@@ -157,16 +166,52 @@ export default function MyPage() {
     );
   }
 
-  const handleNicknameChange = () => {
-    if (newNickname.length < 2 || newNickname.length > 20) {
+  const handleNicknameCheck = async () => {
+    const normalizedNickname = newNickname.trim();
+    if (normalizedNickname.length < 2 || normalizedNickname.length > 20) {
+      setNicknameCheckStatus("invalid");
+      setCheckedNickname("");
+      return;
+    }
+
+    setNicknameCheckStatus("checking");
+    try {
+      const result = await trpcUtils.user.checkNickname.fetch({ name: normalizedNickname });
+      setNicknameCheckStatus(result.isAvailable ? "available" : "duplicate");
+      setCheckedNickname(normalizedNickname);
+    } catch (error) {
+      setNicknameCheckStatus("idle");
+      toast.error(error instanceof Error ? error.message : "Unable to check nickname availability.");
+    }
+  };
+
+  const handleNicknameChange = async () => {
+    const normalizedNickname = newNickname.trim();
+    if (normalizedNickname.length < 2 || normalizedNickname.length > 20) {
       toast.error("Nickname must be between 2 and 20 characters.");
       return;
     }
-    setUserNickname(newNickname);
-    localStorage.setItem("rou_nickname", newNickname);
-    toast.success(`Nickname changed to ${newNickname}!`);
-    setShowNicknameEdit(false);
-    setNewNickname("");
+    if (nicknameCheckStatus !== "available" || checkedNickname !== normalizedNickname) {
+      toast.error("Please search and confirm nickname availability first.");
+      return;
+    }
+
+    setIsEditingNickname(true);
+    try {
+      const result = await updateNicknameMutation.mutateAsync({ name: normalizedNickname });
+      setUserNickname(result.name);
+      localStorage.setItem("rou_nickname", result.name);
+      await trpcUtils.auth.me.invalidate();
+      toast.success(`Nickname changed to ${result.name}!`);
+      setShowNicknameEdit(false);
+      setNewNickname("");
+      setNicknameCheckStatus("idle");
+      setCheckedNickname("");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to change nickname.");
+    } finally {
+      setIsEditingNickname(false);
+    }
   };
 
   const handleCouponSubmit = async () => {
@@ -246,7 +291,7 @@ export default function MyPage() {
                     size="sm"
                     variant="outline"
                     className="mt-3 w-full text-xs border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5"
-                    onClick={() => { setShowNicknameEdit(true); setNewNickname(userNickname); }}
+                    onClick={() => { setShowNicknameEdit(true); setNewNickname(userNickname); setNicknameCheckStatus("idle"); setCheckedNickname(""); }}
                   >
                     <Edit2 size={12} className="mr-1" /> Change Nickname
                   </Button>
@@ -349,7 +394,8 @@ export default function MyPage() {
                       <Table className="text-xs">
                         <TableHeader>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-transparent">
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Name</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Nickname</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">User ID</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Provider</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Registration Date</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Last Account Activity</TableHead>
@@ -358,6 +404,7 @@ export default function MyPage() {
                         <TableBody>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5">
                             <TableCell className="text-black dark:text-white font-medium">{userNickname}</TableCell>
+                            <TableCell className="text-black/70 dark:text-white/70 font-mono">{meData?.id ?? "-"}</TableCell>
                             <TableCell>
                               {socialProvider === "Google" ? (
                                 <span className="inline-flex items-center gap-1 text-black dark:text-white">
@@ -388,6 +435,10 @@ export default function MyPage() {
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Name</p>
                         <p className="text-sm text-black dark:text-white font-medium">{userNickname}</p>
+                      </div>
+                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">User ID</p>
+                        <p className="text-sm text-black dark:text-white font-mono">{meData?.id ?? "-"}</p>
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Provider</p>
@@ -512,28 +563,38 @@ export default function MyPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-[#131313] rounded-2xl p-6 max-w-sm w-full border border-white/10 dark:border-slate-700/50">
             <h3 className="text-lg font-bold text-black dark:text-white mb-4">Change Nickname</h3>
-            <Input
-              type="text"
-              placeholder="Enter new nickname"
-              value={newNickname}
-              onChange={(e) => setNewNickname(e.target.value)}
-              maxLength={20}
-              className="mb-4 bg-white dark:bg-slate-800 border-black/20 dark:border-white/20 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40"
-            />
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                placeholder="Enter new nickname"
+                value={newNickname}
+                onChange={(e) => { setNewNickname(e.target.value); setNicknameCheckStatus("idle"); setCheckedNickname(""); }}
+                maxLength={20}
+                className="bg-white dark:bg-slate-800 border-black/20 dark:border-white/20 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40"
+              />
+              <Button type="button" onClick={handleNicknameCheck} disabled={nicknameCheckStatus === "checking"} className="shrink-0 bg-blue-500 hover:bg-blue-600 text-white px-5">
+                {nicknameCheckStatus === "checking" ? "Checking..." : "Search"}
+              </Button>
+            </div>
+            <div className="min-h-5 mt-1 mb-3 text-xs font-medium">
+              {nicknameCheckStatus === "available" && <p className="text-blue-500">This nickname is available.</p>}
+              {nicknameCheckStatus === "duplicate" && <p className="text-red-500">This nickname is already in use.</p>}
+              {nicknameCheckStatus === "invalid" && <p className="text-red-500">Nickname must be between 2 and 20 characters.</p>}
+            </div>
             <p className="text-xs text-black dark:text-white mb-4">
               {newNickname.length}/20 characters (minimum 2)
             </p>
             <div className="flex gap-3">
               <Button
                 variant="outline"
-                onClick={() => setShowNicknameEdit(false)}
+                onClick={() => { setShowNicknameEdit(false); setNicknameCheckStatus("idle"); setCheckedNickname(""); }}
                 className="flex-1 border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleNicknameChange}
-                disabled={isEditingNickname}
+                disabled={isEditingNickname || nicknameCheckStatus !== "available" || checkedNickname !== newNickname.trim()}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {isEditingNickname ? "Saving..." : "Save"}
