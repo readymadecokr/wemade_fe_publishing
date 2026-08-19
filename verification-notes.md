@@ -138,3 +138,9 @@ Shop 헤더를 Game Info와 동일한 인라인 아이콘·제목·부제 구조
 - 모바일 자동 캡처 범위는 Home, Shop, My Page, News, Game Info, News Detail, Notice, Notice Detail, Login, Terms of Service, Privacy Policy, Cookie Policy이며, 데스크톱 범위는 Home, Game Info, Shop, My Page, News, Notice, Login, Terms of Service이다. 각 확인 화면에서 수평 페이지 이탈 없이 헤더와 주요 콘텐츠가 표시되었다.
 - 공통 CSS의 `outline-ring/50` 포커스 윤곽, native button/link 기반의 주요 인터랙션, 서비스 페이지의 `h1` 또는 `h2` 제목 구조, 모바일 햄버거 제거를 `public-neon-accessibility.test.ts`로 회귀 검증했다. 소셜 바로가기 제어는 모바일에서 본문을 가리지 않도록 우하단 축소 배치했다.
 - 최종 코드 기준 TypeScript 검사와 Vitest 14개 파일·27개 테스트가 모두 통과했다.
+
+## 2026-08-19 — 첨부 Shop 시안 기반 포털 재구성
+
+- Shop을 시안과 같은 좌측 계정·rCoin 잔액·필터·지원 패널, `POWER UP YOUR ADVENTURE` 보상 배너, 4열 상품 그리드, Best Seller·Best Value 강조 구조로 재구성했다. 기존 8개 rCoin 상품 이미지와 구매 팝업·USD 가격 선택·결제 수단·보안 확인 흐름을 유지했다.
+- 1440px 시각 캡처에서 Shop의 8개 상품, 1,500 rCoin Best Seller, 10,000 rCoin Best Value, 보너스 및 USD 가격이 한 화면의 대시보드 그리드에 표시되는 것을 확인했다. 비로그인 API 응답 상태에서도 상품 구성 폴백으로 빈 화면이 발생하지 않는다.
+- Home에는 포털 명령 사이드 패널을 추가했고, Game Info·News·Notice에는 공통 포털 가이드 패널을 적용했다. 1440px 캡처에서 공통 워드마크 헤더, 좌측 정보 패널, 우측 카드형 콘텐츠 흐름이 일관되게 표시되는 것을 확인했다.

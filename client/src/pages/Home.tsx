@@ -205,7 +205,20 @@ export default function Home() {
     <Layout>
       <div className="bg-background">
         {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
-        <div className="relative w-full">
+        <div className="container grid gap-5 py-5 lg:grid-cols-[286px_minmax(0,1fr)]">
+          <aside className="neon-panel hidden min-h-[360px] flex-col rounded-2xl p-5 lg:flex">
+            <p className="neon-kicker">Universe portal</p>
+            <h2 className="mt-2 text-2xl font-black text-slate-100">ADVENTURER<br /><span className="text-cyan-200">COMMAND</span></h2>
+            <p className="mt-4 border-y border-cyan-300/10 py-4 text-sm leading-relaxed text-slate-400">Discover game updates, prepare your account, and enter the world of Ragnarok Universe.</p>
+            <div className="mt-4 space-y-2">
+              <Link href="/point-shop" className="block rounded-lg border border-rose-400/20 bg-rose-400/10 px-3 py-3 text-xs font-black text-rose-100 transition hover:bg-rose-400/20">TOP UP rCOIN</Link>
+              <Link href="/game-info" className="block rounded-lg px-3 py-3 text-xs font-black text-slate-400 transition hover:bg-cyan-300/10 hover:text-cyan-200">GAME GUIDE</Link>
+              <Link href="/mypage" className="block rounded-lg px-3 py-3 text-xs font-black text-slate-400 transition hover:bg-cyan-300/10 hover:text-cyan-200">MY PAGE</Link>
+            </div>
+            <div className="mt-auto rounded-xl border border-cyan-300/15 bg-slate-950/50 p-3"><p className="text-[10px] font-black tracking-[0.18em] text-slate-500">UNIVERSE STATUS</p><p className="mt-1 text-xs font-bold text-emerald-300">● ONLINE · BETA TESTING</p></div>
+          </aside>
+          <div className="min-w-0">
+          <div className="relative w-full overflow-hidden rounded-2xl border border-cyan-300/25 shadow-[0_0_30px_rgba(25,216,230,.1)]">
           {/* BANNER SECTION */}
           <section className="relative w-full bg-slate-950 overflow-hidden flex items-center justify-center" style={{ aspectRatio: '1900 / 600' }}>
             {/* Banner Image */}
@@ -268,10 +281,12 @@ export default function Home() {
               />
             </button>
           </div>
-        </div>
+          </div>
 
-        {/* Spacer: 버튼 높이의 50% (translate-y[50%] 기준) */}
-        <div className="bg-background" style={{ height: 'clamp(60px, 8vw, 130px)' }} />
+          {/* Spacer: 버튼 높이의 50% (translate-y[50%] 기준) */}
+          <div className="bg-background" style={{ height: 'clamp(60px, 8vw, 130px)' }} />
+          </div>
+        </div>
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-0 bg-background">

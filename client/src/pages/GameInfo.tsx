@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
+import PortalGuidePanel from "@/components/PortalGuidePanel";
 
 /**
  * Design Philosophy: Ragnarok Universe dark neon game guide
@@ -89,6 +90,9 @@ function GameInfoPageContent() {
 
       {/* Content */}
       <main className="container py-6">
+        <div className="grid gap-5 lg:grid-cols-[286px_minmax(0,1fr)]">
+          <PortalGuidePanel eyebrow="WORLD GUIDE" title="GAME COMMAND" />
+          <div className="min-w-0">
         {/* Game Overview */}
         <section className="mb-8">
           <div className="mb-4">
@@ -171,6 +175,8 @@ function GameInfoPageContent() {
             </Button>
           </Link>
         </section>
+          </div>
+        </div>
       </main>
     </>
   );

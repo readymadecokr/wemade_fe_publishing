@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
+import PortalGuidePanel from "@/components/PortalGuidePanel";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -226,7 +227,9 @@ function NewsDetailContent() {
 
         {/* Article Content */}
         <main className="container py-10">
-          <div className="max-w-3xl mx-auto">
+          <div className="grid gap-5 lg:grid-cols-[286px_minmax(0,1fr)]">
+            <PortalGuidePanel eyebrow="OFFICIAL DISPATCHES" title="ARTICLE COMMAND" />
+            <div className="min-w-0 max-w-3xl">
             {/* Featured Image — only shown when image exists */}
             {news.image && (
               <div className="neon-card overflow-hidden mb-8">
@@ -289,6 +292,7 @@ function NewsDetailContent() {
                   </button>
                 </div>
               )}
+            </div>
             </div>
           </div>
         </main>

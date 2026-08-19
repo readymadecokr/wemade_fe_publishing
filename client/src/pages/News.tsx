@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
+import PortalGuidePanel from "@/components/PortalGuidePanel";
 import { useState, useEffect } from "react";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
@@ -212,6 +213,9 @@ function NewsPageContent() {
 
       {/* Content - 2 columns grid on mobile, 3 columns on desktop */}
       <main className="container py-4 px-2 md:px-4 md:py-12">
+        <div className="grid gap-5 lg:grid-cols-[286px_minmax(0,1fr)]">
+          <PortalGuidePanel eyebrow="OFFICIAL DISPATCHES" title="NEWS COMMAND" />
+          <div className="min-w-0">
         {(() => {
           const totalPages = Math.ceil(newsData.length / ITEMS_PER_PAGE);
           const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -278,6 +282,8 @@ function NewsPageContent() {
             </>
           );
         })()}
+          </div>
+        </div>
       </main>
     </>
   );

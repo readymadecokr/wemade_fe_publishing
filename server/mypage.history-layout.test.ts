@@ -16,8 +16,11 @@ describe("My Page history layout", () => {
     expect(historySource).not.toMatch(/<h[1-6][^>]*>\{?isPurchase \? \"Purchase History\"/);
   });
 
-  it("keeps only the Top Up view in the Shop navigation", () => {
-    expect(pointShop).toContain(">Top Up<");
+  it("uses the reference-style Shop sidebar while routing history to My Page", () => {
+    expect(pointShop).toContain(">TOP UP<");
+    expect(pointShop).toContain("PURCHASE HISTORY");
+    expect(pointShop).toContain("USAGE HISTORY");
+    expect(pointShop).toContain('setLocation("/mypage")');
     expect(pointShop).not.toContain('"charge-history"');
     expect(pointShop).not.toContain('"use-history"');
   });
