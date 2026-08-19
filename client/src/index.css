@@ -224,10 +224,11 @@
     position: relative;
     isolation: isolate;
     background-color: #f3ead5;
-    background-image: radial-gradient(ellipse 68% 66% at 50% 51%, rgba(255,253,244,.93) 0%, rgba(251,246,230,.87) 42%, rgba(246,236,207,.52) 67%, transparent 92%), url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png');
-    background-position: center center, center center;
-    background-size: cover, cover;
+    background-image: url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png');
+    background-position: center center;
+    background-size: cover;
     background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 
   .fantasy-site-atlas::before {
@@ -236,8 +237,8 @@
     position: absolute;
     inset: 0;
     z-index: 0;
-    background: linear-gradient(180deg, rgba(49,42,30,.22) 0%, rgba(49,42,30,.08) 13%, transparent 29%, transparent 72%, rgba(49,42,30,.09) 88%, rgba(49,42,30,.24) 100%);
-    mix-blend-mode: multiply;
+    background: radial-gradient(ellipse 76% 20% at 50% 10%, rgba(105,77,34,.28) 0%, rgba(188,150,75,.16) 44%, transparent 78%), radial-gradient(ellipse 80% 24% at 50% 92%, rgba(94,68,29,.34) 0%, rgba(174,132,58,.18) 45%, transparent 80%), linear-gradient(180deg, rgba(255,252,241,.04) 0%, rgba(255,252,241,.22) 16%, rgba(255,252,241,.84) 31%, rgba(255,252,241,.88) 69%, rgba(255,252,241,.22) 85%, rgba(255,252,241,.04) 100%);
+    mix-blend-mode: normal;
   }
 
   .fantasy-site-atlas > header,
@@ -278,12 +279,13 @@
 
   @media (max-width: 640px) {
     .fantasy-site-atlas {
-      background-position: center center, center 42%;
-      background-size: cover, cover;
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
 
     .fantasy-site-atlas::before {
-      background: linear-gradient(180deg, rgba(49,42,30,.18) 0%, rgba(49,42,30,.06) 11%, transparent 24%, transparent 76%, rgba(49,42,30,.08) 89%, rgba(49,42,30,.22) 100%);
+      background: radial-gradient(ellipse 110% 15% at 50% 9%, rgba(105,77,34,.24) 0%, rgba(188,150,75,.13) 44%, transparent 80%), radial-gradient(ellipse 110% 20% at 50% 93%, rgba(94,68,29,.29) 0%, rgba(174,132,58,.15) 48%, transparent 82%), linear-gradient(180deg, rgba(255,252,241,.04) 0%, rgba(255,252,241,.18) 16%, rgba(255,252,241,.82) 31%, rgba(255,252,241,.87) 69%, rgba(255,252,241,.20) 85%, rgba(255,252,241,.04) 100%);
     }
 
     .floating-social-box {
