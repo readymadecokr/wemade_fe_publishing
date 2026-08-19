@@ -198,36 +198,36 @@ function NewsDetailContent() {
     <Layout>
       <>
         {/* Fixed Section Header — always shows '📰 News' */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-12">
+        <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#526f8d_50%,#314b66)] py-11 text-white">
           <div className="container">
-            <h1 className="text-4xl font-black mb-2">📰 News</h1>
-            <p className="text-purple-100">Latest news, interviews, and community highlights</p>
+            <h1 className="mb-2 font-serif text-4xl font-bold">News</h1>
+            <p className="text-[#e9dfc8]">Latest news, interviews, and community highlights</p>
           </div>
         </div>
 
         {/* Article Title Block */}
-        <div className="bg-white dark:bg-background border-b border-purple-100 dark:border-border py-8">
-          <div className="container max-w-3xl mx-auto">
-            <Link href="/news" className="flex items-center gap-1.5 text-purple-500 hover:text-purple-700 text-sm mb-4 w-fit">
+        <div className="fantasy-page-shell py-8">
+          <div className="container fantasy-content-guide max-w-3xl mx-auto">
+            <Link href="/news" className="mb-4 flex w-fit items-center gap-1.5 text-sm text-[#4668a3] hover:text-[#2f4e82]">
               <ArrowLeft size={16} />
               Back to News
             </Link>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-3 leading-tight">{news.title}</h2>
+            <h2 className="mb-3 font-serif text-2xl font-bold leading-tight text-[#302419] md:text-3xl">{news.title}</h2>
             <div className="flex items-center gap-3 flex-wrap">
-              <span className={`px-3 py-1 rounded text-xs font-semibold ${getCategoryColor(news.category)}`}>
+              <span className="rounded bg-[#e2eaf7] px-3 py-1 text-xs font-semibold text-[#4668a3]">
                 {news.category.toLowerCase()}
               </span>
-              <span className="text-slate-500 dark:text-slate-400 text-sm">{news.date}</span>
+              <span className="text-sm text-[#7b6a51]">{news.date}</span>
             </div>
           </div>
         </div>
 
         {/* Article Content */}
-        <main className="container py-10">
-          <div className="max-w-3xl mx-auto">
+        <main className="fantasy-page-shell">
+          <div className="container fantasy-content-guide py-10 max-w-3xl mx-auto">
             {/* Featured Image — only shown when image exists */}
             {news.image && (
-              <div className="rounded-xl overflow-hidden mb-8 shadow-sm">
+              <div className="fantasy-frame mb-8 overflow-hidden rounded-xl">
                 <img
                   src={news.image}
                   alt={news.title}
@@ -237,21 +237,21 @@ function NewsDetailContent() {
             )}
 
             {/* Body Text — no box */}
-            <div className="mb-12">
+            <div className="fantasy-card mb-12 rounded-xl p-6">
               {news.content.split("\n\n").map((para, i) => (
-                <p key={i} className="text-slate-700 dark:text-slate-300 text-base leading-relaxed mb-4 last:mb-0">
+                <p key={i} className="mb-4 text-base leading-relaxed text-[#5d4f3d] last:mb-0">
                   {para}
                 </p>
               ))}
             </div>
 
             {/* Bottom Navigation: Prev / List / Next */}
-            <div className="flex items-center justify-between gap-3 pt-6 border-t border-purple-100 dark:border-border">
+            <div className="flex items-center justify-between gap-3 border-t border-[#cdbb91] pt-6">
               {/* Previous */}
               {prevNews ? (
                 <Link href={`/news/${prevNews.id}`} className="flex-1">
-                  <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-purple-200 dark:border-border hover:bg-purple-50 dark:hover:bg-white/5 transition-colors font-semibold text-slate-700 dark:text-slate-200 text-sm">
-                    <ArrowLeft size={15} className="text-purple-500" />
+                  <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#bca77a] px-4 py-3 text-sm font-semibold text-[#5d4f3d] transition-colors hover:bg-[#eadfc4]">
+                    <ArrowLeft size={15} className="text-[#4668a3]" />
                     Previous
                   </button>
                 </Link>
@@ -266,7 +266,7 @@ function NewsDetailContent() {
 
               {/* News List */}
               <Link href="/news" className="flex-1">
-                <button className="w-full flex items-center justify-center px-4 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-sm transition-colors">
+                <button className="flex w-full items-center justify-center rounded-xl border border-[#36578f] bg-[#4668a3] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#385a92]">
                   News List
                 </button>
               </Link>

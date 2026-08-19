@@ -233,13 +233,13 @@ export default function MyPage() {
   if (!isLoggedIn) {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-background dark:to-slate-900 px-4">
-          <div className="text-center">
-            <LogIn size={48} className="mx-auto mb-4 text-slate-400" />
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Not Logged In</h1>
-            <p className="text-slate-600 dark:text-slate-400 mb-6">Please log in to access your profile.</p>
+        <div className="fantasy-page-shell flex min-h-screen items-center justify-center px-4">
+          <div className="fantasy-card w-full max-w-md rounded-2xl p-9 text-center">
+            <LogIn size={48} className="mx-auto mb-4 text-[#5871a0]" />
+            <h1 className="mb-2 font-serif text-3xl font-bold text-[#302419]">Not Logged In</h1>
+            <p className="mb-6 text-[#75664f]">Please log in to access your profile.</p>
             <Link href="/login">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold">
+              <Button className="border border-[#395b94] bg-[#4668a3] font-semibold text-white hover:bg-[#385a92]">
                 Go to Login
               </Button>
             </Link>
@@ -318,25 +318,25 @@ export default function MyPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-background dark:to-slate-900 py-8 px-4">
+      <div className="fantasy-page-shell fantasy-account min-h-screen py-8 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">My Page</h1>
+          <h1 className="fantasy-section-title mb-8 flex items-center gap-3 text-3xl"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb]">✦</span>My Page</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left Sidebar */}
             <div className="lg:col-span-1">
-              <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50 sticky top-8">
+              <div className="fantasy-card sticky top-8 rounded-2xl p-6">
                 {/* Profile Card */}
-                <div className="flex flex-col items-center mb-6 pb-6 border-b border-black/10 dark:border-white/10">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center mb-3">
+                <div className="mb-6 flex flex-col items-center border-b border-[#d8c8a3] pb-6">
+                  <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full border border-[#bca76d] bg-[linear-gradient(135deg,#5474aa,#334f82)]">
                     <User size={32} className="text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-black dark:text-white text-center">{userNickname}</h3>
-                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">{loginInfo.icon} {loginInfo.label}</p>
+                  <h3 className="text-center font-serif text-lg font-bold text-[#302419]">{userNickname}</h3>
+                  <p className="mt-1 text-xs text-[#776952]">{loginInfo.icon} {loginInfo.label}</p>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="mt-3 w-full text-xs border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5"
+                    className="mt-3 w-full border-[#bca76d] text-xs text-[#405f95] hover:bg-[#e7eef9]"
                     onClick={() => { setShowNicknameEdit(true); setNewNickname(userNickname); }}
                   >
                     <Edit2 size={12} className="mr-1" /> Change Nickname
@@ -345,27 +345,27 @@ export default function MyPage() {
 
                 {/* Navigation Menu */}
                 <nav className="space-y-2">
-                  <button onClick={() => setActiveSection("purchase")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "purchase" ? "bg-[#9b2020] text-white" : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"}`}>
-                    <CreditCard size={16} className={activeSection === "purchase" ? "text-white" : "text-black dark:text-white"} />
+                  <button onClick={() => setActiveSection("purchase")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "purchase" ? "bg-[#4668a3] text-white" : "text-[#4e402f] hover:bg-[#eadfc4]"}`}>
+                    <CreditCard size={16} className={activeSection === "purchase" ? "text-white" : "text-[#4e402f]"} />
                     <span>Payment History</span>
                   </button>
-                  <button onClick={() => setActiveSection("usage")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "usage" ? "bg-[#9b2020] text-white" : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"}`}>
-                    <Clock size={16} className={activeSection === "usage" ? "text-white" : "text-black dark:text-white"} />
+                  <button onClick={() => setActiveSection("usage")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "usage" ? "bg-[#4668a3] text-white" : "text-[#4e402f] hover:bg-[#eadfc4]"}`}>
+                    <Clock size={16} className={activeSection === "usage" ? "text-white" : "text-[#4e402f]"} />
                     <span>Points/Item Usage</span>
                   </button>
-                  <button onClick={() => toast.info("Customer inquiry feature coming soon.")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-sm font-medium">
-                    <Mail size={16} className="text-black dark:text-white" />
+                  <button onClick={() => toast.info("Customer inquiry feature coming soon.")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#4e402f] hover:bg-[#eadfc4] transition-colors text-sm font-medium">
+                    <Mail size={16} className="text-[#4e402f]" />
                     <span>1:1 Inquiry</span>
                   </button>
-                  <button onClick={() => setShowCouponInput(true)} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-sm font-medium">
-                    <Ticket size={16} className="text-black dark:text-white" />
+                  <button onClick={() => setShowCouponInput(true)} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#4e402f] hover:bg-[#eadfc4] transition-colors text-sm font-medium">
+                    <Ticket size={16} className="text-[#4e402f]" />
                     <span>Enter Coupon</span>
                   </button>
                 </nav>
 
                 {/* Account Actions */}
-                <div className="mt-6 pt-6 border-t border-black/10 dark:border-white/10 space-y-2">
-                  <Button variant="outline" onClick={handleLogout} className="w-full text-xs border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5">
+                <div className="mt-6 space-y-2 border-t border-[#d8c8a3] pt-6">
+                  <Button variant="outline" onClick={handleLogout} className="w-full border-[#bca76d] text-xs text-[#4e402f] hover:bg-[#eadfc4]">
                     <LogOut size={12} className="mr-1" /> Logout
                   </Button>
 

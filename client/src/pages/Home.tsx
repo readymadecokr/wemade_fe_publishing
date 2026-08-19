@@ -191,21 +191,21 @@ export default function Home() {
 
   // News Card Component
   const NewsCard = ({ item, category }: { item: any; category: string }) => (
-    <div className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer">
+    <div className="fantasy-card overflow-hidden rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-xl cursor-pointer">
       <div className="aspect-video overflow-hidden bg-foreground/10">
         <img src={item.image} alt={item.title} className="w-full h-full object-cover hover:scale-105 transition-transform" />
       </div>
-      <div className="p-4">
-        <p className="text-xs font-bold text-foreground/60 uppercase mb-2">{category}</p>
-        <h3 className="text-base font-bold text-foreground mb-2 line-clamp-2">{item.title}</h3>
-        <p className="text-xs text-foreground/70">{item.date}</p>
+      <div className="p-3">
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[#5971a3]">{category}</p>
+        <h3 className="mb-1 text-sm font-bold leading-snug text-[#2c241c] line-clamp-2">{item.title}</h3>
+        <p className="text-[11px] text-[#7c6a52]">{item.date}</p>
       </div>
     </div>
   );
 
   return (
     <Layout>
-      <div className="bg-background">
+      <div className="fantasy-page-shell">
         {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
         <div className="relative w-full">
           {/* BANNER SECTION */}
@@ -271,24 +271,24 @@ export default function Home() {
         </div>
 
         {/* Spacer: 버튼 높이의 50% (translate-y[50%] 기준) */}
-        <div className="bg-background" style={{ height: 'clamp(60px, 8vw, 130px)' }} />
+        <div style={{ height: 'clamp(60px, 8vw, 130px)' }} />
 
         {/* NEWS SECTION - Unified layout */}
-        <section id="news" className="py-0 bg-background">
-          <div className="container pt-3 md:pt-4">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
-                News
+        <section id="news" className="py-2">
+          <div className="container fantasy-content-guide pt-5 md:pt-7">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb] shadow-sm">✦</span>News
               </h2>
               <Link href="/news">
-                <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white font-semibold text-sm px-5">
+                <Button variant="outline" className="border-[#7386a5] bg-[#fffdf7]/60 text-[#3e609b] hover:bg-[#4668a3] hover:text-white font-semibold text-sm px-5">
                   View More
                 </Button>
               </Link>
             </div>
 
             {/* News Grid - 2 rows of 3 cards on desktop, 2 columns on mobile */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
               {newsData.map((item) => (
                 <Link key={item.id} href={`/news/${item.id}`}>
                   <NewsCard item={item} category="NEWS" />
@@ -301,20 +301,20 @@ export default function Home() {
 
 
         {/* GAME INFO SECTION */}
-        <section id="game-info" className="py-0 bg-background">
-          <div className="container py-0" style={{paddingTop: '30px'}}>
+        <section id="game-info" className="py-0">
+          <div className="container fantasy-content-guide py-0" style={{paddingTop: '48px'}}>
             {/* Header */}
-            <div>
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
-                About Ragnarok Universe
+            <div className="mb-5">
+              <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb] shadow-sm">✦</span>About Ragnarok Universe
               </h2>
-              <p className="text-lg text-foreground/60">Discover the world of Ragnarok</p>
+              <p className="mt-1 text-sm text-[#786850] md:text-base">Discover the heart of Ragnarok</p>
             </div>
 
             {/* Game Info Card */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 items-center">
+            <div className="grid grid-cols-1 items-center gap-5 lg:grid-cols-2 lg:gap-8">
               {/* Game Image */}
-              <div className="rounded-2xl overflow-hidden shadow-lg">
+              <div className="fantasy-frame overflow-hidden rounded-xl">
                 <img
                   src={`${ASSET_BASE_URL}/manus-storage/main2_0c694426_d1284510.png`}
                   alt="Ragnarok Universe Gameplay"
@@ -323,36 +323,36 @@ export default function Home() {
               </div>
 
               {/* Game Details */}
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
                 <div>
-                  <h3 className="text-3xl font-black text-foreground mb-3">Romantic Fantasy MMORPG</h3>
-                  <p className="text-base text-foreground/70 leading-relaxed">
+                  <h3 className="font-serif text-3xl font-bold text-[#302419] mb-3">Discover the Heart of Ragnarok Universe</h3>
+                  <p className="text-sm leading-relaxed text-[#675843] md:text-base">
                     Ragnarok Universe brings the legendary online game to a new era. Play directly in your web browser without any downloads. Experience epic battles, explore vast worlds, and join millions of adventurers in this timeless fantasy universe.
                   </p>
                 </div>
 
                 {/* Game Specs Grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Platform</p>
-                    <p className="text-lg font-black text-foreground">Web Browser</p>
+                  <div className="fantasy-card rounded-lg p-3">
+                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Platform</p>
+                    <p className="text-base font-black text-[#2c241c]">Web Browser</p>
                   </div>
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Genre</p>
-                    <p className="text-lg font-black text-foreground">Fantasy MMORPG</p>
+                  <div className="fantasy-card rounded-lg p-3">
+                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Genre</p>
+                    <p className="text-base font-black text-[#2c241c]">Fantasy MMORPG</p>
                   </div>
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Age Rating</p>
-                    <p className="text-lg font-black text-foreground">18+</p>
+                  <div className="fantasy-card rounded-lg p-3">
+                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Age Rating</p>
+                    <p className="text-base font-black text-[#2c241c]">18+</p>
                   </div>
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Status</p>
-                    <p className="text-lg font-black text-primary">Beta Testing</p>
+                  <div className="fantasy-card rounded-lg p-3">
+                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Status</p>
+                    <p className="text-base font-black text-[#4668a3]">Beta Testing</p>
                   </div>
                 </div>
 
                 <Link href="/game-info">
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold">
+                  <Button className="w-full border border-[#2f568f] bg-[#4668a3] text-white font-bold shadow-md hover:bg-[#385a92]">
                     Learn More <ArrowRight size={16} className="ml-2" />
                   </Button>
                 </Link>
@@ -502,8 +502,8 @@ function MediaSection() {
         if (!embedUrl) return null;
         return (
           <div key={item.id} style={{ paddingTop: '0px' }}>
-            <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight" >Media</h3>
-            <div className="rounded-2xl overflow-hidden shadow-lg">
+            <h3 className="fantasy-section-title mb-4 flex items-center gap-3 text-2xl md:text-3xl"><span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-xs text-[#f9edcb]">✦</span>Media</h3>
+            <div className="fantasy-frame overflow-hidden rounded-xl">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                 <iframe
                   className="absolute inset-0 w-full h-full"

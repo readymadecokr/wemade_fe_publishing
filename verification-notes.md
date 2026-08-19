@@ -122,3 +122,9 @@ Shop 충전 화면을 영문 Top Up 사양으로 복원했다. 영문 잔액 카
 Shop 헤더에 Coins 아이콘을 추가하고 rCoin 숫자와 같은 딥 레드 `#a51f24` 배경을 적용했다. Game Info와 같은 `py-12` 세로 여백·`text-4xl` 제목 규모로 통일했으며, 데스크톱·375px 모바일 캡처에서 아이콘·제목·부제 정렬과 헤더 높이를 확인했다. TypeScript와 Vitest 25건을 통과했다.
 
 Shop 헤더를 Game Info와 동일한 인라인 아이콘·제목·부제 구조로 재정렬했다. 동일 1280px Chromium 측정에서 Game Info와 Shop의 제목 시작점은 x=32, 제목 y=129, 헤더 높이는 168px, 제목 클래스는 모두 `text-4xl font-black mb-2`로 일치했다. 동일 뷰포트 캡처에서 두 헤더의 아이콘·제목·부제 정렬을 재확인했으며 TypeScript와 Vitest 25건을 통과했다.
+# 2026-08-19 — 밝은 판타지 포털 시안 적용
+
+- 서비스 공통 배경을 양피지 질감·은은한 방사형 광원·사파이어 색상 토큰으로 전환했다. 헤더는 반투명 딥 네이비, 푸터는 양피지 기반의 파트너·정책 영역으로 구성했으며, 모바일에서도 햄버거 메뉴 없이 Home·News·Game Info·Shop·Discord와 인증 제어를 모두 표시한다.
+- Home은 히어로·Game Start, 뉴스 카드 6개, 게임 정보 프레임, 미디어 프레임, 섹션별 세로 가이드를 적용했다. Game Info, Shop, My Page, News, Notice, News Detail, Notice Detail, Login, Terms, Privacy, Cookie Policy는 동일한 판타지 카드·문서 패널 표면으로 정렬했다.
+- 1440px에서 Home, Game Info, Shop, My Page, News, Notice, News Detail, Login을 점검했고, 375px에서 Home·Shop·News·Login의 전체 메뉴 노출과 카드 축소를 확인했다. 모바일 Shop의 USD·계정 안내는 세로 정렬로 보정해 겹침을 제거했다.
+- TypeScript 검사와 Vitest 13개 파일·25개 테스트가 모두 통과했다. Shop 헤더 회귀 테스트는 딥 레드 기준에서 밝은 판타지 사파이어 헤더 기준으로 갱신했다.

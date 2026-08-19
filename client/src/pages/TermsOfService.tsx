@@ -5,18 +5,18 @@ export default function TermsOfService() {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <Layout>
-      <div className="min-h-screen bg-white dark:bg-[#0a0a0a]">
+      <div className="fantasy-page-shell min-h-screen">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-12">
+        <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#526f8d_50%,#314b66)] py-11 text-white">
           <div className="container">
-            <h1 className="text-4xl font-black mb-2">Terms of Service</h1>
-            <p className="text-blue-100">Effective Date: July 1, 2026</p>
+            <h1 className="mb-2 font-serif text-4xl font-bold">Terms of Service</h1>
+            <p className="text-[#e9dfc8]">Effective Date: July 1, 2026</p>
           </div>
         </div>
 
         {/* Content */}
-        <div className="container py-12">
-          <div className="max-w-4xl mx-auto">
+        <div className="container fantasy-content-guide py-12">
+          <div className="fantasy-card max-w-4xl mx-auto rounded-xl p-6 md:p-9">
             <p className="text-sm font-bold text-foreground dark:text-white mt-4 mb-1"></p>
                                     <p className="text-foreground/80 dark:text-white/80 mb-3 leading-relaxed text-sm">Gravity Co., Ltd. ("<u>Company</u>," "<u>we</u>", "<u>us</u>" or "<u>our</u>") maintains these Terms of Service ("<u>TOS</u>") that describes the terms and conditions applicable to the use of our game applications for personal computers and mobile devices and Applications accessible on social networking services (“<u>SNS</u>”) (each, an “Application” and collectively, “<u>Applications</u>”).  Your use of the Applications is subject at all times to these TOS, our privacy policy (“<u>Privacy Policy</u>”) and any additional end user license agreements (the “<u>EULA</u>”) which may apply.  Any inconsistencies between this TOS, the Privacy Policy or any EULA shall be resolved by the Company in its sole and absolute discretion.</p>
             <p className="text-foreground/80 dark:text-white/80 mb-3 leading-relaxed text-sm"><strong>Notwithstanding any provision herein, under any circumstance, the countries embargoed by the United States or the countries set forth on “the U.S. Treasury Department's list of Specially Designated Nationals or the U.S. Department of Commerce Denied Persons List or Entity List” shall be clearly excluded from the scope of any services.</strong></p>

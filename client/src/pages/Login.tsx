@@ -214,12 +214,12 @@ export default function Login() {
 
   return (
     <Layout>
-      <div className="container min-h-[75vh] flex items-center justify-center py-12">
+      <div className="fantasy-page-shell container min-h-[75vh] flex items-center justify-center py-12">
         <div className="relative w-full max-w-md">
           {/* Background Decorative Blur */}
-          <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-primary to-accent opacity-20 blur-xl"></div>
+          <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-[#36598f] to-[#d5bd7d] opacity-20 blur-xl"></div>
           
-          <div className="relative glass-panel rounded-3xl border border-white/10 p-8 shadow-2xl bg-slate-900/80 backdrop-blur-2xl">
+          <div className="fantasy-card relative rounded-3xl p-8 shadow-2xl">
             
             {/* STEP 1: LOGIN PAGE */}
             {step === "login" && (
@@ -258,9 +258,9 @@ export default function Login() {
                 </div>
 
                 <div className="relative flex py-2 items-center">
-                  <div className="flex-grow border-t border-white/5"></div>
-                  <span className="flex-shrink mx-4 text-[10px] text-slate-500 uppercase tracking-widest">or</span>
-                  <div className="flex-grow border-t border-white/5"></div>
+                  <div className="flex-grow border-t border-[#d8c8a3]"></div>
+                  <span className="mx-4 flex-shrink text-[10px] uppercase tracking-widest text-[#88765b]">or</span>
+                  <div className="flex-grow border-t border-[#d8c8a3]"></div>
                 </div>
 
                 {/* Guest Mode & Find Link (PPTX 기획안 11번, 5번 슬라이드) */}

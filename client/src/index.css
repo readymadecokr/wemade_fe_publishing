@@ -43,10 +43,10 @@
 }
 
 :root {
-  /* Light Mode (Default) - White + Blue Theme */
-  --primary: #2563eb; /* Blue-600 */
+  /* Bright fantasy portal — parchment, ink, and sapphire */
+  --primary: #3f66b1;
   --primary-foreground: #ffffff;
-  --sidebar-primary: #1e40af; /* Blue-700 */
+  --sidebar-primary: #314e89;
   --sidebar-primary-foreground: #ffffff;
   --chart-1: #3b82f6; /* Blue-500 */
   --chart-2: #2563eb; /* Blue-600 */
@@ -56,35 +56,35 @@
   --radius: 0.65rem;
   
   /* Light backgrounds */
-  --background: #ffffff; /* Pure white */
-  --foreground: #1f2937; /* Slate-900 */
-  --card: #ffffff;
-  --card-foreground: #1f2937;
-  --popover: #ffffff;
-  --popover-foreground: #1f2937;
+  --background: #f3ead5;
+  --foreground: #2c241c;
+  --card: #fffdf7;
+  --card-foreground: #2c241c;
+  --popover: #fffdf7;
+  --popover-foreground: #2c241c;
   
   /* Light secondary colors */
-  --secondary: #f3f4f6; /* Gray-100 */
-  --secondary-foreground: #374151; /* Gray-700 */
-  --muted: #e5e7eb; /* Gray-200 */
-  --muted-foreground: #6b7280; /* Gray-500 */
-  --accent: #eff6ff; /* Blue-50 */
-  --accent-foreground: #1e40af; /* Blue-700 */
+  --secondary: #eadfc4;
+  --secondary-foreground: #4d4031;
+  --muted: #e7dcc0;
+  --muted-foreground: #756754;
+  --accent: #e1edf8;
+  --accent-foreground: #314e89;
   
   /* Light borders and inputs */
   --destructive: #dc2626; /* Red-600 */
   --destructive-foreground: #ffffff;
-  --border: #e0e7ff; /* Indigo-100 */
-  --input: #f3f4f6; /* Gray-100 */
-  --ring: #2563eb; /* Blue-600 */
+  --border: #d5c49e;
+  --input: #fffaf0;
+  --ring: #4b6cab;
   
   /* Sidebar colors */
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1f2937;
-  --sidebar-accent: #eff6ff;
-  --sidebar-accent-foreground: #1e40af;
-  --sidebar-border: #e0e7ff;
-  --sidebar-ring: #2563eb;
+  --sidebar: #fffaf0;
+  --sidebar-foreground: #2c241c;
+  --sidebar-accent: #e6eef8;
+  --sidebar-accent-foreground: #314e89;
+  --sidebar-border: #d5c49e;
+  --sidebar-ring: #4b6cab;
 }
 
 .dark {
@@ -136,6 +136,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
+    background-image: radial-gradient(circle at 15% 8%, rgba(255,255,255,.88), transparent 28%), radial-gradient(circle at 82% 68%, rgba(192,165,107,.17), transparent 30%), repeating-linear-gradient(0deg, rgba(102,79,45,.025) 0px, rgba(102,79,45,.025) 1px, transparent 1px, transparent 5px);
   }
   header a, header h3, header span {
     font-family: 'Poppins', sans-serif;
@@ -159,6 +160,58 @@
 }
 
 @layer components {
+  .fantasy-page-shell {
+    position: relative;
+    background: linear-gradient(180deg, rgba(250,246,232,.72), rgba(241,230,202,.88));
+  }
+
+  .fantasy-content-guide {
+    position: relative;
+    padding-left: clamp(0rem, 4vw, 3.4rem);
+  }
+
+  .fantasy-content-guide::before {
+    content: "";
+    position: absolute;
+    left: 1.2rem;
+    top: .8rem;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(76,97,133,.38) 4%, rgba(76,97,133,.28) 94%, transparent);
+  }
+
+  .fantasy-card {
+    background: rgba(255,253,247,.9);
+    border: 1px solid rgba(174,151,103,.55);
+    box-shadow: 0 9px 22px rgba(93,73,43,.12), inset 0 1px rgba(255,255,255,.8);
+  }
+
+  .fantasy-frame {
+    border: 1px solid rgba(67,97,151,.42);
+    box-shadow: 0 0 0 3px rgba(255,252,241,.72), 0 8px 20px rgba(69,87,117,.14);
+  }
+
+  .fantasy-section-title {
+    color: #302419;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    letter-spacing: -.025em;
+  }
+
+  .fantasy-account .glass-panel {
+    background: rgba(255,253,247,.9) !important;
+    border-color: rgba(174,151,103,.55) !important;
+    box-shadow: 0 9px 22px rgba(93,73,43,.12), inset 0 1px rgba(255,255,255,.8);
+  }
+
+  .fantasy-account .glass-panel table thead {
+    background: rgba(232,220,192,.7);
+  }
+
+  .fantasy-account .glass-panel table tr {
+    border-color: rgba(205,187,145,.66) !important;
+  }
+
   /**
    * Custom container utility that centers content and adds responsive padding.
    *

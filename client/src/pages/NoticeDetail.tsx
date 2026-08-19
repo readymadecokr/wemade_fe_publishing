@@ -94,28 +94,28 @@ function NoticeDetailContent() {
     <Layout>
       <>
         {/* Page Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
+        <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#526f8d_50%,#314b66)] py-11 text-white">
           <div className="container">
-            <Link href="/notice" className="flex items-center gap-2 text-blue-100 hover:text-white mb-4 w-fit">
+            <Link href="/notice" className="mb-4 flex w-fit items-center gap-2 text-[#e9dfc8] hover:text-white">
               <ArrowLeft size={20} />
               Back to Notices
             </Link>
-            <h1 className="text-4xl font-black mb-4 uppercase">{notice.title}</h1>
+            <h1 className="mb-4 font-serif text-4xl font-bold">{notice.title}</h1>
             <div className="flex items-center gap-3">
-              <span className={`px-3 py-1 rounded text-xs font-semibold ${getCategoryColor(notice.category)}`}>
+              <span className="rounded bg-[#e2eaf7] px-3 py-1 text-xs font-semibold text-[#4668a3]">
                 {notice.category.toLowerCase()}
               </span>
-              <span className="text-blue-100">{notice.date}</span>
+              <span className="text-[#e9dfc8]">{notice.date}</span>
             </div>
           </div>
         </div>
 
         {/* Content */}
-        <main className="container py-12">
-          <div className="max-w-3xl mx-auto">
+        <main className="fantasy-page-shell">
+          <div className="container fantasy-content-guide py-12 max-w-3xl mx-auto">
             {/* Article Content */}
-            <div className="bg-white rounded-lg p-8 border border-blue-100">
-              <p className="text-slate-700 text-base leading-relaxed">
+            <div className="fantasy-card rounded-xl p-8">
+              <p className="text-base leading-relaxed text-[#5d4f3d]">
                 {notice.briefContent}
               </p>
             </div>
@@ -123,7 +123,7 @@ function NoticeDetailContent() {
             {/* Navigation */}
             <div className="mt-8">
               <Link href="/notice" className="inline-block">
-                <Button variant="outline" className="border-blue-200 hover:bg-blue-50">
+                <Button variant="outline" className="border-[#bca77a] text-[#4668a3] hover:bg-[#e7eef9]">
                   Back to Notices
                 </Button>
               </Link>
