@@ -151,6 +151,43 @@
   header .portal-nav a {
     font-size: inherit;
   }
+
+  header .portal-nav > a,
+  header .portal-nav > button {
+    position: relative;
+    padding: .35rem 0;
+    font-weight: 800;
+    letter-spacing: .015em;
+    text-shadow: 0 1px 0 rgba(15,31,47,.42);
+    transition: color 180ms ease, transform 180ms ease, text-shadow 180ms ease;
+  }
+
+  header .portal-nav > a::after,
+  header .portal-nav > button::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: .05rem;
+    left: 0;
+    height: 1px;
+    transform: scaleX(0);
+    transform-origin: center;
+    background: linear-gradient(90deg, transparent, #fff3b8 25%, #edc35f 50%, #fff3b8 75%, transparent);
+    box-shadow: 0 0 8px rgba(246,209,111,.78);
+    transition: transform 180ms ease;
+  }
+
+  header .portal-nav > a:hover,
+  header .portal-nav > button:hover {
+    color: #fff1b4 !important;
+    transform: translateY(-1px);
+    text-shadow: 0 0 9px rgba(246,211,117,.7), 0 1px 0 rgba(15,31,47,.42);
+  }
+
+  header .portal-nav > a:hover::after,
+  header .portal-nav > button:hover::after {
+    transform: scaleX(1);
+  }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   [type="button"]:not(:disabled),
@@ -211,23 +248,6 @@
     background: url('/manus-storage/ragnarok-fantasy-section-ornament_f3f3bf5d.png') right center / contain no-repeat;
   }
 
-  .fantasy-view-more {
-    isolation: isolate;
-    position: relative;
-  }
-
-  .fantasy-view-more::before {
-    content: "";
-    pointer-events: none;
-    position: absolute;
-    right: -1.55rem;
-    top: -.55rem;
-    z-index: -1;
-    width: 5.3rem;
-    height: 2rem;
-    opacity: .8;
-    background: url('/manus-storage/ragnarok-fantasy-section-ornament_f3f3bf5d.png') right center / auto 100% no-repeat;
-  }
 
   @media (max-width: 640px) {
     .floating-social-box {

@@ -275,13 +275,13 @@ export default function Home() {
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-2">
-          <div className="container fantasy-content-guide fantasy-section-decorated pt-5 md:pt-7">
+          <div className="container fantasy-content-guide pt-5 md:pt-7">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">
                 <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb] shadow-sm">✦</span>News
               </h2>
               <Link href="/news">
-                <Button variant="outline" className="fantasy-view-more border-[#7386a5] bg-[#fffdf7]/78 px-5 text-sm font-semibold text-[#3e609b] hover:bg-[#4668a3] hover:text-white">
+                <Button variant="outline" className="border-[#7386a5] bg-[#fffdf7]/78 px-5 text-sm font-semibold text-[#3e609b] hover:bg-[#4668a3] hover:text-white">
                   View More
                 </Button>
               </Link>
@@ -302,7 +302,7 @@ export default function Home() {
 
         {/* GAME INFO SECTION */}
         <section id="game-info" className="py-0">
-          <div className="container fantasy-content-guide fantasy-section-decorated py-0" style={{paddingTop: '48px', paddingBottom: '0px'}}>
+          <div className="container fantasy-content-guide py-0" style={{paddingTop: '48px', paddingBottom: '0px'}}>
             {/* Header */}
             <div className="mb-5">
               <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">

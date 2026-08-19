@@ -147,3 +147,9 @@ Shop 헤더를 Game Info와 동일한 인라인 아이콘·제목·부제 구조
 - Home Media wrapper 하단 여백과 Footer 상단 가로 테두리를 제거했다. Media 아래에는 별도의 선이나 단색 띠가 남지 않으며, 영상 프레임에서 Footer로 바로 이어진다.
 - `fantasy-page-shell`의 clipping을 해제해 지도·성채·마법 입자 장식이 컨테이너 경계에서 잘리지 않게 했고, Media와 Footer 하단까지 atlas 배경이 연속된다.
 - 1440px·375px 전체 캡처에서 Media 프레임, 경계선 제거, 하단 배경 연속성을 확인했다. TypeScript와 Vitest 14개 파일·30개 테스트가 통과했다.
+
+# 2026-08-19 — 메뉴·오너먼트 위치 정정
+
+- View More 주변과 뉴스 2행 아래에 잘못 노출되던 섹션 오너먼트를 Home에서 제거했다. 1440px·375px 캡처에서 불필요한 장식이 보이지 않고, View More는 깨끗한 버튼 표면으로 정렬됐다.
+- Home, News, Game Info, Shop, Discord는 `portal-nav`의 동일한 `font-weight: 800` 기준으로 통일했다. hover 시 금빛 텍스트·광택 밑줄·미세한 상승이 적용되며, 키보드 포커스는 기존 CTA focus ring으로 유지된다.
+- 로그인 상태의 계정 이동 표기를 `My Page`로 변경했다. TypeScript와 Vitest 14개 파일·31개 테스트가 통과했다.

@@ -16,7 +16,7 @@ describe("fantasy portal visual polish", () => {
   it("uses the fantasy atlas and ornament assets for portal decoration", () => {
     expect(styleSource).toContain('ragnarok-fantasy-parchment-atlas-bg_ff7c9fce.png');
     expect(styleSource).toContain('ragnarok-fantasy-section-ornament_f3f3bf5d.png');
-    expect(homeSource).toContain('fantasy-section-decorated');
+    expect(homeSource).not.toContain('fantasy-section-decorated');
   });
 
   it("keeps the logged-in Logout control legible against the dark header", () => {
@@ -32,10 +32,17 @@ describe("fantasy portal visual polish", () => {
     expect(layoutSource).toContain('hover:border-[#fff0bd]');
   });
 
-  it("keeps the footer atlas, View More ornament, and mobile social control placement", () => {
+  it("keeps the footer atlas and mobile social control placement without misplaced ornaments", () => {
     expect(layoutSource).toContain('ragnarok-fantasy-footer-atlas_e83c8727.png');
-    expect(styleSource).toContain('.fantasy-view-more::before');
+    expect(styleSource).not.toContain('.fantasy-view-more::before');
     expect(styleSource).toContain('.floating-social-box');
     expect(homeSource).toContain('className="mb-0"');
+  });
+
+  it("keeps portal navigation equally bold with a gold hover effect and My Page copy", () => {
+    expect(styleSource).toContain('header .portal-nav > a');
+    expect(styleSource).toContain('font-weight: 800');
+    expect(styleSource).toContain('color: #fff1b4 !important');
+    expect(layoutSource).toContain('>\n                  My Page\n');
   });
 });
