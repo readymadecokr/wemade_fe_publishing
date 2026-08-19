@@ -221,11 +221,30 @@
   }
 
   .fantasy-site-atlas {
+    position: relative;
+    isolation: isolate;
     background-color: #f3ead5;
-    background-image: radial-gradient(ellipse 69% 104% at 50% 48%, rgba(255,253,244,.94) 0%, rgba(251,246,230,.89) 41%, rgba(246,236,207,.58) 64%, rgba(240,224,181,.16) 84%, transparent 100%), linear-gradient(rgba(250,246,232,.12), rgba(238,220,179,.18)), url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png');
-    background-position: center center, center top, center center;
-    background-size: 100% 100%, 100% 100%, 100% 100%;
+    background-image: radial-gradient(ellipse 68% 66% at 50% 51%, rgba(255,253,244,.93) 0%, rgba(251,246,230,.87) 42%, rgba(246,236,207,.52) 67%, transparent 92%), url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png');
+    background-position: center center, center center;
+    background-size: cover, cover;
     background-repeat: no-repeat;
+  }
+
+  .fantasy-site-atlas::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(180deg, rgba(49,42,30,.22) 0%, rgba(49,42,30,.08) 13%, transparent 29%, transparent 72%, rgba(49,42,30,.09) 88%, rgba(49,42,30,.24) 100%);
+    mix-blend-mode: multiply;
+  }
+
+  .fantasy-site-atlas > header,
+  .fantasy-site-atlas > main,
+  .fantasy-site-atlas > footer {
+    position: relative;
+    z-index: 1;
   }
 
   .fantasy-content-guide {
@@ -258,6 +277,15 @@
 
 
   @media (max-width: 640px) {
+    .fantasy-site-atlas {
+      background-position: center center, center 42%;
+      background-size: cover, cover;
+    }
+
+    .fantasy-site-atlas::before {
+      background: linear-gradient(180deg, rgba(49,42,30,.18) 0%, rgba(49,42,30,.06) 11%, transparent 24%, transparent 76%, rgba(49,42,30,.08) 89%, rgba(49,42,30,.22) 100%);
+    }
+
     .floating-social-box {
       top: auto !important;
       right: .55rem !important;

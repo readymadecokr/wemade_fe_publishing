@@ -16,7 +16,10 @@ describe("fantasy portal visual polish", () => {
   it("uses one continuous fantasy atlas with visible map detail for portal decoration", () => {
     expect(styleSource).toContain('ragnarok-fantasy-continuous-atlas_fb2301c6.png');
     expect(styleSource).toContain('.fantasy-site-atlas');
-    expect(styleSource).toContain('radial-gradient(ellipse 69% 104% at 50% 48%');
+    expect(styleSource).toContain('radial-gradient(ellipse 68% 66% at 50% 51%');
+    expect(styleSource).toContain('background-size: cover, cover');
+    expect(styleSource).toContain('.fantasy-site-atlas::before');
+    expect(styleSource).toContain('background-position: center center, center 42%');
     expect(layoutSource).toContain('fantasy-site-atlas');
     expect(layoutSource).toContain('bg-transparent text-[#17120c]');
     expect(styleSource).toContain('ragnarok-fantasy-section-ornament_f3f3bf5d.png');
