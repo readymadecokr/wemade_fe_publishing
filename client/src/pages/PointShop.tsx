@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
-import { Check, ChevronDown, ChevronLeft, ShieldCheck } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, Coins, ShieldCheck } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
@@ -155,7 +155,7 @@ export default function PointShop() {
   const { user } = useAuth();
   const { data: balance } = trpc.shop.myBalance.useQuery(undefined, { enabled: !!user });
   return <Layout>
-    <div className="bg-[#182b40] py-8 text-white"><div className="container"><h1 className="text-3xl font-black tracking-tight">Shop</h1><p className="mt-1 text-sm text-slate-300">Top up rCoin</p></div></div>
-    <div className="container py-8"><div className="flex gap-6"><aside className="hidden w-44 shrink-0 md:flex md:flex-col"><button className="rounded-lg bg-[#182b40] px-4 py-3 text-left text-sm font-bold text-white">Top Up</button><button onClick={() => setLocation("/")} className="mt-auto inline-flex items-center gap-1 border-t border-slate-200 pt-6 text-left text-sm font-medium text-slate-500 hover:text-blue-600"><ChevronLeft size={16} />Back to Home</button></aside><main className="min-w-0 flex-1"><ChargeTab rCoin={balance?.ruCash ?? 0} bonusCoin={balance?.bonusCash ?? 0} /></main></div></div>
+    <div className="bg-[#a51f24] py-12 text-white"><div className="container"><div className="flex items-center gap-3"><span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25"><Coins size={28} strokeWidth={2.2} /></span><h1 className="text-4xl font-black tracking-tight">Shop</h1></div><p className="mt-2 text-red-100">Top up rCoin</p></div></div>
+    <div className="container py-8"><div className="flex gap-6"><aside className="hidden w-44 shrink-0 md:flex md:flex-col"><button className="rounded-lg bg-[#a51f24] px-4 py-3 text-left text-sm font-bold text-white shadow-sm">Top Up</button><button onClick={() => setLocation("/")} className="mt-auto inline-flex items-center gap-1 border-t border-slate-200 pt-6 text-left text-sm font-medium text-slate-500 hover:text-[#a51f24]"><ChevronLeft size={16} />Back to Home</button></aside><main className="min-w-0 flex-1"><ChargeTab rCoin={balance?.ruCash ?? 0} bonusCoin={balance?.bonusCash ?? 0} /></main></div></div>
   </Layout>;
 }
