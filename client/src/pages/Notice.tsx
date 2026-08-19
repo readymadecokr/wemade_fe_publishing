@@ -53,12 +53,10 @@ function NoticePageContent() {
   return (
     <>
       {/* Page Header */}
-      <div className="relative overflow-hidden border-b border-cyan-300/20 bg-[linear-gradient(120deg,#081b32_0%,#091326_44%,#27123d_100%)] text-white py-12">
-        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cyan-300/15 blur-3xl" />
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
         <div className="container">
-          <p className="neon-kicker mb-2">System bulletin</p>
-          <h1 className="text-4xl font-black mb-2">Notice</h1>
-          <p className="text-slate-300">Stay updated with the latest announcements and updates</p>
+          <h1 className="text-4xl font-black mb-2">📋 Notice</h1>
+          <p className="text-blue-100">Stay updated with the latest announcements and updates</p>
         </div>
       </div>
 
@@ -67,22 +65,22 @@ function NoticePageContent() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {noticeData.map((notice) => (
             <Link key={notice.id} href={`/notice/${notice.id}`}>
-              <div className="neon-card overflow-hidden cursor-pointer h-full flex flex-col group">
+              <div className="bg-white border border-blue-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
                 {/* Image */}
                 <div className="w-full h-48 overflow-hidden">
                   <img
                     src={notice.image}
                     alt={notice.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
 
                 {/* Content */}
                 <div className="p-4 flex flex-col justify-between flex-1">
-                  <h3 className="text-base font-bold text-slate-100 line-clamp-3">
+                  <h3 className="text-base font-bold text-slate-900 line-clamp-3">
                     {notice.title}
                   </h3>
-                  <span className="text-xs text-slate-400 mt-3">{notice.date}</span>
+                  <span className="text-xs text-slate-500 mt-3">{notice.date}</span>
                 </div>
               </div>
             </Link>

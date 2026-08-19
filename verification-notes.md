@@ -122,19 +122,3 @@ Shop 충전 화면을 영문 Top Up 사양으로 복원했다. 영문 잔액 카
 Shop 헤더에 Coins 아이콘을 추가하고 rCoin 숫자와 같은 딥 레드 `#a51f24` 배경을 적용했다. Game Info와 같은 `py-12` 세로 여백·`text-4xl` 제목 규모로 통일했으며, 데스크톱·375px 모바일 캡처에서 아이콘·제목·부제 정렬과 헤더 높이를 확인했다. TypeScript와 Vitest 25건을 통과했다.
 
 Shop 헤더를 Game Info와 동일한 인라인 아이콘·제목·부제 구조로 재정렬했다. 동일 1280px Chromium 측정에서 Game Info와 Shop의 제목 시작점은 x=32, 제목 y=129, 헤더 높이는 168px, 제목 클래스는 모두 `text-4xl font-black mb-2`로 일치했다. 동일 뷰포트 캡처에서 두 헤더의 아이콘·제목·부제 정렬을 재확인했으며 TypeScript와 Vitest 25건을 통과했다.
-
-다크 네온 Shop UI 시안을 실제 검수했다. 2560×1440 이미지에서 midnight navy·cyan·magenta 포인트의 다크 게이밍 대시보드, Ragnarok Universe 브랜드 헤더, 좌측 사용자·잔액·필터 사이드바, rCoin/Bonus rCoin 잔액, 보상 배너, 8개 rCoin 상품 카드, Best Seller·Best Value 배지와 USD 가격 구조가 확인됐다. 기존 홈페이지 파일은 변경하지 않았다.
-
-## 2026-08-19 — 서비스 페이지 다크 네온 전면 리디자인
-
-- 공통 `#050816` 배경과 cyan·violet·rose 포인트 토큰을 적용하고, Home·Game Info·Shop·My Page·News·Notice·상세·Login·정책 문서를 포함한 서비스 화면을 다크 네온 패널과 카드 체계로 전환했다. AdminPage는 변경 범위에서 제외했다.
-- 1280px 자동 캡처에서 Home의 뉴스·게임 정보 카드, Game Info의 기능·클래스·CTA, Shop의 잔액·8개 상품 카드, News·Notice 목록, Login 및 약관 문서가 모두 다크 표면과 시안 강조색으로 정상 렌더되는 것을 확인했다.
-- 375px 자동 캡처에서 홈·Shop·My Page·News를 점검했다. 모바일 헤더는 햄버거 메뉴 없이 로고·로그인·언어·전체 주요 메뉴를 두 줄로 표시하며, Shop의 통화 안내는 좁은 화면에서 세로 정렬되어 겹침 없이 표시된다.
-- TypeScript `pnpm exec tsc --noEmit` 및 Vitest 전체 25개 테스트가 통과했다. Shop 헤더의 리디자인 기준은 전용 테스트로 갱신해 계속 검증한다.
-
-### 최종 푸터·접근성·반응형 확인
-
-- 푸터의 브랜드 링크, 정책 링크, 구분선, Discord 아이콘, 저작권 텍스트를 다크 표면·시안 hover 상태로 통일했다. 모바일 최종 캡처에서 밝은 GRAVITY 로고와 링크·저작권 텍스트가 어두운 배경에 충분히 구분되어 표시되는 것을 확인했다.
-- 모바일 자동 캡처 범위는 Home, Shop, My Page, News, Game Info, News Detail, Notice, Notice Detail, Login, Terms of Service, Privacy Policy, Cookie Policy이며, 데스크톱 범위는 Home, Game Info, Shop, My Page, News, Notice, Login, Terms of Service이다. 각 확인 화면에서 수평 페이지 이탈 없이 헤더와 주요 콘텐츠가 표시되었다.
-- 공통 CSS의 `outline-ring/50` 포커스 윤곽, native button/link 기반의 주요 인터랙션, 서비스 페이지의 `h1` 또는 `h2` 제목 구조, 모바일 햄버거 제거를 `public-neon-accessibility.test.ts`로 회귀 검증했다. 소셜 바로가기 제어는 모바일에서 본문을 가리지 않도록 우하단 축소 배치했다.
-- 최종 코드 기준 TypeScript 검사와 Vitest 14개 파일·27개 테스트가 모두 통과했다.

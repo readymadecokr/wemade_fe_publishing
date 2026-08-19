@@ -44,40 +44,40 @@ function MyPageHistory({ section }: { section: HistorySection }) {
   return (
     <div data-testid="history-layout" className="space-y-3">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="neon-card p-5">
-          <p className="neon-kicker">rCoin</p>
-          <p className="mt-1 text-3xl font-black text-rose-400">{formatHistoryNumber(balance?.ruCash)}</p>
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">rCoin</p>
+          <p className="mt-1 text-3xl font-black text-[#9b2020]">{formatHistoryNumber(balance?.ruCash)}</p>
           <p className="mt-1 text-xs text-slate-400">Paid Currency</p>
         </div>
-        <div className="neon-card p-5">
-          <p className="neon-kicker">Bonus rCoin</p>
-          <p className="mt-1 text-3xl font-black text-emerald-400">{formatHistoryNumber(balance?.bonusCash)}</p>
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Bonus rCoin</p>
+          <p className="mt-1 text-3xl font-black text-green-700">{formatHistoryNumber(balance?.bonusCash)}</p>
           <p className="mt-1 text-xs text-slate-400">Bonus Currency (Used First)</p>
         </div>
       </div>
 
       {!items.length ? (
-        <div className="neon-card py-14 text-center text-sm text-slate-400">No {isPurchase ? "purchase" : "usage"} history available.</div>
+        <div className="rounded-2xl border border-slate-200 bg-white py-14 text-center text-sm text-slate-400">No {isPurchase ? "purchase" : "usage"} history available.</div>
       ) : (
-        <div data-testid="history-table" className="overflow-hidden rounded-2xl border border-cyan-300/20 bg-slate-950/70 shadow-[0_0_24px_rgba(25,216,230,.06)]">
+        <div data-testid="history-table" className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
           <table className="w-full table-fixed border-collapse text-[11px] sm:text-xs">
             <thead>
-              <tr className="bg-cyan-300/15 text-cyan-100">
-                {headers.map((header, index) => <th key={header} className={`border-r border-cyan-300/15 px-1 py-2 text-center font-semibold whitespace-pre-line leading-tight last:border-r-0 ${index === 1 ? "w-[92px]" : ""}`}>{header}</th>)}
+              <tr className="bg-[#9b2020] text-white">
+                {headers.map((header, index) => <th key={header} className={`border-r border-red-800 px-1 py-2 text-center font-semibold whitespace-pre-line leading-tight last:border-r-0 ${index === 1 ? "w-[92px]" : ""}`}>{header}</th>)}
               </tr>
             </thead>
             <tbody>
               {items.map((tx) => (
-                <tr key={tx.id} className="border-b border-cyan-300/10 last:border-b-0 hover:bg-cyan-300/5">
-                  <td className="px-1 py-2 text-center font-medium text-cyan-300">{tx.gameCode ?? "ROU"}</td>
-                  <td className="w-[92px] px-1 py-2 text-center leading-4 text-slate-300"><HistoryTime value={tx.createdAt} /></td>
+                <tr key={tx.id} className="border-b border-slate-200 last:border-b-0 hover:bg-slate-50">
+                  <td className="px-1 py-2 text-center font-medium text-[#9b2020]">{tx.gameCode ?? "ROU"}</td>
+                  <td className="w-[92px] px-1 py-2 text-center leading-4 text-slate-700"><HistoryTime value={tx.createdAt} /></td>
                   <td className="px-1 py-2 text-right">{formatHistoryNumber(tx.beforeRuCash)}</td>
-                  <td className="px-1 py-2 text-right text-emerald-400">{formatHistoryNumber(tx.beforeBonusCash)}</td>
+                  <td className="px-1 py-2 text-right text-green-700">{formatHistoryNumber(tx.beforeBonusCash)}</td>
                   {isPurchase ? <>
                     <td className="px-1 py-2 text-center">{tx.pgName ?? "-"}</td>
                     <td className="px-1 py-2 text-right">{tx.priceUsd ? `$${Number(tx.priceUsd).toFixed(0)}` : "-"}</td>
-                    <td className="px-1 py-2 text-right font-bold text-rose-400">{formatHistoryNumber(Math.abs(tx.ruCashDelta ?? 0))}</td>
-                    <td className="px-1 py-2 text-right font-bold text-emerald-400">{formatHistoryNumber(Math.abs(tx.bonusCashDelta ?? 0))}</td>
+                    <td className="px-1 py-2 text-right font-bold text-[#9b2020]">{formatHistoryNumber(Math.abs(tx.ruCashDelta ?? 0))}</td>
+                    <td className="px-1 py-2 text-right font-bold text-green-700">{formatHistoryNumber(Math.abs(tx.bonusCashDelta ?? 0))}</td>
                   </> : <>
                     <td className="px-1 py-2 text-center break-words">{tx.itemName ?? "-"}</td>
                     <td className="px-1 py-2 text-right">{tx.itemQty ?? 1}</td>
@@ -85,7 +85,7 @@ function MyPageHistory({ section }: { section: HistorySection }) {
                     <td className="px-1 py-2 text-right font-bold">{formatHistoryNumber(Math.abs(tx.totalPriceRuc ?? 0))}</td>
                   </>}
                   <td className="px-1 py-2 text-right font-bold">{formatHistoryNumber(tx.afterRuCash)}</td>
-                  <td className="px-1 py-2 text-right font-bold text-emerald-400">{formatHistoryNumber(tx.afterBonusCash)}</td>
+                  <td className="px-1 py-2 text-right font-bold text-green-700">{formatHistoryNumber(tx.afterBonusCash)}</td>
                 </tr>
               ))}
             </tbody>
@@ -233,13 +233,13 @@ export default function MyPage() {
   if (!isLoggedIn) {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center bg-[radial-gradient(circle_at_center,rgba(25,216,230,.10),transparent_26rem)] bg-[#050816] px-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-background dark:to-slate-900 px-4">
           <div className="text-center">
             <LogIn size={48} className="mx-auto mb-4 text-slate-400" />
-            <h1 className="text-2xl font-bold text-slate-100 mb-2">Not Logged In</h1>
-            <p className="text-slate-400 mb-6">Please log in to access your profile.</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Not Logged In</h1>
+            <p className="text-slate-600 dark:text-slate-400 mb-6">Please log in to access your profile.</p>
             <Link href="/login">
-              <Button className="bg-cyan-300 hover:bg-cyan-200 text-slate-950 font-black">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold">
                 Go to Login
               </Button>
             </Link>
@@ -318,9 +318,9 @@ export default function MyPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[radial-gradient(circle_at_80%_0%,rgba(168,85,247,.12),transparent_28rem)] py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-background dark:to-slate-900 py-8 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-8"><p className="neon-kicker mb-2">Account command center</p><h1 className="text-3xl font-bold text-slate-100">My Page</h1></div>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">My Page</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left Sidebar */}
@@ -328,7 +328,7 @@ export default function MyPage() {
               <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50 sticky top-8">
                 {/* Profile Card */}
                 <div className="flex flex-col items-center mb-6 pb-6 border-b border-black/10 dark:border-white/10">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-300 to-violet-500 flex items-center justify-center mb-3 shadow-[0_0_22px_rgba(25,216,230,.3)]">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center mb-3">
                     <User size={32} className="text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-black dark:text-white text-center">{userNickname}</h3>
@@ -345,11 +345,11 @@ export default function MyPage() {
 
                 {/* Navigation Menu */}
                 <nav className="space-y-2">
-                  <button onClick={() => setActiveSection("purchase")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "purchase" ? "bg-cyan-300/15 text-cyan-100 border border-cyan-300/25" : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"}`}>
+                  <button onClick={() => setActiveSection("purchase")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "purchase" ? "bg-[#9b2020] text-white" : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"}`}>
                     <CreditCard size={16} className={activeSection === "purchase" ? "text-white" : "text-black dark:text-white"} />
                     <span>Payment History</span>
                   </button>
-                  <button onClick={() => setActiveSection("usage")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "usage" ? "bg-cyan-300/15 text-cyan-100 border border-cyan-300/25" : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"}`}>
+                  <button onClick={() => setActiveSection("usage")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "usage" ? "bg-[#9b2020] text-white" : "text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10"}`}>
                     <Clock size={16} className={activeSection === "usage" ? "text-white" : "text-black dark:text-white"} />
                     <span>Points/Item Usage</span>
                   </button>
@@ -547,7 +547,7 @@ export default function MyPage() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <span className="text-sm font-medium text-black dark:text-white">Ragnarok Universe</span>
-                        <Button className="bg-cyan-300 hover:bg-cyan-200 text-slate-950 text-xs px-4 py-2 rounded-lg font-black flex items-center gap-2">
+                        <Button className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg font-semibold flex items-center gap-2">
                           Start <ArrowRight size={14} />
                         </Button>
                       </div>
