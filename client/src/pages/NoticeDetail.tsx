@@ -2,7 +2,6 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
-import PortalGuidePanel from "@/components/PortalGuidePanel";
 
 /**
  * Design Philosophy: Flyff Universe + Play2Bit Style
@@ -114,9 +113,7 @@ function NoticeDetailContent() {
 
         {/* Content */}
         <main className="container py-12">
-          <div className="grid gap-5 lg:grid-cols-[286px_minmax(0,1fr)]">
-            <PortalGuidePanel eyebrow="SYSTEM BULLETIN" title="NOTICE COMMAND" />
-            <div className="min-w-0 max-w-3xl">
+          <div className="max-w-3xl mx-auto">
             {/* Article Content */}
             <div className="neon-panel rounded-2xl p-8">
               <p className="text-slate-300 text-base leading-relaxed">
@@ -131,7 +128,6 @@ function NoticeDetailContent() {
                   Back to Notices
                 </Button>
               </Link>
-            </div>
             </div>
           </div>
         </main>

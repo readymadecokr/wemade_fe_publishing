@@ -87,7 +87,6 @@ export default function Layout({ children }: LayoutProps) {
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-2 group cursor-pointer">
             <img src={`${ASSET_BASE_URL}/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png`} alt="Ragnarok" className="h-12 w-auto group-hover:opacity-80 transition-opacity" />
-            <span className="hidden text-lg font-black tracking-[0.08em] text-amber-100 drop-shadow-[0_0_12px_rgba(251,191,36,.2)] xl:inline">RAGNAROK UNIVERSE</span>
           </Link>
 
           {/* Navigation remains visible on mobile; the header scrolls horizontally when needed. */}

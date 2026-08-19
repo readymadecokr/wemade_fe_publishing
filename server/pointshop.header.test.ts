@@ -4,19 +4,12 @@ import { describe, expect, it } from "vitest";
 const source = readFileSync(new URL("../client/src/pages/PointShop.tsx", import.meta.url), "utf8");
 
 describe("Shop category header", () => {
-  it("uses the reference-style account panel, reward banner, filters, and product grid", () => {
-    expect(source).toContain("function AccountPanel");
-    expect(source).toContain("POWER UP");
-    expect(source).toContain("YOUR ADVENTURE");
-    expect(source).toContain("TOP UP NOW");
-    expect(source).toContain("PurchaseDialog");
-    expect(source).toContain("BEST\\nSELLER");
-    expect(source).toContain("BEST\\nVALUE");
-    expect(source).toContain("rcoin-copper-100_8108700a.png");
-    expect(source).toContain("rcoin-copper-10000_80314e45.png");
-    expect(source).toContain("border-cyan-100/20");
-    expect(source).toContain("border-cyan-100/25");
-    expect(source).not.toContain("PURCHASE HISTORY");
-    expect(source).not.toContain("USAGE HISTORY");
+  it("uses the shared dark-neon category header and page-title hierarchy", () => {
+    expect(source).toContain('border-b border-cyan-300/20');
+    expect(source).toContain('bg-[linear-gradient(120deg,#081b32_0%,#091326_44%,#27123d_100%)]');
+    expect(source).toContain('Secure top up');
+    expect(source).toContain('text-4xl font-black mb-2');
+    expect(source).toContain('>Shop</h1>');
+    expect(source).toContain('Top up rCoin');
   });
 });

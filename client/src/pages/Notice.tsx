@@ -1,6 +1,5 @@
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
-import PortalGuidePanel from "@/components/PortalGuidePanel";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -65,9 +64,6 @@ function NoticePageContent() {
 
       {/* Content */}
       <main className="container py-12">
-        <div className="grid gap-5 lg:grid-cols-[286px_minmax(0,1fr)]">
-          <PortalGuidePanel eyebrow="SYSTEM BULLETIN" title="NOTICE COMMAND" />
-          <div className="min-w-0">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {noticeData.map((notice) => (
             <Link key={notice.id} href={`/notice/${notice.id}`}>
@@ -91,8 +87,6 @@ function NoticePageContent() {
               </div>
             </Link>
           ))}
-        </div>
-          </div>
         </div>
       </main>
     </>
