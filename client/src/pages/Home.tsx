@@ -270,8 +270,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Game Start와 News를 잇는 판타지 전환 장식 */}
-        <div className="game-start-transition" aria-hidden="true" />
+        {/* Spacer: 버튼 높이의 50% (translate-y[50%] 기준) */}
+        <div style={{ height: 'clamp(60px, 8vw, 130px)' }} />
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-2">
