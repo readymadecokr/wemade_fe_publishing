@@ -128,3 +128,10 @@ Shop 헤더를 Game Info와 동일한 인라인 아이콘·제목·부제 구조
 - Home은 히어로·Game Start, 뉴스 카드 6개, 게임 정보 프레임, 미디어 프레임, 섹션별 세로 가이드를 적용했다. Game Info, Shop, My Page, News, Notice, News Detail, Notice Detail, Login, Terms, Privacy, Cookie Policy는 동일한 판타지 카드·문서 패널 표면으로 정렬했다.
 - 1440px에서 Home, Game Info, Shop, My Page, News, Notice, News Detail, Login을 점검했고, 375px에서 Home·Shop·News·Login의 전체 메뉴 노출과 카드 축소를 확인했다. 모바일 Shop의 USD·계정 안내는 세로 정렬로 보정해 겹침을 제거했다.
 - TypeScript 검사와 Vitest 13개 파일·25개 테스트가 모두 통과했다. Shop 헤더 회귀 테스트는 딥 레드 기준에서 밝은 판타지 사파이어 헤더 기준으로 갱신했다.
+
+# 2026-08-19 — 판타지 포털 시각 밀도·정렬 보강
+
+- Home 뉴스 카드는 `flex h-full` 구조, 고정 본문 최소 높이, 두 줄 제목 예약 높이, 하단 고정 날짜를 적용해 3열·2행 모두 같은 하단 기준선으로 정렬했다.
+- 공통 배경에는 양피지 지도·마법 지형 자산과 섹션 오너먼트를 연결했다. Hero의 기존 캐릭터 일러스트, Game Start 프레임, 뉴스·게임 정보 아트와 함께 카드 외부 영역도 비어 보이지 않도록 시각 밀도를 보강했다.
+- 로그인 상태에서 Header Logout에 밝은 양피지 배경, 황금 테두리, 딥 네이비 텍스트를 적용해 헤더 위에서 충분한 대비를 제공한다. 플로팅 Discord·YouTube 제어도 사파이어·황금 프레임으로 전환했다.
+- 1440px 전체 화면 및 375px 전체 화면에서 뉴스 두 행의 기준선, 지도·오너먼트 배경, 판타지 프레임, 모바일 콘텐츠 축소를 확인했다.

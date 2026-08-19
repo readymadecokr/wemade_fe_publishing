@@ -191,14 +191,14 @@ export default function Home() {
 
   // News Card Component
   const NewsCard = ({ item, category }: { item: any; category: string }) => (
-    <div className="fantasy-card overflow-hidden rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-xl cursor-pointer">
+    <div className="fantasy-card flex h-full flex-col overflow-hidden rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-xl cursor-pointer">
       <div className="aspect-video overflow-hidden bg-foreground/10">
         <img src={item.image} alt={item.title} className="w-full h-full object-cover hover:scale-105 transition-transform" />
       </div>
-      <div className="p-3">
+      <div className="flex min-h-[84px] flex-1 flex-col p-3">
         <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[#5971a3]">{category}</p>
-        <h3 className="mb-1 text-sm font-bold leading-snug text-[#2c241c] line-clamp-2">{item.title}</h3>
-        <p className="text-[11px] text-[#7c6a52]">{item.date}</p>
+        <h3 className="mb-1 min-h-[2.5rem] text-sm font-bold leading-snug text-[#2c241c] line-clamp-2">{item.title}</h3>
+        <p className="mt-auto text-[11px] text-[#7c6a52]">{item.date}</p>
       </div>
     </div>
   );
@@ -275,7 +275,7 @@ export default function Home() {
 
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-2">
-          <div className="container fantasy-content-guide pt-5 md:pt-7">
+          <div className="container fantasy-content-guide fantasy-section-decorated pt-5 md:pt-7">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">
                 <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb] shadow-sm">✦</span>News
@@ -290,7 +290,7 @@ export default function Home() {
             {/* News Grid - 2 rows of 3 cards on desktop, 2 columns on mobile */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
               {newsData.map((item) => (
-                <Link key={item.id} href={`/news/${item.id}`}>
+                <Link key={item.id} href={`/news/${item.id}`} className="block h-full">
                   <NewsCard item={item} category="NEWS" />
                 </Link>
               ))}
@@ -302,7 +302,7 @@ export default function Home() {
 
         {/* GAME INFO SECTION */}
         <section id="game-info" className="py-0">
-          <div className="container fantasy-content-guide py-0" style={{paddingTop: '48px'}}>
+          <div className="container fantasy-content-guide fantasy-section-decorated py-0" style={{paddingTop: '48px'}}>
             {/* Header */}
             <div className="mb-5">
               <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">
@@ -366,15 +366,15 @@ export default function Home() {
 
         {/* Sign In Modal — full login panel as popup */}
         {showSignInDialog && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17283b]/55 p-4 backdrop-blur-sm">
             <div className="relative w-full max-w-md">
               {/* Decorative blur */}
-              <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-primary to-accent opacity-20 blur-xl pointer-events-none"></div>
-              <div className="relative rounded-3xl border border-white/10 p-8 shadow-2xl bg-slate-900/90 backdrop-blur-2xl">
+              <div className="pointer-events-none absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-[#37598e] to-[#d7ba74] opacity-30 blur-xl"></div>
+              <div className="fantasy-card relative rounded-3xl p-8 shadow-2xl">
                 {/* Close button */}
                 <button
                   onClick={() => setShowSignInDialog(false)}
-                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-10"
+                  className="absolute right-4 top-4 z-10 text-[#766347] transition-colors hover:text-[#355d9d]"
                 >
                   <X size={22} />
                 </button>

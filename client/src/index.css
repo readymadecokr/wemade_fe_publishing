@@ -136,7 +136,10 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
-    background-image: radial-gradient(circle at 15% 8%, rgba(255,255,255,.88), transparent 28%), radial-gradient(circle at 82% 68%, rgba(192,165,107,.17), transparent 30%), repeating-linear-gradient(0deg, rgba(102,79,45,.025) 0px, rgba(102,79,45,.025) 1px, transparent 1px, transparent 5px);
+    background-image: linear-gradient(rgba(248,243,226,.78), rgba(243,233,204,.84)), url('/manus-storage/ragnarok-fantasy-parchment-atlas-bg_ff7c9fce.png'), radial-gradient(circle at 15% 8%, rgba(255,255,255,.88), transparent 28%), radial-gradient(circle at 82% 68%, rgba(192,165,107,.17), transparent 30%), repeating-linear-gradient(0deg, rgba(102,79,45,.025) 0px, rgba(102,79,45,.025) 1px, transparent 1px, transparent 5px);
+    background-size: cover, 100% auto, auto, auto, auto;
+    background-attachment: fixed, fixed, fixed, fixed, fixed;
+    background-position: center top, center top, center top, center top, center top;
   }
   header a, header h3, header span {
     font-family: 'Poppins', sans-serif;
@@ -162,12 +165,26 @@
 @layer components {
   .fantasy-page-shell {
     position: relative;
-    background: linear-gradient(180deg, rgba(250,246,232,.72), rgba(241,230,202,.88));
+    overflow: clip;
+    background: linear-gradient(180deg, rgba(250,246,232,.5), rgba(241,230,202,.72));
+  }
+
+  .fantasy-page-shell::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    opacity: .36;
+    background-image: url('/manus-storage/ragnarok-fantasy-parchment-atlas-bg_ff7c9fce.png');
+    background-size: cover;
+    background-position: center top;
+    mix-blend-mode: multiply;
   }
 
   .fantasy-content-guide {
     position: relative;
     padding-left: clamp(0rem, 4vw, 3.4rem);
+    z-index: 1;
   }
 
   .fantasy-content-guide::before {
@@ -180,10 +197,22 @@
     background: linear-gradient(180deg, transparent, rgba(76,97,133,.38) 4%, rgba(76,97,133,.28) 94%, transparent);
   }
 
+  .fantasy-section-decorated::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: .15rem;
+    width: min(42vw, 430px);
+    height: 3rem;
+    opacity: .82;
+    background: url('/manus-storage/ragnarok-fantasy-section-ornament_f3f3bf5d.png') right center / contain no-repeat;
+  }
+
   .fantasy-card {
     background: rgba(255,253,247,.9);
     border: 1px solid rgba(174,151,103,.55);
-    box-shadow: 0 9px 22px rgba(93,73,43,.12), inset 0 1px rgba(255,255,255,.8);
+    box-shadow: 0 9px 22px rgba(93,73,43,.12), inset 0 1px rgba(255,255,255,.8), inset 0 0 0 3px rgba(255,246,222,.45);
   }
 
   .fantasy-frame {

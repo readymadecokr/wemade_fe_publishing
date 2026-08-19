@@ -124,7 +124,7 @@ export default function Layout({ children }: LayoutProps) {
                   마이페이지
                 </Link>
               </div>
-              <Button variant="outline" size="sm" onClick={handleLogout} className="text-xs border-blue-200 hover:bg-blue-50 text-slate-600">
+              <Button variant="outline" size="sm" onClick={handleLogout} className="border-[#e6c972] bg-[#fffaf0] text-xs font-bold text-[#263b5b] shadow-sm hover:bg-[#f8edce] hover:text-[#1d3150]">
                 Logout
               </Button>
             </div>
@@ -266,12 +266,12 @@ export default function Layout({ children }: LayoutProps) {
           animation: float-social 3s ease-in-out infinite;
         }
       `}</style>
-      <div className="floating-social-box fixed top-1/2 -translate-y-1/2 right-3 z-40 flex flex-col items-center gap-2 bg-black/50 backdrop-blur-sm rounded-2xl py-3 px-2 shadow-2xl border border-white/10">
+      <div className="floating-social-box fixed right-3 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-2 rounded-2xl border border-[#d6bc78] bg-[linear-gradient(160deg,rgba(42,64,100,.96),rgba(30,44,70,.96))] px-2 py-3 shadow-[0_10px_28px_rgba(43,53,73,.35),inset_0_1px_rgba(255,247,220,.28)] backdrop-blur-sm">
         {/* Discord */}
         <button
           onClick={() => window.open('https://discord.gg/yVWJkWdkAU', '_blank')}
           title="Discord"
-          className="w-[58px] h-[58px] flex items-center justify-center rounded-xl hover:bg-white/20 transition-all duration-200 hover:scale-110 active:scale-95"
+          className="flex h-[58px] w-[58px] items-center justify-center rounded-xl border border-transparent transition-all duration-200 hover:scale-110 hover:border-[#f3d991] hover:bg-[#ffffff]/15 active:scale-95"
         >
           <img src={`${ASSET_BASE_URL}/manus-storage/Discord_icon_230fdb89_6026051e.png`} alt="Discord" className="w-[43px] h-[43px] object-contain" />
         </button>
@@ -279,7 +279,7 @@ export default function Layout({ children }: LayoutProps) {
         <button
           onClick={() => window.open('https://www.youtube.com/@RagnarokUniverse', '_blank')}
           title="YouTube"
-          className="w-[58px] h-[58px] flex items-center justify-center rounded-xl hover:bg-white/20 transition-all duration-200 hover:scale-110 active:scale-95"
+          className="flex h-[58px] w-[58px] items-center justify-center rounded-xl border border-transparent transition-all duration-200 hover:scale-110 hover:border-[#f3d991] hover:bg-[#ffffff]/15 active:scale-95"
         >
           <img src="/manus-storage/yt_icon_red_digital_78f0d0ca.png" alt="YouTube" className="w-[43px] h-[43px] object-contain" />
         </button>
