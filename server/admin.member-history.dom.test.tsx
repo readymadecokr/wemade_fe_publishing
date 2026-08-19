@@ -58,7 +58,7 @@ beforeAll(() => {
     const user = userEvent.setup();
     const submitSearch = vi.fn();
     function ControlsHarness() {
-      const [tab, setTab] = React.useState<"all" | "charge" | "use">("all");
+      const [tab, setTab] = React.useState<"all" | "charge" | "use" | "coupon">("all");
       const [search, setSearch] = React.useState("");
       const [startDate, setStartDate] = React.useState("");
       const [endDate, setEndDate] = React.useState("");

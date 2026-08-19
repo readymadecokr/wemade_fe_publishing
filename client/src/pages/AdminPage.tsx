@@ -136,13 +136,15 @@ function Pagination({ page, total, pageSize, onChange }: { page: number; total: 
   );
 }
 
+type MemberHistoryTab = "all" | "charge" | "use" | "coupon";
+
 export function MemberHistoryControls({ tab, searchInput, startDate, endDate, pageSize, onTabChange, onSearchInputChange, onStartDateChange, onEndDateChange, onPageSizeChange, onSearch }: {
-  tab: "all" | "charge" | "use";
+  tab: MemberHistoryTab;
   searchInput: string;
   startDate: string;
   endDate: string;
   pageSize: number;
-  onTabChange: (tab: "all" | "charge" | "use") => void;
+  onTabChange: (tab: MemberHistoryTab) => void;
   onSearchInputChange: (value: string) => void;
   onStartDateChange: (value: string) => void;
   onEndDateChange: (value: string) => void;
@@ -153,6 +155,7 @@ export function MemberHistoryControls({ tab, searchInput, startDate, endDate, pa
     { key: "all" as const, label: "전체" },
     { key: "charge" as const, label: "구매이력" },
     { key: "use" as const, label: "사용이력" },
+    { key: "coupon" as const, label: "쿠폰 사용이력" },
   ];
   return (
     <div className="mb-3">
@@ -166,7 +169,7 @@ export function MemberHistoryControls({ tab, searchInput, startDate, endDate, pa
           <Input type="date" value={endDate} onChange={e => onEndDateChange(e.target.value)} className="h-8 w-36 text-sm" aria-label="거래 이력 종료일" />
         </div>
         <div className="flex w-full gap-2 lg:w-80">
-          <Input value={searchInput} onChange={e => onSearchInputChange(e.target.value)} onKeyDown={e => { if (e.key === "Enter") onSearch(); }} placeholder="게임 코드, PG, 아이템명 검색" className="h-8 text-sm" aria-label="회원 거래 이력 검색" />
+          <Input value={searchInput} onChange={e => onSearchInputChange(e.target.value)} onKeyDown={e => { if (e.key === "Enter") onSearch(); }} placeholder={tab === "coupon" ? "쿠폰 코드, 쿠폰명 검색" : "게임 코드, PG, 아이템명 검색"} className="h-8 text-sm" aria-label="회원 거래 이력 검색" />
           <Button size="sm" className="h-8 shrink-0" onClick={onSearch}>검색</Button>
         </div>
         <Select value={String(pageSize)} onValueChange={value => onPageSizeChange(Number(value))}>
@@ -201,6 +204,18 @@ export function MemberTransactionTable({ items, tab, loading }: { items: any[]; 
             <tr key={tx.id} className="border-t border-slate-100 dark:border-slate-800"><td className="px-2 py-2">{tx.gameCode}</td>{timeCell(tx)}<td className="px-2 py-2 text-right">{value(tx.beforeRuCash)}</td><td className="px-2 py-2 text-right text-emerald-700">{value(tx.beforeBonusCash)}</td><td className="px-2 py-2">{tx.type === "charge" ? (tx.pgName ?? "-") : (tx.itemName ?? "-")}</td><td className="px-2 py-2 text-right">{tx.type === "charge" ? (tx.priceUsd ? `$${tx.priceUsd}` : "-") : value(tx.totalPriceRuc)}</td><td className="px-2 py-2 text-right font-medium text-blue-700">{value(tx.ruCashDelta)}</td><td className="px-2 py-2 text-right font-medium text-emerald-700">{value(tx.bonusCashDelta)}</td><td className="px-2 py-2 text-right font-medium">{value(tx.afterRuCash)}</td><td className="px-2 py-2 text-right font-medium text-emerald-700">{value(tx.afterBonusCash)}</td></tr>
           ))}
         </tbody>
+      </table>
+    </div>
+  );
+}
+
+export function MemberCouponHistoryTable({ items, loading }: { items: any[]; loading: boolean }) {
+  const formatBenefit = (item: any) => item.benefitType === "point" ? `rCoin ${Number(item.benefitValue ?? 0).toLocaleString()}` : `Product #${item.benefitValue ?? "-"}`;
+  return (
+    <div data-testid="member-coupon-history-table" className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+      <table className="w-full min-w-[640px] text-xs">
+        <thead className="bg-slate-50 text-slate-500 dark:bg-slate-800 dark:text-slate-300"><tr><th className="px-3 py-2 text-left">Usage Date</th><th className="px-3 py-2 text-left">Coupon Code</th><th className="px-3 py-2 text-left">Coupon Name</th><th className="px-3 py-2 text-left">Benefit Type</th><th className="px-3 py-2 text-right">Benefit</th></tr></thead>
+        <tbody>{loading ? <tr><td colSpan={5} className="px-3 py-4 text-center text-muted-foreground">이력 조회 중...</td></tr> : !items.length ? <tr><td colSpan={5} className="px-3 py-4 text-center text-muted-foreground">쿠폰 사용이력이 없습니다.</td></tr> : items.map(item => <tr key={item.id} className="border-t border-slate-100 dark:border-slate-800"><td className="px-3 py-2 text-muted-foreground">{fmt(item.usedAt)}</td><td className="px-3 py-2 font-mono">{item.couponCode}</td><td className="px-3 py-2">{item.couponName}</td><td className="px-3 py-2">{item.benefitType === "point" ? "rCoin" : "Product"}</td><td className="px-3 py-2 text-right font-medium">{formatBenefit(item)}</td></tr>)}</tbody>
       </table>
     </div>
   );
@@ -251,7 +266,7 @@ export function MembersSection({ adminClient }: { adminClient: ReturnType<typeof
   const [editForm, setEditForm] = useState<{ name: string } | null>(null);
   const [nickCheckResult, setNickCheckResult] = useState<"idle" | "available" | "duplicate">("idle");
   const [nickChecking, setNickChecking] = useState(false);
-  const [memberHistoryTab, setMemberHistoryTab] = useState<"all" | "charge" | "use">("all");
+  const [memberHistoryTab, setMemberHistoryTab] = useState<MemberHistoryTab>("all");
   const [memberHistorySearchInput, setMemberHistorySearchInput] = useState("");
   const [memberHistorySearch, setMemberHistorySearch] = useState("");
   const [memberHistoryPage, setMemberHistoryPage] = useState(1);
@@ -289,7 +304,17 @@ export function MembersSection({ adminClient }: { adminClient: ReturnType<typeof
   });
   const { data: memberTransactionHistory, isLoading: memberTransactionHistoryLoading } = useQuery({
     queryKey: ["admin-member-transaction-history", selectedUser?.id, memberHistoryTab, memberHistorySearch, memberHistoryStartDate, memberHistoryEndDate, memberHistoryPage, memberHistoryPageSize],
-    queryFn: () => adminClient!.memberAdmin.transactionHistory.query({ userId: selectedUser!.id, type: memberHistoryTab, search: memberHistorySearch, startDate: memberHistoryStartDate || undefined, endDate: memberHistoryEndDate || undefined, page: memberHistoryPage, pageSize: memberHistoryPageSize }),
+    queryFn: () => adminClient!.memberAdmin.transactionHistory.query({ userId: selectedUser!.id, type: memberHistoryTab === "coupon" ? "all" : memberHistoryTab, search: memberHistorySearch, startDate: memberHistoryStartDate || undefined, endDate: memberHistoryEndDate || undefined, page: memberHistoryPage, pageSize: memberHistoryPageSize }),
+    enabled: !!adminClient && !!selectedUser && memberHistoryTab !== "coupon",
+  });
+  const { data: memberCouponHistory, isLoading: memberCouponHistoryLoading } = useQuery({
+    queryKey: ["admin-member-coupon-history", selectedUser?.id, memberHistorySearch, memberHistoryStartDate, memberHistoryEndDate, memberHistoryPage, memberHistoryPageSize],
+    queryFn: () => adminClient!.memberAdmin.couponHistory.query({ userId: selectedUser!.id, search: memberHistorySearch, startDate: memberHistoryStartDate || undefined, endDate: memberHistoryEndDate || undefined, page: memberHistoryPage, pageSize: memberHistoryPageSize }),
+    enabled: !!adminClient && !!selectedUser && memberHistoryTab === "coupon",
+  });
+  const { data: memberPaymentSummary } = useQuery({
+    queryKey: ["admin-member-payment-summary", selectedUser?.id],
+    queryFn: () => adminClient!.memberAdmin.paymentSummary.query({ userId: selectedUser!.id }),
     enabled: !!adminClient && !!selectedUser,
   });
   const latestSuspensionHistory = (restrictionHistory as any[]).find(item => item.status === "suspended");
@@ -413,6 +438,7 @@ export function MembersSection({ adminClient }: { adminClient: ReturnType<typeof
               <div className="grid grid-cols-3 gap-2 py-3"><span className="font-medium text-muted-foreground">Provider</span><span className="col-span-2">{selectedUser.loginMethod ?? "-"}</span></div>
               <div className="grid grid-cols-3 gap-2 py-3"><span className="font-medium text-muted-foreground">가입일</span><span className="col-span-2">{fmt(selectedUser.createdAt)}</span></div>
               <div className="grid grid-cols-3 gap-2 py-3"><span className="font-medium text-muted-foreground">마지막 로그인</span><span className="col-span-2">{fmt(selectedUser.lastSignedIn)}</span></div>
+              <div className="grid grid-cols-3 gap-2 py-3"><span className="font-medium text-muted-foreground">누적 결제금액</span><span className="col-span-2 font-semibold text-blue-700">${Number(memberPaymentSummary?.totalPaymentUsd ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
               <div className="grid grid-cols-3 gap-2 py-3"><span className="font-medium text-muted-foreground">상태</span><span className={`col-span-2 font-medium ${(selectedUser as any).status === "active" ? "" : "text-red-500"}`}>{(selectedUser as any).status === "suspended" ? "이용정지" : (selectedUser as any).status === "banned" ? "영구정지" : "정상"}</span></div>
               <div className="py-4">
                 <p className="mb-2 font-medium text-muted-foreground">이용제한 이력</p>
@@ -424,8 +450,8 @@ export function MembersSection({ adminClient }: { adminClient: ReturnType<typeof
               </div>
               <div className="py-4">
                 <MemberHistoryControls tab={memberHistoryTab} searchInput={memberHistorySearchInput} startDate={memberHistoryStartDate} endDate={memberHistoryEndDate} pageSize={memberHistoryPageSize} onTabChange={nextTab => { setMemberHistoryTab(nextTab); setMemberHistoryPage(1); }} onSearchInputChange={setMemberHistorySearchInput} onStartDateChange={value => { setMemberHistoryStartDate(value); setMemberHistoryPage(1); }} onEndDateChange={value => { setMemberHistoryEndDate(value); setMemberHistoryPage(1); }} onPageSizeChange={value => { setMemberHistoryPageSize(value); setMemberHistoryPage(1); }} onSearch={() => { setMemberHistorySearch(memberHistorySearchInput); setMemberHistoryPage(1); }} />
-                <MemberTransactionTable items={memberTransactionHistory?.items ?? []} tab={memberHistoryTab} loading={memberTransactionHistoryLoading} />
-                <Pagination page={memberHistoryPage} total={memberTransactionHistory?.total ?? 0} pageSize={memberHistoryPageSize} onChange={setMemberHistoryPage} />
+                {memberHistoryTab === "coupon" ? <MemberCouponHistoryTable items={memberCouponHistory?.items ?? []} loading={memberCouponHistoryLoading} /> : <MemberTransactionTable items={memberTransactionHistory?.items ?? []} tab={memberHistoryTab} loading={memberTransactionHistoryLoading} />}
+                <Pagination page={memberHistoryPage} total={memberHistoryTab === "coupon" ? memberCouponHistory?.total ?? 0 : memberTransactionHistory?.total ?? 0} pageSize={memberHistoryPageSize} onChange={setMemberHistoryPage} />
               </div>
             </div>
             <div className="mt-6 flex flex-wrap justify-start gap-2">

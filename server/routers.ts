@@ -7,6 +7,7 @@ import { users, memberRestrictionHistories, banners, news, media, products, paym
 import { ruCashProducts, ruCashBalances, ruCashTransactions } from "../drizzle/schema";
 import { storagePut } from "./storage";
 import { filterMemberTransactionHistory } from "./memberHistory";
+import { calculateCumulativePaymentUsd, filterMemberCouponHistory } from "./memberCouponHistory";
 import { asc, desc, eq, gte, like, lt, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -719,6 +720,32 @@ export const appRouter = router({
         const rows = await db.select().from(ruCashTransactions).where(eq(ruCashTransactions.userId, input.userId));
         const filteredRows = filterMemberTransactionHistory(rows, { type: input.type, search: input.search, startDate: input.startDate, endDate: input.endDate });
         return { items: filteredRows.slice(offset, offset + input.pageSize), total: filteredRows.length };
+      }),
+    couponHistory: adminKeyProcedure
+      .input(z.object({
+        userId: z.number(),
+        search: z.string().trim().max(100).default(""),
+        startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+        endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+        page: z.number().min(1).default(1),
+        pageSize: z.number().min(1).max(100).default(20),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        const uses = await db.select().from(couponUses).where(eq(couponUses.userId, input.userId));
+        const couponRows = await db.select().from(coupons);
+        const items = filterMemberCouponHistory(uses, couponRows, input);
+        const offset = (input.page - 1) * input.pageSize;
+        return { items: items.slice(offset, offset + input.pageSize), total: items.length };
+      }),
+    paymentSummary: adminKeyProcedure
+      .input(z.object({ userId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        const rows = await db.select().from(ruCashTransactions).where(eq(ruCashTransactions.userId, input.userId));
+        return { totalPaymentUsd: calculateCumulativePaymentUsd(rows) };
       }),
     updateNickname: adminKeyProcedure
       .input(z.object({ userId: z.number(), name: z.string() }))
