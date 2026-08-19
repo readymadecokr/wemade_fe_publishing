@@ -177,28 +177,28 @@ export default function Layout({ children }: LayoutProps) {
 
 
       {/* Footer */}
-      <footer className="mt-auto w-full bg-transparent text-[#504432]">
+      <footer className="mt-auto w-full bg-transparent text-[#17120c]">
         <div className="container py-12" style={{paddingTop: '30px'}}>
           {/* Footer Top: Company Logos */}
-          <div className="mb-8 flex items-center justify-center gap-6 text-xs font-semibold text-[#63533b]">
-            <a href="https://gravity.co.kr/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#355d9d]">GRAVITY</a>
-            <span className="h-4 w-px bg-[#bba77c]"></span>
-            <a href="https://wemadeconnect.com/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#355d9d]">WEMADE CONNECT</a>
-            <span className="h-4 w-px bg-[#bba77c]"></span>
-            <a href="https://www.gala.biz/ko" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#355d9d]">GALA</a>
+          <div className="mb-8 flex items-center justify-center gap-6 text-xs font-semibold text-[#17120c]">
+            <a href="https://gravity.co.kr/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#163f7d]">GRAVITY</a>
+            <span className="h-4 w-px bg-[#705c36]"></span>
+            <a href="https://wemadeconnect.com/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#163f7d]">WEMADE CONNECT</a>
+            <span className="h-4 w-px bg-[#705c36]"></span>
+            <a href="https://www.gala.biz/ko" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#163f7d]">GALA</a>
           </div>
 
           {/* Footer Middle: Links and Discord */}
           <div className="mb-8 flex flex-wrap items-center justify-center gap-2 text-sm">
-            <Link href="/terms-of-service" className="text-[#63533b] transition-colors hover:text-[#355d9d]">Terms of Service</Link>
-            <span className="text-[#bba77c]">|</span>
-            <Link href="/privacy-policy" className="text-[#63533b] transition-colors hover:text-[#355d9d]">Privacy Policy</Link>
-            <span className="text-[#bba77c]">|</span>
-            <button onClick={() => setShowPrivacySettings(true)} className="cursor-pointer text-[#63533b] transition-colors hover:text-[#355d9d]">Privacy Settings</button>
-            <span className="text-[#bba77c]">|</span>
+            <Link href="/terms-of-service" className="font-medium text-[#17120c] transition-colors hover:text-[#163f7d]">Terms of Service</Link>
+            <span className="text-[#705c36]">|</span>
+            <Link href="/privacy-policy" className="font-medium text-[#17120c] transition-colors hover:text-[#163f7d]">Privacy Policy</Link>
+            <span className="text-[#705c36]">|</span>
+            <button onClick={() => setShowPrivacySettings(true)} className="cursor-pointer font-medium text-[#17120c] transition-colors hover:text-[#163f7d]">Privacy Settings</button>
+            <span className="text-[#705c36]">|</span>
             <div className="flex items-center gap-2">
               <Disc size={16} className="text-blue-600 dark:text-blue-400" />
-              <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="text-[#63533b] transition-colors hover:text-[#355d9d]">Discord</a>
+              <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="font-medium text-[#17120c] transition-colors hover:text-[#163f7d]">Discord</a>
             </div>
           </div>
 
@@ -210,9 +210,9 @@ export default function Layout({ children }: LayoutProps) {
                 alt="GRAVITY"
                 className="h-8 w-auto"
               />
-              <p className="text-xs text-[#63533b]">Copyright &copy; Gravity Co., LTD & Lee MyoungJin(studio DTDS). All Rights Reserved.</p>
+              <p className="text-xs font-medium text-[#17120c]">Copyright &copy; Gravity Co., LTD & Lee MyoungJin(studio DTDS). All Rights Reserved.</p>
             </div>
-            <p className="text-center text-xs text-[#827055]">All trademarks used on this website are the property of their respective owners.</p>
+            <p className="text-center text-xs font-medium text-[#17120c]">All trademarks used on this website are the property of their respective owners.</p>
           </div>
         </div>
       </footer>

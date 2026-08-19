@@ -16,8 +16,9 @@ describe("fantasy portal visual polish", () => {
   it("uses one continuous fantasy atlas with visible map detail for portal decoration", () => {
     expect(styleSource).toContain('ragnarok-fantasy-continuous-atlas_fb2301c6.png');
     expect(styleSource).toContain('.fantasy-site-atlas');
+    expect(styleSource).toContain('radial-gradient(ellipse 69% 104% at 50% 48%');
     expect(layoutSource).toContain('fantasy-site-atlas');
-    expect(layoutSource).toContain('bg-transparent text-[#504432]');
+    expect(layoutSource).toContain('bg-transparent text-[#17120c]');
     expect(styleSource).toContain('ragnarok-fantasy-section-ornament_f3f3bf5d.png');
     expect(homeSource).not.toContain('fantasy-section-decorated');
   });
@@ -47,5 +48,10 @@ describe("fantasy portal visual polish", () => {
     expect(styleSource).toContain('font-weight: 800');
     expect(styleSource).toContain('color: #fff1b4 !important');
     expect(layoutSource).toContain('>\n                  My Page\n');
+  });
+
+  it("keeps footer content black and readable over the shared atlas", () => {
+    expect(layoutSource).toContain('bg-transparent text-[#17120c]');
+    expect(layoutSource).toContain('font-medium text-[#17120c]');
   });
 });
