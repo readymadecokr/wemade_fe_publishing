@@ -139,5 +139,11 @@ Shop 헤더를 Game Info와 동일한 인라인 아이콘·제목·부제 구조
 # 2026-08-19 — 헤더·하단 정밀 보강
 
 - Header를 72% 투명도의 딥 네이비 유리 표면과 backdrop blur로 적용했다. Home, News, Game Info, Shop, Discord는 `portal-nav`의 동일 텍스트 크기를 사용하며, Sign In / Sign Up은 밝은 테두리·상승·사파이어 밝기·focus ring으로 hover와 키보드 포커스에서 뚜렷하게 구분된다.
-- View More 버튼의 판타지 오너먼트는 버튼 중심 우측에 고정했고, Media 카드 하단에는 `mb-6` 여백을 추가했다. Footer는 생성한 성채·지도·마법 입자 atlas 이미지를 중심 안전 영역을 유지한 배경으로 연결했다.
+- View More 버튼의 판타지 오너먼트는 버튼 중심 우측에 고정했다. Footer는 생성한 성채·지도·마법 입자 atlas 이미지를 중심 안전 영역을 유지한 배경으로 연결했다.
 - 1440px 전체 화면에서 반투명 헤더, 섹션 오너먼트, Media와 Footer의 간격·배경을 확인했고, 375px에서 메뉴 다섯 개·Sign In / Sign Up의 가독성, View More의 비가림 상태, 우하단 축소 소셜 제어를 확인했다. TypeScript와 Vitest 14개 파일·28개 테스트가 통과했다.
+
+# 2026-08-19 — Media·푸터 배경 연속성 정정
+
+- Home Media wrapper 하단 여백과 Footer 상단 가로 테두리를 제거했다. Media 아래에는 별도의 선이나 단색 띠가 남지 않으며, 영상 프레임에서 Footer로 바로 이어진다.
+- `fantasy-page-shell`의 clipping을 해제해 지도·성채·마법 입자 장식이 컨테이너 경계에서 잘리지 않게 했고, Media와 Footer 하단까지 atlas 배경이 연속된다.
+- 1440px·375px 전체 캡처에서 Media 프레임, 경계선 제거, 하단 배경 연속성을 확인했다. TypeScript와 Vitest 14개 파일·30개 테스트가 통과했다.

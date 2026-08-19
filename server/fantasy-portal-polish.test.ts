@@ -36,6 +36,6 @@ describe("fantasy portal visual polish", () => {
     expect(layoutSource).toContain('ragnarok-fantasy-footer-atlas_e83c8727.png');
     expect(styleSource).toContain('.fantasy-view-more::before');
     expect(styleSource).toContain('.floating-social-box');
-    expect(homeSource).toContain('className="mb-6"');
+    expect(homeSource).toContain('className="mb-0"');
   });
 });

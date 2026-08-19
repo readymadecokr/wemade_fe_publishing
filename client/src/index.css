@@ -167,7 +167,7 @@
 @layer components {
   .fantasy-page-shell {
     position: relative;
-    overflow: clip;
+    overflow: visible;
     background: linear-gradient(180deg, rgba(250,246,232,.5), rgba(241,230,202,.72));
   }
 

@@ -177,7 +177,7 @@ export default function Layout({ children }: LayoutProps) {
 
 
       {/* Footer */}
-      <footer className="mt-auto w-full border-t border-[#cdbb91] bg-[#e8dcc0]/95 text-[#504432]" style={{ backgroundImage: "linear-gradient(rgba(235,224,195,.78), rgba(235,224,195,.92)), url('/manus-storage/ragnarok-fantasy-footer-atlas_e83c8727.png')", backgroundPosition: "center bottom", backgroundSize: "cover", backgroundRepeat: "no-repeat" }}>
+      <footer className="mt-auto w-full bg-[#e8dcc0]/95 text-[#504432]" style={{ backgroundImage: "linear-gradient(rgba(235,224,195,.78), rgba(235,224,195,.92)), url('/manus-storage/ragnarok-fantasy-footer-atlas_e83c8727.png')", backgroundPosition: "center bottom", backgroundSize: "cover", backgroundRepeat: "no-repeat" }}>
         <div className="container py-12" style={{paddingTop: '30px'}}>
           {/* Footer Top: Company Logos */}
           <div className="mb-8 flex items-center justify-center gap-6 text-xs font-semibold text-[#63533b]">

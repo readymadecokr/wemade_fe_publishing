@@ -302,7 +302,7 @@ export default function Home() {
 
         {/* GAME INFO SECTION */}
         <section id="game-info" className="py-0">
-          <div className="container fantasy-content-guide fantasy-section-decorated py-0" style={{paddingTop: '48px', paddingBottom: '56px'}}>
+          <div className="container fantasy-content-guide fantasy-section-decorated py-0" style={{paddingTop: '48px', paddingBottom: '0px'}}>
             {/* Header */}
             <div className="mb-5">
               <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">
@@ -501,7 +501,7 @@ function MediaSection() {
         const embedUrl = getYoutubeEmbedUrl(item.youtubeUrl);
         if (!embedUrl) return null;
         return (
-          <div key={item.id} className="mb-6" style={{ paddingTop: '0px' }}>
+          <div key={item.id} className="mb-0" style={{ paddingTop: '0px' }}>
             <h3 className="fantasy-section-title mb-4 flex items-center gap-3 text-2xl md:text-3xl"><span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-xs text-[#f9edcb]">✦</span>Media</h3>
             <div className="fantasy-frame overflow-hidden rounded-xl">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
