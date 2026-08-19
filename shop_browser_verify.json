@@ -1,0 +1,108 @@
+{
+  "desktop": {
+    "cardCount": 8,
+    "koreanCharacterCount": 0,
+    "documentOverflow": false,
+    "cardBounds": [
+      {
+        "left": 232,
+        "right": 474,
+        "width": 242
+      },
+      {
+        "left": 490,
+        "right": 732,
+        "width": 242
+      },
+      {
+        "left": 748,
+        "right": 990,
+        "width": 242
+      },
+      {
+        "left": 1006,
+        "right": 1248,
+        "width": 242
+      },
+      {
+        "left": 232,
+        "right": 474,
+        "width": 242
+      },
+      {
+        "left": 490,
+        "right": 732,
+        "width": 242
+      },
+      {
+        "left": 748,
+        "right": 990,
+        "width": 242
+      },
+      {
+        "left": 1006,
+        "right": 1248,
+        "width": 242
+      }
+    ]
+  },
+  "popup": {
+    "initialPayDisabled": true,
+    "productChanged": true,
+    "extraMethodsVisible": true,
+    "enabledAfterCaptcha": true,
+    "closedByX": true,
+    "closeDataState": "closed",
+    "resetPayDisabled": true,
+    "resetExtraHidden": true,
+    "popupOverflow": false
+  },
+  "mobile": {
+    "cardCount": 8,
+    "koreanCharacterCount": 0,
+    "documentOverflow": false,
+    "cardBounds": [
+      {
+        "left": 16,
+        "right": 359,
+        "width": 343
+      },
+      {
+        "left": 16,
+        "right": 359,
+        "width": 343
+      },
+      {
+        "left": 16,
+        "right": 359,
+        "width": 343
+      },
+      {
+        "left": 16,
+        "right": 359,
+        "width": 343
+      },
+      {
+        "left": 16,
+        "right": 359,
+        "width": 343
+      },
+      {
+        "left": 16,
+        "right": 359,
+        "width": 343
+      },
+      {
+        "left": 16,
+        "right": 359,
+        "width": 343
+      },
+      {
+        "left": 16,
+        "right": 359,
+        "width": 343
+      }
+    ],
+    "allMobileCardsInside": true
+  }
+}

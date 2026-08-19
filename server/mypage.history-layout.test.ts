@@ -17,12 +17,8 @@ describe("My Page history layout", () => {
   });
 
   it("keeps only the Top Up view in the Shop navigation", () => {
-    const menuStart = pointShop.indexOf("const menus:");
-    const menuEnd = pointShop.indexOf("];", menuStart);
-    const menuSource = pointShop.slice(menuStart, menuEnd);
-
-    expect(menuSource).toContain('key: "charge"');
-    expect(menuSource).not.toContain('key: "charge-history"');
-    expect(menuSource).not.toContain('key: "use-history"');
+    expect(pointShop).toContain(">Top Up<");
+    expect(pointShop).not.toContain('"charge-history"');
+    expect(pointShop).not.toContain('"use-history"');
   });
 });

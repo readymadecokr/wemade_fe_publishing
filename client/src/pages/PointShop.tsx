@@ -1,47 +1,18 @@
-import { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
-import { ChevronLeft } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, ShieldCheck } from "lucide-react";
 import Layout from "@/components/Layout";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 
-function fmtRuc(n: number): string { return Math.min(n, 9999999).toLocaleString("en-US"); }
-function fmtAbs(n: number): string { return Math.min(Math.abs(n), 9999999).toLocaleString("en-US"); }
-function fmtDate(d: Date | string | null | undefined): string {
-  if (!d) return "-";
-  const dt = new Date(d);
-  const y = dt.getFullYear();
-  const mo = String(dt.getMonth() + 1).padStart(2, "0");
-  const day = String(dt.getDate()).padStart(2, "0");
-  const h = String(dt.getHours()).padStart(2, "0");
-  const mi = String(dt.getMinutes()).padStart(2, "0");
-  return `${y}-${mo}-${day} ${h}:${mi}`;
+function fmtCoin(value: number) {
+  return Math.min(Math.max(Number(value) || 0, 0), 9_999_999).toLocaleString("en-US");
 }
 
-// ─── 공통 페이지네이션 ────────────────────────────────────────────────────────
-function Pagination({ page, totalPages, setPage }: { page: number; totalPages: number; setPage: (p: number) => void }) {
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-  return (
-    <div className="flex justify-center items-center gap-1 mt-3">
-      <button onClick={() => setPage(1)} disabled={page === 1} className="w-10 h-10 border border-slate-300 rounded bg-white text-slate-700 text-sm font-bold hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed">«</button>
-      <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="w-10 h-10 border border-slate-300 rounded bg-white text-slate-700 text-sm font-bold hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed">&lt;</button>
-      {pages.map(n => (
-        <button key={n} onClick={() => setPage(n)} className={`w-10 h-10 border rounded text-sm font-bold transition-colors ${n === page ? "bg-[#9b2020] text-white border-[#9b2020]" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"}`}>{n}</button>
-      ))}
-      <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} className="w-10 h-10 border border-slate-300 rounded bg-white text-slate-700 text-sm font-bold hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed">&gt;</button>
-      <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="w-10 h-10 border border-slate-300 rounded bg-white text-slate-700 text-sm font-bold hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed">»</button>
-    </div>
-  );
-}
-
-// ─── 충전 탭 ─────────────────────────────────────────────────────────────────
-function ChargeTab({ ruCash, bonusCash }: { ruCash: number; bonusCash: number }) {
-  const [selected, setSelected] = useState<number | null>(null);
-  const { data: products = [] } = trpc.shop.listProducts.useQuery();
-  // 상품 id(sortOrder 기준 1~8)별로 각각 다른 코인 아이콘
 const COIN_ICONS: Record<number, string> = {
   1: "/manus-storage/rcoin-product-normalized-1_3a54dcfa.png",
-  2: "/manus-storage/rcoin-product-normalized-2_7f2e6fc8.png",
+  2: "/manus-storage/rcoin-product-normalized-2_e83f10a6.png",
   3: "/manus-storage/rcoin-product-normalized-3_a2066f09.png",
   4: "/manus-storage/rcoin-product-normalized-4_c97d1b25.png",
   5: "/manus-storage/rcoin-product-normalized-5_1f2fcd6a.png",
@@ -49,225 +20,142 @@ const COIN_ICONS: Record<number, string> = {
   7: "/manus-storage/rcoin-product-normalized-7_1846f0d0.png",
   8: "/manus-storage/rcoin-product-normalized-8_0af9497e.png",
 };
+
+type Product = {
+  id: number;
+  sortOrder?: number | null;
+  ruCashAmount: number;
+  bonusCashAmount: number;
+  priceUsd: number | string;
+};
+
+function BalanceCards({ rCoin, bonusCoin }: { rCoin: number; bonusCoin: number }) {
   return (
-    <div className="space-y-6">
-      <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
-          <p className="text-xs font-black tracking-wide text-slate-500 uppercase">rCoin</p>
-          <p className="mt-1 text-3xl font-black text-[#a51f24]">{fmtRuc(ruCash)}</p>
-          <p className="mt-1 text-xs text-slate-400">유료 충전 캐시</p>
-        </div>
-        <div className="min-h-[118px] rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
-          <p className="text-xs font-black tracking-wide text-slate-500 uppercase">Bonus rCoin</p>
-          <p className="mt-1 text-3xl font-black text-green-700">{fmtRuc(bonusCash)}</p>
-          <p className="mt-1 text-xs text-slate-400">보너스 캐시 (우선 차감)</p>
-        </div>
-      </section>
-
-      <div className="flex flex-col gap-2 border-b border-slate-200 pb-4 text-sm sm:flex-row sm:items-center sm:justify-between">
-        <p className="font-medium text-slate-600">통화 USD 단위 <span className="mx-1 text-slate-300">·</span> 지역 통화는 PG 결제 페이지에서 전환</p>
-        <p className="font-semibold text-slate-500">rCoin은 계정 귀속</p>
+    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
+        <p className="text-xs font-black uppercase tracking-wide text-slate-500">rCoin</p>
+        <p className="mt-1 text-3xl font-black text-[#a51f24]">{fmtCoin(rCoin)}</p>
+        <p className="mt-1 text-xs text-slate-400">Paid Currency</p>
       </div>
+      <div className="rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
+        <p className="text-xs font-black uppercase tracking-wide text-slate-500">Bonus rCoin</p>
+        <p className="mt-1 text-3xl font-black text-green-700">{fmtCoin(bonusCoin)}</p>
+        <p className="mt-1 text-xs text-slate-400">Bonus Currency (Used First)</p>
+      </div>
+    </section>
+  );
+}
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-        {(products as any[]).map((p: any) => {
-          const isSelected = selected === p.id;
-          const coinIcon = COIN_ICONS[p.id] ?? "/manus-storage/rucash-p1-1usd_95e76acd.png";
-          const isBestSeller = p.id === 5;
-          const isBestValue = p.id === 8;
-          const hasBonus = p.bonusCashAmount > 0;
-          return (
-            <button key={p.id} onClick={() => setSelected(p.id)} aria-label={`${fmtRuc(p.ruCashAmount)} rCoin 상품 선택`}
-              className={`relative flex h-[174px] flex-col rounded-xl border p-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${isSelected ? "border-[#a51f24] bg-[#fffaf2] ring-1 ring-[#a51f24]" : "border-[#e3dfca] bg-[#faf8f0] hover:border-[#c6ba92]"}`}>
-              {(isBestSeller || isBestValue) && (
-                <img
-                  src={isBestSeller ? "/manus-storage/rcoin-badge-best-seller-clean_432b87e4.png" : "/manus-storage/rcoin-badge-best-value-clean_4ae2a914.png"}
-                  alt={isBestSeller ? "최다 판매" : "최고 혜택"}
-                  className="absolute -left-2 -top-3 z-10 h-auto w-20 drop-shadow-md sm:w-24"
-                />
-              )}
-              <div className="flex h-[104px] items-center justify-center gap-3 px-2 pt-1">
-                <div className="flex w-[84px] shrink-0 items-center justify-center self-stretch">
-                  <img src={coinIcon} alt="rCoin coin" className="h-[84px] w-[84px] max-h-full max-w-full object-contain object-center" />
-                </div>
-                <div className="flex min-w-0 shrink-0 flex-col justify-center">
-                  {hasBonus ? (
-                    <>
-                      <div className="flex flex-col min-[1280px]:flex-row min-[1280px]:items-center min-[1280px]:gap-1">
-                        <span className="shrink-0 text-2xl font-black leading-none tracking-tight text-slate-900 lg:text-3xl">{fmtRuc(p.ruCashAmount)}</span>
-                        <span className="mt-1 w-fit shrink-0 rounded-lg bg-[#54866f] px-1.5 py-0.5 text-xs font-black leading-none text-white min-[1280px]:mt-0 lg:px-2 lg:py-1 lg:text-sm">+{fmtRuc(p.bonusCashAmount)}</span>
-                      </div>
-                      <div className="mt-2 text-base font-semibold text-slate-600 min-[1280px]:mt-1">rCoin</div>
-                    </>
-                  ) : (
-                    <>
-                      <span className="shrink-0 text-2xl font-black leading-none tracking-tight text-slate-900 lg:text-3xl">{fmtRuc(p.ruCashAmount)}</span>
-                      <div className="mt-1 text-base font-semibold text-slate-600">rCoin</div>
-                    </>
-                  )}
-                </div>
-              </div>
-              <div className="mt-1">
-                <div className="w-full rounded-lg border border-[#e4a100] bg-gradient-to-b from-[#fff09b] via-[#ffd52b] to-[#f2ad05] px-3 py-2 text-center text-base font-black text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(181,105,0,0.32),0_3px_0_rgba(188,117,0,0.56),0_5px_9px_rgba(171,111,0,0.24)] sm:text-lg">${Number(p.priceUsd).toFixed(2)}</div>
-              </div>
-            </button>
-          );
+const primaryPaymentMethods = [
+  { id: "goc", label: "GOC Pay", sublabel: "Recommended" },
+  { id: "xsolla", label: "Xsolla", sublabel: "Global payments" },
+  { id: "paypal", label: "PayPal", sublabel: "Pay securely" },
+];
+const extraPaymentMethods = [
+  { id: "mycard", label: "MyCard" },
+  { id: "ebanx", label: "EBANX" },
+  { id: "payermax", label: "PayerMax" },
+];
+
+export function PurchaseDialog({ products, productId, open, onOpenChange, onSelectProduct }: { products: Product[]; productId: number | null; open: boolean; onOpenChange: (open: boolean) => void; onSelectProduct: (id: number) => void }) {
+  const [priceOpen, setPriceOpen] = useState(false);
+  const [method, setMethod] = useState("goc");
+  const [showMore, setShowMore] = useState(false);
+  const [captchaChecked, setCaptchaChecked] = useState(false);
+  const selected = products.find(product => product.id === productId) ?? products[0];
+
+  useEffect(() => {
+    if (open) {
+      setPriceOpen(false);
+      setMethod("goc");
+      setShowMore(false);
+      setCaptchaChecked(false);
+    }
+  }, [open, productId]);
+
+  if (!selected) return null;
+  const bonusText = selected.bonusCashAmount > 0 ? ` +${fmtCoin(selected.bonusCashAmount)} Bonus` : "";
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="w-[calc(100%-1rem)] max-h-[90vh] max-w-[500px] overflow-x-hidden overflow-y-auto rounded-2xl border-slate-200 bg-white p-0 text-slate-900">
+        <div className="border-b border-slate-200 px-6 py-5">
+          <DialogTitle className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-500">Purchase rCoin</DialogTitle>
+          <DialogDescription className="sr-only">Choose a package, payment method, and confirm the security check.</DialogDescription>
+          <div className="mt-3 flex items-center justify-between gap-3">
+            <p className="whitespace-nowrap text-[22px] font-black leading-none tracking-tight text-slate-950">{fmtCoin(selected.ruCashAmount)} rCoin<span className="ml-1.5 text-green-700">{bonusText}</span></p>
+            <div className="relative shrink-0">
+              <button type="button" onClick={() => setPriceOpen(value => !value)} className="inline-flex min-w-[92px] items-center justify-between gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-800 shadow-sm hover:border-blue-400">
+                ${Number(selected.priceUsd).toFixed(2)} <ChevronDown className="h-4 w-4" />
+              </button>
+              {priceOpen && <div className="absolute right-0 z-30 mt-2 max-h-52 w-28 overflow-y-auto rounded-lg border border-slate-200 bg-white p-1 shadow-xl">
+                {products.map(product => <button type="button" key={product.id} onClick={() => { onSelectProduct(product.id); setPriceOpen(false); }} className={`block w-full rounded px-2 py-2 text-left text-sm font-semibold hover:bg-blue-50 ${product.id === selected.id ? "bg-blue-50 text-blue-700" : "text-slate-700"}`}>${Number(product.priceUsd).toFixed(2)}</button>)}
+              </div>}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-5 px-6 py-5">
+          <section>
+            <p className="mb-2 text-sm font-black text-slate-800">Payment Method</p>
+            <div className="space-y-2">
+              {primaryPaymentMethods.map(item => <button type="button" key={item.id} onClick={() => setMethod(item.id)} className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${method === item.id ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500" : "border-slate-200 hover:border-blue-300"}`}>
+                <span className="font-bold text-slate-800">{item.label}</span><span className={`text-xs font-semibold ${item.id === "goc" ? "text-blue-600" : "text-slate-400"}`}>{item.sublabel}</span>
+              </button>)}
+              {showMore && extraPaymentMethods.map(item => <button type="button" key={item.id} onClick={() => setMethod(item.id)} className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${method === item.id ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500" : "border-slate-200 hover:border-blue-300"}`}><span className="font-bold text-slate-800">{item.label}</span><span className="text-xs text-slate-400">Payment partner</span></button>)}
+            </div>
+            <button type="button" onClick={() => setShowMore(value => !value)} className="mt-3 text-sm font-bold text-blue-600 hover:text-blue-700">{showMore ? "Show less" : "More payment methods"}</button>
+          </section>
+
+          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+            <input type="checkbox" checked={captchaChecked} onChange={event => setCaptchaChecked(event.target.checked)} className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+            <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-slate-500" />I am not a robot</span>
+          </label>
+        </div>
+        <div className="border-t border-slate-200 px-6 py-4">
+          <button type="button" disabled={!captchaChecked} onClick={() => alert("Payment provider integration will be available soon.")} className="w-full rounded-lg bg-blue-500 px-4 py-3 text-sm font-black text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-300">Pay ${Number(selected.priceUsd).toFixed(2)}</button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ChargeTab({ rCoin, bonusCoin }: { rCoin: number; bonusCoin: number }) {
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [purchaseOpen, setPurchaseOpen] = useState(false);
+  const { data: products = [] } = trpc.shop.listProducts.useQuery();
+  const orderedProducts = useMemo(() => [...(products as Product[])].sort((a, b) => (a.sortOrder ?? a.id) - (b.sortOrder ?? b.id)), [products]);
+
+  return (
+    <div className="space-y-5">
+      <BalanceCards rCoin={rCoin} bonusCoin={bonusCoin} />
+      <div className="flex items-center justify-between border-b border-slate-200 pb-3 text-sm text-slate-500"><span>All prices are shown in USD.</span><span>rCoin is bound to your account.</span></div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {orderedProducts.map((product, index) => {
+          const order = product.sortOrder ?? index + 1;
+          const isBestSeller = order === 5;
+          const isBestValue = order === 8;
+          return <button type="button" key={product.id} data-shop-product={product.id} onClick={() => { setSelectedId(product.id); setPurchaseOpen(true); }} className="relative min-h-[154px] rounded-2xl border border-[#e7e2c9] bg-[#faf9f2] p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-md">
+            {(isBestSeller || isBestValue) && <span className={`absolute -left-1 -top-3 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-wide text-white shadow-sm ${isBestSeller ? "bg-[#a51f24]" : "bg-[#5d4387]"}`}>{isBestSeller ? "Best Seller" : "Best Value"}</span>}
+            <div className="flex items-center gap-3 pt-2">
+              <div className="flex h-[76px] w-[76px] shrink-0 items-center justify-center"><img src={COIN_ICONS[order] ?? COIN_ICONS[index + 1]} alt="rCoin package" className="h-[76px] w-[76px] object-contain" /></div>
+              <div className="min-w-0 flex-1"><div className="flex flex-wrap items-baseline gap-x-1 gap-y-1"><span className="text-2xl font-black leading-none text-slate-950">{fmtCoin(product.ruCashAmount)}</span><span className="text-sm font-bold text-slate-600">rCoin</span>{product.bonusCashAmount > 0 && <span className="text-sm font-black text-green-700">+{fmtCoin(product.bonusCashAmount)} Bonus</span>}</div></div>
+            </div>
+            <div className="mt-3 rounded-lg border border-[#e4a100] bg-gradient-to-b from-[#fff39b] via-[#ffd52b] to-[#f1ad05] px-3 py-2 text-center text-lg font-black text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_3px_0_rgba(188,117,0,.52)]">${Number(product.priceUsd).toFixed(2)}</div>
+          </button>;
         })}
       </div>
-      {selected && (
-        <div className="mt-6 flex items-center gap-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-          <div className="flex-1 text-sm text-slate-700">
-            {(() => {
-              const p = (products as any[]).find((x: any) => x.id === selected);
-              if (!p) return null;
-              const total = p.ruCashAmount + p.bonusCashAmount;
-              return <span><strong>{p.name}</strong> 선택됨 — 합계 <strong className="text-[#9b2020]">{fmtRuc(total)} rCoin</strong>{p.bonusCashAmount > 0 ? <span className="text-green-600"> ({fmtRuc(p.ruCashAmount)} rCoin + {fmtRuc(p.bonusCashAmount)} Bonus rCoin)</span> : ""}</span>;
-            })()}
-          </div>
-          <button className="px-6 py-2 bg-[#9b2020] hover:bg-[#7a1a1a] text-white font-bold rounded-lg text-sm transition-colors" onClick={() => alert("PG 결제 연동 후 이용 가능합니다.")}>충전하기</button>
-        </div>
-      )}
+      <PurchaseDialog products={orderedProducts} productId={selectedId} open={purchaseOpen} onOpenChange={setPurchaseOpen} onSelectProduct={setSelectedId} />
     </div>
   );
 }
 
-// ─── 구매 내역 탭 ─────────────────────────────────────────────────────────────
-function ChargeHistoryTab() {
-  const [page, setPage] = useState(1);
-  const { data } = trpc.shop.myChargeHistory.useQuery({ page, pageSize: 10 });
-  const items = (data?.items ?? []) as any[];
-  const total = data?.total ?? 0;
-  const totalPages = Math.max(1, Math.ceil(total / 10));
-  const COLS = ["게임코드","TIME","충전전 rCoin","충전전 Bonus rCoin","PG","Price","충전량 rCoin","충전량 Bonus rCoin","충전후 rCoin","충전후 Bonus rCoin"];
-  return (
-    <div className="space-y-4">
-      <h2 className="text-base font-bold text-slate-800">구매 내역</h2>
-      {!items.length ? (
-        <div className="text-center py-12 text-slate-400 text-sm">충전 내역이 없습니다.</div>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200">
-          <table className="w-full text-xs border-collapse">
-            <thead>
-              <tr className="bg-[#9b2020] text-white">
-                {COLS.map(c => <th key={c} className="px-3 py-2.5 text-left font-semibold whitespace-nowrap border-r border-red-700 last:border-r-0">{c}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((tx: any) => (
-                <tr key={tx.id} className="border-b border-slate-200 hover:bg-slate-50">
-                  <td className="px-3 py-2 font-medium text-[#9b2020] border-r border-slate-200">{tx.gameCode ?? "ROU"}</td>
-                  <td className="px-3 py-2 whitespace-nowrap border-r border-slate-200">{fmtDate(tx.createdAt)}</td>
-                  <td className="px-3 py-2 text-right border-r border-slate-200">{fmtRuc(tx.beforeRuCash)}</td>
-                  <td className="px-3 py-2 text-right text-green-700 border-r border-slate-200">{fmtRuc(tx.beforeBonusCash)}</td>
-                  <td className="px-3 py-2 border-r border-slate-200">{tx.pgName ?? "-"}</td>
-                  <td className="px-3 py-2 text-right border-r border-slate-200">{tx.priceUsd ? `$${Number(tx.priceUsd).toFixed(0)}` : "-"}</td>
-                  <td className="px-3 py-2 text-right font-bold text-[#9b2020] border-r border-slate-200">{fmtAbs(tx.ruCashDelta)}</td>
-                  <td className="px-3 py-2 text-right font-bold text-green-700 border-r border-slate-200">{fmtAbs(tx.bonusCashDelta)}</td>
-                  <td className="px-3 py-2 text-right font-bold border-r border-slate-200">{fmtRuc(tx.afterRuCash)}</td>
-                  <td className="px-3 py-2 text-right font-bold text-green-700">{fmtRuc(tx.afterBonusCash)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      <Pagination page={page} totalPages={totalPages} setPage={setPage} />
-    </div>
-  );
-}
-
-// ─── 사용 내역 탭 ─────────────────────────────────────────────────────────────
-function UseHistoryTab() {
-  const [page, setPage] = useState(1);
-  const { data } = trpc.shop.myUseHistory.useQuery({ page, pageSize: 10 });
-  const items = (data?.items ?? []) as any[];
-  const total = data?.total ?? 0;
-  const totalPages = Math.max(1, Math.ceil(total / 10));
-  const COLS = ["게임코드","TIME","사용전 rCoin","사용전 Bonus rCoin","Item Name","QTY","Item Price","Total Price","잔량 rCoin","잔량 Bonus rCoin"];
-  return (
-    <div className="space-y-4">
-      <h2 className="text-base font-bold text-slate-800">사용 내역</h2>
-      {!items.length ? (
-        <div className="text-center py-12 text-slate-400 text-sm">사용 내역이 없습니다.</div>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200">
-          <table className="w-full text-xs border-collapse">
-            <thead>
-              <tr className="bg-[#9b2020] text-white">
-                {COLS.map(c => <th key={c} className="px-3 py-2.5 text-left font-semibold whitespace-nowrap border-r border-red-700 last:border-r-0">{c}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((tx: any) => (
-                <tr key={tx.id} className="border-b border-slate-200 hover:bg-slate-50">
-                  <td className="px-3 py-2 font-medium text-[#9b2020] border-r border-slate-200">{tx.gameCode ?? "ROU"}</td>
-                  <td className="px-3 py-2 whitespace-nowrap border-r border-slate-200">{fmtDate(tx.createdAt)}</td>
-                  <td className="px-3 py-2 text-right border-r border-slate-200">{fmtRuc(tx.beforeRuCash)}</td>
-                  <td className="px-3 py-2 text-right text-green-700 border-r border-slate-200">{fmtRuc(tx.beforeBonusCash)}</td>
-                  <td className="px-3 py-2 border-r border-slate-200">{tx.itemName ?? "-"}</td>
-                  <td className="px-3 py-2 text-right border-r border-slate-200">{tx.itemQty ?? 1}</td>
-                  <td className="px-3 py-2 text-right border-r border-slate-200">{fmtAbs(tx.itemPriceRuc ?? 0)}</td>
-                  <td className="px-3 py-2 text-right font-bold border-r border-slate-200">{fmtAbs(tx.totalPriceRuc ?? 0)}</td>
-                  <td className="px-3 py-2 text-right font-bold border-r border-slate-200">{fmtRuc(tx.afterRuCash)}</td>
-                  <td className="px-3 py-2 text-right font-bold text-green-700">{fmtRuc(tx.afterBonusCash)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      <Pagination page={page} totalPages={totalPages} setPage={setPage} />
-    </div>
-  );
-}
-
-// ─── 메인 Shop 페이지 ─────────────────────────────────────────────────────────
 export default function PointShop() {
   const [, setLocation] = useLocation();
-  const [tab, setTab] = useState<"charge">("charge");
   const { user } = useAuth();
   const { data: balance } = trpc.shop.myBalance.useQuery(undefined, { enabled: !!user });
-  const ruCash = balance?.ruCash ?? 0;
-  const bonusCash = balance?.bonusCash ?? 0;
-  const menus: { key: typeof tab; label: string }[] = [
-    { key: "charge", label: "충전" },
-  ];
-  return (
-    <Layout>
-      <div className="bg-[#9b2020] text-white py-8">
-        <div className="container">
-          <h1 className="text-3xl font-black tracking-tight">Shop</h1>
-          <p className="text-red-200 text-sm mt-1">rCoin 충전 및 사용 내역</p>
-        </div>
-      </div>
-      <div className="container py-8">
-        <div className="flex gap-6">
-          <aside className="hidden w-44 shrink-0 md:flex md:flex-col">
-            <nav className="flex flex-col gap-1">
-              {menus.map(m => (
-                <button key={m.key} onClick={() => setTab(m.key)}
-                  className={`w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${tab === m.key ? "bg-[#9b2020] text-white shadow-sm" : "bg-white text-slate-700 hover:bg-red-50 border border-slate-200"}`}>
-                  {m.label}
-                </button>
-              ))}
-            </nav>
-            <button onClick={() => setLocation("/")} className="mt-auto inline-flex items-center gap-1 border-t border-slate-200 pt-6 text-left text-sm font-medium text-slate-500 transition-colors hover:text-[#9b2020]">
-              <ChevronLeft size={16} />Back to Home
-            </button>
-          </aside>
-          <main className="flex-1 min-w-0">
-            <div className="mb-4 flex gap-2 overflow-x-auto md:hidden">
-              {menus.map(m => (
-                <button key={m.key} onClick={() => setTab(m.key)} className={`shrink-0 rounded-lg px-4 py-2 text-sm font-semibold ${tab === m.key ? "bg-[#9b2020] text-white" : "border border-slate-200 bg-white text-slate-700"}`}>{m.label}</button>
-              ))}
-            </div>
-            {tab === "charge" && <ChargeTab ruCash={ruCash} bonusCash={bonusCash} />}
-          </main>
-        </div>
-        <div className="mt-10 border-t border-slate-200 pt-5 md:ml-[200px]">
-          <p className="text-sm font-medium text-slate-500">결제 즉시 지급 <span className="mx-2 text-slate-300">·</span> 환불 정책 안내 <span className="mx-2 text-slate-300">·</span> 문의하기</p>
-        </div>
-      </div>
-    </Layout>
-  );
+  return <Layout>
+    <div className="bg-[#182b40] py-8 text-white"><div className="container"><h1 className="text-3xl font-black tracking-tight">Shop</h1><p className="mt-1 text-sm text-slate-300">Top up rCoin</p></div></div>
+    <div className="container py-8"><div className="flex gap-6"><aside className="hidden w-44 shrink-0 md:flex md:flex-col"><button className="rounded-lg bg-[#182b40] px-4 py-3 text-left text-sm font-bold text-white">Top Up</button><button onClick={() => setLocation("/")} className="mt-auto inline-flex items-center gap-1 border-t border-slate-200 pt-6 text-left text-sm font-medium text-slate-500 hover:text-blue-600"><ChevronLeft size={16} />Back to Home</button></aside><main className="min-w-0 flex-1"><ChargeTab rCoin={balance?.ruCash ?? 0} bonusCoin={balance?.bonusCash ?? 0} /></main></div></div>
+  </Layout>;
 }

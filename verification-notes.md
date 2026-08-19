@@ -112,3 +112,9 @@ adminKeyProcedure를 통과한 `memberAdmin.transactionHistory` tRPC caller를 �
 회원 상세 거래 이력의 페이지 크기 드롭다운에 100개씩을 추가했다. jsdom에서 기본 20개씩 표기와 열린 드롭다운의 100개씩 옵션을 확인했으며 TypeScript와 Vitest 20건을 통과했다.
 
 회원 상세에 마지막 로그인 아래 누적 결제금액(완료된 rCoin 충전 USD 합계)을 표시하고, 거래 이력 탭 우측에 쿠폰 사용이력 탭을 추가했다. 쿠폰 탭은 사용일·코드·쿠폰명·혜택 유형·혜택을 표시하며 날짜·쿠폰 코드/명 검색과 페이지네이션을 지원한다. 실제 회원 상세 jsdom 통합 테스트에서 쿠폰 탭 전환·요약 금액·API 응답을, 순수 함수 테스트에서 쿠폰 필터·결제금액 계산을 검증했다. TypeScript와 Vitest 22건을 통과했다.
+
+Shop 충전 화면을 영문 Top Up 사양으로 복원했다. 영문 잔액 카드, 8개 rCoin 카드, Best Seller·Best Value, USD 가격 박스 및 단계형 구매 팝업을 적용했고 Purchase History·Usage History 탭은 제거했다. 500 rCoin 정규화 아이콘을 재업로드해 8개 상품 아이콘이 모두 렌더되는 것을 데스크톱과 375px 모바일 화면에서 확인했다. 구매 팝업의 USD 전용 가격 목록·결제 수단 확장·로봇 확인 후 결제 활성화는 jsdom으로 검증했다.
+
+최신 Shop 브라우저 화면에서 사용자 노출 텍스트가 영문으로 표시되고 8개 상품 자산이 로드되는 것을 확인했다. 1280px·375px 캡처에서 카드 경계와 보너스 수량이 카드 밖으로 나가지 않았다. jsdom에서 구매 팝업의 USD 선택, 더보기 결제 수단, reCAPTCHA 결제 활성화, X 닫기, 재진입 시 결제 상태 초기화를 추가 검증했다. TypeScript와 Vitest 24건을 통과했다.
+
+실제 Chromium 자동화에서 1,000 rCoin 상품 클릭 후 구매 팝업을 열고 USD $1.00 상품 변경, More payment methods, reCAPTCHA 결제 활성화, X 닫힘(`data-state: closed`), 500 rCoin 재진입의 reCAPTCHA·더보기 초기화를 검증했다. 데스크톱(1280px)과 모바일(375px)에서 각각 8개 카드, 한글 문자 0건, 문서 가로 오버플로 0건을 확인했으며 팝업도 가로 오버플로가 없었다.
