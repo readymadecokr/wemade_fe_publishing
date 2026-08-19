@@ -160,26 +160,26 @@ function NewsPageContent() {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "Update":
-        return "bg-purple-100 text-purple-700";
+        return "bg-violet-400/15 text-violet-200 border border-violet-300/25";
       case "Event":
-        return "bg-pink-100 text-pink-700";
+        return "bg-rose-400/15 text-rose-200 border border-rose-300/25";
       case "Interview":
-        return "bg-indigo-100 text-indigo-700";
+        return "bg-cyan-300/15 text-cyan-200 border border-cyan-300/25";
       case "Notice":
-        return "bg-slate-100 text-slate-700";
+        return "bg-slate-400/15 text-slate-200 border border-slate-300/25";
       default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-slate-400/15 text-slate-200 border border-slate-300/25";
     }
   };
 
   const renderCard = (news: any) => (
-    <div className="bg-white border border-purple-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
+    <div className="neon-card overflow-hidden h-full flex flex-col group">
       {/* Image */}
       <div className="w-full h-20 md:h-48 overflow-hidden">
         <img
           src={news.image}
           alt={news.title}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
       </div>
 
@@ -189,11 +189,11 @@ function NewsPageContent() {
           <span className={`px-2 py-0.5 rounded text-xs font-semibold ${getCategoryColor(news.category)}`}>
             {news.category.toLowerCase()}
           </span>
-          <h3 className="text-xs md:text-lg font-bold text-slate-900 mt-0.5 md:mt-2 line-clamp-2">
+          <h3 className="text-xs md:text-lg font-bold text-slate-100 mt-0.5 md:mt-2 line-clamp-2">
             {news.title}
           </h3>
         </div>
-        <span className="text-xs md:text-sm text-slate-500 mt-0.5 md:mt-3">{news.date}</span>
+        <span className="text-xs md:text-sm text-slate-400 mt-0.5 md:mt-3">{news.date}</span>
       </div>
     </div>
   );
@@ -201,10 +201,12 @@ function NewsPageContent() {
   return (
     <>
       {/* Page Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-12">
+      <div className="relative overflow-hidden border-b border-cyan-300/20 bg-[linear-gradient(120deg,#20133a_0%,#0b1930_48%,#09293c_100%)] text-white py-12">
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-fuchsia-400/15 blur-3xl" />
         <div className="container">
-          <h1 className="text-4xl font-black mb-2">📰 News</h1>
-          <p className="text-purple-100">Latest news, interviews, and community highlights</p>
+          <p className="neon-kicker mb-2">Official dispatches</p>
+          <h1 className="text-4xl font-black mb-2">News</h1>
+          <p className="text-slate-300">Latest news, interviews, and community highlights</p>
         </div>
       </div>
 
@@ -250,9 +252,9 @@ function NewsPageContent() {
                     ‹
                   </button>
                   {/* Page indicator */}
-                  <div className="flex items-center gap-1 px-4 py-1 rounded-full border border-slate-300 text-sm text-slate-700 font-medium">
+                  <div className="flex items-center gap-1 px-4 py-1 rounded-full border border-cyan-300/25 bg-cyan-300/10 text-sm text-cyan-100 font-medium">
                     <span>{currentPage}</span>
-                    <span className="text-slate-400">/</span>
+                    <span className="text-slate-500">/</span>
                     <span>{totalPages}</span>
                   </div>
                   {/* Next page */}

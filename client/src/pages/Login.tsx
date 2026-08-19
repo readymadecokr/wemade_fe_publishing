@@ -214,12 +214,12 @@ export default function Login() {
 
   return (
     <Layout>
-      <div className="container min-h-[75vh] flex items-center justify-center py-12">
+      <div className="container min-h-[75vh] flex items-center justify-center py-12 bg-[radial-gradient(circle_at_center,rgba(25,216,230,.10),transparent_26rem)]">
         <div className="relative w-full max-w-md">
           {/* Background Decorative Blur */}
-          <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-primary to-accent opacity-20 blur-xl"></div>
+          <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-cyan-300 via-violet-500 to-rose-500 opacity-25 blur-xl"></div>
           
-          <div className="relative glass-panel rounded-3xl border border-white/10 p-8 shadow-2xl bg-slate-900/80 backdrop-blur-2xl">
+          <div className="relative glass-panel rounded-3xl border border-cyan-300/20 p-8 shadow-[0_0_44px_rgba(25,216,230,.10)] bg-slate-950/80 backdrop-blur-2xl">
             
             {/* STEP 1: LOGIN PAGE */}
             {step === "login" && (
@@ -267,13 +267,13 @@ export default function Login() {
                 <div className="flex flex-col gap-3">
                   <Button 
                     onClick={handleGuestMode}
-                    className="w-full bg-white hover:bg-slate-100 text-black font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98"
+                    className="w-full border border-cyan-300/30 bg-cyan-300/10 hover:bg-cyan-300 text-cyan-100 hover:text-slate-950 font-bold text-sm py-6 rounded-xl flex items-center justify-center gap-3 shadow-lg cursor-pointer transition-all active:scale-98"
                   >
                     GUEST MODE (Try as Guest)
                   </Button>
 
                   {/* Cloudflare Turnstile */}
-                  <div className="bg-white/5 border border-white/10 p-3 rounded-xl flex items-center justify-between mt-1">
+                  <div className="bg-cyan-300/5 border border-cyan-300/15 p-3 rounded-xl flex items-center justify-between mt-1">
                     <div className="flex items-center gap-3">
                       <Shield size={16} className="text-emerald-400 animate-pulse shrink-0" />
                       <div className="flex flex-col">

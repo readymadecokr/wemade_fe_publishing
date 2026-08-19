@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Globe, Menu, X, Disc, Moon, Sun } from "lucide-react";
+import { Globe, X, Disc, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -18,7 +18,6 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [lang, setLang] = useState("EN");
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [showCookieConsent, setShowCookieConsent] = useState(false);
@@ -78,60 +77,60 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/40 selection:text-white overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#050816] text-slate-100 selection:bg-cyan-300/40 selection:text-white overflow-x-hidden">
       
 
 
       {/* Main Header */}
-      <header className="sticky top-0 w-full z-40 bg-background/95 backdrop-blur-md border-b border-border">
-        <div className="container h-20 flex justify-between items-center">
+      <header className="sticky top-0 w-full z-40 bg-[#07101e]/90 backdrop-blur-xl border-b border-cyan-300/15 shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
+        <div className="container min-h-20 flex flex-wrap items-center gap-x-3 gap-y-2 py-3 lg:h-20 lg:flex-nowrap lg:gap-4 lg:py-0">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group cursor-pointer">
+          <Link href="/" className="flex shrink-0 items-center gap-2 group cursor-pointer">
             <img src={`${ASSET_BASE_URL}/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png`} alt="Ragnarok" className="h-12 w-auto group-hover:opacity-80 transition-opacity" />
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
-            <Link href="/" className={`hover:text-blue-600 transition-colors cursor-pointer ${location === "/" ? "text-blue-600 font-bold" : "text-slate-600 dark:text-white"}`}>
+          {/* Navigation remains visible on mobile; the header scrolls horizontally when needed. */}
+          <nav className="order-3 flex basis-full items-center justify-between gap-2 text-xs lg:order-none lg:basis-auto lg:gap-8 lg:text-base">
+            <Link href="/" className={`hover:text-cyan-300 transition-colors cursor-pointer ${location === "/" ? "text-cyan-300 font-bold" : "text-slate-300"}`}>
               Home
             </Link>
-            <Link href="/news" className={`hover:text-blue-600 transition-colors cursor-pointer ${location === "/news" ? "text-blue-600 font-bold" : "text-slate-600 dark:text-white"}`}>
+            <Link href="/news" className={`hover:text-cyan-300 transition-colors cursor-pointer ${location === "/news" ? "text-cyan-300 font-bold" : "text-slate-300"}`}>
               News
             </Link>
-            <Link href="/game-info" className={`hover:text-blue-600 transition-colors cursor-pointer ${location === "/game-info" ? "text-blue-600 font-bold" : "text-slate-600 dark:text-white font-bold"}`}>
+            <Link href="/game-info" className={`hover:text-cyan-300 transition-colors cursor-pointer ${location === "/game-info" ? "text-cyan-300 font-bold" : "text-slate-300 font-bold"}`}>
               Game Info
             </Link>
-            <Link href="/point-shop" className={`hover:text-blue-600 transition-colors cursor-pointer ${location === "/point-shop" ? "text-blue-600 font-bold" : "text-slate-600 dark:text-white font-bold"}`}>
+            <Link href="/point-shop" className={`hover:text-cyan-300 transition-colors cursor-pointer ${location === "/point-shop" ? "text-cyan-300 font-bold" : "text-slate-300 font-bold"}`}>
               Shop
             </Link>
-            <button onClick={() => setShowTTKeyDialog(true)} className="hover:text-blue-600 transition-colors cursor-pointer text-slate-600 dark:text-white font-bold text-base">
+            <button onClick={() => setShowTTKeyDialog(true)} className="hover:text-cyan-300 transition-colors cursor-pointer text-slate-300 font-bold text-base">
               Discord
             </button>
           </nav>
 
-          {/* Desktop CTA / Profile */}
-          <div className="hidden lg:flex items-center gap-4">
+          {/* CTA / Profile */}
+          <div className="flex shrink-0 items-center gap-3 lg:gap-4">
             {/* Auth Section */}
           {isLoggedIn ? (
             <div className="flex items-center gap-4">
               {/* rCoin 잔액 + 마이페이지 통합 표기 */}
-              <div className="flex items-center gap-0 rounded-lg border border-slate-200 bg-white dark:bg-slate-800 dark:border-slate-700 overflow-hidden text-xs font-semibold shadow-sm">
-                <Link href="/point-shop" className="flex items-center gap-1 px-3 py-2 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors cursor-pointer text-slate-700 dark:text-slate-200 whitespace-nowrap">
-                  <span>rCoin: <span className="text-[#9b2020] font-black">{fmtRuc(ruCash)}</span></span>
-                  <span className="mx-2 text-slate-300">|</span>
-                  <span>Bonus rCoin: <span className="text-green-700 font-black">{fmtRuc(bonusCash)}</span></span>
+              <div className="flex items-center gap-0 rounded-lg border border-cyan-300/20 bg-slate-950/80 overflow-hidden text-xs font-semibold shadow-[0_0_18px_rgba(25,216,230,0.08)]">
+                <Link href="/point-shop" className="flex items-center gap-1 px-3 py-2 hover:bg-cyan-300/10 transition-colors cursor-pointer text-slate-200 whitespace-nowrap">
+                  <span>rCoin: <span className="text-[#fb4b68] font-black">{fmtRuc(ruCash)}</span></span>
+                  <span className="mx-2 text-slate-600">|</span>
+                  <span>Bonus rCoin: <span className="text-emerald-400 font-black">{fmtRuc(bonusCash)}</span></span>
                 </Link>
-                <Link href="/mypage" className="flex items-center px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors cursor-pointer border-l border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 whitespace-nowrap">
+                <Link href="/mypage" className="flex items-center px-3 py-2 bg-cyan-300/10 hover:bg-cyan-300/20 transition-colors cursor-pointer border-l border-cyan-300/15 text-cyan-100 whitespace-nowrap">
                   마이페이지
                 </Link>
               </div>
-              <Button variant="outline" size="sm" onClick={handleLogout} className="text-xs border-blue-200 hover:bg-blue-50 text-slate-600">
+              <Button variant="outline" size="sm" onClick={handleLogout} className="text-xs border-cyan-300/25 bg-transparent hover:bg-cyan-300/10 text-slate-200">
                 Logout
               </Button>
             </div>
             ) : (
               <Link href="/login">
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-5 py-2.5 rounded-lg shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 transition-all active:scale-95 cursor-pointer">
+                <Button size="sm" className="bg-cyan-300 hover:bg-cyan-200 text-slate-950 font-black text-xs px-5 py-2.5 rounded-lg shadow-lg shadow-cyan-300/20 hover:shadow-cyan-300/30 transition-all active:scale-95 cursor-pointer">
                   Sign In / Sign Up
                 </Button>
               </Link>
@@ -140,17 +139,17 @@ export default function Layout({ children }: LayoutProps) {
             {/* Language and Theme */}
             <div className="flex items-center gap-3">
               <div className="relative">
-                <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="hover:text-blue-600 transition-colors flex items-center gap-1 cursor-pointer font-bold text-slate-600 dark:text-white hover:text-slate-900 dark:hover:text-slate-100">
+                <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="hover:text-cyan-300 transition-colors flex items-center gap-1 cursor-pointer font-bold text-slate-300">
                   <Globe size={14} /> {lang}
                 </button>
                 {langDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-lg shadow-lg z-50">
+                  <div className="absolute right-0 mt-2 w-40 bg-[#0b1628] border border-cyan-300/20 rounded-lg shadow-2xl z-50">
                     {languages.map((l) => (
                       <button
                         key={l.code}
                         onClick={() => handleLangSelect(l.code)}
                         className={`w-full text-left px-4 py-2 text-sm hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 ${
-                          lang === l.code ? "text-blue-600 font-bold bg-blue-50 dark:bg-slate-700" : "text-slate-900 dark:text-white"
+                          lang === l.code ? "text-cyan-300 font-bold bg-cyan-300/10" : "text-slate-200"
                         }`}
                       >
                         <span>{l.flag}</span>
@@ -160,60 +159,13 @@ export default function Layout({ children }: LayoutProps) {
                   </div>
                 )}
               </div>
-              <button onClick={toggleTheme} disabled={!toggleTheme} className="hover:text-blue-600 transition-colors flex items-center gap-1 cursor-pointer text-slate-600 dark:text-white hover:text-slate-900 dark:hover:text-slate-100 disabled:opacity-50 disabled:cursor-not-allowed">
+              <button onClick={toggleTheme} disabled={!toggleTheme} className="hover:text-cyan-300 transition-colors flex items-center gap-1 cursor-pointer text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed">
                 {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
               </button>
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="lg:hidden p-2 hover:bg-primary/10 rounded-lg transition-colors">
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
         </div>
-
-        {/* Mobile Navigation Menu */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden w-full bg-white dark:bg-background border-b border-blue-100 dark:border-border py-6 px-6 flex flex-col gap-5 animate-in fade-in slide-in-from-top-5 duration-200">
-            <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className={`text-sm font-bold ${location === "/" ? "text-blue-600" : "text-slate-600 dark:text-white"}`}>
-              Home
-            </Link>
-            <Link href="/news" onClick={() => setIsMobileMenuOpen(false)} className={`text-left text-sm font-bold ${location === "/news" ? "text-blue-600" : "text-slate-600 dark:text-white"}`}>
-              News
-            </Link>
-            <Link href="/game-info" onClick={() => setIsMobileMenuOpen(false)} className={`text-left text-sm font-bold ${location === "/game-info" ? "text-blue-600" : "text-slate-600 dark:text-white"}`}>
-              Game Info
-            </Link>
-            <Link href="/point-shop" onClick={() => setIsMobileMenuOpen(false)} className={`text-left text-sm font-bold ${location === "/point-shop" ? "text-blue-600" : "text-slate-600 dark:text-white"}`}>
-              Shop
-            </Link>
-            <button onClick={() => { setShowTTKeyDialog(true); setIsMobileMenuOpen(false); }} className="text-left text-sm font-bold text-slate-600 dark:text-white hover:text-blue-600 w-full">
-              Discord
-            </button>
-            <hr className="border-blue-100 my-1" />
-            {isLoggedIn ? (
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 border border-blue-200">
-                  <span className="text-sm font-semibold text-slate-900">Welcome, {userNickname}!</span>
-                </div>
-                <Link href="/mypage" onClick={() => setIsMobileMenuOpen(false)} className="w-full">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm">
-                    My Page
-                  </Button>
-                </Link>
-                <Button variant="outline" onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="w-full text-sm border-blue-200 hover:bg-blue-50">
-                  Logout
-                </Button>
-              </div>
-            ) : (
-              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold">
-                  Sign In / Sign Up
-                </Button>
-              </Link>
-            )}
-          </div>
-        )}
       </header>
 
       {/* Main Content */}
@@ -225,28 +177,28 @@ export default function Layout({ children }: LayoutProps) {
 
 
       {/* Footer */}
-      <footer className="w-full bg-background mt-auto">
+      <footer className="w-full mt-auto border-t border-cyan-300/10 bg-[#050816]">
         <div className="container py-12" style={{paddingTop: '30px'}}>
           {/* Footer Top: Company Logos */}
-          <div className="flex justify-center items-center gap-6 text-xs font-semibold text-slate-600 dark:text-white mb-8">
-            <a href="https://gravity.co.kr/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">GRAVITY</a>
-            <span className="h-4 w-[1px] bg-slate-300 dark:bg-slate-600"></span>
-            <a href="https://wemadeconnect.com/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">WEMADE CONNECT</a>
-            <span className="h-4 w-[1px] bg-slate-300 dark:bg-slate-600"></span>
-            <a href="https://www.gala.biz/ko" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">GALA</a>
+          <div className="flex justify-center items-center gap-6 text-xs font-semibold text-slate-400 mb-8">
+            <a href="https://gravity.co.kr/" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-300 transition-colors">GRAVITY</a>
+            <span className="h-4 w-[1px] bg-cyan-300/20"></span>
+            <a href="https://wemadeconnect.com/" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-300 transition-colors">WEMADE CONNECT</a>
+            <span className="h-4 w-[1px] bg-cyan-300/20"></span>
+            <a href="https://www.gala.biz/ko" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-300 transition-colors">GALA</a>
           </div>
 
           {/* Footer Middle: Links and Discord */}
           <div className="flex justify-center items-center gap-2 text-sm mb-8 flex-wrap">
-            <Link href="/terms-of-service" className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Terms of Service</Link>
-            <span className="text-slate-300 dark:text-slate-600">|</span>
-            <Link href="/privacy-policy" className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Privacy Policy</Link>
-            <span className="text-slate-300 dark:text-slate-600">|</span>
-            <button onClick={() => setShowPrivacySettings(true)} className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">Privacy Settings</button>
-            <span className="text-slate-300 dark:text-slate-600">|</span>
+            <Link href="/terms-of-service" className="text-slate-400 hover:text-cyan-300 transition-colors">Terms of Service</Link>
+            <span className="text-slate-700">|</span>
+            <Link href="/privacy-policy" className="text-slate-400 hover:text-cyan-300 transition-colors">Privacy Policy</Link>
+            <span className="text-slate-700">|</span>
+            <button onClick={() => setShowPrivacySettings(true)} className="text-slate-400 hover:text-cyan-300 transition-colors cursor-pointer">Privacy Settings</button>
+            <span className="text-slate-700">|</span>
             <div className="flex items-center gap-2">
-              <Disc size={16} className="text-blue-600 dark:text-blue-400" />
-              <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Discord</a>
+              <Disc size={16} className="text-cyan-300" />
+              <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-300 transition-colors">Discord</a>
             </div>
           </div>
 
@@ -254,13 +206,13 @@ export default function Layout({ children }: LayoutProps) {
           <div style={{paddingTop: '0px'}}>
             <div className="flex items-center justify-center gap-4 mb-4">
               <img
-                src={theme === "dark" ? `${ASSET_BASE_URL}/manus-storage/gravity_logo_white_5424057b_66bab3ca.webp` : `${ASSET_BASE_URL}/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png`}
+                src={`${ASSET_BASE_URL}/manus-storage/gravity_logo_white_5424057b_66bab3ca.webp`}
                 alt="GRAVITY"
                 className="h-8 w-auto"
               />
-              <p className="text-xs text-slate-600 dark:text-white">Copyright &copy; Gravity Co., LTD & Lee MyoungJin(studio DTDS). All Rights Reserved.</p>
+              <p className="text-xs text-slate-500">Copyright &copy; Gravity Co., LTD & Lee MyoungJin(studio DTDS). All Rights Reserved.</p>
             </div>
-            <p className="text-center text-xs text-slate-500 dark:text-slate-400">All trademarks used on this website are the property of their respective owners.</p>
+            <p className="text-center text-xs text-slate-600">All trademarks used on this website are the property of their respective owners.</p>
           </div>
         </div>
       </footer>
@@ -314,22 +266,22 @@ export default function Layout({ children }: LayoutProps) {
           animation: float-social 3s ease-in-out infinite;
         }
       `}</style>
-      <div className="floating-social-box fixed top-1/2 -translate-y-1/2 right-3 z-40 flex flex-col items-center gap-2 bg-black/50 backdrop-blur-sm rounded-2xl py-3 px-2 shadow-2xl border border-white/10">
+      <div className="floating-social-box fixed bottom-4 right-3 z-40 flex flex-col items-center gap-1 rounded-2xl border border-cyan-300/15 bg-slate-950/80 px-1.5 py-2 shadow-2xl backdrop-blur-sm sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2 sm:gap-2 sm:px-2 sm:py-3">
         {/* Discord */}
         <button
           onClick={() => window.open('https://discord.gg/yVWJkWdkAU', '_blank')}
           title="Discord"
-          className="w-[58px] h-[58px] flex items-center justify-center rounded-xl hover:bg-white/20 transition-all duration-200 hover:scale-110 active:scale-95"
+          className="h-12 w-12 flex items-center justify-center rounded-xl hover:bg-cyan-300/15 transition-all duration-200 hover:scale-110 active:scale-95 sm:h-[58px] sm:w-[58px]"
         >
-          <img src={`${ASSET_BASE_URL}/manus-storage/Discord_icon_230fdb89_6026051e.png`} alt="Discord" className="w-[43px] h-[43px] object-contain" />
+          <img src={`${ASSET_BASE_URL}/manus-storage/Discord_icon_230fdb89_6026051e.png`} alt="Discord" className="h-9 w-9 object-contain sm:h-[43px] sm:w-[43px]" />
         </button>
         {/* YouTube */}
         <button
           onClick={() => window.open('https://www.youtube.com/@RagnarokUniverse', '_blank')}
           title="YouTube"
-          className="w-[58px] h-[58px] flex items-center justify-center rounded-xl hover:bg-white/20 transition-all duration-200 hover:scale-110 active:scale-95"
+          className="h-12 w-12 flex items-center justify-center rounded-xl hover:bg-cyan-300/15 transition-all duration-200 hover:scale-110 active:scale-95 sm:h-[58px] sm:w-[58px]"
         >
-          <img src="/manus-storage/yt_icon_red_digital_78f0d0ca.png" alt="YouTube" className="w-[43px] h-[43px] object-contain" />
+          <img src="/manus-storage/yt_icon_red_digital_78f0d0ca.png" alt="YouTube" className="h-9 w-9 object-contain sm:h-[43px] sm:w-[43px]" />
         </button>
       </div>
     </div>

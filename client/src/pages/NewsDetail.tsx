@@ -168,13 +168,13 @@ function NewsDetailContent() {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "Update":
-        return "bg-purple-100 text-purple-700";
+        return "bg-violet-400/15 text-violet-200 border border-violet-300/25";
       case "Event":
-        return "bg-pink-100 text-pink-700";
+        return "bg-rose-400/15 text-rose-200 border border-rose-300/25";
       case "Interview":
-        return "bg-indigo-100 text-indigo-700";
+        return "bg-cyan-300/15 text-cyan-200 border border-cyan-300/25";
       default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-slate-400/15 text-slate-200 border border-slate-300/25";
     }
   };
 
@@ -182,9 +182,9 @@ function NewsDetailContent() {
     return (
       <Layout>
         <div className="container py-12 text-center">
-          <h1 className="text-2xl font-bold text-slate-900 mb-4">News Not Found</h1>
+          <h1 className="text-2xl font-bold text-slate-100 mb-4">News Not Found</h1>
           <Link href="/news">
-            <Button className="bg-purple-600 hover:bg-purple-700">Back to News</Button>
+            <Button className="bg-cyan-300 hover:bg-cyan-200 text-slate-950">Back to News</Button>
           </Link>
         </div>
       </Layout>
@@ -198,26 +198,28 @@ function NewsDetailContent() {
     <Layout>
       <>
         {/* Fixed Section Header — always shows '📰 News' */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-12">
+        <div className="relative overflow-hidden border-b border-cyan-300/20 bg-[linear-gradient(120deg,#20133a_0%,#0b1930_48%,#09293c_100%)] text-white py-12">
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-fuchsia-400/15 blur-3xl" />
           <div className="container">
-            <h1 className="text-4xl font-black mb-2">📰 News</h1>
-            <p className="text-purple-100">Latest news, interviews, and community highlights</p>
+            <p className="neon-kicker mb-2">Official dispatches</p>
+            <h1 className="text-4xl font-black mb-2">News</h1>
+            <p className="text-slate-300">Latest news, interviews, and community highlights</p>
           </div>
         </div>
 
         {/* Article Title Block */}
-        <div className="bg-white dark:bg-background border-b border-purple-100 dark:border-border py-8">
+        <div className="border-b border-cyan-300/15 bg-slate-950/35 py-8">
           <div className="container max-w-3xl mx-auto">
-            <Link href="/news" className="flex items-center gap-1.5 text-purple-500 hover:text-purple-700 text-sm mb-4 w-fit">
+            <Link href="/news" className="flex items-center gap-1.5 text-cyan-300 hover:text-cyan-200 text-sm mb-4 w-fit">
               <ArrowLeft size={16} />
               Back to News
             </Link>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-3 leading-tight">{news.title}</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-slate-100 mb-3 leading-tight">{news.title}</h2>
             <div className="flex items-center gap-3 flex-wrap">
               <span className={`px-3 py-1 rounded text-xs font-semibold ${getCategoryColor(news.category)}`}>
                 {news.category.toLowerCase()}
               </span>
-              <span className="text-slate-500 dark:text-slate-400 text-sm">{news.date}</span>
+              <span className="text-slate-400 text-sm">{news.date}</span>
             </div>
           </div>
         </div>
@@ -227,7 +229,7 @@ function NewsDetailContent() {
           <div className="max-w-3xl mx-auto">
             {/* Featured Image — only shown when image exists */}
             {news.image && (
-              <div className="rounded-xl overflow-hidden mb-8 shadow-sm">
+              <div className="neon-card overflow-hidden mb-8">
                 <img
                   src={news.image}
                   alt={news.title}
@@ -237,21 +239,21 @@ function NewsDetailContent() {
             )}
 
             {/* Body Text — no box */}
-            <div className="mb-12">
+            <div className="neon-panel rounded-2xl mb-12 p-6 md:p-8">
               {news.content.split("\n\n").map((para, i) => (
-                <p key={i} className="text-slate-700 dark:text-slate-300 text-base leading-relaxed mb-4 last:mb-0">
+                <p key={i} className="text-slate-300 text-base leading-relaxed mb-4 last:mb-0">
                   {para}
                 </p>
               ))}
             </div>
 
             {/* Bottom Navigation: Prev / List / Next */}
-            <div className="flex items-center justify-between gap-3 pt-6 border-t border-purple-100 dark:border-border">
+            <div className="flex items-center justify-between gap-3 pt-6 border-t border-cyan-300/15">
               {/* Previous */}
               {prevNews ? (
                 <Link href={`/news/${prevNews.id}`} className="flex-1">
-                  <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-purple-200 dark:border-border hover:bg-purple-50 dark:hover:bg-white/5 transition-colors font-semibold text-slate-700 dark:text-slate-200 text-sm">
-                    <ArrowLeft size={15} className="text-purple-500" />
+                  <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-cyan-300/25 bg-slate-950/55 hover:bg-cyan-300/10 transition-colors font-semibold text-slate-200 text-sm">
+                    <ArrowLeft size={15} className="text-cyan-300" />
                     Previous
                   </button>
                 </Link>
@@ -266,7 +268,7 @@ function NewsDetailContent() {
 
               {/* News List */}
               <Link href="/news" className="flex-1">
-                <button className="w-full flex items-center justify-center px-4 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-sm transition-colors">
+                <button className="w-full flex items-center justify-center px-4 py-3 rounded-xl bg-cyan-300 hover:bg-cyan-200 text-slate-950 font-black text-sm transition-colors shadow-[0_0_18px_rgba(25,216,230,.2)]">
                   News List
                 </button>
               </Link>
@@ -274,9 +276,9 @@ function NewsDetailContent() {
               {/* Next */}
               {nextNews ? (
                 <Link href={`/news/${nextNews.id}`} className="flex-1">
-                  <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-purple-200 dark:border-border hover:bg-purple-50 dark:hover:bg-white/5 transition-colors font-semibold text-slate-700 dark:text-slate-200 text-sm">
+                  <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-cyan-300/25 bg-slate-950/55 hover:bg-cyan-300/10 transition-colors font-semibold text-slate-200 text-sm">
                     Next
-                    <ArrowLeft size={15} className="rotate-180 text-purple-500" />
+                    <ArrowLeft size={15} className="rotate-180 text-cyan-300" />
                   </button>
                 </Link>
               ) : (

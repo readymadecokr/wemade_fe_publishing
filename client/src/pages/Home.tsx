@@ -11,12 +11,10 @@ import { trpc } from "@/lib/trpc";
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
 /**
- * Design Philosophy: Flyff Universe + Play2Bit Style
- * - Professional gaming portal design
- * - Large hero banner with game start CTA
- * - Multi-category news section
- * - Clean white background with blue accents
- * - English content throughout
+ * Design Philosophy: Ragnarok Universe dark neon portal
+ * - Cinematic hero imagery with cyan and magenta energy accents
+ * - Glass panels, luminous card borders, and high-contrast content hierarchy
+ * - Existing discovery, game-start, and authentication flows remain unchanged
  */
 
 export default function Home() {
@@ -191,14 +189,14 @@ export default function Home() {
 
   // News Card Component
   const NewsCard = ({ item, category }: { item: any; category: string }) => (
-    <div className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer">
-      <div className="aspect-video overflow-hidden bg-foreground/10">
-        <img src={item.image} alt={item.title} className="w-full h-full object-cover hover:scale-105 transition-transform" />
+    <div className="neon-card overflow-hidden cursor-pointer group">
+      <div className="aspect-video overflow-hidden bg-slate-950">
+        <img src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
       </div>
       <div className="p-4">
-        <p className="text-xs font-bold text-foreground/60 uppercase mb-2">{category}</p>
-        <h3 className="text-base font-bold text-foreground mb-2 line-clamp-2">{item.title}</h3>
-        <p className="text-xs text-foreground/70">{item.date}</p>
+        <p className="neon-kicker mb-2">{category}</p>
+        <h3 className="text-base font-bold text-slate-100 mb-2 line-clamp-2">{item.title}</h3>
+        <p className="text-xs text-slate-400">{item.date}</p>
       </div>
     </div>
   );
@@ -209,7 +207,7 @@ export default function Home() {
         {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
         <div className="relative w-full">
           {/* BANNER SECTION */}
-          <section className="relative w-full bg-foreground/10 overflow-hidden flex items-center justify-center" style={{ aspectRatio: '1900 / 600' }}>
+          <section className="relative w-full bg-slate-950 overflow-hidden flex items-center justify-center" style={{ aspectRatio: '1900 / 600' }}>
             {/* Banner Image */}
             <img
               src={bannerImages[currentBannerIndex].url}
@@ -229,16 +227,18 @@ export default function Home() {
               }}
               className="h-full w-full object-cover cursor-pointer"
             />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#030816]/50 via-transparent to-[#050816]/35 pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#050816]/70 to-transparent pointer-events-none" />
             {/* Banner Navigation Buttons */}
             <button
               onClick={(e) => { e.stopPropagation(); prevBanner(); }}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-slate-950/60 hover:bg-cyan-300/20 text-cyan-100 p-2 rounded-lg transition-all backdrop-blur-sm border border-cyan-300/25"
             >
               <ChevronLeft size={16} />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); nextBanner(); }}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-slate-950/60 hover:bg-cyan-300/20 text-cyan-100 p-2 rounded-lg transition-all backdrop-blur-sm border border-cyan-300/25"
             >
               <ChevronRight size={16} />
             </button>
@@ -277,11 +277,14 @@ export default function Home() {
         <section id="news" className="py-0 bg-background">
           <div className="container pt-3 md:pt-4">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
+              <div>
+                <p className="neon-kicker mb-2">Latest dispatches</p>
+                <h2 className="text-3xl md:text-4xl font-black text-slate-100 tracking-tight">
                 News
               </h2>
+              </div>
               <Link href="/news">
-                <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white font-semibold text-sm px-5">
+                <Button variant="outline" className="border-cyan-300/50 bg-cyan-300/5 text-cyan-200 hover:bg-cyan-300 hover:text-slate-950 font-semibold text-sm px-5">
                   View More
                 </Button>
               </Link>
@@ -305,16 +308,17 @@ export default function Home() {
           <div className="container py-0" style={{paddingTop: '30px'}}>
             {/* Header */}
             <div>
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
+              <p className="neon-kicker mb-2">Explore the realm</p>
+              <h2 className="text-3xl md:text-4xl font-black text-slate-100 mb-2 tracking-tight">
                 About Ragnarok Universe
               </h2>
-              <p className="text-lg text-foreground/60">Discover the world of Ragnarok</p>
+              <p className="text-lg text-slate-400">Discover the world of Ragnarok</p>
             </div>
 
             {/* Game Info Card */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 items-center">
               {/* Game Image */}
-              <div className="rounded-2xl overflow-hidden shadow-lg">
+              <div className="neon-card overflow-hidden">
                 <img
                   src={`${ASSET_BASE_URL}/manus-storage/main2_0c694426_d1284510.png`}
                   alt="Ragnarok Universe Gameplay"
@@ -325,34 +329,34 @@ export default function Home() {
               {/* Game Details */}
               <div className="flex flex-col gap-6">
                 <div>
-                  <h3 className="text-3xl font-black text-foreground mb-3">Romantic Fantasy MMORPG</h3>
-                  <p className="text-base text-foreground/70 leading-relaxed">
+                  <h3 className="text-3xl font-black text-slate-100 mb-3">Romantic Fantasy MMORPG</h3>
+                  <p className="text-base text-slate-400 leading-relaxed">
                     Ragnarok Universe brings the legendary online game to a new era. Play directly in your web browser without any downloads. Experience epic battles, explore vast worlds, and join millions of adventurers in this timeless fantasy universe.
                   </p>
                 </div>
 
                 {/* Game Specs Grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Platform</p>
-                    <p className="text-lg font-black text-foreground">Web Browser</p>
+                  <div className="neon-card p-4">
+                    <p className="neon-kicker mb-2">Platform</p>
+                    <p className="text-lg font-black text-slate-100">Web Browser</p>
                   </div>
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Genre</p>
-                    <p className="text-lg font-black text-foreground">Fantasy MMORPG</p>
+                  <div className="neon-card p-4">
+                    <p className="neon-kicker mb-2">Genre</p>
+                    <p className="text-lg font-black text-slate-100">Fantasy MMORPG</p>
                   </div>
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Age Rating</p>
-                    <p className="text-lg font-black text-foreground">18+</p>
+                  <div className="neon-card p-4">
+                    <p className="neon-kicker mb-2">Age Rating</p>
+                    <p className="text-lg font-black text-slate-100">18+</p>
                   </div>
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Status</p>
-                    <p className="text-lg font-black text-primary">Beta Testing</p>
+                  <div className="neon-card p-4">
+                    <p className="neon-kicker mb-2">Status</p>
+                    <p className="text-lg font-black text-cyan-300">Beta Testing</p>
                   </div>
                 </div>
 
                 <Link href="/game-info">
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold">
+                  <Button className="w-full bg-cyan-300 hover:bg-cyan-200 text-slate-950 font-black shadow-[0_0_24px_rgba(25,216,230,0.24)]">
                     Learn More <ArrowRight size={16} className="ml-2" />
                   </Button>
                 </Link>
@@ -502,8 +506,8 @@ function MediaSection() {
         if (!embedUrl) return null;
         return (
           <div key={item.id} style={{ paddingTop: '0px' }}>
-            <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight" >Media</h3>
-            <div className="rounded-2xl overflow-hidden shadow-lg">
+            <h3 className="text-2xl md:text-3xl font-black text-slate-100 mb-4 tracking-tight" >Media</h3>
+            <div className="neon-card overflow-hidden"> 
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                 <iframe
                   className="absolute inset-0 w-full h-full"

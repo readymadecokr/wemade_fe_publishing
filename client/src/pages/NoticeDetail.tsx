@@ -66,9 +66,9 @@ function NoticeDetailContent() {
     return (
       <Layout>
         <div className="container py-12 text-center">
-          <h1 className="text-2xl font-bold text-slate-900 mb-4">Notice Not Found</h1>
+          <h1 className="text-2xl font-bold text-slate-100 mb-4">Notice Not Found</h1>
           <Link href="/notice">
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button className="bg-cyan-300 hover:bg-cyan-200 text-slate-950">
               Back to Notices
             </Button>
           </Link>
@@ -80,13 +80,13 @@ function NoticeDetailContent() {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "Update":
-        return "bg-blue-100 text-blue-700";
+        return "bg-cyan-300/15 text-cyan-200 border border-cyan-300/25";
       case "Maintenance":
-        return "bg-red-100 text-red-700";
+        return "bg-rose-400/15 text-rose-200 border border-rose-300/25";
       case "Policy":
-        return "bg-purple-100 text-purple-700";
+        return "bg-violet-400/15 text-violet-200 border border-violet-300/25";
       default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-slate-400/15 text-slate-200 border border-slate-300/25";
     }
   };
 
@@ -94,9 +94,10 @@ function NoticeDetailContent() {
     <Layout>
       <>
         {/* Page Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
+        <div className="relative overflow-hidden border-b border-cyan-300/20 bg-[linear-gradient(120deg,#081b32_0%,#091326_44%,#27123d_100%)] text-white py-12">
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cyan-300/15 blur-3xl" />
           <div className="container">
-            <Link href="/notice" className="flex items-center gap-2 text-blue-100 hover:text-white mb-4 w-fit">
+            <Link href="/notice" className="flex items-center gap-2 text-cyan-200 hover:text-white mb-4 w-fit">
               <ArrowLeft size={20} />
               Back to Notices
             </Link>
@@ -105,7 +106,7 @@ function NoticeDetailContent() {
               <span className={`px-3 py-1 rounded text-xs font-semibold ${getCategoryColor(notice.category)}`}>
                 {notice.category.toLowerCase()}
               </span>
-              <span className="text-blue-100">{notice.date}</span>
+            <span className="text-slate-300">{notice.date}</span>
             </div>
           </div>
         </div>
@@ -114,8 +115,8 @@ function NoticeDetailContent() {
         <main className="container py-12">
           <div className="max-w-3xl mx-auto">
             {/* Article Content */}
-            <div className="bg-white rounded-lg p-8 border border-blue-100">
-              <p className="text-slate-700 text-base leading-relaxed">
+            <div className="neon-panel rounded-2xl p-8">
+              <p className="text-slate-300 text-base leading-relaxed">
                 {notice.briefContent}
               </p>
             </div>
@@ -123,7 +124,7 @@ function NoticeDetailContent() {
             {/* Navigation */}
             <div className="mt-8">
               <Link href="/notice" className="inline-block">
-                <Button variant="outline" className="border-blue-200 hover:bg-blue-50">
+                <Button variant="outline" className="border-cyan-300/30 bg-slate-950/55 text-cyan-100 hover:bg-cyan-300/10">
                   Back to Notices
                 </Button>
               </Link>
