@@ -146,8 +146,10 @@
   }
   nav a {
     font-family: 'Poppins', sans-serif;
-    font-size: 16px;
     font-weight: 700;
+  }
+  header .portal-nav a {
+    font-size: inherit;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -207,6 +209,34 @@
     height: 3rem;
     opacity: .82;
     background: url('/manus-storage/ragnarok-fantasy-section-ornament_f3f3bf5d.png') right center / contain no-repeat;
+  }
+
+  .fantasy-view-more {
+    isolation: isolate;
+    position: relative;
+  }
+
+  .fantasy-view-more::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    right: -1.55rem;
+    top: -.55rem;
+    z-index: -1;
+    width: 5.3rem;
+    height: 2rem;
+    opacity: .8;
+    background: url('/manus-storage/ragnarok-fantasy-section-ornament_f3f3bf5d.png') right center / auto 100% no-repeat;
+  }
+
+  @media (max-width: 640px) {
+    .floating-social-box {
+      top: auto !important;
+      right: .55rem !important;
+      bottom: .7rem !important;
+      transform: scale(.78) !important;
+      transform-origin: bottom right;
+    }
   }
 
   .fantasy-card {

@@ -82,7 +82,7 @@ export default function Layout({ children }: LayoutProps) {
 
 
       {/* Main Header */}
-      <header className="sticky top-0 w-full z-40 border-b border-[#617089]/60 bg-[#23384c]/95 text-white shadow-[0_2px_13px_rgba(36,47,67,.3)] backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-[#c8d8e7]/30 bg-[#1c3147]/72 text-white shadow-[0_3px_18px_rgba(24,38,57,.28)] backdrop-blur-xl [background-image:linear-gradient(100deg,rgba(32,56,78,.84),rgba(58,84,110,.58),rgba(24,45,66,.82))]">
         <div className="container flex min-h-16 flex-wrap items-center justify-center gap-x-5 gap-y-1 py-2 lg:min-h-18 lg:flex-nowrap lg:justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group cursor-pointer">
@@ -90,7 +90,7 @@ export default function Layout({ children }: LayoutProps) {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="flex items-center justify-center gap-3 text-[11px] sm:gap-5 sm:text-xs lg:gap-7" aria-label="Primary navigation">
+          <nav className="portal-nav flex items-center justify-center gap-3 text-[11px] sm:gap-5 sm:text-xs lg:gap-7" aria-label="Primary navigation">
             <Link href="/" className={`transition-colors cursor-pointer ${location === "/" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
               Home
             </Link>
@@ -130,7 +130,7 @@ export default function Layout({ children }: LayoutProps) {
             </div>
             ) : (
               <Link href="/login">
-              <Button size="sm" className="border border-[#d5bd7d]/70 bg-[#476da9] px-3 py-2 text-[10px] font-semibold text-white shadow-lg shadow-[#17283b]/30 transition-all hover:bg-[#5b80bd] active:scale-95 sm:px-4 sm:text-xs">
+              <Button size="sm" className="border border-[#d5bd7d]/70 bg-[#476da9] px-3 py-2 text-[10px] font-semibold text-white shadow-lg shadow-[#17283b]/30 transition-all hover:-translate-y-0.5 hover:border-[#fff0bd] hover:bg-[#6188c5] hover:shadow-[0_8px_20px_rgba(18,39,70,.42),inset_0_1px_rgba(255,255,255,.45)] focus-visible:ring-2 focus-visible:ring-[#fff0bd] active:scale-95 sm:px-4 sm:text-xs">
                   Sign In / Sign Up
                 </Button>
               </Link>
@@ -177,7 +177,7 @@ export default function Layout({ children }: LayoutProps) {
 
 
       {/* Footer */}
-      <footer className="mt-auto w-full border-t border-[#cdbb91] bg-[#e8dcc0]/95 text-[#504432]">
+      <footer className="mt-auto w-full border-t border-[#cdbb91] bg-[#e8dcc0]/95 text-[#504432]" style={{ backgroundImage: "linear-gradient(rgba(235,224,195,.78), rgba(235,224,195,.92)), url('/manus-storage/ragnarok-fantasy-footer-atlas_e83c8727.png')", backgroundPosition: "center bottom", backgroundSize: "cover", backgroundRepeat: "no-repeat" }}>
         <div className="container py-12" style={{paddingTop: '30px'}}>
           {/* Footer Top: Company Logos */}
           <div className="mb-8 flex items-center justify-center gap-6 text-xs font-semibold text-[#63533b]">

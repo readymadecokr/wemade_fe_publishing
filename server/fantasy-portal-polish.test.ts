@@ -24,4 +24,18 @@ describe("fantasy portal visual polish", () => {
     expect(layoutSource).toContain('text-[#263b5b]');
     expect(layoutSource).toContain('>\n                Logout\n');
   });
+
+  it("keeps the portal header translucent and the sign-in call to action distinguishable", () => {
+    expect(layoutSource).toContain('bg-[#1c3147]/72');
+    expect(layoutSource).toContain('backdrop-blur-xl');
+    expect(layoutSource).toContain('portal-nav');
+    expect(layoutSource).toContain('hover:border-[#fff0bd]');
+  });
+
+  it("keeps the footer atlas, View More ornament, and mobile social control placement", () => {
+    expect(layoutSource).toContain('ragnarok-fantasy-footer-atlas_e83c8727.png');
+    expect(styleSource).toContain('.fantasy-view-more::before');
+    expect(styleSource).toContain('.floating-social-box');
+    expect(homeSource).toContain('className="mb-6"');
+  });
 });
