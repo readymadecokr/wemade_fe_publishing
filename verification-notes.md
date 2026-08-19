@@ -144,3 +144,9 @@ Shop 헤더를 Game Info와 동일한 인라인 아이콘·제목·부제 구조
 - Shop을 시안과 같은 좌측 계정·rCoin 잔액·필터·지원 패널, `POWER UP YOUR ADVENTURE` 보상 배너, 4열 상품 그리드, Best Seller·Best Value 강조 구조로 재구성했다. 기존 8개 rCoin 상품 이미지와 구매 팝업·USD 가격 선택·결제 수단·보안 확인 흐름을 유지했다.
 - 1440px 시각 캡처에서 Shop의 8개 상품, 1,500 rCoin Best Seller, 10,000 rCoin Best Value, 보너스 및 USD 가격이 한 화면의 대시보드 그리드에 표시되는 것을 확인했다. 비로그인 API 응답 상태에서도 상품 구성 폴백으로 빈 화면이 발생하지 않는다.
 - Home에는 포털 명령 사이드 패널을 추가했고, Game Info·News·Notice에는 공통 포털 가이드 패널을 적용했다. 1440px 캡처에서 공통 워드마크 헤더, 좌측 정보 패널, 우측 카드형 콘텐츠 흐름이 일관되게 표시되는 것을 확인했다.
+
+### Shop 상품 이미지·이력 메뉴 정정
+
+- 첨부 모바일 캡처의 금색 rCoin 스타일에 맞춰 100, 500, 1,000, 1,500, 2,000, 3,000, 5,000, 10,000 rCoin 상품용 금색 코인 자산을 새로 연결했다. 기존의 어두운 보석·상자형 상품 이미지는 Shop 코드에서 제거했다.
+- 삭제된 Purchase History와 Usage History는 Shop 사이드바에서 다시 제거했다. 구매·사용 이력은 기존대로 My Page에서만 제공하며, Shop에는 Top Up, filter, support 영역만 남는다.
+- 1440px 및 375px 전체 캡처에서 금색 8개 상품 이미지, Best Seller·Best Value 배지, 가격·보너스 표기와 이력 메뉴 미노출을 확인했다. TypeScript 검사와 Vitest 14개 파일·27개 테스트가 통과했다.

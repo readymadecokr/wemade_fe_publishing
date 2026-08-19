@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useLocation } from "wouter";
-import { ChevronDown, CreditCard, Headphones, History, ShieldCheck, SlidersHorizontal, Sparkles, UserRound } from "lucide-react";
+import { ChevronDown, CreditCard, Headphones, ShieldCheck, UserRound } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
@@ -11,14 +10,14 @@ function fmtCoin(value: number) {
 }
 
 const COIN_ICONS: Record<number, string> = {
-  1: "/manus-storage/rcoin-product-normalized-1_3a54dcfa.png",
-  2: "/manus-storage/rcoin-product-normalized-2_e83f10a6.png",
-  3: "/manus-storage/rcoin-product-normalized-3_a2066f09.png",
-  4: "/manus-storage/rcoin-product-normalized-4_c97d1b25.png",
-  5: "/manus-storage/rcoin-product-normalized-5_1f2fcd6a.png",
-  6: "/manus-storage/rcoin-product-normalized-6_f8d73a29.png",
-  7: "/manus-storage/rcoin-product-normalized-7_1846f0d0.png",
-  8: "/manus-storage/rcoin-product-normalized-8_0af9497e.png",
+  1: "/manus-storage/rcoin-gold-100_8e9f5b06.png",
+  2: "/manus-storage/rcoin-gold-v2-500_d606d867.png",
+  3: "/manus-storage/rcoin-gold-v2-1000_0aa9388a.png",
+  4: "/manus-storage/rcoin-gold-v2-1500_00a2c788.png",
+  5: "/manus-storage/rcoin-gold-v2-2000_498b94d8.png",
+  6: "/manus-storage/rcoin-gold-v2-3000_f08c7cfe.png",
+  7: "/manus-storage/rcoin-gold-v2-5000_1560fa9d.png",
+  8: "/manus-storage/rcoin-gold-v2-10000_370ad2a4.png",
 };
 
 type Product = {
@@ -110,7 +109,7 @@ export function PurchaseDialog({ products, productId, open, onOpenChange, onSele
   );
 }
 
-function AccountPanel({ rCoin, bonusCoin, onHistory }: { rCoin: number; bonusCoin: number; onHistory: () => void }) {
+function AccountPanel({ rCoin, bonusCoin }: { rCoin: number; bonusCoin: number }) {
   const nickname = localStorage.getItem("rou_nickname") || "ADVENTURER";
   return <aside className="neon-panel flex h-full min-h-[640px] flex-col rounded-2xl p-4 lg:sticky lg:top-24">
     <div className="flex flex-col items-center border-b border-cyan-300/15 pb-5">
@@ -123,8 +122,6 @@ function AccountPanel({ rCoin, bonusCoin, onHistory }: { rCoin: number; bonusCoi
     </div>
     <nav className="mt-5 space-y-1.5" aria-label="Shop navigation">
       <a href="#top-up" className="flex items-center gap-3 rounded-lg border border-rose-400/20 bg-[linear-gradient(90deg,rgba(251,63,104,.22),rgba(251,63,104,.02))] px-3 py-3 text-sm font-black text-slate-100"><CreditCard className="h-4 w-4 text-rose-300" />TOP UP</a>
-      <button type="button" onClick={onHistory} className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-bold text-slate-400 transition-colors hover:bg-cyan-300/10 hover:text-cyan-200"><History className="h-4 w-4" />PURCHASE HISTORY</button>
-      <button type="button" onClick={onHistory} className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-bold text-slate-400 transition-colors hover:bg-cyan-300/10 hover:text-cyan-200"><SlidersHorizontal className="h-4 w-4" />USAGE HISTORY</button>
     </nav>
     <div className="mt-5 border-t border-cyan-300/10 pt-5"><p className="mb-2 text-[10px] font-black tracking-[0.18em] text-slate-500">FILTER</p><div className="flex gap-2"><span className="rounded-md border border-cyan-300/35 bg-cyan-300/10 px-2.5 py-1.5 text-[10px] font-black text-cyan-200">ALL</span><span className="rounded-md border border-slate-700 px-2.5 py-1.5 text-[10px] font-bold text-slate-500">RECOMMENDED</span></div></div>
     <button type="button" className="mt-auto flex items-center gap-3 rounded-xl border border-cyan-300/15 bg-slate-950/45 p-3 text-left transition-colors hover:border-cyan-300/35"><Headphones className="h-5 w-5 text-cyan-300" /><span><span className="block text-xs font-black text-slate-200">NEED HELP?</span><span className="text-[10px] text-slate-500">Visit our Support Center</span></span></button>
@@ -132,7 +129,6 @@ function AccountPanel({ rCoin, bonusCoin, onHistory }: { rCoin: number; bonusCoi
 }
 
 function ShopContent({ rCoin, bonusCoin }: { rCoin: number; bonusCoin: number }) {
-  const [, setLocation] = useLocation();
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [purchaseOpen, setPurchaseOpen] = useState(false);
   const [filter, setFilter] = useState<ProductFilter>("all");
@@ -146,12 +142,12 @@ function ShopContent({ rCoin, bonusCoin }: { rCoin: number; bonusCoin: number })
 
   return <div className="container py-5 lg:py-7">
     <div className="grid gap-5 lg:grid-cols-[286px_minmax(0,1fr)]">
-      <AccountPanel rCoin={rCoin} bonusCoin={bonusCoin} onHistory={() => setLocation("/mypage")} />
+      <AccountPanel rCoin={rCoin} bonusCoin={bonusCoin} />
       <main className="min-w-0 space-y-5">
         <section className="relative min-h-[238px] overflow-hidden rounded-2xl border border-cyan-300/35 bg-[linear-gradient(112deg,rgba(4,19,39,.98),rgba(15,28,59,.88)_54%,rgba(31,12,49,.83))] p-7 shadow-[0_0_34px_rgba(25,216,230,.12)] sm:p-9">
           <div className="absolute -right-12 -top-12 h-64 w-64 rounded-full bg-violet-500/20 blur-3xl" /><div className="absolute bottom-0 left-[45%] h-40 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
           <div className="relative z-10 max-w-[60%] sm:max-w-[55%]"><p className="neon-kicker mb-3">rCoin rewards</p><h1 className="font-serif text-4xl font-black leading-[.95] text-slate-100 sm:text-5xl">POWER UP<br /><span className="text-cyan-200">YOUR ADVENTURE</span></h1><p className="mt-4 text-sm leading-relaxed text-slate-300 sm:text-base">Top up rCoin and unlock limitless possibilities in Ragnarok Universe.</p><button type="button" onClick={startTopUp} className="mt-5 rounded-lg border border-cyan-200/60 bg-cyan-300 px-6 py-2.5 text-sm font-black text-slate-950 shadow-[0_0_22px_rgba(25,216,230,.34)] transition hover:bg-cyan-200">TOP UP NOW</button></div>
-          <img src={COIN_ICONS[8]} alt="rCoin treasure package" className="absolute bottom-0 right-2 z-10 h-[86%] w-[46%] object-contain object-bottom opacity-95 sm:right-7" />
+          <img src={COIN_ICONS[8]} onError={event => { event.currentTarget.src = COIN_ICONS[1]; }} alt="rCoin treasure package" className="absolute bottom-0 right-2 z-10 h-[86%] w-[46%] object-contain object-bottom opacity-95 sm:right-7" />
         </section>
         <section id="top-up" className="scroll-mt-24">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><p className="neon-kicker">Choose your amount</p><h2 className="mt-1 text-2xl font-black text-slate-100">Top Up rCoin</h2></div><div className="flex rounded-lg border border-cyan-300/15 bg-slate-950/55 p-1">{(["all", "recommended", "special"] as ProductFilter[]).map(value => <button type="button" key={value} onClick={() => setFilter(value)} className={`rounded-md px-3 py-1.5 text-[10px] font-black uppercase tracking-wide transition ${filter === value ? "bg-cyan-300/15 text-cyan-200" : "text-slate-500 hover:text-slate-300"}`}>{value}</button>)}</div></div>
@@ -163,7 +159,7 @@ function ShopContent({ rCoin, bonusCoin }: { rCoin: number; bonusCoin: number })
               const isBestValue = displayOrder === 8;
               return <button type="button" key={product.id} data-shop-product={product.id} onClick={() => { setSelectedId(product.id); setPurchaseOpen(true); }} className={`group relative overflow-hidden rounded-2xl border bg-[linear-gradient(155deg,rgba(13,31,52,.97),rgba(4,12,27,.98))] text-center shadow-[0_0_24px_rgba(25,216,230,.07)] transition duration-200 hover:-translate-y-1 hover:border-cyan-200/75 hover:shadow-[0_0_30px_rgba(25,216,230,.2)] ${isBestValue ? "border-amber-300/45" : "border-cyan-300/25"}`}>
                 {(isBestSeller || isBestValue) && <span className={`absolute right-0 top-0 z-20 rounded-bl-xl px-3 py-2 text-[10px] font-black leading-none text-white ${isBestSeller ? "bg-rose-600" : "bg-amber-500 text-slate-950"}`}>{isBestSeller ? "BEST\nSELLER" : "BEST\nVALUE"}</span>}
-                <div className="border-b border-cyan-300/10 px-3 pb-1 pt-4"><p className="text-xs font-bold text-rose-300">rCoin</p><p className="text-2xl font-black text-rose-400">{fmtCoin(product.ruCashAmount)}</p><div className="relative mx-auto mt-1 h-28 w-full overflow-hidden"><div className="absolute inset-x-3 bottom-1 h-8 rounded-full bg-cyan-300/10 blur-xl" /><img src={COIN_ICONS[order] ?? COIN_ICONS[index + 1]} alt={`${fmtCoin(product.ruCashAmount)} rCoin package`} className="relative z-10 mx-auto h-full w-full object-contain transition duration-300 group-hover:scale-105" /></div></div>
+                <div className="border-b border-cyan-300/10 px-3 pb-1 pt-4"><p className="text-xs font-bold text-rose-300">rCoin</p><p className="text-2xl font-black text-rose-400">{fmtCoin(product.ruCashAmount)}</p><div className="relative mx-auto mt-1 h-28 w-full overflow-hidden"><div className="absolute inset-x-3 bottom-1 h-8 rounded-full bg-cyan-300/10 blur-xl" /><img src={COIN_ICONS[order] ?? COIN_ICONS[index + 1]} onError={event => { event.currentTarget.src = COIN_ICONS[1]; }} alt={`${fmtCoin(product.ruCashAmount)} rCoin package`} className="relative z-10 mx-auto h-full w-full object-contain transition duration-300 group-hover:scale-105" /></div></div>
                 <div className="flex items-center justify-center gap-2 bg-slate-950/50 px-3 py-2 text-xs"><span className="text-emerald-300">Bonus rCoin</span><span className="font-black text-emerald-400">+{fmtCoin(product.bonusCashAmount)}</span></div><div className="border-t border-cyan-300/15 py-2.5 text-xl font-black text-slate-100">${Number(product.priceUsd).toFixed(2)}</div>
               </button>;
             })}

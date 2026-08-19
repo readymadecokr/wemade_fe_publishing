@@ -12,5 +12,9 @@ describe("Shop category header", () => {
     expect(source).toContain("PurchaseDialog");
     expect(source).toContain("BEST\\nSELLER");
     expect(source).toContain("BEST\\nVALUE");
+    expect(source).toContain("rcoin-gold-100_8e9f5b06.png");
+    expect(source).toContain("rcoin-gold-v2-10000_370ad2a4.png");
+    expect(source).not.toContain("PURCHASE HISTORY");
+    expect(source).not.toContain("USAGE HISTORY");
   });
 });
