@@ -153,3 +153,9 @@ Shop 헤더를 Game Info와 동일한 인라인 아이콘·제목·부제 구조
 - View More 주변과 뉴스 2행 아래에 잘못 노출되던 섹션 오너먼트를 Home에서 제거했다. 1440px·375px 캡처에서 불필요한 장식이 보이지 않고, View More는 깨끗한 버튼 표면으로 정렬됐다.
 - Home, News, Game Info, Shop, Discord는 `portal-nav`의 동일한 `font-weight: 800` 기준으로 통일했다. hover 시 금빛 텍스트·광택 밑줄·미세한 상승이 적용되며, 키보드 포커스는 기존 CTA focus ring으로 유지된다.
 - 로그인 상태의 계정 이동 표기를 `My Page`로 변경했다. TypeScript와 Vitest 14개 파일·31개 테스트가 통과했다.
+
+# 2026-08-19 — Media·푸터 판타지 배경 통합
+
+- Media와 Footer가 개별 이미지 레이어를 사용하던 구조를 제거하고, Layout의 최상위 `fantasy-site-atlas`에 세로형 단일 atlas를 적용했다. 따라서 Home 콘텐츠·Media·Footer가 같은 배경 그림 위에 렌더링되어 가로 이음선이 발생하지 않는다.
+- 새 atlas는 지도 윤곽, 성채, 수정, 마법 입자, 고대 금빛 장식을 좌우·하단에 배치하고 중심은 읽기 가능한 양피지 여백으로 남긴다. 이전보다 Media와 Footer 하단의 판타지 배경 디테일·대비가 높다.
+- 1440px 및 375px 전체 캡처에서 지도 배경이 Media 프레임부터 Footer 하단까지 연속되고, 데스크톱·모바일에서 지도 장식이 끊기지 않는 것을 확인했다. TypeScript와 Vitest 14개 파일·31개 테스트를 통과했다.

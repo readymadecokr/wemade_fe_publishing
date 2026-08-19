@@ -136,10 +136,10 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
-    background-image: linear-gradient(rgba(248,243,226,.78), rgba(243,233,204,.84)), url('/manus-storage/ragnarok-fantasy-parchment-atlas-bg_ff7c9fce.png'), radial-gradient(circle at 15% 8%, rgba(255,255,255,.88), transparent 28%), radial-gradient(circle at 82% 68%, rgba(192,165,107,.17), transparent 30%), repeating-linear-gradient(0deg, rgba(102,79,45,.025) 0px, rgba(102,79,45,.025) 1px, transparent 1px, transparent 5px);
-    background-size: cover, 100% auto, auto, auto, auto;
+    background-image: linear-gradient(rgba(250,246,232,.42), rgba(238,220,179,.5)), url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png'), radial-gradient(circle at 15% 8%, rgba(255,255,255,.68), transparent 28%), radial-gradient(circle at 82% 68%, rgba(176,142,79,.26), transparent 30%), repeating-linear-gradient(0deg, rgba(102,79,45,.04) 0px, rgba(102,79,45,.04) 1px, transparent 1px, transparent 5px);
+    background-size: cover, cover, auto, auto, auto;
     background-attachment: fixed, fixed, fixed, fixed, fixed;
-    background-position: center top, center top, center top, center top, center top;
+    background-position: center top, center center, center top, center center, center top;
   }
   header a, header h3, header span {
     font-family: 'Poppins', sans-serif;
@@ -205,7 +205,7 @@
   .fantasy-page-shell {
     position: relative;
     overflow: visible;
-    background: linear-gradient(180deg, rgba(250,246,232,.5), rgba(241,230,202,.72));
+    background: transparent;
   }
 
   .fantasy-page-shell::before {
@@ -213,11 +213,19 @@
     pointer-events: none;
     position: absolute;
     inset: 0;
-    opacity: .36;
-    background-image: url('/manus-storage/ragnarok-fantasy-parchment-atlas-bg_ff7c9fce.png');
+    opacity: .09;
+    background-image: radial-gradient(circle at 11% 78%, rgba(105,130,173,.34), transparent 17%), radial-gradient(circle at 89% 64%, rgba(174,129,58,.28), transparent 20%);
     background-size: cover;
-    background-position: center top;
-    mix-blend-mode: multiply;
+    background-position: center center;
+    mix-blend-mode: soft-light;
+  }
+
+  .fantasy-site-atlas {
+    background-color: #f3ead5;
+    background-image: linear-gradient(rgba(250,246,232,.2), rgba(238,220,179,.28)), url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png');
+    background-position: center top, center center;
+    background-size: 100% 100%, 100% 100%;
+    background-repeat: no-repeat;
   }
 
   .fantasy-content-guide {

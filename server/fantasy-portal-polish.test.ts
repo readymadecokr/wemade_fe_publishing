@@ -13,8 +13,11 @@ describe("fantasy portal visual polish", () => {
     expect(homeSource).toContain('mt-auto text-[11px]');
   });
 
-  it("uses the fantasy atlas and ornament assets for portal decoration", () => {
-    expect(styleSource).toContain('ragnarok-fantasy-parchment-atlas-bg_ff7c9fce.png');
+  it("uses one continuous fantasy atlas with visible map detail for portal decoration", () => {
+    expect(styleSource).toContain('ragnarok-fantasy-continuous-atlas_fb2301c6.png');
+    expect(styleSource).toContain('.fantasy-site-atlas');
+    expect(layoutSource).toContain('fantasy-site-atlas');
+    expect(layoutSource).toContain('bg-transparent text-[#504432]');
     expect(styleSource).toContain('ragnarok-fantasy-section-ornament_f3f3bf5d.png');
     expect(homeSource).not.toContain('fantasy-section-decorated');
   });
@@ -32,8 +35,8 @@ describe("fantasy portal visual polish", () => {
     expect(layoutSource).toContain('hover:border-[#fff0bd]');
   });
 
-  it("keeps the footer atlas and mobile social control placement without misplaced ornaments", () => {
-    expect(layoutSource).toContain('ragnarok-fantasy-footer-atlas_e83c8727.png');
+  it("keeps the footer transparent over the shared atlas and mobile social control placement without misplaced ornaments", () => {
+    expect(layoutSource).not.toContain('ragnarok-fantasy-footer-atlas_e83c8727.png');
     expect(styleSource).not.toContain('.fantasy-view-more::before');
     expect(styleSource).toContain('.floating-social-box');
     expect(homeSource).toContain('className="mb-0"');
