@@ -150,3 +150,9 @@ Shop 헤더를 Game Info와 동일한 인라인 아이콘·제목·부제 구조
 - 첨부 모바일 캡처의 금색 rCoin 스타일에 맞춰 100, 500, 1,000, 1,500, 2,000, 3,000, 5,000, 10,000 rCoin 상품용 금색 코인 자산을 새로 연결했다. 기존의 어두운 보석·상자형 상품 이미지는 Shop 코드에서 제거했다.
 - 삭제된 Purchase History와 Usage History는 Shop 사이드바에서 다시 제거했다. 구매·사용 이력은 기존대로 My Page에서만 제공하며, Shop에는 Top Up, filter, support 영역만 남는다.
 - 1440px 및 375px 전체 캡처에서 금색 8개 상품 이미지, Best Seller·Best Value 배지, 가격·보너스 표기와 이력 메뉴 미노출을 확인했다. TypeScript 검사와 Vitest 14개 파일·27개 테스트가 통과했다.
+
+### Shop 기준 카드 정밀 반영
+
+- 상품 이미지를 금색 코인에서 첨부 기준과 같은 구리빛·청동색 R 메달리온과 midnight-blue 수정 바닥 광원이 있는 8개 이미지로 다시 교체했다.
+- 상품 카드에는 cyan 외곽선, 내부 라인, 네 모서리의 얼음빛 장식 프레임, 이미지·Bonus rCoin·USD 가격 사이의 수평 분할선을 적용했다. 데스크톱과 모바일 모두에서 프레임·분할선이 유지된다.
+- 1440px 및 375px 화면에서 8개 구리빛 R 코인, Best Seller·Best Value, Top Up 단일 메뉴, Purchase History·Usage History 미노출을 확인했다. TypeScript 검사와 Vitest 14개 파일·27개 테스트가 통과했다.

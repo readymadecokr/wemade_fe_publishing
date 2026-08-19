@@ -10,14 +10,14 @@ function fmtCoin(value: number) {
 }
 
 const COIN_ICONS: Record<number, string> = {
-  1: "/manus-storage/rcoin-gold-100_8e9f5b06.png",
-  2: "/manus-storage/rcoin-gold-v2-500_d606d867.png",
-  3: "/manus-storage/rcoin-gold-v2-1000_0aa9388a.png",
-  4: "/manus-storage/rcoin-gold-v2-1500_00a2c788.png",
-  5: "/manus-storage/rcoin-gold-v2-2000_498b94d8.png",
-  6: "/manus-storage/rcoin-gold-v2-3000_f08c7cfe.png",
-  7: "/manus-storage/rcoin-gold-v2-5000_1560fa9d.png",
-  8: "/manus-storage/rcoin-gold-v2-10000_370ad2a4.png",
+  1: "/manus-storage/rcoin-copper-100_8108700a.png",
+  2: "/manus-storage/rcoin-copper-500_739d9480.png",
+  3: "/manus-storage/rcoin-copper-1000_c7fb1116.png",
+  4: "/manus-storage/rcoin-copper-1500_3a47ec9e.png",
+  5: "/manus-storage/rcoin-copper-2000_f30585f3.png",
+  6: "/manus-storage/rcoin-copper-3000_82f2ec5e.png",
+  7: "/manus-storage/rcoin-copper-5000_f4a938c4.png",
+  8: "/manus-storage/rcoin-copper-10000_80314e45.png",
 };
 
 type Product = {
@@ -147,7 +147,7 @@ function ShopContent({ rCoin, bonusCoin }: { rCoin: number; bonusCoin: number })
         <section className="relative min-h-[238px] overflow-hidden rounded-2xl border border-cyan-300/35 bg-[linear-gradient(112deg,rgba(4,19,39,.98),rgba(15,28,59,.88)_54%,rgba(31,12,49,.83))] p-7 shadow-[0_0_34px_rgba(25,216,230,.12)] sm:p-9">
           <div className="absolute -right-12 -top-12 h-64 w-64 rounded-full bg-violet-500/20 blur-3xl" /><div className="absolute bottom-0 left-[45%] h-40 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
           <div className="relative z-10 max-w-[60%] sm:max-w-[55%]"><p className="neon-kicker mb-3">rCoin rewards</p><h1 className="font-serif text-4xl font-black leading-[.95] text-slate-100 sm:text-5xl">POWER UP<br /><span className="text-cyan-200">YOUR ADVENTURE</span></h1><p className="mt-4 text-sm leading-relaxed text-slate-300 sm:text-base">Top up rCoin and unlock limitless possibilities in Ragnarok Universe.</p><button type="button" onClick={startTopUp} className="mt-5 rounded-lg border border-cyan-200/60 bg-cyan-300 px-6 py-2.5 text-sm font-black text-slate-950 shadow-[0_0_22px_rgba(25,216,230,.34)] transition hover:bg-cyan-200">TOP UP NOW</button></div>
-          <img src={COIN_ICONS[8]} onError={event => { event.currentTarget.src = COIN_ICONS[1]; }} alt="rCoin treasure package" className="absolute bottom-0 right-2 z-10 h-[86%] w-[46%] object-contain object-bottom opacity-95 sm:right-7" />
+          <img src={COIN_ICONS[5]} onError={event => { event.currentTarget.src = COIN_ICONS[1]; }} alt="rCoin treasure package" className="absolute bottom-0 right-2 z-10 h-[86%] w-[46%] object-contain object-bottom opacity-95 sm:right-7" />
         </section>
         <section id="top-up" className="scroll-mt-24">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><p className="neon-kicker">Choose your amount</p><h2 className="mt-1 text-2xl font-black text-slate-100">Top Up rCoin</h2></div><div className="flex rounded-lg border border-cyan-300/15 bg-slate-950/55 p-1">{(["all", "recommended", "special"] as ProductFilter[]).map(value => <button type="button" key={value} onClick={() => setFilter(value)} className={`rounded-md px-3 py-1.5 text-[10px] font-black uppercase tracking-wide transition ${filter === value ? "bg-cyan-300/15 text-cyan-200" : "text-slate-500 hover:text-slate-300"}`}>{value}</button>)}</div></div>
@@ -157,10 +157,15 @@ function ShopContent({ rCoin, bonusCoin }: { rCoin: number; bonusCoin: number })
               const displayOrder = orderedProducts.findIndex(candidate => candidate.id === product.id) + 1;
               const isBestSeller = displayOrder === 4;
               const isBestValue = displayOrder === 8;
-              return <button type="button" key={product.id} data-shop-product={product.id} onClick={() => { setSelectedId(product.id); setPurchaseOpen(true); }} className={`group relative overflow-hidden rounded-2xl border bg-[linear-gradient(155deg,rgba(13,31,52,.97),rgba(4,12,27,.98))] text-center shadow-[0_0_24px_rgba(25,216,230,.07)] transition duration-200 hover:-translate-y-1 hover:border-cyan-200/75 hover:shadow-[0_0_30px_rgba(25,216,230,.2)] ${isBestValue ? "border-amber-300/45" : "border-cyan-300/25"}`}>
+              return <button type="button" key={product.id} data-shop-product={product.id} onClick={() => { setSelectedId(product.id); setPurchaseOpen(true); }} className={`group relative overflow-hidden rounded-[17px] border bg-[linear-gradient(155deg,rgba(12,29,49,.98),rgba(2,10,23,.99))] text-center shadow-[0_0_22px_rgba(25,216,230,.11),inset_0_0_20px_rgba(86,210,234,.04)] transition duration-200 hover:-translate-y-1 hover:border-cyan-100/90 hover:shadow-[0_0_32px_rgba(25,216,230,.28)] ${isBestValue ? "border-amber-200/60" : "border-cyan-200/55"}`}>
+                <span aria-hidden className="pointer-events-none absolute inset-1 z-10 rounded-[13px] border border-cyan-100/20" />
+                <span aria-hidden className="pointer-events-none absolute left-0 top-0 z-10 h-7 w-7 rounded-tl-[16px] border-l-2 border-t-2 border-cyan-100/90 shadow-[0_0_9px_rgba(103,224,249,.85)]" />
+                <span aria-hidden className="pointer-events-none absolute right-0 top-0 z-10 h-7 w-7 rounded-tr-[16px] border-r-2 border-t-2 border-cyan-100/90 shadow-[0_0_9px_rgba(103,224,249,.85)]" />
+                <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-10 h-7 w-7 rounded-bl-[16px] border-b-2 border-l-2 border-cyan-100/90 shadow-[0_0_9px_rgba(103,224,249,.85)]" />
+                <span aria-hidden className="pointer-events-none absolute bottom-0 right-0 z-10 h-7 w-7 rounded-br-[16px] border-b-2 border-r-2 border-cyan-100/90 shadow-[0_0_9px_rgba(103,224,249,.85)]" />
                 {(isBestSeller || isBestValue) && <span className={`absolute right-0 top-0 z-20 rounded-bl-xl px-3 py-2 text-[10px] font-black leading-none text-white ${isBestSeller ? "bg-rose-600" : "bg-amber-500 text-slate-950"}`}>{isBestSeller ? "BEST\nSELLER" : "BEST\nVALUE"}</span>}
-                <div className="border-b border-cyan-300/10 px-3 pb-1 pt-4"><p className="text-xs font-bold text-rose-300">rCoin</p><p className="text-2xl font-black text-rose-400">{fmtCoin(product.ruCashAmount)}</p><div className="relative mx-auto mt-1 h-28 w-full overflow-hidden"><div className="absolute inset-x-3 bottom-1 h-8 rounded-full bg-cyan-300/10 blur-xl" /><img src={COIN_ICONS[order] ?? COIN_ICONS[index + 1]} onError={event => { event.currentTarget.src = COIN_ICONS[1]; }} alt={`${fmtCoin(product.ruCashAmount)} rCoin package`} className="relative z-10 mx-auto h-full w-full object-contain transition duration-300 group-hover:scale-105" /></div></div>
-                <div className="flex items-center justify-center gap-2 bg-slate-950/50 px-3 py-2 text-xs"><span className="text-emerald-300">Bonus rCoin</span><span className="font-black text-emerald-400">+{fmtCoin(product.bonusCashAmount)}</span></div><div className="border-t border-cyan-300/15 py-2.5 text-xl font-black text-slate-100">${Number(product.priceUsd).toFixed(2)}</div>
+                <div className="relative z-20 border-b border-cyan-100/25 px-3 pb-1 pt-4"><p className="text-xs font-bold text-rose-300">rCoin</p><p className="text-2xl font-black text-rose-400">{fmtCoin(product.ruCashAmount)}</p><div className="relative -mx-3 mt-1 h-28 overflow-hidden border-t border-cyan-100/10"><img src={COIN_ICONS[order] ?? COIN_ICONS[index + 1]} onError={event => { event.currentTarget.src = COIN_ICONS[1]; }} alt={`${fmtCoin(product.ruCashAmount)} rCoin package`} className="relative z-10 h-full w-full object-cover object-center transition duration-300 group-hover:scale-105" /></div></div>
+                <div className="relative z-20 flex items-center justify-center gap-2 border-b border-cyan-100/25 bg-[#020d1c]/72 px-3 py-2 text-xs"><span className="text-emerald-300">Bonus rCoin</span><span className="font-black text-emerald-400">+{fmtCoin(product.bonusCashAmount)}</span></div><div className="relative z-20 bg-[#030b18]/82 py-2.5 text-xl font-black text-slate-100">${Number(product.priceUsd).toFixed(2)}</div>
               </button>;
             })}
           </div>
