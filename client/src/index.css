@@ -286,6 +286,11 @@
       background: linear-gradient(180deg, rgba(49,42,30,.18) 0%, rgba(49,42,30,.06) 11%, transparent 24%, transparent 76%, rgba(49,42,30,.08) 89%, rgba(49,42,30,.22) 100%);
     }
 
+    .game-start-transition {
+      height: clamp(92px, 24vw, 126px);
+      background-position: center center, center 72%;
+    }
+
     .floating-social-box {
       top: auto !important;
       right: .55rem !important;
@@ -311,6 +316,35 @@
     font-family: Georgia, "Times New Roman", serif;
     font-weight: 700;
     letter-spacing: -.025em;
+  }
+
+  .game-start-transition {
+    position: relative;
+    height: clamp(116px, 12vw, 190px);
+    overflow: hidden;
+    isolation: isolate;
+    background-image: linear-gradient(90deg, rgba(247,239,213,.12) 0%, rgba(247,239,213,.32) 16%, rgba(247,239,213,.04) 50%, rgba(247,239,213,.32) 84%, rgba(247,239,213,.12) 100%), url('/manus-storage/ragnarok-game-start-transition-ornament_34c68161.png');
+    background-position: center center, center 68%;
+    background-size: 100% 100%, cover;
+    background-repeat: no-repeat;
+  }
+
+  .game-start-transition::before,
+  .game-start-transition::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .game-start-transition::before {
+    z-index: -1;
+    background: radial-gradient(ellipse 40% 80% at 50% 82%, rgba(73,95,133,.18) 0%, rgba(222,184,99,.12) 44%, transparent 78%);
+  }
+
+  .game-start-transition::after {
+    z-index: 1;
+    background: linear-gradient(90deg, rgba(244,233,198,.28), transparent 19%, transparent 81%, rgba(244,233,198,.28));
   }
 
   .fantasy-account .glass-panel {

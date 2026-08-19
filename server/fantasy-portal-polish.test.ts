@@ -57,4 +57,11 @@ describe("fantasy portal visual polish", () => {
     expect(layoutSource).toContain('bg-transparent text-[#17120c]');
     expect(layoutSource).toContain('font-medium text-[#17120c]');
   });
+
+  it("fills the Game Start to News transition with dedicated fantasy scenery", () => {
+    expect(homeSource).toContain('className="game-start-transition"');
+    expect(styleSource).toContain('ragnarok-game-start-transition-ornament_34c68161.png');
+    expect(styleSource).toContain('.game-start-transition');
+    expect(styleSource).toContain('height: clamp(92px, 24vw, 126px)');
+  });
 });
