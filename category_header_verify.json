@@ -1,0 +1,23 @@
+{
+  "gameInfo": {
+    "title": "🎮 Game Info",
+    "h1Left": 32,
+    "h1Top": 129,
+    "headerHeight": 168,
+    "h1Class": "text-4xl font-black mb-2",
+    "subtitleClass": "text-blue-100"
+  },
+  "shop": {
+    "title": "🪙 Shop",
+    "h1Left": 32,
+    "h1Top": 129,
+    "headerHeight": 168,
+    "h1Class": "text-4xl font-black mb-2",
+    "subtitleClass": "text-red-100"
+  },
+  "aligned": {
+    "sameTitleStart": true,
+    "sameHeaderHeight": true,
+    "sameTitleClass": true
+  }
+}

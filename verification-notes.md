@@ -120,3 +120,5 @@ Shop 충전 화면을 영문 Top Up 사양으로 복원했다. 영문 잔액 카
 실제 Chromium 자동화에서 1,000 rCoin 상품 클릭 후 구매 팝업을 열고 USD $1.00 상품 변경, More payment methods, reCAPTCHA 결제 활성화, X 닫힘(`data-state: closed`), 500 rCoin 재진입의 reCAPTCHA·더보기 초기화를 검증했다. 데스크톱(1280px)과 모바일(375px)에서 각각 8개 카드, 한글 문자 0건, 문서 가로 오버플로 0건을 확인했으며 팝업도 가로 오버플로가 없었다.
 
 Shop 헤더에 Coins 아이콘을 추가하고 rCoin 숫자와 같은 딥 레드 `#a51f24` 배경을 적용했다. Game Info와 같은 `py-12` 세로 여백·`text-4xl` 제목 규모로 통일했으며, 데스크톱·375px 모바일 캡처에서 아이콘·제목·부제 정렬과 헤더 높이를 확인했다. TypeScript와 Vitest 25건을 통과했다.
+
+Shop 헤더를 Game Info와 동일한 인라인 아이콘·제목·부제 구조로 재정렬했다. 동일 1280px Chromium 측정에서 Game Info와 Shop의 제목 시작점은 x=32, 제목 y=129, 헤더 높이는 168px, 제목 클래스는 모두 `text-4xl font-black mb-2`로 일치했다. 동일 뷰포트 캡처에서 두 헤더의 아이콘·제목·부제 정렬을 재확인했으며 TypeScript와 Vitest 25건을 통과했다.
