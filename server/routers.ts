@@ -8,8 +8,57 @@ import { ruCashProducts, ruCashBalances, ruCashTransactions } from "../drizzle/s
 import { storagePut } from "./storage";
 import { filterMemberTransactionHistory } from "./memberHistory";
 import { calculateCumulativePaymentUsd, filterMemberCouponHistory } from "./memberCouponHistory";
+import { getCouponStatus, validateCouponSystemInput } from "./couponSystem";
 import { asc, desc, eq, gte, like, lt, or, sql } from "drizzle-orm";
 import { z } from "zod";
+
+const couponSystemInput = z.object({
+  gameCode: z.string().trim().min(1).max(32).default("ROU"),
+  couponType: z.enum(["common", "random"]),
+  eventName: z.string().trim().min(1).max(20),
+  code: z.string().trim().min(1).max(64),
+  validFrom: z.string().optional().nullable(),
+  expiresAt: z.string().optional().nullable(),
+  serverCodes: z.string().trim().max(255).optional().nullable(),
+  bonusRcoin: z.number().int().min(0).default(0),
+  rewardItems: z.array(z.object({ itemId: z.string().trim().min(1).max(64), quantity: z.number().int().min(1) })).min(1).max(5),
+  isActive: z.number().int().min(0).max(1).default(1),
+  randomGenerated: z.number().int().min(0).max(1).default(0),
+});
+
+function toCouponSystemValues(input: z.infer<typeof couponSystemInput>) {
+  const validFrom = input.validFrom ? new Date(input.validFrom) : null;
+  const expiresAt = input.expiresAt ? new Date(input.expiresAt) : null;
+  const code = input.code.trim().toUpperCase();
+  const validationError = validateCouponSystemInput({
+    couponType: input.couponType,
+    code,
+    eventName: input.eventName,
+    validFrom,
+    expiresAt,
+    bonusRcoin: input.bonusRcoin,
+    rewardItems: input.rewardItems,
+    randomGenerated: input.randomGenerated,
+  });
+  if (validationError) throw new Error(validationError);
+  return {
+    gameCode: input.gameCode.trim().toUpperCase(),
+    couponType: input.couponType,
+    eventName: input.eventName.trim(),
+    code,
+    name: input.eventName.trim(),
+    benefitType: input.bonusRcoin > 0 ? "point" as const : "product" as const,
+    benefitValue: input.bonusRcoin,
+    bonusRcoin: input.bonusRcoin,
+    rewardItems: JSON.stringify(input.rewardItems),
+    serverCodes: input.serverCodes?.trim() || null,
+    validFrom,
+    expiresAt,
+    maxUses: input.couponType === "random" ? 1 : 999999999,
+    isActive: input.isActive,
+    randomGenerated: input.randomGenerated,
+  };
+}
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -525,35 +574,85 @@ export const appRouter = router({
   // ===== COUPONS =====
   coupons: router({
     list: adminKeyProcedure
-      .input(z.object({ search: z.string().optional(), page: z.number().default(1), pageSize: z.number().default(20) }))
+      .input(z.object({ search: z.string().optional(), page: z.number().default(1), pageSize: z.number().min(1).max(1000).default(20) }))
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) return { items: [], total: 0 };
         const offset = (input.page - 1) * input.pageSize;
-        let q = db.select().from(coupons).$dynamic();
-        if (input.search) q = q.where(like(coupons.name, `%${input.search}%`));
-        const items = await q.orderBy(desc(coupons.createdAt)).limit(input.pageSize).offset(offset);
-        const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(coupons);
-        return { items, total: Number(count) };
+        const keyword = input.search?.trim().toLowerCase() ?? "";
+        const rows = await db.select().from(coupons).orderBy(desc(coupons.createdAt));
+        const filtered = rows.filter(row => !keyword || [row.code, row.name, row.eventName, row.gameCode].some(value => value.toLowerCase().includes(keyword)));
+        return { items: filtered.slice(offset, offset + input.pageSize).map(row => ({ ...row, status: getCouponStatus(row) })), total: filtered.length };
       }),
     create: adminKeyProcedure
-      .input(z.object({ code: z.string(), name: z.string(), benefitType: z.enum(['point', 'product']).default('point'), benefitValue: z.number().default(0), maxUses: z.number().default(1), expiresAt: z.string().optional(), isActive: z.number().default(1) }))
+      .input(couponSystemInput)
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
-        const result = await db.insert(coupons).values({ ...input, expiresAt: input.expiresAt ? new Date(input.expiresAt) : undefined });
+        const result = await db.insert(coupons).values(toCouponSystemValues(input));
         return { id: (result as any).insertId };
       }),
     update: adminKeyProcedure
-      .input(z.object({ id: z.number(), name: z.string().optional(), maxUses: z.number().optional(), expiresAt: z.string().optional(), isActive: z.number().optional() }))
+      .input(couponSystemInput.extend({ id: z.number() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
-        const { id, expiresAt, ...rest } = input;
-        const updateData: Record<string, unknown> = { ...rest };
-        if (expiresAt) updateData.expiresAt = new Date(expiresAt);
-        await db.update(coupons).set(updateData).where(eq(coupons.id, id));
+        const { id, ...couponInput } = input;
+        await db.update(coupons).set(toCouponSystemValues(couponInput)).where(eq(coupons.id, id));
         return { success: true };
+      }),
+    bulkUpsert: adminKeyProcedure
+      .input(z.object({ items: z.array(couponSystemInput).min(1).max(1000) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        for (const item of input.items) {
+          const values = toCouponSystemValues(item);
+          await db.insert(coupons).values(values).onDuplicateKeyUpdate({ set: { ...values, updatedAt: new Date() } });
+        }
+        return { imported: input.items.length };
+      }),
+    systemHistory: adminKeyProcedure
+      .input(z.object({ startDate: z.string().optional(), endDate: z.string().optional(), aid: z.string().optional(), eventName: z.string().optional(), page: z.number().min(1).default(1), pageSize: z.number().min(1).max(1000).default(100) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { items: [], total: 0 };
+        const couponRows = await db.select().from(coupons);
+        const useRows = await db.select({ use: couponUses, user: users }).from(couponUses).leftJoin(users, eq(couponUses.userId, users.id));
+        const byCoupon = new Map<number, typeof useRows>();
+        useRows.forEach(row => byCoupon.set(row.use.couponId, [...(byCoupon.get(row.use.couponId) ?? []), row]));
+        const start = input.startDate ? new Date(`${input.startDate}T00:00:00`).getTime() : Number.NEGATIVE_INFINITY;
+        const end = input.endDate ? new Date(`${input.endDate}T23:59:59.999`).getTime() : Number.POSITIVE_INFINITY;
+        const aid = input.aid?.trim().toLowerCase() ?? "";
+        const eventName = input.eventName?.trim().toLowerCase() ?? "";
+        type CouponHistoryEntry = { coupon: typeof couponRows[number]; usage: typeof useRows[number] | null; usageCount: number };
+        const historyRows: CouponHistoryEntry[] = couponRows.flatMap<CouponHistoryEntry>(coupon => {
+          const uses = byCoupon.get(coupon.id) ?? [];
+          if (coupon.couponType === "common") return [{ coupon, usage: null, usageCount: uses.length }];
+          return uses.length ? uses.map(usage => ({ coupon, usage, usageCount: uses.length })) : [{ coupon, usage: null, usageCount: 0 }];
+        });
+        const rows = historyRows.filter(row => {
+          const usedAt = row.usage?.use.usedAt ? new Date(row.usage.use.usedAt).getTime() : new Date(row.coupon.createdAt).getTime();
+          const userAid = row.usage?.user?.openId?.toLowerCase() ?? "";
+          return usedAt >= start && usedAt <= end && (!aid || userAid.includes(aid)) && (!eventName || row.coupon.eventName.toLowerCase().includes(eventName));
+        }).map(row => ({
+          gameCode: row.coupon.gameCode,
+          couponType: row.coupon.couponType,
+          eventName: row.coupon.eventName,
+          couponCode: row.coupon.code,
+          validFrom: row.coupon.validFrom,
+          expiresAt: row.coupon.expiresAt,
+          rewardItems: row.coupon.rewardItems,
+          bonusRcoin: row.coupon.bonusRcoin,
+          serverCodes: row.coupon.serverCodes,
+          isActive: row.coupon.isActive,
+          aid: row.usage?.user?.openId ?? null,
+          characterName: row.usage?.use.characterName ?? null,
+          usedAt: row.usage?.use.usedAt ?? null,
+          status: row.coupon.couponType === "common" ? `${row.usageCount.toLocaleString()}회` : (row.usage ? "사용됨" : getCouponStatus(row.coupon) === "active" ? "미사용" : getCouponStatus(row.coupon)),
+        }));
+        const offset = (input.page - 1) * input.pageSize;
+        return { items: rows.slice(offset, offset + input.pageSize), total: rows.length };
       }),
     delete: adminKeyProcedure
       .input(z.object({ id: z.number() }))

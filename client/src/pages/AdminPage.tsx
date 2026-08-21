@@ -8,10 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
+import * as XLSX from "xlsx";
 import type { AppRouter } from "../../../server/routers";
 import {
   Activity, BarChart2, Banknote, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, CircleDollarSign, Coins, CreditCard, Eye, Gamepad2,
-  Image, Link, LogOut, Pencil, Plus, RefreshCw, Search, Shield, ShoppingCart,
+  Download, FileSpreadsheet, Gift, Image, Link, LogOut, Pencil, Plus, RefreshCw, Search, Shield, ShoppingCart, Upload,
   Tag, Trash2, ToggleLeft, ToggleRight, UserCheck, UserCog, UserPlus, Users, Users2, UsersRound, X,
 } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
@@ -2387,6 +2388,135 @@ function CouponsSection({ adminClient }: { adminClient: ReturnType<typeof create
   );
 }
 
+// ─── COUPON SYSTEM V4 SECTION ─────────────────────────────────────────────────
+type CouponSystemReward = { itemId: string; quantity: number };
+type CouponSystemForm = {
+  id?: number;
+  gameCode: string;
+  couponType: "common" | "random";
+  eventName: string;
+  code: string;
+  validFrom: string;
+  expiresAt: string;
+  serverCodes: string;
+  bonusRcoin: number;
+  rewardItems: CouponSystemReward[];
+  isActive: number;
+  randomGenerated: number;
+};
+
+const couponEmptyForm = (): CouponSystemForm => ({ gameCode: "ROU", couponType: "common", eventName: "", code: "", validFrom: "", expiresAt: "", serverCodes: "", bonusRcoin: 0, rewardItems: [{ itemId: "", quantity: 1 }], isActive: 1, randomGenerated: 0 });
+const randomCouponCode = () => {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  return Array.from({ length: 3 }, () => Array.from({ length: 4 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join("")).join("-");
+};
+const formatCouponDate = (value: Date | string | null | undefined) => value ? new Date(value).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }) : "-";
+const parseRewardItems = (value: unknown): CouponSystemReward[] => {
+  if (!value) return [{ itemId: "", quantity: 1 }];
+  try {
+    const parsed = typeof value === "string" ? JSON.parse(value) : value;
+    return Array.isArray(parsed) && parsed.length ? parsed.map((item: any) => ({ itemId: String(item.itemId ?? ""), quantity: Number(item.quantity ?? 1) })) : [{ itemId: "", quantity: 1 }];
+  } catch { return [{ itemId: "", quantity: 1 }]; }
+};
+
+function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [view, setView] = useState<"list" | "history" | "upload">("list");
+  const [form, setForm] = useState<CouponSystemForm | null>(null);
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [historyFilters, setHistoryFilters] = useState({ startDate: "", endDate: "", aid: "", eventName: "", pageSize: 100 });
+  const [historyPage, setHistoryPage] = useState(1);
+  const [uploading, setUploading] = useState(false);
+
+  const couponsQuery = useQuery({ queryKey: ["coupon-system-v4", search, page], queryFn: () => adminClient!.coupons.list.query({ search, page, pageSize: 20 }), enabled: !!adminClient && view === "list" });
+  const historyQuery = useQuery({ queryKey: ["coupon-system-history", historyFilters, historyPage], queryFn: () => adminClient!.coupons.systemHistory.query({ ...historyFilters, startDate: historyFilters.startDate || undefined, endDate: historyFilters.endDate || undefined, aid: historyFilters.aid || undefined, eventName: historyFilters.eventName || undefined, page: historyPage }), enabled: !!adminClient && view === "history" });
+  const createMutation = useMutation({ mutationFn: (input: any) => adminClient!.coupons.create.mutate(input), onSuccess: () => { toast.success("쿠폰이 등록되었습니다."); setForm(null); couponsQuery.refetch(); }, onError: (error: Error) => toast.error(error.message) });
+  const updateMutation = useMutation({ mutationFn: (input: any) => adminClient!.coupons.update.mutate(input), onSuccess: () => { toast.success("쿠폰이 수정되었습니다."); setForm(null); couponsQuery.refetch(); }, onError: (error: Error) => toast.error(error.message) });
+
+  const toPayload = (source: CouponSystemForm) => ({
+    ...source,
+    eventName: source.eventName.trim(),
+    code: source.code.trim().toUpperCase(),
+    serverCodes: source.serverCodes.trim() || null,
+    validFrom: source.validFrom || null,
+    expiresAt: source.expiresAt || null,
+    rewardItems: source.rewardItems.filter(item => item.itemId.trim()),
+  });
+  const submit = () => {
+    if (!form) return;
+    const payload = toPayload(form);
+    if (!payload.eventName || !payload.code) return toast.error("이벤트명과 쿠폰 코드를 입력하세요.");
+    if (new TextEncoder().encode(payload.eventName).length > 20) return toast.error("이벤트명은 영문 기준 최대 20byte입니다.");
+    if (payload.couponType === "random" && !payload.randomGenerated) return toast.error("난수 쿠폰은 쿠폰 난수 생성 버튼으로 생성하세요.");
+    const maximum = payload.bonusRcoin > 0 ? 4 : 5;
+    if (!payload.rewardItems.length || payload.rewardItems.length > maximum) return toast.error(`보상 아이템은 ${maximum}종까지 등록할 수 있습니다.`);
+    if (payload.id) updateMutation.mutate(payload); else createMutation.mutate(payload);
+  };
+  const editCoupon = (item: any) => setForm({ id: item.id, gameCode: item.gameCode ?? "ROU", couponType: item.couponType ?? "common", eventName: item.eventName ?? item.name, code: item.code, validFrom: item.validFrom ? new Date(item.validFrom).toISOString().slice(0, 16) : "", expiresAt: item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0, 16) : "", serverCodes: item.serverCodes ?? "", bonusRcoin: Number(item.bonusRcoin ?? 0), rewardItems: parseRewardItems(item.rewardItems), isActive: item.isActive, randomGenerated: item.randomGenerated ?? 0 });
+  const statusText = (item: any) => ({ active: "활성", inactive: "비활성", scheduled: "예정", expired: "만료", used: "사용됨" } as Record<string, string>)[String(item.status)] ?? "활성";
+  const statusClass = (item: any) => item.status === "active" ? "bg-emerald-100 text-emerald-700" : item.status === "expired" || item.status === "inactive" ? "bg-slate-100 text-slate-600" : "bg-amber-100 text-amber-700";
+
+  const downloadTemplate = () => {
+    const worksheet = XLSX.utils.json_to_sheet([{ "Game Code": "ROU", "Coupon Type": "COMMON", "Event Name": "ROU PREREG 2026", "Coupon Code": "TT1REWARD2026", "Valid From": "2026-08-01T00:00", "Valid To": "2026-08-31T23:59", "Bonus rCoin": 100, "Reward Items": "501039:1|501040:5", "Server Codes": "5,7,9", "Active": 1 }]);
+    const workbook = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(workbook, worksheet, "Coupons"); XLSX.writeFile(workbook, "ROU_coupon_upload_template.xlsx");
+  };
+  const readCell = (row: Record<string, any>, ...names: string[]) => names.map(name => row[name]).find(value => value !== undefined && value !== null && String(value).trim() !== "");
+  const toSpreadsheetDate = (value: unknown) => {
+    if (!value) return "";
+    if (value instanceof Date) return value.toISOString().slice(0, 16);
+    if (typeof value === "number") { const date = XLSX.SSF.parse_date_code(value); return date ? `${date.y}-${String(date.m).padStart(2, "0")}-${String(date.d).padStart(2, "0")}T${String(date.H).padStart(2, "0")}:${String(date.M).padStart(2, "0")}` : ""; }
+    return String(value).replace(" ", "T").slice(0, 16);
+  };
+  const handleUpload = async (file?: File) => {
+    if (!file || !adminClient) return;
+    setUploading(true);
+    try {
+      const workbook = XLSX.read(await file.arrayBuffer(), { type: "array", cellDates: true });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rawRows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, { defval: "" });
+      const items = rawRows.map(row => {
+        const couponType = String(readCell(row, "Coupon Type", "쿠폰타입") ?? "COMMON").toLowerCase() === "random" ? "random" as const : "common" as const;
+        const rewards = String(readCell(row, "Reward Items", "보상") ?? "").split("|").map(value => value.trim()).filter(Boolean).map(value => { const [itemId, quantity] = value.split(":"); return { itemId: itemId?.trim() ?? "", quantity: Number(quantity ?? 1) }; });
+        return { gameCode: String(readCell(row, "Game Code", "게임코드") ?? "ROU"), couponType, eventName: String(readCell(row, "Event Name", "이벤트명") ?? ""), code: String(readCell(row, "Coupon Code", "쿠폰코드") ?? "").toUpperCase(), validFrom: toSpreadsheetDate(readCell(row, "Valid From", "유효기간 시작")) || null, expiresAt: toSpreadsheetDate(readCell(row, "Valid To", "유효기간 종료")) || null, serverCodes: String(readCell(row, "Server Codes", "서버") ?? "").trim() || null, bonusRcoin: Number(readCell(row, "Bonus rCoin", "Bonus rCoin") ?? 0), rewardItems: rewards, isActive: Number(readCell(row, "Active", "활성화") ?? 1) === 0 ? 0 : 1, randomGenerated: couponType === "random" ? 1 : 0 };
+      }).filter(item => item.code && item.eventName);
+      if (!items.length) throw new Error("업로드 가능한 쿠폰 행을 찾지 못했습니다.");
+      for (let start = 0; start < items.length; start += 1000) await adminClient.coupons.bulkUpsert.mutate({ items: items.slice(start, start + 1000) });
+      toast.success(`${items.length.toLocaleString()}개 쿠폰을 등록·갱신했습니다.`); setView("list"); couponsQuery.refetch();
+    } catch (error) { toast.error(error instanceof Error ? error.message : "엑셀 업로드에 실패했습니다."); }
+    finally { setUploading(false); }
+  };
+  const exportHistory = async () => {
+    if (!adminClient) return;
+    const result = await adminClient.coupons.systemHistory.query({ ...historyFilters, startDate: historyFilters.startDate || undefined, endDate: historyFilters.endDate || undefined, aid: historyFilters.aid || undefined, eventName: historyFilters.eventName || undefined, page: 1, pageSize: 1000 });
+    const worksheet = XLSX.utils.json_to_sheet(result.items.map((item: any) => ({ "Game Code": item.gameCode, "Coupon Type": item.couponType === "common" ? "COMMON" : "RANDOM", "Event Name": item.eventName, "Coupon Code": item.couponCode, "Server": item.serverCodes || "", "AID": item.aid || "", "Character Name": item.characterName || "", "Used At": item.usedAt ? formatCouponDate(item.usedAt) : "", "Status / Count": item.status })));
+    const workbook = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(workbook, worksheet, "Coupon History"); XLSX.writeFile(workbook, "ROU_coupon_history.xlsx");
+  };
+
+  if (form) {
+    const maxItems = form.bonusRcoin > 0 ? 4 : 5;
+    return <div className="space-y-5">
+      <SectionHeader title={form.id ? "쿠폰 수정" : "신규 쿠폰 등록"} desc="게임 코드·쿠폰 타입·이벤트·기간·보상·서버 설정을 관리합니다." action={<Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="mr-1 h-4 w-4" />목록으로</Button>} />
+      <Card><CardContent className="space-y-6 pt-6">
+        <div className="grid gap-5 lg:grid-cols-2"><div className="space-y-2"><label className="text-sm font-semibold">게임 코드 (Game Code)</label><Select value={form.gameCode} onValueChange={gameCode => setForm(current => current && ({ ...current, gameCode }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="ROU">라그나로크 유니버스 (ROU)</SelectItem></SelectContent></Select><p className="text-xs text-muted-foreground">포털 확장을 위한 필드입니다.</p></div><div className="space-y-2"><label className="text-sm font-semibold">쿠폰 타입</label><div className="grid grid-cols-2 gap-2"><Button type="button" variant={form.couponType === "common" ? "default" : "outline"} onClick={() => setForm(current => current && ({ ...current, couponType: "common", randomGenerated: 0 }))}>공용 쿠폰</Button><Button type="button" variant={form.couponType === "random" ? "default" : "outline"} onClick={() => setForm(current => current && ({ ...current, couponType: "random", code: "", randomGenerated: 0 }))}>난수 쿠폰</Button></div><p className="text-xs text-muted-foreground">공용은 공유 코드, 난수는 코드별 1회 사용입니다.</p></div></div>
+        <div className="rounded-lg border border-blue-100 bg-blue-50/60 p-4 text-sm text-blue-900"><p className="font-semibold">공통 사용 제한</p><p className="mt-1">계정(AID)당 1회만 사용 가능하며, 다른 서버 캐릭터로 이미 획득한 보상은 다시 받을 수 없습니다.</p></div>
+        <div className="grid gap-5 lg:grid-cols-2"><div className="space-y-2"><label className="text-sm font-semibold">쿠폰 코드</label><div className="flex gap-2"><Input value={form.code} disabled={form.couponType === "random" || !!form.id} onChange={event => setForm(current => current && ({ ...current, code: event.target.value.toUpperCase() }))} placeholder={form.couponType === "random" ? "NNNN-NNNN-NNNN" : "공용 코드 입력"} className="font-mono" />{form.couponType === "random" && <Button type="button" variant="outline" onClick={() => setForm(current => current && ({ ...current, code: randomCouponCode(), randomGenerated: 1 }))}>쿠폰 난수 생성</Button>}</div><p className="text-xs text-muted-foreground">난수 쿠폰은 대문자·숫자 12자리와 하이픈 규칙을 자동 적용합니다.</p></div><div className="space-y-2"><label className="text-sm font-semibold">이벤트명 <span className="font-normal text-muted-foreground">(영문 최대 20byte)</span></label><Input value={form.eventName} onChange={event => setForm(current => current && ({ ...current, eventName: event.target.value }))} placeholder="ROU PREREG 2026" /><p className="text-right text-xs text-muted-foreground">{new TextEncoder().encode(form.eventName).length} / 20B</p></div></div>
+        <div className="grid gap-5 lg:grid-cols-3"><div className="space-y-2"><label className="text-sm font-semibold">유효기간 시작</label><DateTimeInput value={form.validFrom} onChange={validFrom => setForm(current => current && ({ ...current, validFrom }))} /></div><div className="space-y-2"><label className="text-sm font-semibold">유효기간 종료</label><DateTimeInput value={form.expiresAt} onChange={expiresAt => setForm(current => current && ({ ...current, expiresAt }))} /></div><div className="space-y-2"><label className="text-sm font-semibold">서버 코드</label><Input value={form.serverCodes} onChange={event => setForm(current => current && ({ ...current, serverCodes: event.target.value }))} placeholder="공란 = 전 서버, 예: 5, 7, 9" /></div></div>
+        <div className="space-y-4 rounded-xl border bg-slate-50/60 p-5"><div className="flex flex-wrap items-center justify-between gap-2"><div><h3 className="font-semibold">보상 아이템 설정</h3><p className="mt-1 text-xs text-muted-foreground">Bonus rCoin 미입력 시 최대 5종, 입력 시 아이템 최대 4종까지 등록할 수 있습니다.</p></div><Button type="button" size="sm" variant="outline" disabled={form.rewardItems.length >= maxItems} onClick={() => setForm(current => current && ({ ...current, rewardItems: [...current.rewardItems, { itemId: "", quantity: 1 }] }))}><Plus className="mr-1 h-4 w-4" />아이템 추가</Button></div><div className="grid gap-3 md:grid-cols-3"><div className="space-y-1"><label className="text-sm font-medium">Bonus rCoin</label><Input type="number" min={0} value={form.bonusRcoin || ""} onChange={event => setForm(current => current && ({ ...current, bonusRcoin: Number(event.target.value || 0), rewardItems: current.rewardItems.slice(0, Number(event.target.value || 0) > 0 ? 4 : 5) }))} placeholder="선택 입력" /></div><div className="flex items-end"><div className="flex h-10 items-center gap-2"><span className="text-sm font-medium">활성화</span><ToggleBtn value={form.isActive} onChange={isActive => setForm(current => current && ({ ...current, isActive }))} /></div></div></div>{form.rewardItems.map((reward, index) => <div key={index} className="grid gap-2 md:grid-cols-[1fr_180px_auto] md:items-end"><div className="space-y-1"><label className="text-sm font-medium">{index === 0 ? "기본 아이템" : `추가 아이템 ${index}`} ItemID</label><Input value={reward.itemId} onChange={event => setForm(current => current && ({ ...current, rewardItems: current.rewardItems.map((entry, entryIndex) => entryIndex === index ? { ...entry, itemId: event.target.value } : entry) }))} placeholder="501039" /></div><div className="space-y-1"><label className="text-sm font-medium">QTY</label><Input type="number" min={1} value={reward.quantity} onChange={event => setForm(current => current && ({ ...current, rewardItems: current.rewardItems.map((entry, entryIndex) => entryIndex === index ? { ...entry, quantity: Number(event.target.value || 1) } : entry) }))} /></div><Button type="button" variant="ghost" className="text-red-500" disabled={form.rewardItems.length === 1} onClick={() => setForm(current => current && ({ ...current, rewardItems: current.rewardItems.filter((_, entryIndex) => entryIndex !== index) }))}>삭제</Button></div>)}</div>
+        <div className="flex justify-start gap-2"><Button onClick={submit} disabled={createMutation.isPending || updateMutation.isPending}>{form.id ? "저장" : "쿠폰 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>이전</Button></div>
+      </CardContent></Card>
+    </div>;
+  }
+
+  return <div className="space-y-5">
+    <SectionHeader title="쿠폰 관리" desc="쿠폰 발급, 엑셀 갱신, 발급 히스토리를 관리합니다." action={<Button onClick={() => setForm(couponEmptyForm())}><Plus className="mr-2 h-4 w-4" />신규 등록</Button>} />
+    <div className="flex flex-wrap gap-2 border-b"><Button variant={view === "list" ? "default" : "ghost"} onClick={() => setView("list")}>쿠폰 목록</Button><Button variant={view === "upload" ? "default" : "ghost"} onClick={() => setView("upload")}><FileSpreadsheet className="mr-1 h-4 w-4" />엑셀 업로드</Button><Button variant={view === "history" ? "default" : "ghost"} onClick={() => setView("history")}><Gift className="mr-1 h-4 w-4" />발급 히스토리</Button></div>
+    {view === "list" && <Card><CardHeader className="pb-3"><div className="flex gap-2"><SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="이벤트명 또는 쿠폰코드 검색" /><Button variant="ghost" size="sm" onClick={() => couponsQuery.refetch()}><RefreshCw className="h-4 w-4" /></Button></div></CardHeader><CardContent><div className="overflow-x-auto"><table className="w-full min-w-[1000px] text-sm"><thead className="bg-slate-50 text-slate-500"><tr><th className="px-3 py-3 text-left">게임코드</th><th className="px-3 py-3 text-left">타입</th><th className="px-3 py-3 text-left">이벤트명</th><th className="px-3 py-3 text-left">쿠폰코드</th><th className="px-3 py-3 text-left">유효기간</th><th className="px-3 py-3 text-left">보상</th><th className="px-3 py-3 text-left">서버</th><th className="px-3 py-3 text-left">상태</th><th className="px-3 py-3 text-center">처리</th></tr></thead><tbody>{!couponsQuery.data?.items.length ? <tr><td colSpan={9} className="py-12 text-center text-muted-foreground">등록된 쿠폰이 없습니다.</td></tr> : couponsQuery.data.items.map((item: any) => <tr key={item.id} className="border-t hover:bg-slate-50"><td className="px-3 py-3 font-medium">{item.gameCode}</td><td className="px-3 py-3">{item.couponType === "common" ? "공용" : "난수"}</td><td className="px-3 py-3 font-medium">{item.eventName}</td><td className="px-3 py-3 font-mono text-xs">{item.code}</td><td className="px-3 py-3 text-xs">{formatCouponDate(item.validFrom)}<br />~ {formatCouponDate(item.expiresAt)}</td><td className="px-3 py-3 text-xs">{Number(item.bonusRcoin ?? 0) > 0 && <span>Bonus rCoin {Number(item.bonusRcoin).toLocaleString()}<br /></span>}{parseRewardItems(item.rewardItems).filter(reward => reward.itemId).map(reward => <span key={reward.itemId}>{reward.itemId} × {reward.quantity}<br /></span>)}</td><td className="px-3 py-3 text-xs">{item.serverCodes || "전 서버"}</td><td className="px-3 py-3"><span className={`rounded-full px-2 py-1 text-xs font-semibold ${statusClass(item)}`}>{statusText(item)}</span></td><td className="px-3 py-3 text-center"><Button variant="ghost" size="sm" onClick={() => editCoupon(item)}><Pencil className="h-4 w-4" /></Button></td></tr>)}</tbody></table></div><Pagination page={page} total={couponsQuery.data?.total ?? 0} pageSize={20} onChange={setPage} /></CardContent></Card>}
+    {view === "upload" && <Card><CardContent className="pt-6"><div className="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-10 text-center"><FileSpreadsheet className="mx-auto h-10 w-10 text-blue-500" /><h3 className="mt-3 font-semibold">쿠폰 엑셀 업로드</h3><p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground">동일한 쿠폰코드와 이벤트명 조합은 마지막 업로드 파일의 값으로 갱신됩니다. 대량 파일은 1,000개 단위로 안전하게 등록합니다.</p><div className="mt-5 flex flex-wrap justify-center gap-2"><Button variant="outline" onClick={downloadTemplate}><Download className="mr-2 h-4 w-4" />엑셀 템플릿 다운로드</Button><label className="inline-flex h-10 cursor-pointer items-center rounded-md bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700"><Upload className="mr-2 h-4 w-4" />{uploading ? "업로드 중..." : "엑셀 파일 업로드"}<input type="file" accept=".xlsx,.xls,.csv" className="hidden" disabled={uploading} onChange={event => handleUpload(event.target.files?.[0])} /></label></div></div><div className="mt-5 rounded-lg border bg-amber-50 p-4 text-sm text-amber-900"><p className="font-semibold">업로드 규칙</p><p className="mt-1">필수 헤더: Game Code, Coupon Type, Event Name, Coupon Code, Valid From, Valid To, Bonus rCoin, Reward Items, Server Codes, Active. Reward Items는 <code>ITEMID:QTY|ITEMID:QTY</code> 형식입니다.</p></div></CardContent></Card>}
+    {view === "history" && <Card><CardContent className="space-y-4 pt-6"><div className="grid gap-3 lg:grid-cols-[1fr_1fr_1fr_1fr_130px_auto_auto]"><Input type="date" value={historyFilters.startDate} onChange={event => { setHistoryFilters(current => ({ ...current, startDate: event.target.value })); setHistoryPage(1); }} aria-label="쿠폰 히스토리 시작일" /><Input type="date" value={historyFilters.endDate} onChange={event => { setHistoryFilters(current => ({ ...current, endDate: event.target.value })); setHistoryPage(1); }} aria-label="쿠폰 히스토리 종료일" /><Input value={historyFilters.aid} onChange={event => { setHistoryFilters(current => ({ ...current, aid: event.target.value })); setHistoryPage(1); }} placeholder="AID 검색" /><Input value={historyFilters.eventName} onChange={event => { setHistoryFilters(current => ({ ...current, eventName: event.target.value })); setHistoryPage(1); }} placeholder="이벤트명 검색" /><Select value={String(historyFilters.pageSize)} onValueChange={value => { setHistoryFilters(current => ({ ...current, pageSize: Number(value) })); setHistoryPage(1); }}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="50">50개</SelectItem><SelectItem value="100">100개</SelectItem><SelectItem value="1000">1,000개</SelectItem></SelectContent></Select><Button onClick={() => historyQuery.refetch()}><Search className="mr-1 h-4 w-4" />조회</Button><Button variant="outline" onClick={exportHistory}><Download className="mr-1 h-4 w-4" />CSV 내보내기</Button></div><div className="overflow-x-auto"><table className="w-full min-w-[1050px] text-sm"><thead className="bg-slate-50 text-slate-500"><tr><th className="px-3 py-3 text-left">게임코드</th><th className="px-3 py-3 text-left">쿠폰타입</th><th className="px-3 py-3 text-left">이벤트명</th><th className="px-3 py-3 text-left">쿠폰코드</th><th className="px-3 py-3 text-left">서버</th><th className="px-3 py-3 text-left">AID</th><th className="px-3 py-3 text-left">캐릭터명</th><th className="px-3 py-3 text-left">사용일자</th><th className="px-3 py-3 text-left">상태/횟수</th></tr></thead><tbody>{!historyQuery.data?.items.length ? <tr><td colSpan={9} className="py-12 text-center text-muted-foreground">조회 결과가 없습니다.</td></tr> : historyQuery.data.items.map((item: any, index: number) => <tr key={`${item.couponCode}-${item.aid ?? "common"}-${index}`} className="border-t"><td className="px-3 py-3">{item.gameCode}</td><td className="px-3 py-3">{item.couponType === "common" ? "공용" : "난수"}</td><td className="px-3 py-3">{item.eventName}</td><td className="px-3 py-3 font-mono text-xs">{item.couponCode}</td><td className="px-3 py-3">{item.serverCodes || "전 서버"}</td><td className="px-3 py-3">{item.aid || "—"}</td><td className="px-3 py-3">{item.characterName || "—"}</td><td className="px-3 py-3 text-xs">{formatCouponDate(item.usedAt)}</td><td className="px-3 py-3 font-semibold">{item.status}</td></tr>)}</tbody></table></div><Pagination page={historyPage} total={historyQuery.data?.total ?? 0} pageSize={historyFilters.pageSize} onChange={setHistoryPage} /></CardContent></Card>}
+  </div>;
+}
+
 // ─── ADMIN ACCOUNTS SECTION ───────────────────────────────────────────────────
 type AdminAccForm = { id?: number; username: string; password: string; displayName: string; permissions: string; isActive: number };
 
@@ -2837,7 +2967,7 @@ export default function AdminPage() {
           {activeMenu === "shop" && <ShopSection adminClient={adminClient} />}
           {activeMenu === "payments" && <PaymentsSection adminClient={adminClient} />}
           {activeMenu === "stats" && <StatsSection adminClient={adminClient} />}
-          {activeMenu === "coupons" && <CouponsSection adminClient={adminClient} />}
+          {activeMenu === "coupons" && <CouponSystemSection adminClient={adminClient} />}
           {activeMenu === "admin-accounts" && <AdminAccountsSection adminClient={adminClient} />}
           {activeMenu.startsWith("policy") && <PolicySection activeMenu={activeMenu} />}
         </main>

@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, bigint } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, bigint, uniqueIndex } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -143,17 +143,27 @@ export type Payment = typeof payments.$inferSelect;
 /** Coupons */
 export const coupons = mysqlTable("coupons", {
   id: int("id").autoincrement().primaryKey(),
-  code: varchar("code", { length: 64 }).notNull().unique(),
+  gameCode: varchar("gameCode", { length: 32 }).default("ROU").notNull(),
+  couponType: mysqlEnum("couponType", ["common", "random"]).default("common").notNull(),
+  eventName: varchar("eventName", { length: 20 }).default("Legacy Coupon").notNull(),
+  code: varchar("code", { length: 64 }).notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   benefitType: mysqlEnum("benefitType", ["point", "product"]).default("point").notNull(),
   benefitValue: int("benefitValue").default(0).notNull(), // points or productId
+  bonusRcoin: int("bonusRcoin").default(0).notNull(),
+  rewardItems: text("rewardItems"), // JSON: [{ itemId, quantity }]
+  serverCodes: varchar("serverCodes", { length: 255 }),
+  validFrom: timestamp("validFrom"),
   maxUses: int("maxUses").default(1).notNull(),
   usedCount: int("usedCount").default(0).notNull(),
   expiresAt: timestamp("expiresAt"),
   isActive: int("isActive").default(1).notNull(),
+  randomGenerated: int("randomGenerated").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  couponCodeEventUnique: uniqueIndex("coupons_code_eventName_unique").on(table.code, table.eventName),
+}));
 export type Coupon = typeof coupons.$inferSelect;
 
 /** Coupon usage log */
@@ -161,6 +171,9 @@ export const couponUses = mysqlTable("couponUses", {
   id: int("id").autoincrement().primaryKey(),
   couponId: int("couponId").notNull().references(() => coupons.id, { onDelete: "cascade" }),
   userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  serverCode: varchar("serverCode", { length: 32 }),
+  characterName: varchar("characterName", { length: 128 }),
+  couponCodeSnapshot: varchar("couponCodeSnapshot", { length: 64 }),
   usedAt: timestamp("usedAt").defaultNow().notNull(),
 });
 
