@@ -34,6 +34,7 @@ export default function Home() {
 
   // DB에서 배너 데이터 가져오기 (fallback: 하드코딩 배너)
   const { data: dbBanners } = trpc.banner.list.useQuery(undefined, { retry: false });
+  const { data: dbNews } = trpc.publicNews.list.useQuery(undefined, { retry: false });
 
   const fallbackBanners = [
     {
@@ -85,8 +86,8 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [bannerImages.length]);
 
-  // News data - unified single section (6 items for 2 rows x 3 columns) with banner images
-  const newsData = [
+  // News fallback - 공개 News API가 비어 있을 때만 표시
+  const fallbackNewsData = [
     {
       id: 1,
       title: "Ragnarok Online: Patch Update June 17, 2026",
@@ -124,6 +125,14 @@ export default function Home() {
       image: `${ASSET_BASE_URL}/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_bc640d8a_0c8f7386.png`,
     },
   ];
+  const newsData = dbNews && dbNews.length > 0
+    ? dbNews.map(item => ({
+        id: item.id,
+        title: item.title,
+        date: item.publishedAt ? new Date(item.publishedAt).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }) : "",
+        image: item.imageUrl || `${ASSET_BASE_URL}/manus-storage/ragnarok-news-default-banner_0d5427e8.png`,
+      }))
+    : fallbackNewsData;
 
   const handleGameStart = () => {
     if (!isLoggedIn) {

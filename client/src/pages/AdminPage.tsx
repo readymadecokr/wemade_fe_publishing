@@ -1406,7 +1406,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
   const submit = () => {
     if (!form?.title) { toast.error("제목을 입력하세요."); return; }
     // publishedAt: DateTimeInput에서 YYYY-MM-DDTHH:mm 형식으로 저장됨 - 그대로 전달
-    const p = { title: form.title, category: form.category, summary: form.summary || undefined, content: form.content || undefined, imageUrl: form.imageUrl || undefined, isActive: form.isActive, sortOrder: form.sortOrder, publishedAt: form.publishedAt || undefined };
+    const p = { title: form.title, category: form.category, summary: form.summary || undefined, content: form.content || undefined, imageUrl: form.imageUrl || undefined, isActive: form.isActive, publishedAt: form.publishedAt || undefined };
     form.id ? updateM.mutate({ id: form.id, ...p }) : createM.mutate(p);
   };
 
@@ -1430,6 +1430,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                       <th className="px-2 py-2.5 text-left font-medium w-28">이미지</th>
                       <th className="px-3 py-2.5 text-left font-medium">제목</th>
                       <th className="px-3 py-2.5 text-center font-medium w-40">등록일시</th>
+                      <th className="px-2 py-2.5 text-center font-medium w-16">메인</th>
                       <th className="px-3 py-2.5 text-center font-medium w-16">공개</th>
                       <th className="px-2 py-2.5 text-center font-medium w-16">수정</th>
                       <th className="px-2 py-2.5 text-center font-medium w-12">삭제</th>
@@ -1457,6 +1458,9 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                           <span className="text-xs text-slate-500 bg-slate-100 dark:bg-slate-700 rounded px-2 py-1 font-mono">
                             {item.publishedAt ? new Date(item.publishedAt).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }) : "-"}
                           </span>
+                        </td>
+                        <td className="px-2 py-3 w-16 text-center whitespace-nowrap">
+                          {data.mainNewsIds?.includes(item.id) ? <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-700">활성</span> : <span className="text-xs text-slate-400">-</span>}
                         </td>
                         {/* 활성 */}
                         <td className="px-3 py-3 w-16 whitespace-nowrap"><StatusBadge active={item.isActive} /></td>
@@ -1544,11 +1548,11 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
               />
             </div>
           </div>
-          {/* ⑥ 순서 + 활성 상태 (2열 그리드) */}
+          {/* ⑥ 순서 자동 부여 + 활성 상태 */}
           <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label className="text-sm font-medium block mb-1">순서</label>
-              <Input type="number" value={form.sortOrder + 1} onChange={e => setForm(f => f && ({ ...f, sortOrder: Math.max(0, parseInt(e.target.value) || 1) - 1 }))} min={1} />
+            <div className="rounded-md border border-dashed bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              <p className="font-medium text-slate-700">순서</p>
+              <p className="mt-1 text-xs">신규 등록 시 등록일시 기준으로 자동 부여됩니다.</p>
             </div>
             <div>
               <label className="text-sm font-medium block mb-1">활성 상태</label>
