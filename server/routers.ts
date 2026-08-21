@@ -9,7 +9,7 @@ import { storagePut } from "./storage";
 import { filterMemberTransactionHistory } from "./memberHistory";
 import { calculateCumulativePaymentUsd, filterMemberCouponHistory } from "./memberCouponHistory";
 import { generateRandomCouponCode, getCouponStatus, validateCouponSystemInput } from "./couponSystem";
-import { asc, desc, eq, gte, inArray, like, lt, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, like, lt, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const couponSystemInput = z.object({
@@ -696,18 +696,46 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) return { items: [], total: 0 };
-        const keyword = input.search?.trim().toLowerCase() ?? "";
         const startAt = input.startDate ? new Date(`${input.startDate}T00:00:00`) : null;
         const endAt = input.endDate ? new Date(`${input.endDate}T23:59:59.999`) : null;
-        const rows = await db.select().from(coupons).orderBy(desc(coupons.createdAt), desc(coupons.id));
-        const grouped = new Map<string, typeof rows>();
-        rows.filter(row => (!startAt || row.createdAt >= startAt) && (!endAt || row.createdAt <= endAt) && (!keyword || [row.eventName, row.gameCode, row.code].some(value => value.toLowerCase().includes(keyword)))).forEach(row => grouped.set(row.eventName, [...(grouped.get(row.eventName) ?? []), row]));
-        const summaries = Array.from(grouped.entries()).map(([eventName, eventRows]) => {
-          const newest = eventRows[0];
-          return { id: newest.id, eventName, gameCode: newest.gameCode, couponType: newest.couponType, couponCount: eventRows.length, issueQuantity: eventRows.reduce((sum, row) => sum + (row.couponType === "random" ? 1 : Number(row.issueQuantity ?? 1)), 0), usedCount: eventRows.reduce((sum, row) => sum + Number(row.usedCount ?? 0), 0), validFrom: newest.validFrom, expiresAt: newest.expiresAt, bonusRcoin: newest.bonusRcoin, rewardItems: newest.rewardItems, serverCodes: newest.serverCodes, isActive: eventRows.some(row => row.isActive === 1) ? 1 : 0, randomGenerated: newest.randomGenerated, createdAt: newest.createdAt, status: getCouponStatus(newest) };
-        });
+        const keyword = input.search?.trim() ?? "";
+        const whereClause = and(
+          startAt ? gte(coupons.createdAt, startAt) : undefined,
+          endAt ? lt(coupons.createdAt, new Date(endAt.getTime() + 1)) : undefined,
+          keyword ? or(like(coupons.eventName, `%${keyword}%`), like(coupons.gameCode, `%${keyword}%`), like(coupons.code, `%${keyword}%`)) : undefined,
+        );
         const offset = (input.page - 1) * input.pageSize;
-        return { items: summaries.slice(offset, offset + input.pageSize), total: summaries.length };
+        const [rows, [{ count }]] = await Promise.all([
+          db.select({
+            id: sql<number>`MAX(${coupons.id})`,
+            eventName: coupons.eventName,
+            gameCode: sql<string>`MAX(${coupons.gameCode})`,
+            couponType: sql<"common" | "random">`MAX(${coupons.couponType})`,
+            couponCount: sql<number>`COUNT(*)`,
+            issueQuantity: sql<number>`SUM(CASE WHEN ${coupons.couponType} = 'random' THEN 1 ELSE ${coupons.issueQuantity} END)`,
+            usedCount: sql<number>`SUM(${coupons.usedCount})`,
+            validFrom: sql<Date | null>`MAX(${coupons.validFrom})`,
+            expiresAt: sql<Date | null>`MAX(${coupons.expiresAt})`,
+            bonusRcoin: sql<number>`MAX(${coupons.bonusRcoin})`,
+            rewardItems: sql<string | null>`MAX(${coupons.rewardItems})`,
+            serverCodes: sql<string | null>`MAX(${coupons.serverCodes})`,
+            isActive: sql<number>`MAX(${coupons.isActive})`,
+            randomGenerated: sql<number>`MAX(${coupons.randomGenerated})`,
+            createdAt: sql<Date>`MAX(${coupons.createdAt})`,
+          }).from(coupons).where(whereClause).groupBy(coupons.eventName).orderBy(desc(sql`MAX(${coupons.createdAt})`)).limit(input.pageSize).offset(offset),
+          db.select({ count: sql<number>`COUNT(DISTINCT ${coupons.eventName})` }).from(coupons).where(whereClause),
+        ]);
+        return {
+          items: rows.map(row => ({
+            ...row,
+            issueQuantity: Number(row.issueQuantity ?? 0),
+            usedCount: Number(row.usedCount ?? 0),
+            isActive: Number(row.isActive ?? 0),
+            randomGenerated: Number(row.randomGenerated ?? 0),
+            status: getCouponStatus({ isActive: Number(row.isActive ?? 0), validFrom: row.validFrom, expiresAt: row.expiresAt, usedCount: Number(row.usedCount ?? 0), maxUses: 999999999, couponType: row.couponType }),
+          })),
+          total: Number(count ?? 0),
+        };
       }),
     eventDetail: adminKeyProcedure
       .input(z.object({ eventName: z.string().min(1) }))

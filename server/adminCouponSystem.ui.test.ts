@@ -76,7 +76,7 @@ describe("admin coupon system UI", () => {
     expect(summarySource).toContain("onClick={() => editCoupon(item)}");
     expect(summarySource).not.toContain('type="checkbox"');
     expect(source).toContain('form.id ? "쿠폰 수정" : "쿠폰 등록"');
-    expect(routerSource).toContain("id: newest.id");
+    expect(routerSource).toContain("id: sql<number>`MAX(${coupons.id})`");
   });
 
   it("replaces reward details in the event summary with used quantity and opens the coupon edit form", () => {
@@ -99,6 +99,8 @@ describe("admin coupon system UI", () => {
     expect(source).toContain("total >= 100000 ? 500 : 250");
     expect(source).toContain("attempt < 3");
     expect(routerSource).toContain("batchSize: z.number().int().min(1).max(1000)");
+    expect(routerSource).toContain("COUNT(DISTINCT ${coupons.eventName})");
+    expect(routerSource).toContain("groupBy(coupons.eventName)");
     expect(source).toContain("개별 쿠폰 현황");
     expect(source).toContain('couponDetailEvent ? "쿠폰코드 검색" : "이벤트명 또는 쿠폰코드 검색"');
     expect(source).toContain("!couponDetailEvent && <Input type=\"date\"");
