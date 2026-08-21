@@ -2455,8 +2455,8 @@ function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof c
     if (!payload.eventName || !payload.code) return toast.error("이벤트명과 쿠폰 코드를 입력하세요.");
     if (new TextEncoder().encode(payload.eventName).length > 20) return toast.error("이벤트명은 영문 기준 최대 20byte입니다.");
     if (payload.couponType === "random" && !payload.randomGenerated) return toast.error("난수 쿠폰은 쿠폰 난수 생성 버튼으로 생성하세요.");
-    const maximum = payload.bonusRcoin > 0 ? 4 : 5;
-    if (!payload.rewardItems.length || payload.rewardItems.length > maximum) return toast.error(`보상 아이템은 ${maximum}종까지 등록할 수 있습니다.`);
+    const rewardCount = payload.rewardItems.length + (payload.bonusRcoin > 0 ? 1 : 0);
+    if (rewardCount < 1 || rewardCount > 5) return toast.error("보상은 Bonus rCoin을 포함해 1개부터 최대 5개까지 등록할 수 있습니다.");
     if (payload.id) updateMutation.mutate(payload); else createMutation.mutate(payload);
   };
   const editCoupon = (item: any) => setForm({ id: item.id, gameCode: item.gameCode ?? "ROU", couponType: item.couponType ?? "common", eventName: item.eventName ?? item.name, code: item.code, validFrom: item.validFrom ? new Date(item.validFrom).toISOString().slice(0, 16) : "", expiresAt: item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0, 16) : "", serverCodes: item.serverCodes ?? "", bonusRcoin: Number(item.bonusRcoin ?? 0), rewardItems: parseRewardItems(item.rewardItems), isActive: item.isActive, randomGenerated: item.randomGenerated ?? 0, issueQuantity: Number(item.issueQuantity ?? 1) });
