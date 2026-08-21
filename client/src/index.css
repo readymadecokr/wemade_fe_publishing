@@ -155,7 +155,7 @@
     padding: .35rem 0;
     font-weight: 800;
     letter-spacing: .015em;
-    text-shadow: none;
+    text-shadow: 0 1px 0 rgba(15,31,47,.42);
     transition: color 180ms ease, transform 180ms ease, text-shadow 180ms ease;
   }
 
@@ -169,16 +169,16 @@
     height: 1px;
     transform: scaleX(0);
     transform-origin: center;
-    background: linear-gradient(90deg, transparent, #93c5fd 25%, #2563eb 50%, #93c5fd 75%, transparent);
-    box-shadow: 0 0 7px rgba(37,99,235,.28);
+    background: linear-gradient(90deg, transparent, #fff3b8 25%, #edc35f 50%, #fff3b8 75%, transparent);
+    box-shadow: 0 0 8px rgba(246,209,111,.78);
     transition: transform 180ms ease;
   }
 
   header .portal-nav > a:hover,
   header .portal-nav > button:hover {
-    color: #2563eb !important;
+    color: #fff1b4 !important;
     transform: translateY(-1px);
-    text-shadow: none;
+    text-shadow: 0 0 9px rgba(246,211,117,.7), 0 1px 0 rgba(15,31,47,.42);
   }
 
   header .portal-nav > a:hover::after,
@@ -202,21 +202,39 @@
   .fantasy-page-shell {
     position: relative;
     overflow: visible;
-    background: #ffffff;
+    background: transparent;
   }
 
   .fantasy-page-shell::before {
-    display: none;
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    opacity: .09;
+    background-image: radial-gradient(circle at 11% 78%, rgba(105,130,173,.34), transparent 17%), radial-gradient(circle at 89% 64%, rgba(174,129,58,.28), transparent 20%);
+    background-size: cover;
+    background-position: center center;
+    mix-blend-mode: soft-light;
   }
 
   .fantasy-site-atlas {
     position: relative;
     isolation: isolate;
-    background: #ffffff;
+    background-color: #f3ead5;
+    background-image: radial-gradient(ellipse 68% 66% at 50% 51%, rgba(255,253,244,.93) 0%, rgba(251,246,230,.87) 42%, rgba(246,236,207,.52) 67%, transparent 92%), url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png');
+    background-position: center center, center center;
+    background-size: cover, cover;
+    background-repeat: no-repeat;
   }
 
   .fantasy-site-atlas::before {
-    display: none;
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(180deg, rgba(49,42,30,.22) 0%, rgba(49,42,30,.08) 13%, transparent 29%, transparent 72%, rgba(49,42,30,.09) 88%, rgba(49,42,30,.24) 100%);
+    mix-blend-mode: multiply;
   }
 
   .fantasy-site-atlas > header,
@@ -228,20 +246,43 @@
 
   .fantasy-content-guide {
     position: relative;
-    padding-left: 0;
+    padding-left: clamp(0rem, 4vw, 3.4rem);
     z-index: 1;
   }
 
   .fantasy-content-guide::before {
-    display: none;
+    content: "";
+    position: absolute;
+    left: 1.2rem;
+    top: .8rem;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(76,97,133,.38) 4%, rgba(76,97,133,.28) 94%, transparent);
   }
 
   .fantasy-section-decorated::after {
-    display: none;
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: .15rem;
+    width: min(42vw, 430px);
+    height: 3rem;
+    opacity: .82;
+    background: url('/manus-storage/ragnarok-fantasy-section-ornament_f3f3bf5d.png') right center / contain no-repeat;
   }
 
 
   @media (max-width: 640px) {
+    .fantasy-site-atlas {
+      background-position: center center, center 42%;
+      background-size: cover, cover;
+    }
+
+    .fantasy-site-atlas::before {
+      background: linear-gradient(180deg, rgba(49,42,30,.18) 0%, rgba(49,42,30,.06) 11%, transparent 24%, transparent 76%, rgba(49,42,30,.08) 89%, rgba(49,42,30,.22) 100%);
+    }
+
     .floating-social-box {
       top: auto !important;
       right: .55rem !important;
@@ -252,35 +293,35 @@
   }
 
   .fantasy-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 12px rgba(15,23,42,.08);
+    background: rgba(255,253,247,.9);
+    border: 1px solid rgba(174,151,103,.55);
+    box-shadow: 0 9px 22px rgba(93,73,43,.12), inset 0 1px rgba(255,255,255,.8), inset 0 0 0 3px rgba(255,246,222,.45);
   }
 
   .fantasy-frame {
-    border: 1px solid #cbd5e1;
-    box-shadow: 0 4px 12px rgba(15,23,42,.08);
+    border: 1px solid rgba(67,97,151,.42);
+    box-shadow: 0 0 0 3px rgba(255,252,241,.72), 0 8px 20px rgba(69,87,117,.14);
   }
 
   .fantasy-section-title {
-    color: #1e293b;
-    font-family: 'Poppins', sans-serif;
+    color: #302419;
+    font-family: Georgia, "Times New Roman", serif;
     font-weight: 700;
     letter-spacing: -.025em;
   }
 
   .fantasy-account .glass-panel {
-    background: #ffffff !important;
-    border-color: #e2e8f0 !important;
-    box-shadow: 0 4px 12px rgba(15,23,42,.08);
+    background: rgba(255,253,247,.9) !important;
+    border-color: rgba(174,151,103,.55) !important;
+    box-shadow: 0 9px 22px rgba(93,73,43,.12), inset 0 1px rgba(255,255,255,.8);
   }
 
   .fantasy-account .glass-panel table thead {
-    background: #f8fafc;
+    background: rgba(240,230,204,.7);
   }
 
   .fantasy-account .glass-panel table tr {
-    border-color: #e2e8f0 !important;
+    border-color: rgba(174,151,103,.38) !important;
   }
 
   /**
