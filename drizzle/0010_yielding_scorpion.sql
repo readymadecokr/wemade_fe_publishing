@@ -1,0 +1,1 @@
+ALTER TABLE `coupons` ADD `issueQuantity` int DEFAULT 1 NOT NULL;

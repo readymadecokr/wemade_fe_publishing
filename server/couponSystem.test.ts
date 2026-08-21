@@ -17,6 +17,13 @@ describe("coupon system rules", () => {
     expect(validateCouponSystemInput({ ...base, bonusRcoin: 100, rewardItems: [...reward, { itemId: "2", quantity: 1 }, { itemId: "3", quantity: 1 }, { itemId: "4", quantity: 1 }, { itemId: "5", quantity: 1 }] })).toContain("4종");
   });
 
+  it("requires the same NNNN-NNNN-NNNN format for common coupons and bounds issue quantity", () => {
+    const common = { couponType: "common" as const, code: "ABCD-EFGH-2345", eventName: "ROU TEST", bonusRcoin: 0, rewardItems: reward, issueQuantity: 500000 };
+    expect(validateCouponSystemInput(common)).toBeNull();
+    expect(validateCouponSystemInput({ ...common, code: "COMMONCODE" })).toContain("NNNN-NNNN-NNNN");
+    expect(validateCouponSystemInput({ ...common, issueQuantity: 500001 })).toContain("500,000");
+  });
+
   it("calculates inactive, scheduled, expired, used, and active states safely", () => {
     const now = new Date("2026-08-21T00:00:00Z");
     const base = { isActive: 1, validFrom: null, expiresAt: null, usedCount: 0, maxUses: 1, couponType: "random" as const };

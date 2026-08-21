@@ -8,6 +8,7 @@ export type CouponSystemInput = {
   bonusRcoin: number;
   rewardItems: CouponRewardItem[];
   randomGenerated?: number;
+  issueQuantity?: number;
 };
 
 export const RANDOM_COUPON_PATTERN = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
@@ -21,7 +22,9 @@ export function validateCouponSystemInput(input: CouponSystemInput) {
   const eventBytes = Buffer.byteLength(input.eventName.trim(), "utf8");
   if (!input.eventName.trim() || eventBytes > 20) return "이벤트명은 영문 기준 최대 20byte로 입력하세요.";
   if (!input.code.trim()) return "쿠폰 코드를 입력하세요.";
+  if (!RANDOM_COUPON_PATTERN.test(input.code)) return "쿠폰 코드는 NNNN-NNNN-NNNN 형식의 대문자·숫자 코드로 입력하세요.";
   if (input.couponType === "random" && (!input.randomGenerated || !RANDOM_COUPON_PATTERN.test(input.code))) return "난수 쿠폰은 자동 생성된 NNNN-NNNN-NNNN 코드만 사용할 수 있습니다.";
+  if (!Number.isInteger(input.issueQuantity ?? 1) || (input.issueQuantity ?? 1) < 1 || (input.issueQuantity ?? 1) > 500000) return "쿠폰 발급 수량은 1부터 최대 500,000까지 입력하세요.";
   if (input.validFrom && input.expiresAt && input.validFrom > input.expiresAt) return "유효기간 종료는 시작일 이후여야 합니다.";
   const maxRewards = input.bonusRcoin > 0 ? 4 : 5;
   if (!input.rewardItems.length || input.rewardItems.length > maxRewards) return `보상 아이템은 ${maxRewards}종까지 등록할 수 있습니다.`;

@@ -8,7 +8,7 @@ import { ruCashProducts, ruCashBalances, ruCashTransactions } from "../drizzle/s
 import { storagePut } from "./storage";
 import { filterMemberTransactionHistory } from "./memberHistory";
 import { calculateCumulativePaymentUsd, filterMemberCouponHistory } from "./memberCouponHistory";
-import { getCouponStatus, validateCouponSystemInput } from "./couponSystem";
+import { generateRandomCouponCode, getCouponStatus, validateCouponSystemInput } from "./couponSystem";
 import { asc, desc, eq, gte, like, lt, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -24,6 +24,7 @@ const couponSystemInput = z.object({
   rewardItems: z.array(z.object({ itemId: z.string().trim().min(1).max(64), quantity: z.number().int().min(1) })).min(1).max(5),
   isActive: z.number().int().min(0).max(1).default(1),
   randomGenerated: z.number().int().min(0).max(1).default(0),
+  issueQuantity: z.number().int().min(1).max(500000).default(1),
 });
 
 function toCouponSystemValues(input: z.infer<typeof couponSystemInput>) {
@@ -39,6 +40,7 @@ function toCouponSystemValues(input: z.infer<typeof couponSystemInput>) {
     bonusRcoin: input.bonusRcoin,
     rewardItems: input.rewardItems,
     randomGenerated: input.randomGenerated,
+    issueQuantity: input.issueQuantity,
   });
   if (validationError) throw new Error(validationError);
   return {
@@ -57,6 +59,7 @@ function toCouponSystemValues(input: z.infer<typeof couponSystemInput>) {
     maxUses: input.couponType === "random" ? 1 : 999999999,
     isActive: input.isActive,
     randomGenerated: input.randomGenerated,
+    issueQuantity: input.issueQuantity,
   };
 }
 
@@ -598,8 +601,18 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
-        const result = await db.insert(coupons).values(toCouponSystemValues(input));
-        return { id: (result as any).insertId };
+        const values = toCouponSystemValues(input);
+        if (input.couponType !== "random" || input.issueQuantity === 1) {
+          const result = await db.insert(coupons).values(values);
+          return { id: (result as any).insertId, created: 1 };
+        }
+        const codes = new Set<string>([values.code]);
+        while (codes.size < input.issueQuantity) codes.add(generateRandomCouponCode());
+        const rows = Array.from(codes, code => ({ ...values, code }));
+        for (let start = 0; start < rows.length; start += 1000) {
+          await db.insert(coupons).values(rows.slice(start, start + 1000));
+        }
+        return { created: rows.length };
       }),
     update: adminKeyProcedure
       .input(couponSystemInput.extend({ id: z.number() }))

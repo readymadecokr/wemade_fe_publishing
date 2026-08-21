@@ -159,6 +159,7 @@ export const coupons = mysqlTable("coupons", {
   expiresAt: timestamp("expiresAt"),
   isActive: int("isActive").default(1).notNull(),
   randomGenerated: int("randomGenerated").default(0).notNull(),
+  issueQuantity: int("issueQuantity").default(1).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
