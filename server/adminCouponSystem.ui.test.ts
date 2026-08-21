@@ -20,6 +20,12 @@ describe("admin coupon system UI", () => {
     expect(source).not.toContain("공통 사용 제한");
     expect(source).toContain("Bonus rCoin을 포함한 전체 보상은 1개부터 최대 5개까지 등록할 수 있습니다.");
     expect(source).toContain("Bonus rCoin만 지급하려면 아이템을 추가하지 않아도 됩니다.");
+    expect(source).toContain('max-w-2xl space-y-5');
+    expect(source).toContain('>1</span>이벤트명');
+    expect(source).toContain('>2</span>유효기간 시작');
+    expect(source).toContain('>3</span>게임 코드 (Game Code)');
+    expect(source).toContain('>4</span>서버 코드');
+    expect(source).not.toContain("포털 확장을 위한 필드입니다.");
   });
 
   it("uses code-and-event upsert and provides system history on the server", () => {
