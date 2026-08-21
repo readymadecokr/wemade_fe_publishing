@@ -9,7 +9,7 @@ import { storagePut } from "./storage";
 import { filterMemberTransactionHistory } from "./memberHistory";
 import { calculateCumulativePaymentUsd, filterMemberCouponHistory } from "./memberCouponHistory";
 import { generateRandomCouponCode, getCouponStatus, validateCouponSystemInput } from "./couponSystem";
-import { asc, desc, eq, gte, like, lt, or, sql } from "drizzle-orm";
+import { asc, desc, eq, gte, inArray, like, lt, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const couponSystemInput = z.object({
@@ -703,6 +703,25 @@ export const appRouter = router({
         if (!db) throw new Error('DB unavailable');
         await db.delete(coupons).where(eq(coupons.id, input.id));
         return { success: true };
+      }),
+    updateEventActive: adminKeyProcedure
+      .input(z.object({ eventName: z.string().min(1), isActive: z.number().int().min(0).max(1) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.update(coupons).set({ isActive: input.isActive, updatedAt: new Date() }).where(eq(coupons.eventName, input.eventName));
+        return { success: true };
+      }),
+    deleteEvents: adminKeyProcedure
+      .input(z.object({ eventNames: z.array(z.string().min(1)).min(1).max(100) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const targetCoupons = await db.select({ id: coupons.id }).from(coupons).where(inArray(coupons.eventName, input.eventNames));
+        const couponIds = targetCoupons.map(row => row.id);
+        if (couponIds.length) await db.delete(couponUses).where(inArray(couponUses.couponId, couponIds));
+        await db.delete(coupons).where(inArray(coupons.eventName, input.eventNames));
+        return { success: true, deleted: couponIds.length };
       }),
     usageList: adminKeyProcedure
       .input(z.object({ couponId: z.number().optional(), used: z.boolean().optional(), page: z.number().default(1), pageSize: z.number().default(20) }))
