@@ -680,13 +680,14 @@ export const appRouter = router({
         const pageRows = filtered.slice(offset, offset + input.pageSize);
         const couponIds = pageRows.map(row => row.id);
         const usageRows = couponIds.length
-          ? await db.select({ couponId: couponUses.couponId, userId: users.openId }).from(couponUses).leftJoin(users, eq(couponUses.userId, users.id)).where(inArray(couponUses.couponId, couponIds)).orderBy(desc(couponUses.usedAt))
+          ? await db.select({ couponId: couponUses.couponId, userId: users.id }).from(couponUses).leftJoin(users, eq(couponUses.userId, users.id)).where(inArray(couponUses.couponId, couponIds)).orderBy(desc(couponUses.usedAt))
           : [];
         const userIdsByCoupon = new Map<number, string[]>();
         usageRows.forEach(row => {
           if (!row.userId) return;
           const current = userIdsByCoupon.get(row.couponId) ?? [];
-          if (!current.includes(row.userId)) userIdsByCoupon.set(row.couponId, [...current, row.userId]);
+          const userId = String(row.userId);
+          if (!current.includes(userId)) userIdsByCoupon.set(row.couponId, [...current, userId]);
         });
         return { items: pageRows.map(row => ({ ...row, status: getCouponStatus(row), userIds: userIdsByCoupon.get(row.id) ?? [] })), total: filtered.length };
       }),
