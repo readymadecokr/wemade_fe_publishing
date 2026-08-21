@@ -1,0 +1,28 @@
+<slide id="checklist">
+  <background color="paper"/>
+  <text id="header-label" x="60" y="34" width="390" height="22" font="code" size="14" color="muted" wrap="false">RAGNAROK UNIVERSE / COUPON API</text>
+  <text id="version-tag" x="1080" y="34" width="140" height="22" font="code" size="14" color="brand" align="right" wrap="false">v1.0 API GUIDE</text>
+  <shape id="header-divider" type="line" x="60" y="72" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="slide-title" x="60" y="94" width="700" height="48" font="heading" size="34" color="ink" wrap="false">연동 체크리스트</text>
+  <text id="slide-subtitle" x="60" y="150" width="980" height="28" font="body" size="18" color="muted">외부 포털 또는 게임 서버 연결 전, 아래 항목을 최소 수용 기준으로 확인하세요.</text>
+  <shape id="auth-card" type="rect" x="60" y="220" width="550" height="150" fill="surface" stroke="hairline" stroke-width="1" corner-radius="14"/>
+  <icon id="auth-card-icon" name="shield-check" x="88" y="250" width="32" height="32" color="accent"/>
+  <text id="auth-card-title" x="140" y="250" width="270" height="26" font="heading" size="21" color="ink">인증</text>
+  <text id="auth-card-body" x="88" y="300" width="440" height="44" font="body" size="16" color="muted" line-height="1.35">관리자 키는 서버에만 보관하고, 플레이어 정보는 OAuth 세션에서만 결정합니다.</text>
+  <shape id="generation-card" type="rect" x="650" y="220" width="550" height="150" fill="surface" stroke="hairline" stroke-width="1" corner-radius="14"/>
+  <icon id="generation-card-icon" name="layers-3" x="678" y="250" width="32" height="32" color="accent"/>
+  <text id="generation-card-title" x="730" y="250" width="270" height="26" font="heading" size="21" color="ink">난수 발급</text>
+  <text id="generation-card-body" x="678" y="300" width="440" height="44" font="body" size="16" color="muted" line-height="1.35">배치 진행 상태를 저장하고, 성공 응답이 없는 배치만 재시도합니다.</text>
+  <shape id="redemption-card" type="rect" x="60" y="410" width="550" height="150" fill="surface" stroke="hairline" stroke-width="1" corner-radius="14"/>
+  <icon id="redemption-card-icon" name="badge-check" x="88" y="440" width="32" height="32" color="accent"/>
+  <text id="redemption-card-title" x="140" y="440" width="270" height="26" font="heading" size="21" color="ink">Coupon 등록 검증</text>
+  <text id="redemption-card-body" x="88" y="490" width="440" height="44" font="body" size="16" color="muted" line-height="1.35">상태·기간·수량·서버·중복 사용을 반드시 서버에서 다시 검증합니다.</text>
+  <shape id="fulfillment-card" type="rect" x="650" y="410" width="550" height="150" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1" corner-radius="14"/>
+  <icon id="fulfillment-card-icon" name="package-check" x="678" y="440" width="32" height="32" color="accent"/>
+  <text id="fulfillment-card-title" x="730" y="440" width="270" height="26" font="heading" size="21" color="ink">아이템 지급</text>
+  <text id="fulfillment-card-body" x="678" y="490" width="440" height="44" font="body" size="16" color="muted" line-height="1.35">멱등성 키와 별도 지급 상태 기록으로 안전하게 게임 보상을 전달합니다.</text>
+  <shape id="cta-panel" type="rect" x="60" y="600" width="1140" height="42" fill="brand" corner-radius="10"/>
+  <text id="cta-text" x="60" y="611" width="1140" height="18" font="body" size="16" color="#FFFFFF" align="center">인증·데이터 매핑부터 시작하고, 이후 검증·배치 생성·지급 워커를 순서대로 구현하세요.</text>
+  <shape id="footer-divider" type="line" x="60" y="670" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="page-number" x="1150" y="683" width="70" height="20" font="code" size="13" color="muted" align="right">11 / 11</text>
+</slide>

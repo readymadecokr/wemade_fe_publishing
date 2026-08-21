@@ -1,0 +1,30 @@
+<slide id="bonus_rcoin">
+  <background color="paper"/>
+  <text id="header-label" x="60" y="34" width="390" height="22" font="code" size="14" color="muted" wrap="false">RAGNAROK UNIVERSE / COUPON API</text>
+  <text id="version-tag" x="1080" y="34" width="140" height="22" font="code" size="14" color="brand" align="right" wrap="false">v1.0 API GUIDE</text>
+  <shape id="header-divider" type="line" x="60" y="72" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="slide-title" x="60" y="94" width="850" height="48" font="heading" size="34" color="ink" wrap="false">Bonus rCoin은 즉시 반영됩니다</text>
+  <text id="slide-subtitle" x="60" y="150" width="1000" height="28" font="body" size="18" color="muted">Coupon 등록 성공 시 My Page를 새로고침하기 전에 잔액과 거래 원장이 갱신됩니다.</text>
+  <shape id="balance-card" type="rect" x="60" y="220" width="340" height="170" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1" corner-radius="16"/>
+  <icon id="balance-icon" name="wallet" x="88" y="248" width="34" height="34" color="accent"/>
+  <text id="balance-title" x="88" y="300" width="200" height="28" font="heading" size="22" color="ink">잔액</text>
+  <text id="balance-body" x="88" y="342" width="220" height="24" font="body" size="17" color="muted">bonusCash에 bonusRcoin을 더합니다</text>
+  <shape id="ledger-card" type="rect" x="450" y="220" width="340" height="170" fill="surface" stroke="hairline" stroke-width="1" corner-radius="16"/>
+  <icon id="ledger-icon" name="receipt-text" x="478" y="248" width="34" height="34" color="brand"/>
+  <text id="ledger-title" x="478" y="300" width="200" height="28" font="heading" size="22" color="ink">거래 원장</text>
+  <text id="ledger-body" x="478" y="342" width="250" height="24" font="body" size="17" color="muted">전 잔액 / 증감 / 후 잔액을 기록</text>
+  <shape id="history-card" type="rect" x="840" y="220" width="340" height="170" fill="surface" stroke="hairline" stroke-width="1" corner-radius="16"/>
+  <icon id="history-icon" name="history" x="868" y="248" width="34" height="34" color="brand"/>
+  <text id="history-title" x="868" y="300" width="220" height="28" font="heading" size="22" color="ink">Coupon Use History</text>
+  <text id="history-body" x="868" y="342" width="250" height="24" font="body" size="17" color="muted">현재 사용자 기준 최신순 이력</text>
+  <shape id="flow-start" type="rect" x="100" y="492" width="250" height="86" fill="#EEF2FF" corner-radius="12"/>
+  <text id="flow-start-text" x="100" y="512" width="250" height="44" font="body" size="18" color="brand" align="center" anchor="middle"><p><strong>coupon.redeem</strong></p><p size="14" color="muted">등록 성공 응답</p></text>
+  <shape id="flow-arrow-one" type="line" x="368" y="535" width="88" height="0" stroke="brand" stroke-width="3" arrow-end="arrow"/>
+  <shape id="flow-middle" type="rect" x="468" y="492" width="250" height="86" fill="#D1FAE5" corner-radius="12"/>
+  <text id="flow-middle-text" x="468" y="512" width="250" height="44" font="body" size="18" color="#047857" align="center" anchor="middle"><p><strong>잔액 + 거래 원장</strong></p><p size="14" color="#047857">즉시 저장</p></text>
+  <shape id="flow-arrow-two" type="line" x="736" y="535" width="88" height="0" stroke="accent" stroke-width="3" arrow-end="arrow"/>
+  <shape id="flow-end" type="rect" x="836" y="492" width="250" height="86" fill="surface" corner-radius="12"/>
+  <text id="flow-end-text" x="836" y="512" width="250" height="44" font="body" size="18" color="ink" align="center" anchor="middle"><p><strong>coupon.myHistory</strong></p><p size="14" color="muted">My Page 이력 조회</p></text>
+  <shape id="footer-divider" type="line" x="60" y="670" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="page-number" x="1150" y="683" width="70" height="20" font="code" size="13" color="muted" align="right">09 / 11</text>
+</slide>

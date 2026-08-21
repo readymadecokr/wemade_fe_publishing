@@ -1,0 +1,21 @@
+<slide id="admin_apis">
+  <background color="paper"/>
+  <text id="header-label" x="60" y="34" width="390" height="22" font="code" size="14" color="muted" wrap="false">RAGNAROK UNIVERSE / COUPON API</text>
+  <text id="version-tag" x="1080" y="34" width="140" height="22" font="code" size="14" color="brand" align="right" wrap="false">v1.0 API GUIDE</text>
+  <shape id="header-divider" type="line" x="60" y="72" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="slide-title" x="60" y="94" width="880" height="48" font="heading" size="34" color="ink" wrap="false">관리자 API는 대량 이벤트 운영을 지원합니다</text>
+  <text id="slide-subtitle" x="60" y="150" width="960" height="28" font="body" size="18" color="muted">수십만 개 코드가 있는 이벤트도 SQL 집계 기반으로 빠르게 조회합니다.</text>
+  <table id="admin-api-table" x="60" y="220" width="1160" height="336" columns="3,5,4" rows="52,57,57,57,57,56" font="body" size="16" color="ink" padding="12 14" header-fill="brand" header-border="1 brand" border-h="1 solid hairline" border-v="0 hairline" border-outer="1 hairline">
+    <tr color="#FFFFFF"><td><strong>Procedure</strong></td><td><strong>용도</strong></td><td><strong>주요 반환값</strong></td></tr>
+    <tr><td font="code" color="brand">eventSummaries</td><td>이벤트 운영을 위한 페이지 단위 SQL 집계 목록</td><td>발급·사용 수량, 상태, 보상</td></tr>
+    <tr fill="surface"><td font="code" color="brand">list</td><td>이벤트별 개별 발급 코드 및 사용 현황</td><td>User ID, 닉네임, 사용일시, 사용 여부</td></tr>
+    <tr><td font="code" color="brand">eventDetail</td><td>현재 이벤트 설정과 집계 수량</td><td>기간, 서버, 보상 설정</td></tr>
+    <tr fill="surface"><td font="code" color="brand">update / updateEventActive</td><td>이벤트 설정 수정 또는 활성 On/Off</td><td>성공 여부</td></tr>
+    <tr><td font="code" color="brand">delete / deleteEvents</td><td>단일 코드 또는 이벤트 전체 및 사용 이력 삭제</td><td>삭제된 행 수</td></tr>
+  </table>
+  <shape id="summary-note" type="rect" x="60" y="584" width="1160" height="46" fill="#ECFDF5" corner-radius="10"/>
+  <icon id="summary-note-icon" name="zap" x="82" y="595" width="22" height="22" color="accent"/>
+  <text id="summary-note-text" x="118" y="595" width="1060" height="22" font="body" size="16" color="#065F46">대량 이벤트 요약은 eventSummaries를 먼저 호출하고, 클라이언트에서 모든 코드를 집계하지 마세요.</text>
+  <shape id="footer-divider" type="line" x="60" y="670" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="page-number" x="1150" y="683" width="70" height="20" font="code" size="13" color="muted" align="right">05 / 11</text>
+</slide>

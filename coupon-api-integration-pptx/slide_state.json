@@ -1,0 +1,133 @@
+{
+  "project_info": {
+    "title": "Ragnarok Universe Coupon API Integration Guide",
+    "created": 1787305973.888,
+    "last_updated": 1787306752.317,
+    "total_slides": 11
+  },
+  "slides": [
+    {
+      "id": "cover",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "flow",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "data_model",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "authentication",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "admin_apis",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "batch_generation",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "editing",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "redemption",
+      "state": "edited",
+      "pageNum": 8
+    },
+    {
+      "id": "bonus_rcoin",
+      "state": "edited",
+      "pageNum": 9
+    },
+    {
+      "id": "item_delivery",
+      "state": "edited",
+      "pageNum": 10
+    },
+    {
+      "id": "checklist",
+      "state": "edited",
+      "pageNum": 11
+    }
+  ],
+  "outline": [
+    {
+      "id": "cover",
+      "title": "Ragnarok Universe Coupon API Integration Guide",
+      "summary": "외부 프로그래머를 위한 관리자 쿠폰·서비스 Coupon·게임 서버 보상 연동 가이드 표지입니다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "flow",
+      "title": "One Coupon Flow, Three Integration Surfaces",
+      "summary": "관리자 콘솔, My Page Coupon, 게임 서버 보상 전달의 전체 흐름을 소개합니다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "data_model",
+      "title": "Data Model Separates Codes from Usage",
+      "summary": "쿠폰, 사용 이력, Bonus rCoin 거래 데이터 모델의 역할을 설명합니다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "authentication",
+      "title": "Authentication Depends on Caller Context",
+      "summary": "관리자 헤더 인증과 서비스 OAuth 세션 인증을 구분합니다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "admin_apis",
+      "title": "Admin APIs Manage Events at Scale",
+      "summary": "이벤트 요약, 개별 코드 현황, 운영 제어를 위한 관리자 API를 설명합니다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "batch_generation",
+      "title": "Random Coupon Generation Uses Safe Batches",
+      "summary": "최대 50만개 난수 쿠폰의 배치 생성·진행 관리·재시도 원칙을 설명합니다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "editing",
+      "title": "Editing Preserves Every Random Coupon Code",
+      "summary": "이벤트 수정에서 난수 코드를 유지하며 설정을 일괄 반영하는 방식을 설명합니다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "redemption",
+      "title": "Coupon Redemption Is a Server-Side Gate",
+      "summary": "서비스 Coupon 등록에서 수행하는 서버 측 검증과 사용 기록을 설명합니다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "bonus_rcoin",
+      "title": "Bonus rCoin Is Applied Immediately",
+      "summary": "Bonus rCoin 잔액·거래 이력 반영과 Coupon Use History 조회를 설명합니다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "item_delivery",
+      "title": "Game Item Delivery Must Be Idempotent",
+      "summary": "게임 서버 아이템 보상 지급을 안전하게 수행하기 위한 멱등성 구조를 설명합니다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "checklist",
+      "title": "Integration Checklist",
+      "summary": "외부 프로그래머가 구현 전에 확인할 인증·배치·검증·보상 전달 체크리스트입니다.",
+      "image_plan": "Use a suitable image if needed"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+<slide id="editing">
+  <background color="paper"/>
+  <text id="header-label" x="60" y="34" width="390" height="22" font="code" size="14" color="muted" wrap="false">RAGNAROK UNIVERSE / COUPON API</text>
+  <text id="version-tag" x="1080" y="34" width="140" height="22" font="code" size="14" color="brand" align="right" wrap="false">v1.0 API GUIDE</text>
+  <shape id="header-divider" type="line" x="60" y="72" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="slide-title" x="60" y="94" width="940" height="48" font="heading" size="34" color="ink" wrap="false">난수 쿠폰 수정은 모든 고유 코드를 보존합니다</text>
+  <text id="slide-subtitle" x="60" y="150" width="1040" height="28" font="body" size="18" color="muted">발급된 난수 코드를 무효화하지 않고 이벤트 운영 설정만 갱신합니다.</text>
+  <shape id="before-card" type="rect" x="70" y="225" width="360" height="300" fill="surface" stroke="hairline" stroke-width="1" corner-radius="16"/>
+  <text id="before-kicker" x="98" y="254" width="200" height="20" font="code" size="14" color="muted">수정 전</text>
+  <text id="before-title" x="98" y="290" width="230" height="30" font="heading" size="23" color="ink">발급된 난수 코드</text>
+  <shape id="before-code-one" type="rect" x="98" y="348" width="240" height="36" fill="#FFFFFF" stroke="hairline" stroke-width="1" corner-radius="6"/>
+  <text id="before-code-one-text" x="112" y="358" width="210" height="18" font="code" size="14" color="ink">A1B2-C3D4-E5F6</text>
+  <shape id="before-code-two" type="rect" x="98" y="396" width="240" height="36" fill="#FFFFFF" stroke="hairline" stroke-width="1" corner-radius="6"/>
+  <text id="before-code-two-text" x="112" y="406" width="210" height="18" font="code" size="14" color="ink">P9Q8-R7S6-T5U4</text>
+  <shape id="before-code-three" type="rect" x="98" y="444" width="240" height="36" fill="#FFFFFF" stroke="hairline" stroke-width="1" corner-radius="6"/>
+  <text id="before-code-three-text" x="112" y="454" width="210" height="18" font="code" size="14" color="ink">… 이벤트 내 모든 코드</text>
+  <shape id="edit-arrow" type="arrow" x="480" y="335" width="250" height="100" fill="brand" head-ratio="0.3"/>
+  <text id="edit-arrow-text" x="500" y="352" width="180" height="46" font="body" size="17" color="#FFFFFF" align="center" anchor="middle"><p><strong>coupons.update</strong></p><p size="14">이벤트 범위</p></text>
+  <shape id="after-card" type="rect" x="780" y="225" width="430" height="300" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1" corner-radius="16"/>
+  <text id="after-kicker" x="810" y="254" width="200" height="20" font="code" size="14" color="#047857">수정 후</text>
+  <text id="after-title" x="810" y="290" width="300" height="30" font="heading" size="23" color="ink">이벤트 설정 갱신</text>
+  <text id="after-settings" x="810" y="344" width="260" height="100" font="body" size="17" color="ink" line-height="1.45"><p>보상 및 Bonus rCoin</p><p>사용 기간과 서버 범위</p><p>활성 상태와 발급 설정</p></text>
+  <icon id="after-check-icon" name="circle-check" x="1090" y="347" width="34" height="34" color="accent"/>
+  <text id="after-preserve-title" x="810" y="466" width="322" height="22" font="body" size="17" color="#047857"><strong>발급된 각 코드 값은 변경되지 않습니다</strong></text>
+  <shape id="rule-panel" type="rect" x="70" y="575" width="1140" height="50" fill="#EEF2FF" corner-radius="10"/>
+  <icon id="rule-icon" name="shield-check" x="96" y="588" width="24" height="24" color="brand"/>
+  <text id="rule-text" x="140" y="588" width="1030" height="22" font="body" size="17" color="#3730A3">난수 이벤트는 대표 ID로 수정합니다. 폼의 code가 비어 있으면 기존 코드를 자동으로 유지합니다.</text>
+  <shape id="footer-divider" type="line" x="60" y="670" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="page-number" x="1150" y="683" width="70" height="20" font="code" size="13" color="muted" align="right">07 / 11</text>
+</slide>

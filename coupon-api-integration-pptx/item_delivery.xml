@@ -1,0 +1,40 @@
+<slide id="item_delivery">
+  <background color="paper"/>
+  <text id="header-label" x="60" y="34" width="390" height="22" font="code" size="14" color="muted" wrap="false">RAGNAROK UNIVERSE / COUPON API</text>
+  <text id="version-tag" x="1080" y="34" width="140" height="22" font="code" size="14" color="brand" align="right" wrap="false">v1.0 API GUIDE</text>
+  <shape id="header-divider" type="line" x="60" y="72" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="slide-title" x="60" y="94" width="950" height="48" font="heading" size="34" color="ink" wrap="false">게임 아이템 지급은 멱등성을 보장해야 합니다</text>
+  <text id="slide-subtitle" x="60" y="150" width="1040" height="28" font="body" size="18" color="muted">포털의 쿠폰 검증은 한 번만 성공하고, 게임 아이템 지급은 타임아웃·재시도를 안전하게 처리해야 합니다.</text>
+  <shape id="key-panel" type="rect" x="60" y="220" width="400" height="356" fill="surface" stroke="hairline" stroke-width="1" corner-radius="16"/>
+  <icon id="key-panel-icon" name="key-round" x="92" y="252" width="36" height="36" color="brand"/>
+  <text id="key-panel-title" x="92" y="310" width="286" height="30" font="heading" size="24" color="ink">멱등성 키</text>
+  <shape id="key-code-box" type="rect" x="92" y="362" width="332" height="44" fill="#EEF2FF" corner-radius="8"/>
+  <text id="key-code" x="108" y="375" width="302" height="18" font="code" size="14" color="brand" wrap="false">coupon:{couponId}:user:{userId}</text>
+  <text id="key-panel-body" x="92" y="440" width="300" height="90" font="body" size="17" color="muted" line-height="1.35"><p>동일 보상이 두 번 지급되지 않도록 영속 키를 사용합니다.</p><p>지급 상태는 쿠폰 검증과 분리해 기록합니다.</p></text>
+  <shape id="portal-node" type="rect" x="530" y="282" width="180" height="150" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="1" corner-radius="14"/>
+  <icon id="portal-node-icon" name="server" x="600" y="306" width="36" height="36" color="brand"/>
+  <text id="portal-node-title" x="545" y="360" width="150" height="24" font="heading" size="19" color="ink" align="center">포털</text>
+  <text id="portal-node-body" x="545" y="397" width="150" height="22" font="caption" size="13" color="muted" align="center">검증 후 작업 발행</text>
+  <shape id="portal-arrow" type="line" x="722" y="357" width="26" height="0" stroke="brand" stroke-width="3" arrow-end="arrow"/>
+  <shape id="worker-node" type="rect" x="760" y="282" width="180" height="150" fill="surface" stroke="hairline" stroke-width="1" corner-radius="14"/>
+  <icon id="worker-node-icon" name="workflow" x="830" y="306" width="36" height="36" color="brand"/>
+  <text id="worker-node-title" x="775" y="360" width="150" height="24" font="heading" size="19" color="ink" align="center">지급 워커</text>
+  <text id="worker-node-body" x="775" y="397" width="150" height="22" font="caption" size="13" color="muted" align="center">잠금 및 안전한 재시도</text>
+  <shape id="worker-arrow" type="line" x="952" y="357" width="26" height="0" stroke="accent" stroke-width="3" arrow-end="arrow"/>
+  <shape id="game-node" type="rect" x="990" y="282" width="180" height="150" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1" corner-radius="14"/>
+  <icon id="game-node-icon" name="package-check" x="1060" y="306" width="36" height="36" color="accent"/>
+  <text id="game-node-title" x="1005" y="360" width="150" height="24" font="heading" size="19" color="ink" align="center">게임 서버</text>
+  <text id="game-node-body" x="1005" y="397" width="150" height="22" font="caption" size="13" color="muted" align="center">우편함 / 인벤토리</text>
+  <shape id="states-panel" type="rect" x="530" y="472" width="640" height="78" fill="#F1F5F9" corner-radius="12"/>
+  <text id="states-label" x="558" y="490" width="110" height="20" font="code" size="14" color="muted">지급 상태</text>
+  <shape id="pending-chip" type="rect" x="558" y="520" width="120" height="22" fill="#E2E8F0" corner-radius="11"/>
+  <text id="pending-chip-text" x="558" y="523" width="120" height="15" font="caption" size="12" color="ink" align="center">대기</text>
+  <shape id="success-chip" type="rect" x="696" y="520" width="120" height="22" fill="#D1FAE5" corner-radius="11"/>
+  <text id="success-chip-text" x="696" y="523" width="120" height="15" font="caption" size="12" color="#047857" align="center">지급 완료</text>
+  <shape id="retry-chip" type="rect" x="834" y="520" width="120" height="22" fill="#FFF7ED" corner-radius="11"/>
+  <text id="retry-chip-text" x="834" y="523" width="120" height="15" font="caption" size="12" color="#9A3412" align="center">재시도 가능</text>
+  <shape id="delivery-note" type="rect" x="60" y="608" width="1110" height="34" fill="#ECFDF5" corner-radius="8"/>
+  <text id="delivery-note-text" x="80" y="616" width="1070" height="18" font="body" size="15" color="#065F46" align="center">포털 Coupon 등록 성공 후에는 등록 요청을 재시도하지 말고, 멱등성 키 기준의 아이템 지급 작업만 재시도하세요.</text>
+  <shape id="footer-divider" type="line" x="60" y="670" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="page-number" x="1150" y="683" width="70" height="20" font="code" size="13" color="muted" align="right">10 / 11</text>
+</slide>

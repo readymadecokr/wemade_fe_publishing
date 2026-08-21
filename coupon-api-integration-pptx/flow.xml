@@ -1,0 +1,30 @@
+<slide id="flow">
+  <background color="paper"/>
+  <text id="header-label" x="60" y="34" width="390" height="22" font="code" size="14" color="muted" wrap="false">RAGNAROK UNIVERSE / COUPON API</text>
+  <text id="version-tag" x="1080" y="34" width="140" height="22" font="code" size="14" color="brand" align="right" wrap="false">v1.0 API GUIDE</text>
+  <shape id="header-divider" type="line" x="60" y="72" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="slide-title" x="60" y="94" width="850" height="48" font="heading" size="34" color="ink" wrap="false">하나의 쿠폰, 세 개의 연동 지점</text>
+  <text id="slide-subtitle" x="60" y="150" width="800" height="28" font="body" size="18" color="muted">포털은 검증을 담당하고, 게임 서버는 안전한 아이템 지급을 담당합니다.</text>
+  <shape id="admin-card" type="rect" x="72" y="230" width="300" height="260" fill="surface" stroke="hairline" stroke-width="1" corner-radius="16"/>
+  <icon id="admin-icon" name="settings-2" x="102" y="262" width="42" height="42" color="brand"/>
+  <text id="admin-number" x="294" y="267" width="44" height="28" font="code" size="16" color="muted" align="right">01</text>
+  <text id="admin-title" x="102" y="330" width="224" height="30" font="heading" size="24" color="ink">관리자 페이지</text>
+  <text id="admin-body" x="102" y="378" width="230" height="70" font="body" size="17" color="muted" line-height="1.35"><p>이벤트 생성</p><p>쿠폰 코드 발급</p><p>이벤트 운영</p></text>
+  <shape id="arrow-one" type="line" x="384" y="360" width="46" height="0" stroke="brand" stroke-width="3" arrow-end="arrow"/>
+  <shape id="player-card" type="rect" x="442" y="230" width="300" height="260" fill="surface" stroke="hairline" stroke-width="1" corner-radius="16"/>
+  <icon id="player-icon" name="user-check" x="472" y="262" width="42" height="42" color="brand"/>
+  <text id="player-number" x="664" y="267" width="44" height="28" font="code" size="16" color="muted" align="right">02</text>
+  <text id="player-title" x="472" y="330" width="226" height="30" font="heading" size="24" color="ink">My Page Coupon</text>
+  <text id="player-body" x="472" y="378" width="230" height="70" font="body" size="17" color="muted" line-height="1.35"><p>플레이어 정보 검증</p><p>사용 이력 기록</p><p>Bonus rCoin 반영</p></text>
+  <shape id="arrow-two" type="line" x="754" y="360" width="46" height="0" stroke="brand" stroke-width="3" arrow-end="arrow"/>
+  <shape id="game-card" type="rect" x="812" y="230" width="300" height="260" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1" corner-radius="16"/>
+  <icon id="game-icon" name="package-check" x="842" y="262" width="42" height="42" color="accent"/>
+  <text id="game-number" x="1034" y="267" width="44" height="28" font="code" size="16" color="muted" align="right">03</text>
+  <text id="game-title" x="842" y="330" width="226" height="30" font="heading" size="24" color="ink">게임 서버</text>
+  <text id="game-body" x="842" y="378" width="230" height="70" font="body" size="17" color="muted" line-height="1.35"><p>아이템 보상 지급</p><p>멱등성 키 사용</p><p>지급 상태 기록</p></text>
+  <shape id="storage-panel" type="rect" x="72" y="540" width="1040" height="76" fill="#F1F5F9" corner-radius="12"/>
+  <icon id="storage-icon" name="database" x="98" y="561" width="30" height="30" color="brand"/>
+  <text id="storage-text" x="148" y="556" width="910" height="38" font="body" size="18" color="ink" anchor="middle">영속 기록: coupons → couponUses → rCoin 잔액 및 거래 원장</text>
+  <shape id="footer-divider" type="line" x="60" y="670" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="page-number" x="1150" y="683" width="70" height="20" font="code" size="13" color="muted" align="right">02 / 11</text>
+</slide>

@@ -1,0 +1,29 @@
+<slide id="data_model">
+  <background color="paper"/>
+  <text id="header-label" x="60" y="34" width="390" height="22" font="code" size="14" color="muted" wrap="false">RAGNAROK UNIVERSE / COUPON API</text>
+  <text id="version-tag" x="1080" y="34" width="140" height="22" font="code" size="14" color="brand" align="right" wrap="false">v1.0 API GUIDE</text>
+  <shape id="header-divider" type="line" x="60" y="72" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="slide-title" x="60" y="94" width="920" height="48" font="heading" size="34" color="ink" wrap="false">쿠폰 코드와 사용 이력은 분리해 관리합니다</text>
+  <text id="slide-subtitle" x="60" y="150" width="940" height="28" font="body" size="18" color="muted">쿠폰 코드는 발급 정보이며, 사용과 재화 효과는 독립된 이력으로 기록됩니다.</text>
+  <shape id="coupon-card" type="rect" x="60" y="218" width="340" height="340" fill="surface" stroke="hairline" stroke-width="1" corner-radius="16"/>
+  <icon id="coupon-icon" name="ticket" x="88" y="248" width="36" height="36" color="brand"/>
+  <text id="coupon-title" x="138" y="247" width="190" height="32" font="heading" size="23" color="ink">coupons</text>
+  <text id="coupon-fields" x="88" y="308" width="248" height="196" font="code" size="15" color="ink" line-height="1.55"><p>id · code · eventName</p><p>couponType · gameCode</p><p>validFrom · expiresAt</p><p>serverCodes · isActive</p><p>issueQuantity · usedCount</p><p>bonusRcoin · rewardItems</p></text>
+  <text id="coupon-note" x="88" y="510" width="248" height="26" font="caption" size="13" color="muted">발급 코드당 1개 행</text>
+  <shape id="model-arrow-one" type="line" x="410" y="388" width="20" height="0" stroke="brand" stroke-width="3" arrow-end="arrow"/>
+  <shape id="usage-card" type="rect" x="440" y="218" width="340" height="340" fill="surface" stroke="hairline" stroke-width="1" corner-radius="16"/>
+  <icon id="usage-icon" name="clipboard-check" x="468" y="248" width="36" height="36" color="brand"/>
+  <text id="usage-title" x="518" y="247" width="220" height="32" font="heading" size="23" color="ink">couponUses</text>
+  <text id="usage-fields" x="468" y="308" width="250" height="196" font="code" size="15" color="ink" line-height="1.55"><p>couponId · userId</p><p>serverCode</p><p>characterName</p><p>couponCodeSnapshot</p><p>usedAt</p></text>
+  <text id="usage-note" x="468" y="510" width="248" height="26" font="caption" size="13" color="muted">변경되지 않는 사용 이력</text>
+  <shape id="model-arrow-two" type="line" x="790" y="388" width="20" height="0" stroke="accent" stroke-width="3" arrow-end="arrow"/>
+  <shape id="ledger-card" type="rect" x="820" y="218" width="340" height="340" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1" corner-radius="16"/>
+  <icon id="ledger-icon" name="wallet-cards" x="848" y="248" width="36" height="36" color="accent"/>
+  <text id="ledger-title" x="898" y="247" width="220" height="32" font="heading" size="23" color="ink">rCoin 원장</text>
+  <text id="ledger-fields" x="848" y="308" width="252" height="196" font="code" size="15" color="ink" line-height="1.55"><p>ruCashBalances</p><p>bonusCash 잔액</p><p>ruCashTransactions</p><p>전 / 증감 / 후</p><p>type: charge</p><p>source: Coupon</p></text>
+  <text id="ledger-note" x="848" y="510" width="248" height="26" font="caption" size="13" color="muted">즉시 반영되는 Bonus rCoin</text>
+  <shape id="constraint-panel" type="rect" x="60" y="592" width="1100" height="44" fill="#F1F5F9" corner-radius="10"/>
+  <text id="constraint-text" x="80" y="602" width="1060" height="22" font="body" size="16" color="ink" align="center">포털 검증과 게임 보상 지급을 연결할 때 couponId + userId 또는 couponCodeSnapshot을 멱등성 키로 사용합니다.</text>
+  <shape id="footer-divider" type="line" x="60" y="670" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="page-number" x="1150" y="683" width="70" height="20" font="code" size="13" color="muted" align="right">03 / 11</text>
+</slide>

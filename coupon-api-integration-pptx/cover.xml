@@ -1,0 +1,21 @@
+<slide id="cover">
+  <background color="paper"/>
+  <shape id="cover-indigo-panel" type="rect" x="820" y="72" width="388" height="576" fill="brand" corner-radius="24"/>
+  <shape id="cover-accent-bar" type="rect" x="72" y="132" width="92" height="8" fill="accent" corner-radius="4"/>
+  <text id="cover-kicker" x="72" y="166" width="560" height="28" font="code" size="16" color="brand" wrap="false">외부 개발자용 기술 문서</text>
+  <text id="cover-title" x="72" y="212" width="660" height="156" font="display" size="52" color="ink" line-height="1.08"><p>쿠폰 API</p><p>연동 가이드</p></text>
+  <text id="cover-subtitle" x="72" y="392" width="620" height="74" font="body" size="22" color="muted" line-height="1.35">관리자 쿠폰 · My Page Coupon · 게임 서버 보상 지급</text>
+  <shape id="cover-scope-card" type="rect" x="72" y="492" width="620" height="88" fill="surface" stroke="hairline" stroke-width="1" corner-radius="14"/>
+  <text id="cover-scope" x="96" y="512" width="570" height="48" font="body" size="18" color="ink" line-height="1.3">API 계약, 인증, 보상 저장과 멱등성 아이템 지급 구조를 다룹니다.</text>
+  <text id="cover-audience" x="72" y="620" width="580" height="24" font="caption" size="14" color="muted">대상: 포털 · 게임 서버 · 운영 도구 연동 개발자</text>
+  <text id="cover-version" x="820" y="104" width="330" height="26" font="code" size="15" color="#E0E7FF" align="center" wrap="false">ROU · COUPON API · v1.0</text>
+  <shape id="cover-module-one" type="rect" x="872" y="194" width="284" height="96" fill="#FFFFFF1F" stroke="#FFFFFF55" stroke-width="1" corner-radius="14"/>
+  <icon id="cover-api-icon" name="braces" x="900" y="222" width="38" height="38" color="#FFFFFF"/>
+  <text id="cover-module-one-text" x="958" y="213" width="166" height="54" font="body" size="18" color="#FFFFFF"><p><strong>관리자 API</strong></p><p size="14" color="#E0E7FF">이벤트 운영</p></text>
+  <shape id="cover-module-two" type="rect" x="872" y="310" width="284" height="96" fill="#FFFFFF1F" stroke="#FFFFFF55" stroke-width="1" corner-radius="14"/>
+  <icon id="cover-user-icon" name="user-check" x="900" y="338" width="38" height="38" color="#FFFFFF"/>
+  <text id="cover-module-two-text" x="958" y="329" width="166" height="54" font="body" size="18" color="#FFFFFF"><p><strong>Coupon 사용</strong></p><p size="14" color="#E0E7FF">플레이어 검증</p></text>
+  <shape id="cover-module-three" type="rect" x="872" y="426" width="284" height="96" fill="#10B981" stroke="#A7F3D0" stroke-width="1" corner-radius="14"/>
+  <icon id="cover-db-icon" name="database" x="900" y="454" width="38" height="38" color="#FFFFFF"/>
+  <text id="cover-module-three-text" x="958" y="445" width="166" height="54" font="body" size="18" color="#FFFFFF"><p><strong>보상 원장</strong></p><p size="14" color="#ECFDF5">Bonus rCoin·아이템</p></text>
+</slide>

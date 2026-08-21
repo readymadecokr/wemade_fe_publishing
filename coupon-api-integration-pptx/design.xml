@@ -1,0 +1,15 @@
+<design>
+  <size width="1280" height="720"></size>
+  <color name="brand" value="#4F46E5"/>
+  <color name="ink" value="#1E293B"/>
+  <color name="muted" value="#64748B"/>
+  <color name="paper" value="#FFFFFF"/>
+  <color name="surface" value="#F8FAFC"/>
+  <color name="hairline" value="#E2E8F0"/>
+  <color name="accent" value="#10B981"/>
+  <font name="display" family="Noto Sans KR" size="44"/>
+  <font name="heading" family="Noto Sans KR" size="32"/>
+  <font name="body" family="Noto Sans KR" size="18"/>
+  <font name="caption" family="Noto Sans KR" size="14"/>
+  <font name="code" family="Roboto Mono" size="16"/>
+</design>

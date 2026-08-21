@@ -1,0 +1,26 @@
+<slide id="redemption">
+  <background color="paper"/>
+  <text id="header-label" x="60" y="34" width="390" height="22" font="code" size="14" color="muted" wrap="false">RAGNAROK UNIVERSE / COUPON API</text>
+  <text id="version-tag" x="1080" y="34" width="140" height="22" font="code" size="14" color="brand" align="right" wrap="false">v1.0 API GUIDE</text>
+  <shape id="header-divider" type="line" x="60" y="72" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="slide-title" x="60" y="94" width="900" height="48" font="heading" size="34" color="ink" wrap="false">Coupon 등록은 서버가 최종 검증합니다</text>
+  <text id="slide-subtitle" x="60" y="150" width="1040" height="28" font="body" size="18" color="muted">coupon.redeem은 사용 자격, 사용자 식별, 사용 수량을 클라이언트에 맡기지 않습니다.</text>
+  <shape id="input-card" type="rect" x="60" y="226" width="300" height="304" fill="surface" stroke="hairline" stroke-width="1" corner-radius="16"/>
+  <icon id="input-icon" name="monitor-smartphone" x="90" y="256" width="36" height="36" color="brand"/>
+  <text id="input-title" x="90" y="312" width="190" height="28" font="heading" size="22" color="ink">My Page Client</text>
+  <text id="input-body" x="90" y="364" width="210" height="96" font="code" size="15" color="ink" line-height="1.55"><p>code</p><p>serverCode</p><p>characterName</p><p>OAuth session</p></text>
+  <shape id="input-arrow" type="line" x="372" y="376" width="50" height="0" stroke="brand" stroke-width="3" arrow-end="arrow"/>
+  <shape id="gate-card" type="rect" x="440" y="226" width="330" height="304" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="1" corner-radius="16"/>
+  <icon id="gate-icon" name="shield-check" x="470" y="256" width="36" height="36" color="brand"/>
+  <text id="gate-title" x="520" y="257" width="190" height="28" font="heading" size="22" color="ink">포털 검증</text>
+  <text id="gate-body" x="470" y="318" width="250" height="150" font="body" size="16" color="ink" line-height="1.45"><p>1. 코드 존재 및 활성 상태</p><p>2. 사용 기간 및 사용 가능 수량</p><p>3. 선택 서버 허용 여부</p><p>4. 동일 코드 재사용 여부</p><p>5. 난수 이벤트 계정당 1회</p></text>
+  <shape id="gate-arrow" type="line" x="782" y="376" width="42" height="0" stroke="accent" stroke-width="3" arrow-end="arrow"/>
+  <shape id="effect-card" type="rect" x="835" y="226" width="365" height="304" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1" corner-radius="16"/>
+  <icon id="effect-icon" name="circle-check" x="865" y="256" width="36" height="36" color="accent"/>
+  <text id="effect-title" x="915" y="257" width="230" height="28" font="heading" size="22" color="ink">영속 처리 효과</text>
+  <text id="effect-body" x="865" y="318" width="270" height="150" font="body" size="16" color="ink" line-height="1.45"><p>couponUses 저장</p><p>usedCount 1 증가</p><p>Bonus rCoin 반영</p><p>거래 원장 기록</p><p>아이템 보상 정보 반환</p></text>
+  <shape id="response-strip" type="rect" x="60" y="588" width="1140" height="42" fill="#F1F5F9" corner-radius="9"/>
+  <text id="response-code" x="84" y="600" width="1090" height="18" font="code" size="14" color="ink" wrap="false">성공 응답: success · eventName · couponCode · bonusRcoin · rewardItems</text>
+  <shape id="footer-divider" type="line" x="60" y="670" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="page-number" x="1150" y="683" width="70" height="20" font="code" size="13" color="muted" align="right">08 / 11</text>
+</slide>
