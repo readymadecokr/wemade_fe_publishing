@@ -43,10 +43,10 @@
 }
 
 :root {
-  /* Bright fantasy portal — parchment, ink, and sapphire */
-  --primary: #3f66b1;
+  /* White service UI — blue primary and neutral surfaces */
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --sidebar-primary: #314e89;
+  --sidebar-primary: #1e40af;
   --sidebar-primary-foreground: #ffffff;
   --chart-1: #3b82f6; /* Blue-500 */
   --chart-2: #2563eb; /* Blue-600 */
@@ -56,35 +56,35 @@
   --radius: 0.65rem;
   
   /* Light backgrounds */
-  --background: #f3ead5;
-  --foreground: #2c241c;
-  --card: #fffdf7;
-  --card-foreground: #2c241c;
-  --popover: #fffdf7;
-  --popover-foreground: #2c241c;
+  --background: #ffffff;
+  --foreground: #1f2937;
+  --card: #ffffff;
+  --card-foreground: #1f2937;
+  --popover: #ffffff;
+  --popover-foreground: #1f2937;
   
   /* Light secondary colors */
-  --secondary: #eadfc4;
-  --secondary-foreground: #4d4031;
-  --muted: #e7dcc0;
-  --muted-foreground: #756754;
-  --accent: #e1edf8;
-  --accent-foreground: #314e89;
+  --secondary: #f3f4f6;
+  --secondary-foreground: #374151;
+  --muted: #e5e7eb;
+  --muted-foreground: #6b7280;
+  --accent: #eff6ff;
+  --accent-foreground: #1e40af;
   
   /* Light borders and inputs */
   --destructive: #dc2626; /* Red-600 */
   --destructive-foreground: #ffffff;
-  --border: #d5c49e;
-  --input: #fffaf0;
-  --ring: #4b6cab;
+  --border: #e0e7ff;
+  --input: #f3f4f6;
+  --ring: #2563eb;
   
   /* Sidebar colors */
-  --sidebar: #fffaf0;
-  --sidebar-foreground: #2c241c;
-  --sidebar-accent: #e6eef8;
-  --sidebar-accent-foreground: #314e89;
-  --sidebar-border: #d5c49e;
-  --sidebar-ring: #4b6cab;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1f2937;
+  --sidebar-accent: #eff6ff;
+  --sidebar-accent-foreground: #1e40af;
+  --sidebar-border: #e0e7ff;
+  --sidebar-ring: #2563eb;
 }
 
 .dark {
@@ -136,10 +136,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
-    background-image: linear-gradient(rgba(250,246,232,.42), rgba(238,220,179,.5)), url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png'), radial-gradient(circle at 15% 8%, rgba(255,255,255,.68), transparent 28%), radial-gradient(circle at 82% 68%, rgba(176,142,79,.26), transparent 30%), repeating-linear-gradient(0deg, rgba(102,79,45,.04) 0px, rgba(102,79,45,.04) 1px, transparent 1px, transparent 5px);
-    background-size: cover, cover, auto, auto, auto;
-    background-attachment: fixed, fixed, fixed, fixed, fixed;
-    background-position: center top, center center, center top, center center, center top;
+    background-image: none;
   }
   header a, header h3, header span {
     font-family: 'Poppins', sans-serif;
@@ -158,7 +155,7 @@
     padding: .35rem 0;
     font-weight: 800;
     letter-spacing: .015em;
-    text-shadow: 0 1px 0 rgba(15,31,47,.42);
+    text-shadow: none;
     transition: color 180ms ease, transform 180ms ease, text-shadow 180ms ease;
   }
 
@@ -172,16 +169,16 @@
     height: 1px;
     transform: scaleX(0);
     transform-origin: center;
-    background: linear-gradient(90deg, transparent, #fff3b8 25%, #edc35f 50%, #fff3b8 75%, transparent);
-    box-shadow: 0 0 8px rgba(246,209,111,.78);
+    background: linear-gradient(90deg, transparent, #93c5fd 25%, #2563eb 50%, #93c5fd 75%, transparent);
+    box-shadow: 0 0 7px rgba(37,99,235,.28);
     transition: transform 180ms ease;
   }
 
   header .portal-nav > a:hover,
   header .portal-nav > button:hover {
-    color: #fff1b4 !important;
+    color: #2563eb !important;
     transform: translateY(-1px);
-    text-shadow: 0 0 9px rgba(246,211,117,.7), 0 1px 0 rgba(15,31,47,.42);
+    text-shadow: none;
   }
 
   header .portal-nav > a:hover::after,
@@ -205,39 +202,21 @@
   .fantasy-page-shell {
     position: relative;
     overflow: visible;
-    background: transparent;
+    background: #ffffff;
   }
 
   .fantasy-page-shell::before {
-    content: "";
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    opacity: .09;
-    background-image: radial-gradient(circle at 11% 78%, rgba(105,130,173,.34), transparent 17%), radial-gradient(circle at 89% 64%, rgba(174,129,58,.28), transparent 20%);
-    background-size: cover;
-    background-position: center center;
-    mix-blend-mode: soft-light;
+    display: none;
   }
 
   .fantasy-site-atlas {
     position: relative;
     isolation: isolate;
-    background-color: #f3ead5;
-    background-image: radial-gradient(ellipse 68% 66% at 50% 51%, rgba(255,253,244,.93) 0%, rgba(251,246,230,.87) 42%, rgba(246,236,207,.52) 67%, transparent 92%), url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png');
-    background-position: center center, center center;
-    background-size: cover, cover;
-    background-repeat: no-repeat;
+    background: #ffffff;
   }
 
   .fantasy-site-atlas::before {
-    content: "";
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background: linear-gradient(180deg, rgba(49,42,30,.22) 0%, rgba(49,42,30,.08) 13%, transparent 29%, transparent 72%, rgba(49,42,30,.09) 88%, rgba(49,42,30,.24) 100%);
-    mix-blend-mode: multiply;
+    display: none;
   }
 
   .fantasy-site-atlas > header,
@@ -249,43 +228,20 @@
 
   .fantasy-content-guide {
     position: relative;
-    padding-left: clamp(0rem, 4vw, 3.4rem);
+    padding-left: 0;
     z-index: 1;
   }
 
   .fantasy-content-guide::before {
-    content: "";
-    position: absolute;
-    left: 1.2rem;
-    top: .8rem;
-    bottom: 0;
-    width: 1px;
-    background: linear-gradient(180deg, transparent, rgba(76,97,133,.38) 4%, rgba(76,97,133,.28) 94%, transparent);
+    display: none;
   }
 
   .fantasy-section-decorated::after {
-    content: "";
-    pointer-events: none;
-    position: absolute;
-    right: 0;
-    top: .15rem;
-    width: min(42vw, 430px);
-    height: 3rem;
-    opacity: .82;
-    background: url('/manus-storage/ragnarok-fantasy-section-ornament_f3f3bf5d.png') right center / contain no-repeat;
+    display: none;
   }
 
 
   @media (max-width: 640px) {
-    .fantasy-site-atlas {
-      background-position: center center, center 42%;
-      background-size: cover, cover;
-    }
-
-    .fantasy-site-atlas::before {
-      background: linear-gradient(180deg, rgba(49,42,30,.18) 0%, rgba(49,42,30,.06) 11%, transparent 24%, transparent 76%, rgba(49,42,30,.08) 89%, rgba(49,42,30,.22) 100%);
-    }
-
     .floating-social-box {
       top: auto !important;
       right: .55rem !important;
@@ -296,35 +252,35 @@
   }
 
   .fantasy-card {
-    background: rgba(255,253,247,.9);
-    border: 1px solid rgba(174,151,103,.55);
-    box-shadow: 0 9px 22px rgba(93,73,43,.12), inset 0 1px rgba(255,255,255,.8), inset 0 0 0 3px rgba(255,246,222,.45);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(15,23,42,.08);
   }
 
   .fantasy-frame {
-    border: 1px solid rgba(67,97,151,.42);
-    box-shadow: 0 0 0 3px rgba(255,252,241,.72), 0 8px 20px rgba(69,87,117,.14);
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 4px 12px rgba(15,23,42,.08);
   }
 
   .fantasy-section-title {
-    color: #302419;
-    font-family: Georgia, "Times New Roman", serif;
+    color: #1e293b;
+    font-family: 'Poppins', sans-serif;
     font-weight: 700;
     letter-spacing: -.025em;
   }
 
   .fantasy-account .glass-panel {
-    background: rgba(255,253,247,.9) !important;
-    border-color: rgba(174,151,103,.55) !important;
-    box-shadow: 0 9px 22px rgba(93,73,43,.12), inset 0 1px rgba(255,255,255,.8);
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 4px 12px rgba(15,23,42,.08);
   }
 
   .fantasy-account .glass-panel table thead {
-    background: rgba(232,220,192,.7);
+    background: #f8fafc;
   }
 
   .fantasy-account .glass-panel table tr {
-    border-color: rgba(205,187,145,.66) !important;
+    border-color: #e2e8f0 !important;
   }
 
   /**

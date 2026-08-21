@@ -82,28 +82,28 @@ export default function Layout({ children }: LayoutProps) {
 
 
       {/* Main Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-[#c8d8e7]/30 bg-[#1c3147]/72 text-white shadow-[0_3px_18px_rgba(24,38,57,.28)] backdrop-blur-xl [background-image:linear-gradient(100deg,rgba(32,56,78,.84),rgba(58,84,110,.58),rgba(24,45,66,.82))]">
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white text-slate-900 shadow-sm">
         <div className="container flex min-h-16 flex-wrap items-center justify-center gap-x-5 gap-y-1 py-2 lg:min-h-18 lg:flex-nowrap lg:justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group cursor-pointer">
-            <img src={`${ASSET_BASE_URL}/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png`} alt="Ragnarok" className="h-10 w-auto brightness-[1.28] contrast-90 group-hover:opacity-80 transition-opacity" />
+            <img src={`${ASSET_BASE_URL}/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png`} alt="Ragnarok" className="h-10 w-auto group-hover:opacity-80 transition-opacity" />
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="portal-nav flex items-center justify-center gap-3 text-[11px] sm:gap-5 sm:text-xs lg:gap-7" aria-label="Primary navigation">
-            <Link href="/" className={`transition-colors cursor-pointer ${location === "/" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
+            <Link href="/" className={`transition-colors cursor-pointer ${location === "/" ? "text-blue-600 font-bold" : "text-slate-600 hover:text-blue-600"}`}>
               Home
             </Link>
-            <Link href="/news" className={`transition-colors cursor-pointer ${location === "/news" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
+            <Link href="/news" className={`transition-colors cursor-pointer ${location === "/news" ? "text-blue-600 font-bold" : "text-slate-600 hover:text-blue-600"}`}>
               News
             </Link>
-            <Link href="/game-info" className={`transition-colors cursor-pointer ${location === "/game-info" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
+            <Link href="/game-info" className={`transition-colors cursor-pointer ${location === "/game-info" ? "text-blue-600 font-bold" : "text-slate-600 hover:text-blue-600"}`}>
               Game Info
             </Link>
-            <Link href="/point-shop" className={`transition-colors cursor-pointer ${location === "/point-shop" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
+            <Link href="/point-shop" className={`transition-colors cursor-pointer ${location === "/point-shop" ? "text-blue-600 font-bold" : "text-slate-600 hover:text-blue-600"}`}>
               Shop
             </Link>
-            <button onClick={() => setShowTTKeyDialog(true)} className="cursor-pointer text-[11px] text-slate-100 transition-colors hover:text-[#f3d991] sm:text-xs">
+            <button onClick={() => setShowTTKeyDialog(true)} className="cursor-pointer text-[11px] text-slate-600 transition-colors hover:text-blue-600 sm:text-xs">
               Discord
             </button>
           </nav>
@@ -124,13 +124,13 @@ export default function Layout({ children }: LayoutProps) {
                   My Page
                 </Link>
               </div>
-              <Button variant="outline" size="sm" onClick={handleLogout} className="border-[#e6c972] bg-[#fffaf0] text-xs font-bold text-[#263b5b] shadow-sm hover:bg-[#f8edce] hover:text-[#1d3150]">
+              <Button variant="outline" size="sm" onClick={handleLogout} className="border-slate-300 bg-white text-xs font-bold text-slate-700 shadow-sm hover:bg-slate-50 hover:text-blue-700">
                 Logout
               </Button>
             </div>
             ) : (
               <Link href="/login">
-              <Button size="sm" className="border border-[#d5bd7d]/70 bg-[#476da9] px-3 py-2 text-[10px] font-semibold text-white shadow-lg shadow-[#17283b]/30 transition-all hover:-translate-y-0.5 hover:border-[#fff0bd] hover:bg-[#6188c5] hover:shadow-[0_8px_20px_rgba(18,39,70,.42),inset_0_1px_rgba(255,255,255,.45)] focus-visible:ring-2 focus-visible:ring-[#fff0bd] active:scale-95 sm:px-4 sm:text-xs">
+              <Button size="sm" className="border border-blue-600 bg-blue-600 px-3 py-2 text-[10px] font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-md focus-visible:ring-2 focus-visible:ring-blue-400 active:scale-95 sm:px-4 sm:text-xs">
                   Sign In / Sign Up
                 </Button>
               </Link>
@@ -139,7 +139,7 @@ export default function Layout({ children }: LayoutProps) {
             {/* Language and Theme */}
             <div className="flex items-center gap-3">
               <div className="relative">
-                <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="flex cursor-pointer items-center gap-1 text-[10px] font-bold text-slate-100 transition-colors hover:text-[#f3d991] sm:text-xs">
+                <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="flex cursor-pointer items-center gap-1 text-[10px] font-bold text-slate-600 transition-colors hover:text-blue-600 sm:text-xs">
                   <Globe size={14} /> {lang}
                 </button>
                 {langDropdownOpen && (
@@ -159,7 +159,7 @@ export default function Layout({ children }: LayoutProps) {
                   </div>
                 )}
               </div>
-              <button onClick={toggleTheme} disabled={!toggleTheme} className="flex cursor-pointer items-center gap-1 text-slate-100 transition-colors hover:text-[#f3d991] disabled:cursor-not-allowed disabled:opacity-50">
+              <button onClick={toggleTheme} disabled={!toggleTheme} className="flex cursor-pointer items-center gap-1 text-slate-600 transition-colors hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-50">
                 {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
               </button>
             </div>
@@ -177,28 +177,28 @@ export default function Layout({ children }: LayoutProps) {
 
 
       {/* Footer */}
-      <footer className="mt-auto w-full bg-transparent text-[#17120c]">
+      <footer className="mt-auto w-full border-t border-slate-200 bg-white text-slate-700">
         <div className="container py-12" style={{paddingTop: '30px'}}>
           {/* Footer Top: Company Logos */}
-          <div className="mb-8 flex items-center justify-center gap-6 text-xs font-semibold text-[#17120c]">
-            <a href="https://gravity.co.kr/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#163f7d]">GRAVITY</a>
-            <span className="h-4 w-px bg-[#705c36]"></span>
-            <a href="https://wemadeconnect.com/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#163f7d]">WEMADE CONNECT</a>
-            <span className="h-4 w-px bg-[#705c36]"></span>
-            <a href="https://www.gala.biz/ko" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#163f7d]">GALA</a>
+          <div className="mb-8 flex items-center justify-center gap-6 text-xs font-semibold text-slate-700">
+            <a href="https://gravity.co.kr/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-blue-600">GRAVITY</a>
+            <span className="h-4 w-px bg-slate-300"></span>
+            <a href="https://wemadeconnect.com/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-blue-600">WEMADE CONNECT</a>
+            <span className="h-4 w-px bg-slate-300"></span>
+            <a href="https://www.gala.biz/ko" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-blue-600">GALA</a>
           </div>
 
           {/* Footer Middle: Links and Discord */}
           <div className="mb-8 flex flex-wrap items-center justify-center gap-2 text-sm">
-            <Link href="/terms-of-service" className="font-medium text-[#17120c] transition-colors hover:text-[#163f7d]">Terms of Service</Link>
-            <span className="text-[#705c36]">|</span>
-            <Link href="/privacy-policy" className="font-medium text-[#17120c] transition-colors hover:text-[#163f7d]">Privacy Policy</Link>
-            <span className="text-[#705c36]">|</span>
-            <button onClick={() => setShowPrivacySettings(true)} className="cursor-pointer font-medium text-[#17120c] transition-colors hover:text-[#163f7d]">Privacy Settings</button>
-            <span className="text-[#705c36]">|</span>
+            <Link href="/terms-of-service" className="font-medium text-slate-600 transition-colors hover:text-blue-600">Terms of Service</Link>
+            <span className="text-slate-300">|</span>
+            <Link href="/privacy-policy" className="font-medium text-slate-600 transition-colors hover:text-blue-600">Privacy Policy</Link>
+            <span className="text-slate-300">|</span>
+            <button onClick={() => setShowPrivacySettings(true)} className="cursor-pointer font-medium text-slate-600 transition-colors hover:text-blue-600">Privacy Settings</button>
+            <span className="text-slate-300">|</span>
             <div className="flex items-center gap-2">
               <Disc size={16} className="text-blue-600 dark:text-blue-400" />
-              <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="font-medium text-[#17120c] transition-colors hover:text-[#163f7d]">Discord</a>
+              <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="font-medium text-slate-600 transition-colors hover:text-blue-600">Discord</a>
             </div>
           </div>
 
@@ -210,9 +210,9 @@ export default function Layout({ children }: LayoutProps) {
                 alt="GRAVITY"
                 className="h-8 w-auto"
               />
-              <p className="text-xs font-medium text-[#17120c]">Copyright &copy; Gravity Co., LTD & Lee MyoungJin(studio DTDS). All Rights Reserved.</p>
+              <p className="text-xs font-medium text-slate-600">Copyright &copy; Gravity Co., LTD & Lee MyoungJin(studio DTDS). All Rights Reserved.</p>
             </div>
-            <p className="text-center text-xs font-medium text-[#17120c]">All trademarks used on this website are the property of their respective owners.</p>
+            <p className="text-center text-xs font-medium text-slate-500">All trademarks used on this website are the property of their respective owners.</p>
           </div>
         </div>
       </footer>
@@ -266,12 +266,12 @@ export default function Layout({ children }: LayoutProps) {
           animation: float-social 3s ease-in-out infinite;
         }
       `}</style>
-      <div className="floating-social-box fixed right-3 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-2 rounded-2xl border border-[#d6bc78] bg-[linear-gradient(160deg,rgba(42,64,100,.96),rgba(30,44,70,.96))] px-2 py-3 shadow-[0_10px_28px_rgba(43,53,73,.35),inset_0_1px_rgba(255,247,220,.28)] backdrop-blur-sm">
+      <div className="floating-social-box fixed right-3 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-2 rounded-2xl border border-slate-200 bg-white px-2 py-3 shadow-lg">
         {/* Discord */}
         <button
           onClick={() => window.open('https://discord.gg/yVWJkWdkAU', '_blank')}
           title="Discord"
-          className="flex h-[58px] w-[58px] items-center justify-center rounded-xl border border-transparent transition-all duration-200 hover:scale-110 hover:border-[#f3d991] hover:bg-[#ffffff]/15 active:scale-95"
+          className="flex h-[58px] w-[58px] items-center justify-center rounded-xl border border-transparent transition-all duration-200 hover:scale-110 hover:border-blue-200 hover:bg-blue-50 active:scale-95"
         >
           <img src={`${ASSET_BASE_URL}/manus-storage/Discord_icon_230fdb89_6026051e.png`} alt="Discord" className="w-[43px] h-[43px] object-contain" />
         </button>
@@ -279,7 +279,7 @@ export default function Layout({ children }: LayoutProps) {
         <button
           onClick={() => window.open('https://www.youtube.com/@RagnarokUniverse', '_blank')}
           title="YouTube"
-          className="flex h-[58px] w-[58px] items-center justify-center rounded-xl border border-transparent transition-all duration-200 hover:scale-110 hover:border-[#f3d991] hover:bg-[#ffffff]/15 active:scale-95"
+          className="flex h-[58px] w-[58px] items-center justify-center rounded-xl border border-transparent transition-all duration-200 hover:scale-110 hover:border-blue-200 hover:bg-blue-50 active:scale-95"
         >
           <img src="/manus-storage/yt_icon_red_digital_78f0d0ca.png" alt="YouTube" className="w-[43px] h-[43px] object-contain" />
         </button>

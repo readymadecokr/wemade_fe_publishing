@@ -5,7 +5,7 @@ const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.m
 const layoutSource = readFileSync(new URL("../client/src/components/Layout.tsx", import.meta.url), "utf8");
 const styleSource = readFileSync(new URL("../client/src/index.css", import.meta.url), "utf8");
 
-describe("fantasy portal visual polish", () => {
+describe("white portal visual restoration", () => {
   it("keeps all home news cards at a consistent content height", () => {
     expect(homeSource).toContain('flex h-full flex-col overflow-hidden');
     expect(homeSource).toContain('min-h-[84px] flex-1 flex-col');
@@ -13,48 +13,46 @@ describe("fantasy portal visual polish", () => {
     expect(homeSource).toContain('mt-auto text-[11px]');
   });
 
-  it("uses one continuous fantasy atlas with visible map detail for portal decoration", () => {
-    expect(styleSource).toContain('ragnarok-fantasy-continuous-atlas_fb2301c6.png');
+  it("uses clean white surfaces without decorative background images", () => {
+    expect(styleSource).not.toContain('ragnarok-fantasy-continuous-atlas_fb2301c6.png');
     expect(styleSource).toContain('.fantasy-site-atlas');
-    expect(styleSource).toContain('radial-gradient(ellipse 68% 66% at 50% 51%');
-    expect(styleSource).toContain('background-size: cover, cover');
+    expect(styleSource).toContain('background: #ffffff');
+    expect(styleSource).toContain('background-image: none');
     expect(styleSource).toContain('.fantasy-site-atlas::before');
-    expect(styleSource).toContain('background-position: center center, center 42%');
     expect(layoutSource).toContain('fantasy-site-atlas');
-    expect(layoutSource).toContain('bg-transparent text-[#17120c]');
-    expect(styleSource).toContain('ragnarok-fantasy-section-ornament_f3f3bf5d.png');
+    expect(layoutSource).toContain('border-t border-slate-200 bg-white text-slate-700');
+    expect(styleSource).not.toContain('ragnarok-fantasy-section-ornament_f3f3bf5d.png');
     expect(homeSource).not.toContain('fantasy-section-decorated');
   });
 
-  it("keeps the logged-in Logout control legible against the dark header", () => {
-    expect(layoutSource).toContain('bg-[#fffaf0]');
-    expect(layoutSource).toContain('text-[#263b5b]');
+  it("keeps the logged-in Logout control legible against the white header", () => {
+    expect(layoutSource).toContain('border-slate-300 bg-white');
+    expect(layoutSource).toContain('text-slate-700');
     expect(layoutSource).toContain('>\n                Logout\n');
   });
 
-  it("keeps the portal header translucent and the sign-in call to action distinguishable", () => {
-    expect(layoutSource).toContain('bg-[#1c3147]/72');
-    expect(layoutSource).toContain('backdrop-blur-xl');
+  it("keeps the portal header white and the sign-in call to action distinguishable", () => {
+    expect(layoutSource).toContain('border-b border-slate-200 bg-white text-slate-900 shadow-sm');
     expect(layoutSource).toContain('portal-nav');
-    expect(layoutSource).toContain('hover:border-[#fff0bd]');
+    expect(layoutSource).toContain('hover:bg-blue-700');
   });
 
-  it("keeps the footer transparent over the shared atlas and mobile social control placement without misplaced ornaments", () => {
+  it("keeps a white footer and mobile social control placement without misplaced ornaments", () => {
     expect(layoutSource).not.toContain('ragnarok-fantasy-footer-atlas_e83c8727.png');
     expect(styleSource).not.toContain('.fantasy-view-more::before');
     expect(styleSource).toContain('.floating-social-box');
     expect(homeSource).toContain('className="mb-0"');
   });
 
-  it("keeps portal navigation equally bold with a gold hover effect and My Page copy", () => {
+  it("keeps portal navigation equally bold with a blue hover effect and My Page copy", () => {
     expect(styleSource).toContain('header .portal-nav > a');
     expect(styleSource).toContain('font-weight: 800');
-    expect(styleSource).toContain('color: #fff1b4 !important');
+    expect(styleSource).toContain('color: #2563eb !important');
     expect(layoutSource).toContain('>\n                  My Page\n');
   });
 
-  it("keeps footer content black and readable over the shared atlas", () => {
-    expect(layoutSource).toContain('bg-transparent text-[#17120c]');
-    expect(layoutSource).toContain('font-medium text-[#17120c]');
+  it("keeps footer content readable over the white surface", () => {
+    expect(layoutSource).toContain('border-t border-slate-200 bg-white text-slate-700');
+    expect(layoutSource).toContain('font-medium text-slate-600');
   });
 });
