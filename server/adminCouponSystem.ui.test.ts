@@ -42,6 +42,8 @@ describe("admin coupon system UI", () => {
     expect(routerSource).toContain("systemHistory");
     expect(routerSource).toContain("eventSummaries");
     expect(routerSource).toContain("eventDetail");
+    expect(routerSource).toContain("createRandomBatch");
+    expect(routerSource).toContain("batchSize");
     expect(routerSource).toContain("usageByCoupon");
     expect(source).toContain("쿠폰 목록");
     expect(source).toContain("개별 쿠폰 목록");
@@ -90,5 +92,12 @@ describe("admin coupon system UI", () => {
     expect(source).not.toContain('data-testid="coupon-usage-detail-table" className="w-full min-w-[1080px] text-sm"><thead className="bg-slate-50 text-slate-500"><tr><th className="px-3 py-3 text-left">게임코드</th><th className="px-3 py-3 text-left">타입</th><th className="px-3 py-3 text-left">이벤트명</th><th className="px-3 py-3 text-left">쿠폰코드</th><th className="px-3 py-3 text-left">쿠폰사용기간</th>');
     expect(source).toContain('title={form.id ? "쿠폰 수정" : "신규 쿠폰 생성"}');
     expect(source).toContain('form.id ? "쿠폰 수정" : "쿠폰 등록"');
+    expect(source).toContain("신규 쿠폰 (엑셀 업로드)");
+    expect(source).toContain("대량 난수 쿠폰 생성 중");
+    expect(source).toContain("예상 남은 시간");
+    expect(source).toContain("createRandomInBatches");
+    expect(source).toContain("total >= 100000 ? 500 : 250");
+    expect(source).toContain("attempt < 3");
+    expect(routerSource).toContain("batchSize: z.number().int().min(1).max(1000)");
   });
 });

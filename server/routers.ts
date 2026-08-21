@@ -752,6 +752,30 @@ export const appRouter = router({
         }
         return { created: rows.length };
       }),
+    createRandomBatch: adminKeyProcedure
+      .input(couponSystemInput.extend({ batchSize: z.number().int().min(1).max(1000), totalQuantity: z.number().int().min(1).max(500000) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        if (input.couponType !== 'random') throw new Error('대량 배치 생성은 난수 쿠폰에서만 사용할 수 있습니다.');
+        const validationError = validateCouponSystemInput({
+          couponType: 'random',
+          code: 'AAAA-AAAA-AAAA',
+          eventName: input.eventName,
+          validFrom: input.validFrom ? new Date(input.validFrom) : null,
+          expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
+          bonusRcoin: input.bonusRcoin,
+          rewardItems: input.rewardItems,
+          randomGenerated: 1,
+          issueQuantity: input.totalQuantity,
+        });
+        if (validationError) throw new Error(validationError);
+        const codes = new Set<string>();
+        while (codes.size < input.batchSize) codes.add(generateRandomCouponCode());
+        const rows = Array.from(codes, code => toCouponSystemValues({ ...input, code, randomGenerated: 1, issueQuantity: 1 }));
+        await db.insert(coupons).values(rows);
+        return { created: rows.length };
+      }),
     update: adminKeyProcedure
       .input(couponSystemInput.extend({ id: z.number() }))
       .mutation(async ({ input }) => {

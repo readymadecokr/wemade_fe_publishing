@@ -2442,6 +2442,8 @@ function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof c
   const [historyFilters, setHistoryFilters] = useState({ startDate: "", endDate: "", aid: "", eventName: "", pageSize: 100 });
   const [historyPage, setHistoryPage] = useState(1);
   const [uploading, setUploading] = useState(false);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState<{ completed: number; total: number; startedAt: number } | null>(null);
 
   const eventSummaryQuery = useQuery({ queryKey: ["coupon-event-summaries", search, couponFilters, couponPage], queryFn: () => adminClient!.coupons.eventSummaries.query({ search: search || undefined, startDate: couponFilters.startDate || undefined, endDate: couponFilters.endDate || undefined, page: couponPage, pageSize: couponFilters.pageSize }), enabled: !!adminClient && view === "list" && !couponDetailEvent });
   const couponsQuery = useQuery({ queryKey: ["coupon-event-detail", couponDetailEvent, search, couponFilters, couponPage], queryFn: () => adminClient!.coupons.list.query({ search: search || undefined, eventName: couponDetailEvent || undefined, startDate: couponFilters.startDate || undefined, endDate: couponFilters.endDate || undefined, page: couponPage, pageSize: couponFilters.pageSize }), enabled: !!adminClient && view === "list" && !!couponDetailEvent });
@@ -2461,6 +2463,48 @@ function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof c
     expiresAt: source.expiresAt || null,
     rewardItems: source.rewardItems.filter(item => item.itemId.trim()),
   });
+  const formatRemainingTime = (seconds: number) => {
+    const safeSeconds = Math.max(0, Math.ceil(seconds));
+    const hours = Math.floor(safeSeconds / 3600);
+    const minutes = Math.floor((safeSeconds % 3600) / 60);
+    const remainingSeconds = safeSeconds % 60;
+    return hours > 0 ? `${hours}시간 ${minutes}분 ${remainingSeconds}초` : minutes > 0 ? `${minutes}분 ${remainingSeconds}초` : `${remainingSeconds}초`;
+  };
+  const createRandomInBatches = async (payload: ReturnType<typeof toPayload>) => {
+    if (!adminClient) return;
+    const total = payload.issueQuantity;
+    const batchSize = total >= 100000 ? 500 : 250;
+    const startedAt = Date.now();
+    let completed = 0;
+    setBulkProgress({ completed, total, startedAt });
+    try {
+      while (completed < total) {
+        const currentBatchSize = Math.min(batchSize, total - completed);
+        let lastError: unknown;
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          try {
+            await adminClient.coupons.createRandomBatch.mutate({ ...payload, batchSize: currentBatchSize, totalQuantity: total });
+            lastError = null;
+            break;
+          } catch (error) {
+            lastError = error;
+            await new Promise(resolve => window.setTimeout(resolve, 500 * (attempt + 1)));
+          }
+        }
+        if (lastError) throw lastError;
+        completed += currentBatchSize;
+        setBulkProgress({ completed, total, startedAt });
+        await new Promise(resolve => window.setTimeout(resolve, 75));
+      }
+      toast.success(`${total.toLocaleString()}개 난수 쿠폰을 안전하게 생성했습니다.`);
+      setForm(null);
+      refreshCouponLists();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "대량 쿠폰 생성에 실패했습니다. 진행된 배치는 유지됩니다.");
+    } finally {
+      setBulkProgress(null);
+    }
+  };
   const submit = () => {
     if (!form) return;
     const payload = toPayload(form);
@@ -2468,7 +2512,7 @@ function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof c
     if (new TextEncoder().encode(payload.eventName).length > 20) return toast.error("이벤트명은 영문 기준 최대 20byte입니다.");
     const rewardCount = payload.rewardItems.length + (payload.bonusRcoin > 0 ? 1 : 0);
     if (rewardCount < 1 || rewardCount > 5) return toast.error("보상은 Bonus rCoin을 포함해 1개부터 최대 5개까지 등록할 수 있습니다.");
-    if (payload.id) updateMutation.mutate(payload); else createMutation.mutate(payload);
+    if (payload.id) updateMutation.mutate(payload); else if (payload.couponType === "random" && payload.issueQuantity > 1) void createRandomInBatches(payload); else createMutation.mutate(payload);
   };
   const editCoupon = (item: any) => setForm({ id: item.id, gameCode: item.gameCode ?? "ROU", couponType: item.couponType ?? "common", eventName: item.eventName ?? item.name, code: item.code, validFrom: item.validFrom ? new Date(item.validFrom).toISOString().slice(0, 16) : "", expiresAt: item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0, 16) : "", serverCodes: item.serverCodes ?? "", bonusRcoin: Number(item.bonusRcoin ?? 0), rewardItems: parseRewardItems(item.rewardItems), isActive: item.isActive, randomGenerated: item.randomGenerated ?? 0, issueQuantity: Number(item.issueQuantity ?? 1) });
   const statusText = (item: any) => ({ active: "활성", scheduled: "예정", expired: "만료" } as Record<string, string>)[String(item.status)] ?? "활성";
@@ -2516,7 +2560,7 @@ function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof c
     const workbook = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(workbook, worksheet, "Individual Coupons"); XLSX.writeFile(workbook, `${couponDetailEvent}_individual_coupons.xlsx`);
   };
 
-  if (form) {
+  if (form && !bulkProgress) {
     const maxItems = form.bonusRcoin > 0 ? 4 : 5;
     return <div className="space-y-5">
       <SectionHeader title={form.id ? "쿠폰 수정" : "신규 쿠폰 생성"} desc="게임 코드·쿠폰 타입·이벤트·기간·보상·서버 설정을 관리합니다." action={<Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="mr-1 h-4 w-4" />목록으로</Button>} />
@@ -2540,8 +2584,9 @@ function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof c
 
   if (Boolean(view === "list")) {
     return <div className="space-y-5">
-      <SectionHeader title="쿠폰 관리" desc="쿠폰 발급, 엑셀 갱신, 발급 히스토리를 관리합니다." action={<Button onClick={() => setForm(couponEmptyForm())}><Plus className="mr-2 h-4 w-4" />신규 쿠폰 생성</Button>} />
-      <div className="flex flex-wrap gap-2 border-b"><Button variant="default" onClick={() => setView("list")}>쿠폰 목록</Button><Button variant="ghost" onClick={() => setView("upload")}><FileSpreadsheet className="mr-1 h-4 w-4" />엑셀 업로드</Button><Button variant="ghost" onClick={() => setView("history")}><Gift className="mr-1 h-4 w-4" />발급 히스토리</Button></div>
+      <SectionHeader title="쿠폰 관리" desc="쿠폰 발급과 엑셀 업로드를 관리합니다." action={<div className="flex flex-wrap gap-2"><Button onClick={() => setForm(couponEmptyForm())}><Plus className="mr-2 h-4 w-4" />신규 쿠폰 생성</Button><Button variant="outline" onClick={() => setUploadDialogOpen(true)}><FileSpreadsheet className="mr-2 h-4 w-4" />신규 쿠폰 (엑셀 업로드)</Button></div>} />
+      <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}><DialogContent className="sm:max-w-2xl"><DialogHeader><DialogTitle>신규 쿠폰 (엑셀 업로드)</DialogTitle><DialogDescription>템플릿 형식의 엑셀 파일로 쿠폰을 일괄 등록하거나 갱신합니다.</DialogDescription></DialogHeader><div className="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-8 text-center"><FileSpreadsheet className="mx-auto h-10 w-10 text-blue-500" /><div className="mt-5 flex flex-wrap justify-center gap-2"><Button variant="outline" onClick={downloadTemplate}><Download className="mr-2 h-4 w-4" />엑셀 템플릿 다운로드</Button><label className="inline-flex h-10 cursor-pointer items-center rounded-md bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700"><Upload className="mr-2 h-4 w-4" />{uploading ? "업로드 중..." : "엑셀 파일 업로드"}<input type="file" accept=".xlsx,.xls,.csv" className="hidden" disabled={uploading} onChange={async event => { await handleUpload(event.target.files?.[0]); setUploadDialogOpen(false); }} /></label></div></div><div className="rounded-lg border bg-amber-50 p-4 text-sm text-amber-900">필수 헤더: Game Code, Coupon Type, Event Name, Coupon Code, Valid From, Valid To, Bonus rCoin, Reward Items, Server Codes, Active.</div></DialogContent></Dialog>
+      <Dialog open={!!bulkProgress}><DialogContent className="sm:max-w-md" onPointerDownOutside={event => event.preventDefault()} onEscapeKeyDown={event => event.preventDefault()}><DialogHeader><DialogTitle>대량 난수 쿠폰 생성 중</DialogTitle><DialogDescription>안정적인 배치로 천천히 생성하고 있습니다. 이 창을 닫거나 페이지를 새로고침하지 마세요.</DialogDescription></DialogHeader>{bulkProgress && <div className="space-y-4"><div className="flex items-end justify-between"><strong className="text-lg">{bulkProgress.completed.toLocaleString()} / {bulkProgress.total.toLocaleString()}</strong><span className="text-sm text-muted-foreground">{Math.floor((bulkProgress.completed / bulkProgress.total) * 100)}%</span></div><div className="h-3 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-600 transition-[width] duration-200" style={{ width: `${(bulkProgress.completed / bulkProgress.total) * 100}%` }} /></div><div className="rounded-lg bg-slate-50 p-3 text-sm"><span className="text-muted-foreground">예상 남은 시간</span><strong className="ml-2">{bulkProgress.completed > 0 ? formatRemainingTime(((Date.now() - bulkProgress.startedAt) / 1000 / bulkProgress.completed) * (bulkProgress.total - bulkProgress.completed)) : "계산 중..."}</strong></div></div>}</DialogContent></Dialog>
       <Card>
         <CardHeader className="space-y-4 pb-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
