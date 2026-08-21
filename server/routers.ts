@@ -21,7 +21,7 @@ const couponSystemInput = z.object({
   expiresAt: z.string().optional().nullable(),
   serverCodes: z.string().trim().max(255).optional().nullable(),
   bonusRcoin: z.number().int().min(0).default(0),
-  rewardItems: z.array(z.object({ itemId: z.string().trim().min(1).max(64), quantity: z.number().int().min(1) })).min(1).max(5),
+  rewardItems: z.array(z.object({ itemId: z.string().trim().min(1).max(64), quantity: z.number().int().min(1) })).max(5),
   isActive: z.number().int().min(0).max(1).default(1),
   randomGenerated: z.number().int().min(0).max(1).default(0),
   issueQuantity: z.number().int().min(1).max(500000).default(1),

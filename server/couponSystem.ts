@@ -26,8 +26,8 @@ export function validateCouponSystemInput(input: CouponSystemInput) {
   if (input.couponType === "random" && (!input.randomGenerated || !RANDOM_COUPON_PATTERN.test(input.code))) return "난수 쿠폰은 자동 생성된 NNNN-NNNN-NNNN 코드만 사용할 수 있습니다.";
   if (!Number.isInteger(input.issueQuantity ?? 1) || (input.issueQuantity ?? 1) < 1 || (input.issueQuantity ?? 1) > 500000) return "쿠폰 발급 수량은 1부터 최대 500,000까지 입력하세요.";
   if (input.validFrom && input.expiresAt && input.validFrom > input.expiresAt) return "유효기간 종료는 시작일 이후여야 합니다.";
-  const maxRewards = input.bonusRcoin > 0 ? 4 : 5;
-  if (!input.rewardItems.length || input.rewardItems.length > maxRewards) return `보상 아이템은 ${maxRewards}종까지 등록할 수 있습니다.`;
+  const rewardCount = input.rewardItems.length + (input.bonusRcoin > 0 ? 1 : 0);
+  if (rewardCount < 1 || rewardCount > 5) return "보상은 Bonus rCoin을 포함해 1개부터 최대 5개까지 등록할 수 있습니다.";
   if (input.rewardItems.some(item => !item.itemId.trim() || !Number.isInteger(item.quantity) || item.quantity <= 0)) return "보상 ItemID와 수량을 확인하세요.";
   return null;
 }
