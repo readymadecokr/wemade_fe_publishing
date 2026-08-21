@@ -124,6 +124,87 @@ export const appRouter = router({
     }),
   }),
 
+  coupon: router({
+    redeem: publicProcedure
+      .input(z.object({
+        code: z.string().trim().min(1).max(64),
+        serverCode: z.string().trim().min(1).max(32),
+        characterName: z.string().trim().min(1).max(128),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new Error("Not authenticated");
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        const code = input.code.toUpperCase().replace(/\s+/g, "");
+        const [coupon] = await db.select().from(coupons).where(eq(coupons.code, code)).limit(1);
+        const now = new Date();
+        if (!coupon || coupon.isActive !== 1 || (coupon.validFrom && coupon.validFrom > now) || (coupon.expiresAt && coupon.expiresAt < now) || Number(coupon.usedCount) >= Number(coupon.issueQuantity)) {
+          throw new Error("유효하지 않은 쿠폰 코드입니다.");
+        }
+        const availableServers = coupon.serverCodes?.split(",").map(server => server.trim()).filter(Boolean) ?? [];
+        if (availableServers.length && !availableServers.includes(input.serverCode)) throw new Error("해당 서버에서 사용할 수 없는 쿠폰 코드입니다.");
+
+        const priorUses = await db.select({ couponId: couponUses.couponId, eventName: coupons.eventName })
+          .from(couponUses)
+          .innerJoin(coupons, eq(couponUses.couponId, coupons.id))
+          .where(eq(couponUses.userId, ctx.user.id));
+        if (priorUses.some(use => use.couponId === coupon.id)) throw new Error("이미 사용된 쿠폰 코드입니다.");
+        if (coupon.couponType === "random" && priorUses.some(use => use.eventName === coupon.eventName)) throw new Error("해당 쿠폰은 계정당 1회만 사용할 수 있습니다.");
+
+        await db.insert(couponUses).values({ couponId: coupon.id, userId: ctx.user.id, serverCode: input.serverCode, characterName: input.characterName, couponCodeSnapshot: code });
+        await db.update(coupons).set({ usedCount: sql`${coupons.usedCount} + 1` }).where(eq(coupons.id, coupon.id));
+
+        const bonusRcoin = Number(coupon.bonusRcoin ?? 0);
+        if (bonusRcoin > 0) {
+          const [existingBalance] = await db.select().from(ruCashBalances).where(eq(ruCashBalances.userId, ctx.user.id)).limit(1);
+          const beforeRuCash = Number(existingBalance?.ruCash ?? 0);
+          const beforeBonusCash = Number(existingBalance?.bonusCash ?? 0);
+          const afterBonusCash = beforeBonusCash + bonusRcoin;
+          if (existingBalance) await db.update(ruCashBalances).set({ bonusCash: afterBonusCash }).where(eq(ruCashBalances.id, existingBalance.id));
+          else await db.insert(ruCashBalances).values({ userId: ctx.user.id, ruCash: beforeRuCash, bonusCash: afterBonusCash });
+          await db.insert(ruCashTransactions).values({
+            userId: ctx.user.id,
+            type: "charge",
+            gameCode: coupon.gameCode,
+            beforeRuCash,
+            beforeBonusCash,
+            ruCashDelta: 0,
+            bonusCashDelta: bonusRcoin,
+            afterRuCash: beforeRuCash,
+            afterBonusCash,
+            pgName: "Coupon",
+            itemName: `Coupon: ${coupon.eventName}`,
+          });
+        }
+
+        return { success: true, eventName: coupon.eventName, couponCode: code, bonusRcoin, rewardItems: coupon.rewardItems };
+      }),
+    myHistory: publicProcedure
+      .input(z.object({ page: z.number().int().min(1).default(1), pageSize: z.number().int().min(1).max(20).default(20) }))
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user) return { items: [], total: 0 };
+        const db = await getDb();
+        if (!db) return { items: [], total: 0 };
+        const offset = (input.page - 1) * input.pageSize;
+        const rows = await db.select({ use: couponUses, coupon: coupons })
+          .from(couponUses)
+          .innerJoin(coupons, eq(couponUses.couponId, coupons.id))
+          .where(eq(couponUses.userId, ctx.user.id))
+          .orderBy(desc(couponUses.usedAt));
+        return {
+          items: rows.slice(offset, offset + input.pageSize).map(row => ({
+            id: row.use.id,
+            eventName: row.coupon.eventName,
+            couponCode: row.use.couponCodeSnapshot || row.coupon.code,
+            characterName: row.use.characterName || "-",
+            registeredAt: row.use.usedAt,
+            status: "등록 완료",
+          })),
+          total: rows.length,
+        };
+      }),
+  }),
+
   guest: router({
     // 게스트 회원가입 — 닉네임을 DB에 저장
     register: publicProcedure

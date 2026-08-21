@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -35,6 +35,10 @@ vi.mock("@/lib/trpc", () => ({
       myChargeHistory: { useQuery: ({ page }: { page: number }) => ({ data: { items: mocks.historyItems(page, "purchase"), total: 15 } }) },
       myUseHistory: { useQuery: ({ page }: { page: number }) => ({ data: { items: mocks.historyItems(page, "usage"), total: 15 } }) },
     },
+    coupon: {
+      myHistory: { useQuery: () => ({ data: { items: [{ id: 1, eventName: "Welcome Celebration", couponCode: "DEMO-0001-0001", characterName: "ValkyrieKnight", registeredAt: new Date("2026-08-20T00:00:00Z"), status: "등록 완료" }], total: 1 }, isLoading: false, refetch: vi.fn() }) },
+      redeem: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
+    },
   },
 }));
 
@@ -46,6 +50,7 @@ import MyPage from "@/pages/MyPage";
 
 describe("My Page history screens", () => {
   beforeEach(() => {
+    cleanup();
     localStorage.clear();
     localStorage.setItem("rou_logged_in", "true");
     localStorage.setItem("rou_nickname", "Ryan Kim");
@@ -69,5 +74,22 @@ describe("My Page history screens", () => {
     await user.click(screen.getByRole("button", { name: "Points/Item Usage" }));
     expect(screen.queryByRole("heading", { name: "Usage History" })).toBeNull();
     expect(screen.getAllByText("Kafra Card")).toHaveLength(10);
+  });
+
+  it("opens the Enter Coupon screen with server, character, confirmation, and history controls", async () => {
+    const user = userEvent.setup();
+    render(<MyPage />);
+    await user.click(screen.getByRole("button", { name: "Enter Coupon" }));
+    expect(screen.getByTestId("coupon-entry")).toBeTruthy();
+    expect(screen.getByRole("combobox", { name: "Coupon server" })).toBeTruthy();
+    expect(screen.getByRole("combobox", { name: "Coupon character" })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "Coupon code" })).toBeTruthy();
+    expect(screen.getByText("Coupon Use History")).toBeTruthy();
+    await user.selectOptions(screen.getByRole("combobox", { name: "Coupon server" }), "1");
+    await user.selectOptions(screen.getByRole("combobox", { name: "Coupon character" }), "ValkyrieKnight");
+    await user.type(screen.getByRole("textbox", { name: "Coupon code" }), "demo-0001-0001");
+    await user.click(screen.getByRole("button", { name: "쿠폰 사용하기" }));
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "확인" })).toBeTruthy();
   });
 });

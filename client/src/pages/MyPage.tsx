@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
-import { User, Shield, LogOut, Trash2, CheckCircle2, ShieldAlert, CreditCard, Clock, ArrowRight, Edit2, Ticket, Unlink, Mail, Users, LogIn, Bell } from "lucide-react";
+import { User, Shield, LogOut, Trash2, CheckCircle2, ShieldAlert, CreditCard, Clock, ArrowRight, Edit2, Ticket, Unlink, Mail, Users, LogIn, Bell, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,6 +13,7 @@ import Layout from "@/components/Layout";
 import { trpc } from "@/lib/trpc";
 
 type HistorySection = "purchase" | "usage";
+type MyPageSection = "account" | HistorySection | "coupon";
 
 const formatHistoryNumber = (value: number | null | undefined) => Number(value ?? 0).toLocaleString();
 
@@ -105,6 +106,57 @@ function MyPageHistory({ section }: { section: HistorySection }) {
   );
 }
 
+function MyPageCouponEntry() {
+  const [serverCode, setServerCode] = useState("");
+  const [characterName, setCharacterName] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [notice, setNotice] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [historyPage, setHistoryPage] = useState(1);
+  const couponBalance = trpc.shop.myBalance.useQuery();
+  const couponHistory = trpc.coupon.myHistory.useQuery({ page: historyPage, pageSize: 20 });
+  const redeemCoupon = trpc.coupon.redeem.useMutation({
+    onSuccess: () => {
+      setNotice({ type: "success", message: "쿠폰이 정상적으로 등록되었습니다. 우편함을 확인해주세요." });
+      setCouponCode("");
+      setConfirmOpen(false);
+      couponBalance.refetch();
+      couponHistory.refetch();
+    },
+    onError: (error) => {
+      setNotice({ type: "error", message: error.message || "유효하지 않은 쿠폰 코드입니다." });
+      setConfirmOpen(false);
+    },
+  });
+  const totalPages = Math.max(1, Math.ceil((couponHistory.data?.total ?? 0) / 20));
+  const requestConfirmation = () => {
+    setNotice(null);
+    if (!serverCode || !characterName || !couponCode) {
+      setNotice({ type: "error", message: "쿠폰 보상 아이템 지급을 위한 정보를 모두 확인해주세요." });
+      return;
+    }
+    setConfirmOpen(true);
+  };
+
+  return <div data-testid="coupon-entry" className="space-y-5">
+    <section className="rounded-2xl border border-[#decfc0] bg-[#fffdf9]/95 p-6 shadow-[0_8px_24px_rgba(93,73,43,.1)]">
+      <div className="mb-6 border-b border-[#e7d9c8] pb-4"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">MY PAGE · COUPON USE</p><h2 className="mt-1 font-serif text-2xl font-bold text-[#302419]">Enter Coupon</h2><p className="mt-2 text-sm text-[#776952]">Select the server and character that will receive your coupon reward.</p></div>
+      <div className="mb-5 grid gap-3 sm:grid-cols-2"><div className="rounded-lg border border-[#eadfce] bg-white px-4 py-3"><p className="text-xs font-bold uppercase tracking-wide text-[#786850]">rCoin</p><p className="mt-1 text-xl font-black text-[#a51f24]">{Number(couponBalance.data?.ruCash ?? 0).toLocaleString()}</p></div><div className="rounded-lg border border-[#eadfce] bg-white px-4 py-3"><p className="text-xs font-bold uppercase tracking-wide text-[#786850]">Bonus rCoin</p><p className="mt-1 text-xl font-black text-emerald-700">{Number(couponBalance.data?.bonusCash ?? 0).toLocaleString()}</p></div></div>
+      {notice && <div role="status" className={`mb-5 flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-semibold ${notice.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-red-200 bg-red-50 text-red-700"}`}>{notice.type === "success" ? <CheckCircle2 className="h-5 w-5 shrink-0" /> : <AlertCircle className="h-5 w-5 shrink-0" />}{notice.message}</div>}
+      <div className="grid gap-4 md:grid-cols-2">
+        <label className="space-y-2 text-sm font-semibold text-[#4e402f]"><span>Server</span><select aria-label="Coupon server" value={serverCode} onChange={event => { setServerCode(event.target.value); setCharacterName(""); }} className="h-10 w-full rounded-md border border-[#cbb797] bg-white px-3 text-sm outline-none focus:border-[#a51f24] focus:ring-2 focus:ring-[#a51f24]/15"><option value="">Select server</option><option value="1">Server 1 · Prontera</option><option value="2">Server 2 · Geffen</option><option value="3">Server 3 · Payon</option><option value="4">Server 4 · Morroc</option><option value="5">Server 5 · Aldebaran</option><option value="6">Server 6 · Comodo</option></select></label>
+        <label className="space-y-2 text-sm font-semibold text-[#4e402f]"><span>Character Name</span><select aria-label="Coupon character" value={characterName} disabled={!serverCode} onChange={event => setCharacterName(event.target.value)} className="h-10 w-full rounded-md border border-[#cbb797] bg-white px-3 text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-100 focus:border-[#a51f24] focus:ring-2 focus:ring-[#a51f24]/15"><option value="">Select character</option><option value="ValkyrieKnight">ValkyrieKnight</option><option value="RuneMage">RuneMage</option><option value="ShadowRanger">ShadowRanger</option></select></label>
+      </div>
+      <label className="mt-4 block space-y-2 text-sm font-semibold text-[#4e402f]"><span>Coupon Code</span><Input aria-label="Coupon code" value={couponCode} onChange={event => setCouponCode(event.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ""))} placeholder="NNNN-NNNN-NNNN" maxLength={64} className="border-[#cbb797] bg-white font-mono tracking-[.08em] focus-visible:ring-[#a51f24]" /></label>
+      <div className="mt-6 flex justify-end"><Button onClick={requestConfirmation} className="min-w-36 bg-[#a51f24] font-bold text-white hover:bg-[#86191d]"><Ticket className="mr-2 h-4 w-4" />쿠폰 사용하기</Button></div>
+    </section>
+
+    <section className="overflow-hidden rounded-2xl border border-[#decfc0] bg-[#fffdf9]/95 shadow-[0_8px_24px_rgba(93,73,43,.1)]"><div className="border-b border-[#e7d9c8] px-6 py-4"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">COUPON HISTORY</p><h2 className="mt-1 font-serif text-xl font-bold text-[#302419]">Coupon Use History</h2></div>{couponHistory.isLoading ? <p className="px-6 py-10 text-center text-sm text-[#776952]">Loading coupon history...</p> : !couponHistory.data?.items.length ? <p className="px-6 py-10 text-center text-sm text-[#776952]">No coupon history available.</p> : <><div className="overflow-x-auto"><table className="w-full min-w-[680px] text-sm"><thead className="bg-[#a51f24] text-white"><tr><th className="px-4 py-3 text-left">Event Name</th><th className="px-4 py-3 text-left">Coupon Code</th><th className="px-4 py-3 text-left">Character Name</th><th className="px-4 py-3 text-left">Registered Date</th><th className="px-4 py-3 text-center">Status</th></tr></thead><tbody>{couponHistory.data.items.map(item => <tr key={item.id} className="border-t border-[#eadfce]"><td className="px-4 py-3 font-medium text-[#302419]">{item.eventName}</td><td className="px-4 py-3 font-mono text-xs text-[#4e402f]">{item.couponCode}</td><td className="px-4 py-3 text-[#4e402f]">{item.characterName}</td><td className="px-4 py-3 text-[#776952]">{new Date(item.registeredAt).toLocaleDateString("en-CA")}</td><td className="px-4 py-3 text-center font-semibold text-emerald-700">{item.status}</td></tr>)}</tbody></table></div>{totalPages > 1 && <div className="flex justify-center gap-1 border-t border-[#e7d9c8] p-3">{Array.from({ length: totalPages }, (_, index) => index + 1).map(page => <Button key={page} size="sm" variant={historyPage === page ? "default" : "outline"} onClick={() => setHistoryPage(page)}>{page}</Button>)}</div>}</>}</section>
+
+    {confirmOpen && <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4"><div className="w-full max-w-md rounded-2xl border border-[#decfc0] bg-[#fffdf9] p-6 shadow-2xl"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">CONFIRM COUPON USE</p><h3 className="mt-2 font-serif text-xl font-bold text-[#302419]">쿠폰을 사용하시겠습니까?</h3><p className="mt-3 text-sm leading-6 text-[#675843]"><strong>{`Server ${serverCode}`}</strong>의 <strong>{characterName}</strong> 캐릭터에 쿠폰 보상을 등록합니다.</p><div className="mt-6 flex justify-end gap-2"><Button variant="outline" onClick={() => setConfirmOpen(false)}>취소</Button><Button disabled={redeemCoupon.isPending} onClick={() => redeemCoupon.mutate({ code: couponCode, serverCode, characterName })} className="bg-[#a51f24] text-white hover:bg-[#86191d]">{redeemCoupon.isPending ? "등록 중..." : "확인"}</Button></div></div></div>}
+  </div>;
+}
+
 export default function MyPage() {
   const [, setLocation] = useLocation();
   const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
@@ -114,10 +166,7 @@ export default function MyPage() {
   const [showNicknameEdit, setShowNicknameEdit] = useState(false);
   const [newNickname, setNewNickname] = useState("");
   const [isEditingNickname, setIsEditingNickname] = useState(false);
-  const [showCouponInput, setShowCouponInput] = useState(false);
-  const [couponCode, setCouponCode] = useState("");
-  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
-  const [activeSection, setActiveSection] = useState<"account" | HistorySection>("account");
+  const [activeSection, setActiveSection] = useState<MyPageSection>("account");
 
   // Generate random nickname (10 characters: letters + numbers)
   const generateRandomNickname = (): string => {
@@ -261,29 +310,6 @@ export default function MyPage() {
     setNewNickname("");
   };
 
-  const handleCouponSubmit = async () => {
-    if (!couponCode.trim()) {
-      toast.error("Please enter a coupon code.");
-      return;
-    }
-
-    setIsValidatingCoupon(true);
-    
-    // Simulate coupon validation
-    const validCoupons = ["WELCOME2026", "SUMMER100", "NEWPLAYER50"];
-    
-    setTimeout(() => {
-      if (validCoupons.includes(couponCode.toUpperCase())) {
-        toast.success(`Coupon ${couponCode} applied successfully!`);
-        setCouponCode("");
-        setShowCouponInput(false);
-      } else {
-        toast.error("Invalid coupon code. Please try again.");
-      }
-      setIsValidatingCoupon(false);
-    }, 1000);
-  };
-
   const handleLogout = () => {
     localStorage.removeItem("rou_logged_in");
     localStorage.removeItem("rou_nickname");
@@ -357,8 +383,8 @@ export default function MyPage() {
                     <Mail size={16} className="text-[#4e402f]" />
                     <span>1:1 Inquiry</span>
                   </button>
-                  <button onClick={() => setShowCouponInput(true)} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#4e402f] hover:bg-[#eadfc4] transition-colors text-sm font-medium">
-                    <Ticket size={16} className="text-[#4e402f]" />
+                  <button onClick={() => setActiveSection("coupon")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "coupon" ? "bg-[#4668a3] text-white" : "text-[#4e402f] hover:bg-[#eadfc4]"}`}>
+                    <Ticket size={16} className={activeSection === "coupon" ? "text-white" : "text-[#4e402f]"} />
                     <span>Enter Coupon</span>
                   </button>
                 </nav>
@@ -387,6 +413,8 @@ export default function MyPage() {
                 <MyPageHistory key="purchase" section="purchase" />
               ) : activeSection === "usage" ? (
                 <MyPageHistory key="usage" section="usage" />
+              ) : activeSection === "coupon" ? (
+                <MyPageCouponEntry />
               ) : showWithdrawDialog ? (
                 // Withdrawal Dialog
                 <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50">
@@ -638,37 +666,6 @@ export default function MyPage() {
         </div>
       )}
 
-      {/* Coupon Input Dialog */}
-      {showCouponInput && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-[#131313] rounded-2xl p-6 max-w-sm w-full border border-white/10 dark:border-slate-700/50">
-            <h3 className="text-lg font-bold text-black dark:text-white mb-4">Enter Coupon</h3>
-            <Input
-              type="text"
-              placeholder="Enter coupon code"
-              value={couponCode}
-              onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-              className="mb-4 bg-white dark:bg-slate-800 border-black/20 dark:border-white/20 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40"
-            />
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setShowCouponInput(false)}
-                className="flex-1 border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleCouponSubmit}
-                disabled={isValidatingCoupon}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                {isValidatingCoupon ? "Validating..." : "Apply Coupon"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
       {/* Delete Account Confirmation Popup */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
