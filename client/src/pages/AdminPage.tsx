@@ -2446,7 +2446,7 @@ function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof c
   const [bulkProgress, setBulkProgress] = useState<{ completed: number; total: number; startedAt: number } | null>(null);
 
   const eventSummaryQuery = useQuery({ queryKey: ["coupon-event-summaries", search, couponFilters, couponPage], queryFn: () => adminClient!.coupons.eventSummaries.query({ search: search || undefined, startDate: couponFilters.startDate || undefined, endDate: couponFilters.endDate || undefined, page: couponPage, pageSize: couponFilters.pageSize }), enabled: !!adminClient && view === "list" && !couponDetailEvent });
-  const couponsQuery = useQuery({ queryKey: ["coupon-event-detail", couponDetailEvent, search, couponFilters, couponPage], queryFn: () => adminClient!.coupons.list.query({ search: search || undefined, eventName: couponDetailEvent || undefined, startDate: couponFilters.startDate || undefined, endDate: couponFilters.endDate || undefined, page: couponPage, pageSize: couponFilters.pageSize }), enabled: !!adminClient && view === "list" && !!couponDetailEvent });
+  const couponsQuery = useQuery({ queryKey: ["coupon-event-detail", couponDetailEvent, search, couponFilters, couponPage], queryFn: () => adminClient!.coupons.list.query({ search: search || undefined, eventName: couponDetailEvent || undefined, startDate: couponDetailEvent ? undefined : couponFilters.startDate || undefined, endDate: couponDetailEvent ? undefined : couponFilters.endDate || undefined, page: couponPage, pageSize: couponFilters.pageSize }), enabled: !!adminClient && view === "list" && !!couponDetailEvent });
   const historyQuery = useQuery({ queryKey: ["coupon-system-history", historyFilters, historyPage], queryFn: () => adminClient!.coupons.systemHistory.query({ ...historyFilters, startDate: historyFilters.startDate || undefined, endDate: historyFilters.endDate || undefined, aid: historyFilters.aid || undefined, eventName: historyFilters.eventName || undefined, page: historyPage }), enabled: !!adminClient && view === "history" });
   const refreshCouponLists = () => { eventSummaryQuery.refetch(); couponsQuery.refetch(); };
   const createMutation = useMutation({ mutationFn: (input: any) => adminClient!.coupons.create.mutate(input), onSuccess: () => { toast.success("쿠폰이 등록되었습니다."); setForm(null); refreshCouponLists(); }, onError: (error: Error) => toast.error(error.message) });
@@ -2590,16 +2590,16 @@ function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof c
       <Card>
         <CardHeader className="space-y-4 pb-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            {couponDetailEvent ? <div className="flex items-center gap-2"><Button variant="outline" size="sm" onClick={() => { setCouponDetailEvent(null); setCouponPage(1); }}><ChevronLeft className="mr-1 h-4 w-4" />쿠폰 목록</Button><h3 className="font-semibold">[{couponDetailEvent}] 개별 쿠폰 현황</h3></div> : <h3 className="font-semibold">쿠폰 목록</h3>}
+            {couponDetailEvent ? <div className="flex items-center gap-2"><Button variant="outline" size="sm" onClick={() => { setCouponDetailEvent(null); setCouponPage(1); }}><ChevronLeft className="mr-1 h-4 w-4" />쿠폰 목록</Button><h3 className="font-semibold">개별 쿠폰 현황</h3></div> : <h3 className="font-semibold">쿠폰 목록</h3>}
             <div className="flex items-center gap-2">
               {couponDetailEvent && <Button variant="outline" size="sm" onClick={exportEventCoupons}><Download className="mr-1 h-4 w-4" />엑셀 다운로드</Button>}
               <Button variant="ghost" size="sm" onClick={refreshCouponLists}><RefreshCw className="h-4 w-4" /></Button>
             </div>
           </div>
-          <div className="grid gap-2 lg:grid-cols-[160px_160px_minmax(240px,1fr)_130px_auto]">
-            <Input type="date" value={couponFilters.startDate} onChange={event => { setCouponFilters(current => ({ ...current, startDate: event.target.value })); setCouponPage(1); }} aria-label="쿠폰 목록 시작일" />
-            <Input type="date" value={couponFilters.endDate} onChange={event => { setCouponFilters(current => ({ ...current, endDate: event.target.value })); setCouponPage(1); }} aria-label="쿠폰 목록 종료일" />
-            <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setCouponPage(1); }} placeholder="이벤트명 또는 쿠폰코드 검색" />
+          <div className={`grid gap-2 ${couponDetailEvent ? "lg:grid-cols-[minmax(240px,1fr)_130px_auto]" : "lg:grid-cols-[160px_160px_minmax(240px,1fr)_130px_auto]"}`}>
+            {!couponDetailEvent && <Input type="date" value={couponFilters.startDate} onChange={event => { setCouponFilters(current => ({ ...current, startDate: event.target.value })); setCouponPage(1); }} aria-label="쿠폰 목록 시작일" />}
+            {!couponDetailEvent && <Input type="date" value={couponFilters.endDate} onChange={event => { setCouponFilters(current => ({ ...current, endDate: event.target.value })); setCouponPage(1); }} aria-label="쿠폰 목록 종료일" />}
+            <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setCouponPage(1); }} placeholder={couponDetailEvent ? "쿠폰코드 검색" : "이벤트명 또는 쿠폰코드 검색"} />
             <Select value={String(couponFilters.pageSize)} onValueChange={value => { setCouponFilters(current => ({ ...current, pageSize: Number(value) })); setCouponPage(1); }}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="10">10개씩</SelectItem><SelectItem value="20">20개씩</SelectItem><SelectItem value="50">50개씩</SelectItem><SelectItem value="100">100개씩</SelectItem></SelectContent></Select>
             <Button onClick={() => { setSearch(searchInput); setCouponPage(1); }}><Search className="mr-1 h-4 w-4" />검색</Button>
           </div>

@@ -57,7 +57,7 @@ describe("admin coupon system UI", () => {
     expect(source).toContain("eventActiveMutation");
     expect(source).toContain("deleteEventsMutation");
     expect(source).toContain("exportEventCoupons");
-    expect(source).toContain("[{couponDetailEvent}] 개별 쿠폰 현황");
+    expect(source).toContain("<h3 className=\"font-semibold\">개별 쿠폰 현황</h3>");
     expect(routerSource).toContain("updateEventActive");
     expect(routerSource).toContain("deleteEvents");
     expect(routerSource).toContain("inArray(coupons.eventName, input.eventNames)");
@@ -99,5 +99,8 @@ describe("admin coupon system UI", () => {
     expect(source).toContain("total >= 100000 ? 500 : 250");
     expect(source).toContain("attempt < 3");
     expect(routerSource).toContain("batchSize: z.number().int().min(1).max(1000)");
+    expect(source).toContain("개별 쿠폰 현황");
+    expect(source).toContain('couponDetailEvent ? "쿠폰코드 검색" : "이벤트명 또는 쿠폰코드 검색"');
+    expect(source).toContain("!couponDetailEvent && <Input type=\"date\"");
   });
 });
