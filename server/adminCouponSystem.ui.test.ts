@@ -45,16 +45,11 @@ describe("admin coupon system UI", () => {
     expect(routerSource).toContain("userIdsByCoupon");
     expect(source).toContain("쿠폰 목록");
     expect(source).toContain("개별 쿠폰 목록");
-    expect(source).toContain("현재 쿠폰 정보");
-    expect(source).toContain("상세보기");
-    expect(source).toContain("couponInfoEvent");
     expect(source).toContain("엑셀 다운로드");
-    expect(source).toContain("선택 삭제");
     expect(source).toContain("미사용");
     expect(source).toContain('text-center">사용자</th>');
     expect(source).toContain('item.userIds?.length ? item.userIds.join(", ") : "미사용"');
     expect(source).toContain("ToggleRight");
-    expect(source).toContain("selectedCouponEvents");
     expect(source).toContain("eventActiveMutation");
     expect(source).toContain("deleteEventsMutation");
     expect(source).toContain("exportEventCoupons");
@@ -69,13 +64,24 @@ describe("admin coupon system UI", () => {
     expect(routerSource).toContain("max(500000)");
   });
 
-  it("replaces reward details in the event summary with used quantity and separates detail cards", () => {
+  it("uses icon-based edit and delete actions instead of summary checkboxes or detail view", () => {
+    const summarySource = source.slice(source.indexOf('data-testid="coupon-summary-table"'), source.indexOf('data-testid="coupon-summary-table"') + 6000);
+    expect(summarySource).toContain('text-center">수정</th><th className="px-3 py-3 text-center">삭제</th>');
+    expect(summarySource).toContain("aria-label={`${item.eventName} 수정`");
+    expect(summarySource).toContain("aria-label={`${item.eventName} 삭제`");
+    expect(summarySource).toContain("onClick={() => editCoupon(item)}");
+    expect(summarySource).not.toContain('type="checkbox"');
+    expect(source).toContain('form.id ? "쿠폰 수정" : "쿠폰 등록"');
+    expect(routerSource).toContain("id: newest.id");
+  });
+
+  it("replaces reward details in the event summary with used quantity and opens the coupon edit form", () => {
     const summarySource = source.slice(source.indexOf('data-testid="coupon-summary-table"'), source.indexOf('data-testid="coupon-summary-table"') + 5000);
     expect(summarySource).toContain(">발급 수량</th><th className=\"px-3 py-3 text-left\">사용 수량</th>");
     expect(summarySource).toContain(">쿠폰사용기간</th>");
     expect(summarySource).toContain("Number(item.usedCount ?? 0).toLocaleString()");
     expect(summarySource).not.toContain(">보상</th>");
-    expect(source).toContain('text-xs text-muted-foreground">게임 코드</p>');
-    expect(source).toContain('text-xs text-muted-foreground">쿠폰 타입</p>');
+    expect(source).toContain('title={form.id ? "쿠폰 수정" : "신규 쿠폰 생성"}');
+    expect(source).toContain('form.id ? "쿠폰 수정" : "쿠폰 등록"');
   });
 });
