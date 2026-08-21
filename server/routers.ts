@@ -709,6 +709,7 @@ export const appRouter = router({
         const [rows, [{ count }]] = await Promise.all([
           db.select({
             id: sql<number>`MAX(${coupons.id})`,
+            code: sql<string>`MAX(${coupons.code})`,
             eventName: coupons.eventName,
             gameCode: sql<string>`MAX(${coupons.gameCode})`,
             couponType: sql<"common" | "random">`MAX(${coupons.couponType})`,
@@ -811,7 +812,20 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
         const { id, ...couponInput } = input;
-        await db.update(coupons).set(toCouponSystemValues(couponInput)).where(eq(coupons.id, id));
+        const [existingCoupon] = await db.select().from(coupons).where(eq(coupons.id, id)).limit(1);
+        if (!existingCoupon) throw new Error('쿠폰을 찾을 수 없습니다.');
+        const resolvedInput = {
+          ...couponInput,
+          code: couponInput.code.trim() || existingCoupon.code,
+          randomGenerated: couponInput.couponType === 'random' ? 1 : couponInput.randomGenerated,
+        };
+        const values = toCouponSystemValues(resolvedInput);
+        if (existingCoupon.couponType === 'random') {
+          const { code: _code, ...eventValues } = values;
+          await db.update(coupons).set(eventValues).where(eq(coupons.eventName, existingCoupon.eventName));
+        } else {
+          await db.update(coupons).set(values).where(eq(coupons.id, id));
+        }
         return { success: true };
       }),
     bulkUpsert: adminKeyProcedure

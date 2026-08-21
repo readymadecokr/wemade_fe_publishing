@@ -107,5 +107,8 @@ describe("admin coupon system UI", () => {
     expect(source).toContain('>보상</th><th className="px-3 py-3 text-center">수정</th>');
     expect(source).toContain("보상 보기");
     expect(source).toContain("쿠폰 보상");
+    expect(routerSource).toContain('code: sql<string>`MAX(${coupons.code})`');
+    expect(routerSource).toContain("code: couponInput.code.trim() || existingCoupon.code");
+    expect(routerSource).toContain("where(eq(coupons.eventName, existingCoupon.eventName))");
   });
 });
