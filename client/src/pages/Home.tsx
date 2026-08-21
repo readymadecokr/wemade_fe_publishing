@@ -64,20 +64,26 @@ export default function Home() {
     contentDate: b.contentDate,
     contentBody: b.contentBody,
   }));
+  const currentBanner = bannerImages[currentBannerIndex] ?? bannerImages[0];
+
+  useEffect(() => {
+    setCurrentBannerIndex(previous => bannerImages.length ? Math.min(previous, bannerImages.length - 1) : 0);
+  }, [bannerImages.length]);
 
   const nextBanner = () => {
-    setCurrentBannerIndex((prev) => (prev + 1) % bannerImages.length);
+    setCurrentBannerIndex((prev) => bannerImages.length ? (prev + 1) % bannerImages.length : 0);
   };
 
   const prevBanner = () => {
-    setCurrentBannerIndex((prev) => (prev - 1 + bannerImages.length) % bannerImages.length);
+    setCurrentBannerIndex((prev) => bannerImages.length ? (prev - 1 + bannerImages.length) % bannerImages.length : 0);
   };
 
   // Auto-rotate banner every 5 seconds
   useEffect(() => {
+    if (bannerImages.length < 2) return;
     const interval = setInterval(nextBanner, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [bannerImages.length]);
 
   // News data - unified single section (6 items for 2 rows x 3 columns) with banner images
   const newsData = [
@@ -211,11 +217,11 @@ export default function Home() {
           {/* BANNER SECTION */}
           <section className="relative w-full bg-foreground/10 overflow-hidden flex items-center justify-center" style={{ aspectRatio: '1900 / 600' }}>
             {/* Banner Image */}
-            <img
-              src={bannerImages[currentBannerIndex].url}
-              alt={bannerImages[currentBannerIndex].title}
+            {currentBanner ? <img
+              src={currentBanner.url}
+              alt={currentBanner.title}
               onClick={() => {
-                const banner = bannerImages[currentBannerIndex];
+                const banner = currentBanner;
                 if (banner.actionType === "url") {
                   if (banner.actionUrl === "game-start") {
                     handleGameStart();
@@ -228,9 +234,9 @@ export default function Home() {
                 }
               }}
               className="h-full w-full object-cover cursor-pointer"
-            />
+            /> : <div className="flex h-full w-full items-center justify-center bg-[#213b58] text-sm font-semibold text-white">No banner is currently available.</div>}
             {/* Banner Navigation Buttons */}
-            <button
+            {bannerImages.length > 1 && <><button
               onClick={(e) => { e.stopPropagation(); prevBanner(); }}
               className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm"
             >
@@ -241,7 +247,7 @@ export default function Home() {
               className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm"
             >
               <ChevronRight size={16} />
-            </button>
+            </button></>}
           </section>
 
           {/* GAME START Button — 배너 하단 중앙, 절반 걸치기 */}
