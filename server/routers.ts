@@ -139,17 +139,17 @@ export const appRouter = router({
         const [coupon] = await db.select().from(coupons).where(eq(coupons.code, code)).limit(1);
         const now = new Date();
         if (!coupon || coupon.isActive !== 1 || (coupon.validFrom && coupon.validFrom > now) || (coupon.expiresAt && coupon.expiresAt < now) || Number(coupon.usedCount) >= Number(coupon.issueQuantity)) {
-          throw new Error("유효하지 않은 쿠폰 코드입니다.");
+          throw new Error("This coupon code is invalid or unavailable.");
         }
         const availableServers = coupon.serverCodes?.split(",").map(server => server.trim()).filter(Boolean) ?? [];
-        if (availableServers.length && !availableServers.includes(input.serverCode)) throw new Error("해당 서버에서 사용할 수 없는 쿠폰 코드입니다.");
+        if (availableServers.length && !availableServers.includes(input.serverCode)) throw new Error("This coupon code cannot be used on the selected server.");
 
         const priorUses = await db.select({ couponId: couponUses.couponId, eventName: coupons.eventName })
           .from(couponUses)
           .innerJoin(coupons, eq(couponUses.couponId, coupons.id))
           .where(eq(couponUses.userId, ctx.user.id));
-        if (priorUses.some(use => use.couponId === coupon.id)) throw new Error("이미 사용된 쿠폰 코드입니다.");
-        if (coupon.couponType === "random" && priorUses.some(use => use.eventName === coupon.eventName)) throw new Error("해당 쿠폰은 계정당 1회만 사용할 수 있습니다.");
+        if (priorUses.some(use => use.couponId === coupon.id)) throw new Error("This coupon code has already been used.");
+        if (coupon.couponType === "random" && priorUses.some(use => use.eventName === coupon.eventName)) throw new Error("This event coupon can only be used once per account.");
 
         await db.insert(couponUses).values({ couponId: coupon.id, userId: ctx.user.id, serverCode: input.serverCode, characterName: input.characterName, couponCodeSnapshot: code });
         await db.update(coupons).set({ usedCount: sql`${coupons.usedCount} + 1` }).where(eq(coupons.id, coupon.id));
@@ -198,7 +198,7 @@ export const appRouter = router({
             couponCode: row.use.couponCodeSnapshot || row.coupon.code,
             characterName: row.use.characterName || "-",
             registeredAt: row.use.usedAt,
-            status: "등록 완료",
+            status: "Registered",
           })),
           total: rows.length,
         };

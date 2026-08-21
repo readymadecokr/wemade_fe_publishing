@@ -117,14 +117,14 @@ function MyPageCouponEntry() {
   const couponHistory = trpc.coupon.myHistory.useQuery({ page: historyPage, pageSize: 20 });
   const redeemCoupon = trpc.coupon.redeem.useMutation({
     onSuccess: () => {
-      setNotice({ type: "success", message: "쿠폰이 정상적으로 등록되었습니다. 우편함을 확인해주세요." });
+      setNotice({ type: "success", message: "Your coupon has been registered. Please check your mailbox." });
       setCouponCode("");
       setConfirmOpen(false);
       couponBalance.refetch();
       couponHistory.refetch();
     },
     onError: (error) => {
-      setNotice({ type: "error", message: error.message || "유효하지 않은 쿠폰 코드입니다." });
+      setNotice({ type: "error", message: error.message || "This coupon code is invalid." });
       setConfirmOpen(false);
     },
   });
@@ -132,7 +132,7 @@ function MyPageCouponEntry() {
   const requestConfirmation = () => {
     setNotice(null);
     if (!serverCode || !characterName || !couponCode) {
-      setNotice({ type: "error", message: "쿠폰 보상 아이템 지급을 위한 정보를 모두 확인해주세요." });
+      setNotice({ type: "error", message: "Please complete all fields required to receive your coupon rewards." });
       return;
     }
     setConfirmOpen(true);
@@ -148,12 +148,12 @@ function MyPageCouponEntry() {
         <label className="space-y-2 text-sm font-semibold text-[#4e402f]"><span>Character Name</span><select aria-label="Coupon character" value={characterName} disabled={!serverCode} onChange={event => setCharacterName(event.target.value)} className="h-10 w-full rounded-md border border-[#cbb797] bg-white px-3 text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-100 focus:border-[#a51f24] focus:ring-2 focus:ring-[#a51f24]/15"><option value="">Select character</option><option value="ValkyrieKnight">ValkyrieKnight</option><option value="RuneMage">RuneMage</option><option value="ShadowRanger">ShadowRanger</option></select></label>
       </div>
       <label className="mt-4 block space-y-2 text-sm font-semibold text-[#4e402f]"><span>Coupon Code</span><Input aria-label="Coupon code" value={couponCode} onChange={event => setCouponCode(event.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ""))} placeholder="NNNN-NNNN-NNNN" maxLength={64} className="border-[#cbb797] bg-white font-mono tracking-[.08em] focus-visible:ring-[#a51f24]" /></label>
-      <div className="mt-6 flex justify-end"><Button onClick={requestConfirmation} className="min-w-36 bg-[#a51f24] font-bold text-white hover:bg-[#86191d]"><Ticket className="mr-2 h-4 w-4" />쿠폰 사용하기</Button></div>
+      <div className="mt-6 flex justify-end"><Button onClick={requestConfirmation} className="min-w-36 bg-[#a51f24] font-bold text-white hover:bg-[#86191d]"><Ticket className="mr-2 h-4 w-4" />Redeem Coupon</Button></div>
     </section>
 
     <section className="overflow-hidden rounded-2xl border border-[#decfc0] bg-[#fffdf9]/95 shadow-[0_8px_24px_rgba(93,73,43,.1)]"><div className="border-b border-[#e7d9c8] px-6 py-4"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">COUPON HISTORY</p><h2 className="mt-1 font-serif text-xl font-bold text-[#302419]">Coupon Use History</h2></div>{couponHistory.isLoading ? <p className="px-6 py-10 text-center text-sm text-[#776952]">Loading coupon history...</p> : !couponHistory.data?.items.length ? <p className="px-6 py-10 text-center text-sm text-[#776952]">No coupon history available.</p> : <><div className="overflow-x-auto"><table className="w-full min-w-[680px] text-sm"><thead className="bg-[#a51f24] text-white"><tr><th className="px-4 py-3 text-left">Event Name</th><th className="px-4 py-3 text-left">Coupon Code</th><th className="px-4 py-3 text-left">Character Name</th><th className="px-4 py-3 text-left">Registered Date</th><th className="px-4 py-3 text-center">Status</th></tr></thead><tbody>{couponHistory.data.items.map(item => <tr key={item.id} className="border-t border-[#eadfce]"><td className="px-4 py-3 font-medium text-[#302419]">{item.eventName}</td><td className="px-4 py-3 font-mono text-xs text-[#4e402f]">{item.couponCode}</td><td className="px-4 py-3 text-[#4e402f]">{item.characterName}</td><td className="px-4 py-3 text-[#776952]">{new Date(item.registeredAt).toLocaleDateString("en-CA")}</td><td className="px-4 py-3 text-center font-semibold text-emerald-700">{item.status}</td></tr>)}</tbody></table></div>{totalPages > 1 && <div className="flex justify-center gap-1 border-t border-[#e7d9c8] p-3">{Array.from({ length: totalPages }, (_, index) => index + 1).map(page => <Button key={page} size="sm" variant={historyPage === page ? "default" : "outline"} onClick={() => setHistoryPage(page)}>{page}</Button>)}</div>}</>}</section>
 
-    {confirmOpen && <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4"><div className="w-full max-w-md rounded-2xl border border-[#decfc0] bg-[#fffdf9] p-6 shadow-2xl"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">CONFIRM COUPON USE</p><h3 className="mt-2 font-serif text-xl font-bold text-[#302419]">쿠폰을 사용하시겠습니까?</h3><p className="mt-3 text-sm leading-6 text-[#675843]"><strong>{`Server ${serverCode}`}</strong>의 <strong>{characterName}</strong> 캐릭터에 쿠폰 보상을 등록합니다.</p><div className="mt-6 flex justify-end gap-2"><Button variant="outline" onClick={() => setConfirmOpen(false)}>취소</Button><Button disabled={redeemCoupon.isPending} onClick={() => redeemCoupon.mutate({ code: couponCode, serverCode, characterName })} className="bg-[#a51f24] text-white hover:bg-[#86191d]">{redeemCoupon.isPending ? "등록 중..." : "확인"}</Button></div></div></div>}
+    {confirmOpen && <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4"><div className="w-full max-w-md rounded-2xl border border-[#decfc0] bg-[#fffdf9] p-6 shadow-2xl"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">CONFIRM COUPON USE</p><h3 className="mt-2 font-serif text-xl font-bold text-[#302419]">Redeem this coupon?</h3><p className="mt-3 text-sm leading-6 text-[#675843]">Coupon rewards will be registered to <strong>{characterName}</strong> on <strong>{`Server ${serverCode}`}</strong>.</p><div className="mt-6 flex justify-end gap-2"><Button variant="outline" onClick={() => setConfirmOpen(false)}>Cancel</Button><Button disabled={redeemCoupon.isPending} onClick={() => redeemCoupon.mutate({ code: couponCode, serverCode, characterName })} className="bg-[#a51f24] text-white hover:bg-[#86191d]">{redeemCoupon.isPending ? "Registering..." : "Confirm"}</Button></div></div></div>}
   </div>;
 }
 
@@ -258,7 +258,12 @@ export default function MyPage() {
   // Initialize with stored nickname or generate a new one if not found
   const [userNickname, setUserNickname] = useState(() => {
     const stored = localStorage.getItem("rou_nickname");
-    if (stored && stored !== "모험가") {
+    const legacyDefaultNickname = "\uBAA8\uD5D8\uAC00";
+    if (stored === legacyDefaultNickname) {
+      localStorage.setItem("rou_nickname", "Adventurer");
+      return "Adventurer";
+    }
+    if (stored) {
       return stored;
     }
     const newNickname = generateRandomNickname();
@@ -271,11 +276,11 @@ export default function MyPage() {
   const getLoginTypeInfo = () => {
     const provider = socialProvider;
     if (provider === "Google") {
-      return { icon: "🔵", label: "Google 로그인" };
+      return { icon: "🔵", label: "Google Login" };
     } else if (provider === "Facebook") {
-      return { icon: "📘", label: "Facebook 로그인" };
+      return { icon: "📘", label: "Facebook Login" };
     }
-    return { icon: "👤", label: "Guest 로그인" };
+    return { icon: "👤", label: "Guest Login" };
   };
 
   const loginInfo = getLoginTypeInfo();

@@ -598,7 +598,7 @@ export default function Login() {
 
                 <div className="flex flex-col gap-2">
                   <h2 className="text-2xl font-black tracking-wider text-white uppercase font-display">
-                    Welcome, {localStorage.getItem("rou_nickname") || "모험가"}!
+                    Welcome, {localStorage.getItem("rou_nickname") || "Adventurer"}!
                   </h2>
                   <p className="text-xs text-slate-400">
                     Your account has been created successfully.

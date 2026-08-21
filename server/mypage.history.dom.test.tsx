@@ -36,7 +36,7 @@ vi.mock("@/lib/trpc", () => ({
       myUseHistory: { useQuery: ({ page }: { page: number }) => ({ data: { items: mocks.historyItems(page, "usage"), total: 15 } }) },
     },
     coupon: {
-      myHistory: { useQuery: () => ({ data: { items: [{ id: 1, eventName: "Welcome Celebration", couponCode: "DEMO-0001-0001", characterName: "ValkyrieKnight", registeredAt: new Date("2026-08-20T00:00:00Z"), status: "등록 완료" }], total: 1 }, isLoading: false, refetch: vi.fn() }) },
+      myHistory: { useQuery: () => ({ data: { items: [{ id: 1, eventName: "Welcome Celebration", couponCode: "DEMO-0001-0001", characterName: "ValkyrieKnight", registeredAt: new Date("2026-08-20T00:00:00Z"), status: "Registered" }], total: 1 }, isLoading: false, refetch: vi.fn() }) },
       redeem: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
     },
   },
@@ -91,8 +91,8 @@ describe("My Page history screens", () => {
     await user.selectOptions(screen.getByRole("combobox", { name: "Coupon server" }), "1");
     await user.selectOptions(screen.getByRole("combobox", { name: "Coupon character" }), "ValkyrieKnight");
     await user.type(screen.getByRole("textbox", { name: "Coupon code" }), "demo-0001-0001");
-    await user.click(screen.getByRole("button", { name: "쿠폰 사용하기" }));
+    await user.click(screen.getByRole("button", { name: "Redeem Coupon" }));
     expect(screen.getByRole("dialog")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "확인" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeTruthy();
   });
 });
