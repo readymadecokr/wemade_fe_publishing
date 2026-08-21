@@ -10,7 +10,7 @@ describe("coupon system rules", () => {
     expect(RANDOM_COUPON_PATTERN.test(code)).toBe(true);
   });
 
-  it("requires generated random codes and honors the total reward limit", () => {
+  it("accepts generated random codes and honors the total reward limit", () => {
     const base = { couponType: "random" as const, code: "ABCD-EFGH-2345", eventName: "ROU TEST", bonusRcoin: 0, rewardItems: reward, randomGenerated: 1 };
     expect(validateCouponSystemInput(base)).toBeNull();
     expect(validateCouponSystemInput({ ...base, randomGenerated: 0 })).toContain("자동 생성");
