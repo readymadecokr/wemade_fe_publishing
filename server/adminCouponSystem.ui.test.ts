@@ -41,11 +41,18 @@ describe("admin coupon system UI", () => {
     expect(routerSource).toContain("onDuplicateKeyUpdate");
     expect(routerSource).toContain("systemHistory");
     expect(routerSource).toContain("eventSummaries");
+    expect(routerSource).toContain("eventDetail");
+    expect(routerSource).toContain("userIdsByCoupon");
     expect(source).toContain("쿠폰 목록");
     expect(source).toContain("개별 쿠폰 목록");
+    expect(source).toContain("현재 쿠폰 정보");
+    expect(source).toContain("상세보기");
+    expect(source).toContain("couponInfoEvent");
     expect(source).toContain("엑셀 다운로드");
     expect(source).toContain("선택 삭제");
     expect(source).toContain("미사용");
+    expect(source).toContain('text-center">사용자</th>');
+    expect(source).toContain('item.userIds?.length ? item.userIds.join(", ") : "미사용"');
     expect(source).toContain("ToggleRight");
     expect(source).toContain("selectedCouponEvents");
     expect(source).toContain("eventActiveMutation");

@@ -596,7 +596,18 @@ export const appRouter = router({
         const endAt = input.endDate ? new Date(`${input.endDate}T23:59:59.999`) : null;
         const rows = await db.select().from(coupons).orderBy(desc(coupons.createdAt), desc(coupons.id));
         const filtered = rows.filter(row => (!input.eventName || row.eventName === input.eventName) && (!startAt || row.createdAt >= startAt) && (!endAt || row.createdAt <= endAt) && (!keyword || [row.code, row.name, row.eventName, row.gameCode].some(value => value.toLowerCase().includes(keyword))));
-        return { items: filtered.slice(offset, offset + input.pageSize).map(row => ({ ...row, status: getCouponStatus(row) })), total: filtered.length };
+        const pageRows = filtered.slice(offset, offset + input.pageSize);
+        const couponIds = pageRows.map(row => row.id);
+        const usageRows = couponIds.length
+          ? await db.select({ couponId: couponUses.couponId, userId: users.openId }).from(couponUses).leftJoin(users, eq(couponUses.userId, users.id)).where(inArray(couponUses.couponId, couponIds)).orderBy(desc(couponUses.usedAt))
+          : [];
+        const userIdsByCoupon = new Map<number, string[]>();
+        usageRows.forEach(row => {
+          if (!row.userId) return;
+          const current = userIdsByCoupon.get(row.couponId) ?? [];
+          if (!current.includes(row.userId)) userIdsByCoupon.set(row.couponId, [...current, row.userId]);
+        });
+        return { items: pageRows.map(row => ({ ...row, status: getCouponStatus(row), userIds: userIdsByCoupon.get(row.id) ?? [] })), total: filtered.length };
       }),
     eventSummaries: adminKeyProcedure
       .input(z.object({ search: z.string().optional(), startDate: z.string().optional(), endDate: z.string().optional(), page: z.number().default(1), pageSize: z.number().min(1).max(100).default(10) }))
@@ -615,6 +626,31 @@ export const appRouter = router({
         });
         const offset = (input.page - 1) * input.pageSize;
         return { items: summaries.slice(offset, offset + input.pageSize), total: summaries.length };
+      }),
+    eventDetail: adminKeyProcedure
+      .input(z.object({ eventName: z.string().min(1) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        const eventRows = await db.select().from(coupons).where(eq(coupons.eventName, input.eventName)).orderBy(desc(coupons.createdAt), desc(coupons.id));
+        if (!eventRows.length) throw new Error('쿠폰 이벤트를 찾을 수 없습니다.');
+        const newest = eventRows[0];
+        return {
+          eventName: newest.eventName,
+          gameCode: newest.gameCode,
+          couponType: newest.couponType,
+          couponCount: eventRows.length,
+          issueQuantity: eventRows.reduce((sum, row) => sum + (row.couponType === 'random' ? 1 : Number(row.issueQuantity ?? 1)), 0),
+          usedCount: eventRows.reduce((sum, row) => sum + Number(row.usedCount ?? 0), 0),
+          validFrom: newest.validFrom,
+          expiresAt: newest.expiresAt,
+          bonusRcoin: newest.bonusRcoin,
+          rewardItems: newest.rewardItems,
+          serverCodes: newest.serverCodes,
+          isActive: eventRows.some(row => row.isActive === 1) ? 1 : 0,
+          createdAt: newest.createdAt,
+          status: getCouponStatus(newest),
+        };
       }),
     create: adminKeyProcedure
       .input(couponSystemInput)
