@@ -84,7 +84,7 @@ describe("admin coupon system UI", () => {
     expect(summarySource).toContain(">이벤트명</th><th className=\"px-3 py-3 text-left\">쿠폰사용기간</th><th className=\"px-3 py-3 text-left\">상태</th><th className=\"px-3 py-3 text-left\">게임코드</th><th className=\"px-3 py-3 text-left\">서버코드</th><th className=\"px-3 py-3 text-left\">쿠폰타입</th><th className=\"px-3 py-3 text-left\">발급수량</th><th className=\"px-3 py-3 text-left\">사용수량</th>");
     expect(summarySource).toContain("statusText(item)");
     expect(summarySource).toContain("Number(item.usedCount ?? 0).toLocaleString()");
-    expect(summarySource).not.toContain(">보상</th>");
+    expect(summarySource).toContain(">보상</th>");
     expect(routerSource).toContain("userId: users.id");
     expect(routerSource).toContain("userNickname: usage?.nickname");
     expect(routerSource).toContain('status: usage ? "used" : "unused"');
@@ -102,5 +102,8 @@ describe("admin coupon system UI", () => {
     expect(source).toContain("개별 쿠폰 현황");
     expect(source).toContain('couponDetailEvent ? "쿠폰코드 검색" : "이벤트명 또는 쿠폰코드 검색"');
     expect(source).toContain("!couponDetailEvent && <Input type=\"date\"");
+    expect(source).toContain('>보상</th><th className="px-3 py-3 text-center">수정</th>');
+    expect(source).toContain("보상 보기");
+    expect(source).toContain("쿠폰 보상");
   });
 });
