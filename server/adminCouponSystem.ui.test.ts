@@ -68,4 +68,14 @@ describe("admin coupon system UI", () => {
     expect(schemaSource).toContain("issueQuantity");
     expect(routerSource).toContain("max(500000)");
   });
+
+  it("replaces reward details in the event summary with used quantity and separates detail cards", () => {
+    const summarySource = source.slice(source.indexOf('data-testid="coupon-summary-table"'), source.indexOf('data-testid="coupon-summary-table"') + 5000);
+    expect(summarySource).toContain(">발급 수량</th><th className=\"px-3 py-3 text-left\">사용 수량</th>");
+    expect(summarySource).toContain(">쿠폰사용기간</th>");
+    expect(summarySource).toContain("Number(item.usedCount ?? 0).toLocaleString()");
+    expect(summarySource).not.toContain(">보상</th>");
+    expect(source).toContain('text-xs text-muted-foreground">게임 코드</p>');
+    expect(source).toContain('text-xs text-muted-foreground">쿠폰 타입</p>');
+  });
 });
