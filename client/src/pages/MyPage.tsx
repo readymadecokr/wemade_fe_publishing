@@ -140,7 +140,7 @@ function MyPageCouponEntry() {
 
   return <div data-testid="coupon-entry" className="space-y-5">
     <section className="rounded-2xl border border-[#decfc0] bg-[#fffdf9]/95 p-6 shadow-[0_8px_24px_rgba(93,73,43,.1)]">
-      <div className="mb-6 border-b border-[#e7d9c8] pb-4"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">MY PAGE · COUPON USE</p><h2 className="mt-1 font-serif text-2xl font-bold text-[#302419]">Enter Coupon</h2><p className="mt-2 text-sm text-[#776952]">Select the server and character that will receive your coupon reward.</p></div>
+      <div className="mb-6 border-b border-[#e7d9c8] pb-4"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">MY PAGE · COUPON USE</p><h2 className="mt-1 font-serif text-2xl font-bold text-[#302419]">Coupon</h2><p className="mt-2 text-sm text-[#776952]">Select the server and character that will receive your coupon reward.</p></div>
       <div className="mb-5 grid gap-3 sm:grid-cols-2"><div className="rounded-lg border border-[#eadfce] bg-white px-4 py-3"><p className="text-xs font-bold uppercase tracking-wide text-[#786850]">rCoin</p><p className="mt-1 text-xl font-black text-[#a51f24]">{Number(couponBalance.data?.ruCash ?? 0).toLocaleString()}</p></div><div className="rounded-lg border border-[#eadfce] bg-white px-4 py-3"><p className="text-xs font-bold uppercase tracking-wide text-[#786850]">Bonus rCoin</p><p className="mt-1 text-xl font-black text-emerald-700">{Number(couponBalance.data?.bonusCash ?? 0).toLocaleString()}</p></div></div>
       {notice && <div role="status" className={`mb-5 flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-semibold ${notice.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-red-200 bg-red-50 text-red-700"}`}>{notice.type === "success" ? <CheckCircle2 className="h-5 w-5 shrink-0" /> : <AlertCircle className="h-5 w-5 shrink-0" />}{notice.message}</div>}
       <div className="grid gap-4 md:grid-cols-2">
@@ -192,6 +192,7 @@ export default function MyPage() {
 
   // DB에서 실제 createdAt 가져오기
   const { data: meData } = trpc.auth.me.useQuery();
+  const userIdDisplay = meData?.id ? String(meData.id) : "-";
 
   const formatRegistrationDate = (date: Date | string | null | undefined): string => {
     if (!date) return "-";
@@ -385,7 +386,7 @@ export default function MyPage() {
                   </button>
                   <button onClick={() => setActiveSection("coupon")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "coupon" ? "bg-[#4668a3] text-white" : "text-[#4e402f] hover:bg-[#eadfc4]"}`}>
                     <Ticket size={16} className={activeSection === "coupon" ? "text-white" : "text-[#4e402f]"} />
-                    <span>Enter Coupon</span>
+                    <span>Coupon</span>
                   </button>
                 </nav>
 
@@ -472,7 +473,8 @@ export default function MyPage() {
                       <Table className="text-xs">
                         <TableHeader>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-transparent">
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Name</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Nickname</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">User ID</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Provider</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Registration Date</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Last Account Activity</TableHead>
@@ -481,6 +483,7 @@ export default function MyPage() {
                         <TableBody>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5">
                             <TableCell className="text-black dark:text-white font-medium">{userNickname}</TableCell>
+                            <TableCell className="text-black/70 dark:text-white/70">{userIdDisplay}</TableCell>
                             <TableCell>
                               {socialProvider === "Google" ? (
                                 <span className="inline-flex items-center gap-1 text-black dark:text-white">
@@ -509,8 +512,12 @@ export default function MyPage() {
                     {/* Mobile Card View */}
                     <div className="md:hidden space-y-3">
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Name</p>
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Nickname</p>
                         <p className="text-sm text-black dark:text-white font-medium">{userNickname}</p>
+                      </div>
+                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">User ID</p>
+                        <p className="text-sm text-black dark:text-white">{userIdDisplay}</p>
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Provider</p>

@@ -500,3 +500,9 @@
 - [x] 쿠폰 데이터 존재 여부와 이벤트 목록 조회 결과 확인
 - [x] 목록 공백의 조회 조건·오류 원인 수정
 - [x] 복구된 목록과 데이터 무결성 회귀 검증 후 체크포인트 저장
+
+## My Page 계정·Coupon 이력 표기 정비
+- [x] Name을 Nickname으로 변경하고 User ID 열 추가
+- [x] Enter Coupon 메뉴를 Coupon으로 변경
+- [x] 예시 사용자 쿠폰 사용 이력 연결 및 My Page Coupon Use History 표시
+- [x] My Page 계정·Coupon 이력 회귀 검증 후 체크포인트 저장

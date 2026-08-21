@@ -59,6 +59,8 @@ describe("My Page history screens", () => {
   it("shows title-free purchase and usage tables with 10-item pagination", async () => {
     const user = userEvent.setup();
     render(<MyPage />);
+    expect(screen.getAllByText("Nickname").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("User ID").length).toBeGreaterThan(0);
 
     await user.click(screen.getByRole("button", { name: "Payment History" }));
     expect(screen.queryByRole("heading", { name: "Purchase History" })).toBeNull();
@@ -76,15 +78,16 @@ describe("My Page history screens", () => {
     expect(screen.getAllByText("Kafra Card")).toHaveLength(10);
   });
 
-  it("opens the Enter Coupon screen with server, character, confirmation, and history controls", async () => {
+  it("opens the Coupon screen with server, character, confirmation, and history controls", async () => {
     const user = userEvent.setup();
     render(<MyPage />);
-    await user.click(screen.getByRole("button", { name: "Enter Coupon" }));
+    await user.click(screen.getByRole("button", { name: "Coupon" }));
     expect(screen.getByTestId("coupon-entry")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Coupon" })).toBeTruthy();
+    expect(screen.getByText("Coupon Use History")).toBeTruthy();
     expect(screen.getByRole("combobox", { name: "Coupon server" })).toBeTruthy();
     expect(screen.getByRole("combobox", { name: "Coupon character" })).toBeTruthy();
     expect(screen.getByRole("textbox", { name: "Coupon code" })).toBeTruthy();
-    expect(screen.getByText("Coupon Use History")).toBeTruthy();
     await user.selectOptions(screen.getByRole("combobox", { name: "Coupon server" }), "1");
     await user.selectOptions(screen.getByRole("combobox", { name: "Coupon character" }), "ValkyrieKnight");
     await user.type(screen.getByRole("textbox", { name: "Coupon code" }), "demo-0001-0001");
