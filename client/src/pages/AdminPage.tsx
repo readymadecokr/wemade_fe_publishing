@@ -1109,6 +1109,9 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1); const [pageSize, setPageSize] = useState(10);
+  const [checkedBannerIds, setCheckedBannerIds] = useState<number[]>([]);
+  const [isExposureMoving, setIsExposureMoving] = useState(false);
+  const visibleBannerLimit = 10;
 
   const { data, refetch } = useQuery({ queryKey: ["admin-banners"], queryFn: () => adminClient!.admin.listBanners.query(), enabled: !!adminClient });
   const createM = useMutation({ mutationFn: (input: any) => adminClient!.admin.createBanner.mutate(input), onSuccess: () => { toast.success("배너가 등록되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
@@ -1140,8 +1143,89 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
     input.click();
   };
 
-  const filtered = (data ?? []).filter(b => !search || b.title.toLowerCase().includes(search.toLowerCase()));
-  const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const allBanners = useMemo(() => [...(data ?? [])].sort((a, b) => a.sortOrder - b.sortOrder || a.id - b.id), [data]);
+  const selectedBanners = allBanners.filter(b => b.isActive === 1).slice(0, visibleBannerLimit);
+  const unselectedBanners = [
+    ...allBanners.filter(b => b.isActive === 1).slice(visibleBannerLimit),
+    ...allBanners.filter(b => b.isActive !== 1),
+  ];
+  const matchSearch = (banner: BannerRow) => !search || banner.title.toLowerCase().includes(search.toLowerCase());
+  const filteredSelected = selectedBanners.filter(matchSearch);
+  const filteredUnselected = unselectedBanners.filter(matchSearch);
+  const pagedUnselected = filteredUnselected.slice((page - 1) * pageSize, page * pageSize);
+  const paged = pagedUnselected;
+  const filtered = filteredUnselected;
+  const openBannerForm = (banner: BannerRow) => setForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive, startDate: banner.startDate ?? "", endDate: banner.endDate ?? "" });
+  const toggleBannerChecked = (id: number, checked: boolean) => setCheckedBannerIds(current => checked ? Array.from(new Set([...current, id])) : current.filter(item => item !== id));
+  const toggleGroupChecked = (rows: BannerRow[], checked: boolean) => setCheckedBannerIds(current => checked ? Array.from(new Set([...current, ...rows.map(row => row.id)])) : current.filter(id => !rows.some(row => row.id === id)));
+  const isGroupChecked = (rows: BannerRow[]) => rows.length > 0 && rows.every(row => checkedBannerIds.includes(row.id));
+
+  const moveCheckedBanners = async (direction: "show" | "hide") => {
+    const source = direction === "show" ? unselectedBanners : selectedBanners;
+    const moving = source.filter(banner => checkedBannerIds.includes(banner.id));
+    if (!moving.length) { toast.error(direction === "show" ? "노출할 배너를 선택하세요." : "미노출할 배너를 선택하세요."); return; }
+    if (direction === "show" && selectedBanners.length + moving.length > visibleBannerLimit) {
+      toast.error(`노출 배너는 최대 ${visibleBannerLimit}개까지 선택할 수 있습니다.`);
+      return;
+    }
+    const nextSelected = direction === "show"
+      ? [...selectedBanners, ...moving]
+      : selectedBanners.filter(banner => !checkedBannerIds.includes(banner.id));
+    const nextUnselected = direction === "show"
+      ? unselectedBanners.filter(banner => !checkedBannerIds.includes(banner.id))
+      : [...moving, ...unselectedBanners.filter(banner => !checkedBannerIds.includes(banner.id))];
+
+    setIsExposureMoving(true);
+    try {
+      await Promise.all([
+        ...nextSelected.map((banner, index) => adminClient!.admin.updateBanner.mutate({ id: banner.id, isActive: 1, sortOrder: index })),
+        ...nextUnselected.map((banner, index) => adminClient!.admin.updateBanner.mutate({ id: banner.id, isActive: 0, sortOrder: nextSelected.length + index })),
+      ]);
+      setCheckedBannerIds([]);
+      setPage(1);
+      await refetch();
+      toast.success(direction === "show" ? "선택한 배너를 노출 영역으로 이동했습니다." : "선택한 배너를 미노출 영역으로 이동했습니다.");
+    } catch (error) {
+      toast.error(error instanceof Error ? `배너 이동 실패: ${error.message}` : "배너 이동에 실패했습니다.");
+    } finally {
+      setIsExposureMoving(false);
+    }
+  };
+
+  const BannerTable = ({ rows, exposure }: { rows: BannerRow[]; exposure: "visible" | "hidden" }) => (
+    <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+      <table className="w-full min-w-[820px]">
+        <thead>
+          <tr className="border-b bg-slate-50 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-300">
+            <th className="w-12 px-3 py-2.5 text-center font-medium"><input aria-label={`${exposure === "visible" ? "노출" : "미노출"} 배너 전체 선택`} type="checkbox" checked={isGroupChecked(rows)} onChange={event => toggleGroupChecked(rows, event.target.checked)} /></th>
+            <th className="w-14 px-3 py-2.5 text-center font-medium whitespace-nowrap">순서</th>
+            <th className="w-28 px-2 py-2.5 text-left font-medium">이미지</th>
+            <th className="px-3 py-2.5 text-left font-medium">배너 제목</th>
+            <th className="w-44 px-3 py-2.5 text-center font-medium">기간</th>
+            <th className="w-20 px-3 py-2.5 text-center font-medium">노출 상태</th>
+            <th className="w-10 px-2 py-2.5 text-center font-medium">보기</th>
+            <th className="w-10 px-2 py-2.5 text-center font-medium">수정</th>
+            <th className="w-10 px-2 py-2.5 text-center font-medium">삭제</th>
+          </tr>
+        </thead>
+        <tbody>
+          {!rows.length ? <tr><td colSpan={9} className="px-3 py-8 text-center text-sm text-muted-foreground">표시할 배너가 없습니다.</td></tr> : rows.map((banner, index) => (
+            <tr key={banner.id} className="cursor-pointer border-b last:border-0 hover:bg-accent/30" onClick={() => openBannerForm(banner)}>
+              <td className="px-3 py-3 text-center" onClick={event => event.stopPropagation()}><input aria-label={`${banner.title} 선택`} type="checkbox" checked={checkedBannerIds.includes(banner.id)} onChange={event => toggleBannerChecked(banner.id, event.target.checked)} /></td>
+              <td className="px-3 py-3 text-center text-sm text-muted-foreground">{exposure === "visible" ? index + 1 : "-"}</td>
+              <td className="px-2 py-3"><div className="h-14 w-24 overflow-hidden rounded bg-slate-100"><img src={banner.imageUrl} alt={banner.title} className="h-full w-full object-cover" /></div></td>
+              <td className="px-3 py-3 text-sm font-medium">{banner.title}</td>
+              <td className="px-3 py-3"><div className="rounded bg-slate-100 px-3 py-1.5 text-center dark:bg-slate-700"><p className="whitespace-nowrap font-mono text-xs leading-5 text-slate-600 dark:text-slate-300">{banner.startDate ? banner.startDate.replace("T", " ") : "-"}</p><p className="leading-4 text-slate-400">~</p><p className="whitespace-nowrap font-mono text-xs leading-5 text-slate-600 dark:text-slate-300">{banner.endDate ? banner.endDate.replace("T", " ") : "-"}</p></div></td>
+              <td className="px-3 py-3 text-center"><StatusBadge active={exposure === "visible"} /></td>
+              <td className="px-2 py-3 text-center" onClick={event => event.stopPropagation()}><Button variant="ghost" size="sm" onClick={() => setPreview(banner)}><Eye className="h-4 w-4" /></Button></td>
+              <td className="px-2 py-3 text-center" onClick={event => event.stopPropagation()}><Button variant="ghost" size="sm" onClick={() => openBannerForm(banner)}><Pencil className="h-4 w-4" /></Button></td>
+              <td className="px-2 py-3 text-center" onClick={event => event.stopPropagation()}><Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`"${banner.title}" 배너를 삭제하시겠습니까?`)) deleteM.mutate(banner.id); }}><Trash2 className="h-4 w-4" /></Button></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -1149,7 +1233,37 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
         action={!form ? <Button onClick={() => setForm(empty)}><Plus className="h-4 w-4 mr-2" />배너 등록</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="h-4 w-4 mr-1" />목록으로</Button>} />
 
       {!form ? (
+        <>
         <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="배너 제목 검색..." />
+              <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1); }}>
+                <SelectTrigger className="w-24 h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>{[10, 20, 50, 100].map(n => <SelectItem key={n} value={String(n)}>{n}개씩</SelectItem>)}</SelectContent>
+              </Select>
+              <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8"><RefreshCw className="h-3.5 w-3.5" /></Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6 p-4">
+            <section className="overflow-hidden rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20">
+              <div className="flex flex-col gap-3 border-b border-blue-200 bg-white/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-blue-900 dark:bg-slate-900/50">
+                <div><h3 className="text-sm font-bold text-blue-900 dark:text-blue-200">선택된 노출 배너 <span className="ml-1 text-blue-600">{selectedBanners.length} / {visibleBannerLimit}</span></h3><p className="mt-0.5 text-xs text-muted-foreground">메인 화면에 노출되는 배너입니다. 최대 {visibleBannerLimit}개까지 선택할 수 있습니다.</p></div>
+                <Button size="sm" variant="outline" className="border-blue-300 bg-white text-blue-700 hover:bg-blue-600 hover:text-white" disabled={isExposureMoving || !checkedBannerIds.some(id => selectedBanners.some(banner => banner.id === id))} onClick={() => moveCheckedBanners("hide")}><ChevronDown className="mr-1 h-4 w-4" />아래로 이동</Button>
+              </div>
+              <BannerTable rows={filteredSelected} exposure="visible" />
+            </section>
+            <section className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700">
+              <div className="flex flex-col gap-3 border-b bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:bg-slate-800">
+                <div><h3 className="text-sm font-bold">미선택 배너</h3><p className="mt-0.5 text-xs text-muted-foreground">체크한 배너를 위로 이동하면 메인 화면 노출 배너로 변경됩니다.</p></div>
+                <Button size="sm" className="bg-blue-500 text-white hover:bg-blue-600" disabled={isExposureMoving || !checkedBannerIds.some(id => unselectedBanners.some(banner => banner.id === id))} onClick={() => moveCheckedBanners("show")}><ChevronUp className="mr-1 h-4 w-4" />위로 이동</Button>
+              </div>
+              <BannerTable rows={pagedUnselected} exposure="hidden" />
+              <div className="px-4 py-3"><Pagination page={page} total={filteredUnselected.length} pageSize={pageSize} onChange={setPage} /></div>
+            </section>
+          </CardContent>
+        </Card>
+        <Card className="hidden" aria-hidden="true">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <SearchBar value={searchInput} onChange={setSearchInput} onSearch={() => { setSearch(searchInput); setPage(1); }} placeholder="배너 제목 검색..." />
@@ -1230,6 +1344,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
             )}
           </CardContent>
         </Card>
+        </>
       ) : (
         <Card><CardContent className="pt-6 space-y-4">
           <div className="space-y-1"><label className="text-sm font-medium">배너 제목 *</label><Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="배너 제목" /></div>
