@@ -30,13 +30,13 @@ describe("coupon system rules", () => {
     expect(validateCouponSystemInput({ ...common, issueQuantity: 500001 })).toContain("500,000");
   });
 
-  it("calculates inactive, scheduled, expired, used, and active states safely", () => {
+  it("calculates only scheduled, expired, and active states for coupon list display", () => {
     const now = new Date("2026-08-21T00:00:00Z");
     const base = { isActive: 1, validFrom: null, expiresAt: null, usedCount: 0, maxUses: 1, couponType: "random" as const };
-    expect(getCouponStatus({ ...base, isActive: 0 }, now)).toBe("inactive");
+    expect(getCouponStatus({ ...base, isActive: 0 }, now)).toBe("active");
     expect(getCouponStatus({ ...base, validFrom: new Date("2026-08-22T00:00:00Z") }, now)).toBe("scheduled");
     expect(getCouponStatus({ ...base, expiresAt: new Date("2026-08-20T00:00:00Z") }, now)).toBe("expired");
-    expect(getCouponStatus({ ...base, usedCount: 1 }, now)).toBe("used");
+    expect(getCouponStatus({ ...base, usedCount: 1 }, now)).toBe("active");
     expect(getCouponStatus(base, now)).toBe("active");
   });
 });

@@ -2471,8 +2471,8 @@ function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof c
     if (payload.id) updateMutation.mutate(payload); else createMutation.mutate(payload);
   };
   const editCoupon = (item: any) => setForm({ id: item.id, gameCode: item.gameCode ?? "ROU", couponType: item.couponType ?? "common", eventName: item.eventName ?? item.name, code: item.code, validFrom: item.validFrom ? new Date(item.validFrom).toISOString().slice(0, 16) : "", expiresAt: item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0, 16) : "", serverCodes: item.serverCodes ?? "", bonusRcoin: Number(item.bonusRcoin ?? 0), rewardItems: parseRewardItems(item.rewardItems), isActive: item.isActive, randomGenerated: item.randomGenerated ?? 0, issueQuantity: Number(item.issueQuantity ?? 1) });
-  const statusText = (item: any) => ({ active: "활성", inactive: "비활성", scheduled: "예정", expired: "만료", used: "사용됨" } as Record<string, string>)[String(item.status)] ?? "활성";
-  const statusClass = (item: any) => item.status === "active" ? "bg-emerald-100 text-emerald-700" : item.status === "expired" || item.status === "inactive" ? "bg-slate-100 text-slate-600" : "bg-amber-100 text-amber-700";
+  const statusText = (item: any) => ({ active: "활성", scheduled: "예정", expired: "만료" } as Record<string, string>)[String(item.status)] ?? "활성";
+  const statusClass = (item: any) => item.status === "active" ? "bg-emerald-100 text-emerald-700" : item.status === "expired" ? "bg-slate-100 text-slate-600" : "bg-amber-100 text-amber-700";
 
   const downloadTemplate = () => {
     const worksheet = XLSX.utils.json_to_sheet([{ "Game Code": "ROU", "Coupon Type": "COMMON", "Event Name": "ROU PREREG 2026", "Coupon Code": "ABCD-EFGH-JKLM", "Issue Quantity": 1, "Valid From": "2026-08-01T00:00", "Valid To": "2026-08-31T23:59", "Bonus rCoin": 100, "Reward Items": "501039:1|501040:5", "Server Codes": "5,7,9", "Active": 1 }]);

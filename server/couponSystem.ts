@@ -34,9 +34,7 @@ export function validateCouponSystemInput(input: CouponSystemInput) {
 }
 
 export function getCouponStatus(input: { isActive: number; validFrom: Date | null; expiresAt: Date | null; usedCount: number; maxUses: number; couponType: "common" | "random" }, now = new Date()) {
-  if (!input.isActive) return "inactive" as const;
   if (input.validFrom && input.validFrom > now) return "scheduled" as const;
   if (input.expiresAt && input.expiresAt < now) return "expired" as const;
-  if (input.couponType === "random" && input.usedCount >= input.maxUses) return "used" as const;
   return "active" as const;
 }
