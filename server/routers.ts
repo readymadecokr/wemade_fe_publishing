@@ -9,6 +9,7 @@ import { storagePut } from "./storage";
 import { filterMemberTransactionHistory } from "./memberHistory";
 import { calculateCumulativePaymentUsd, filterMemberCouponHistory } from "./memberCouponHistory";
 import { generateRandomCouponCode, getCouponStatus, validateCouponSystemInput } from "./couponSystem";
+import { authenticateAdminCredentials, encodeAdminPassword } from "./adminCredentials";
 import { and, asc, desc, eq, gte, inArray, like, lt, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -936,6 +937,24 @@ export const appRouter = router({
 
   // ===== ADMIN ACCOUNTS =====
   adminAccounts: router({
+    authenticate: publicProcedure
+      .input(z.object({ username: z.string().trim().min(1), password: z.string().min(1) }))
+      .mutation(async ({ input }) => {
+        const admin = await authenticateAdminCredentials(input.username, input.password);
+        if (!admin) throw new Error("ID 또는 Password가 올바르지 않습니다.");
+        return admin;
+      }),
+    changePassword: publicProcedure
+      .input(z.object({ username: z.string().trim().min(1), currentPassword: z.string().min(1), newPassword: z.string().min(4) }))
+      .mutation(async ({ input }) => {
+        const authenticated = await authenticateAdminCredentials(input.username, input.currentPassword);
+        if (!authenticated) throw new Error("현재 비밀번호가 올바르지 않습니다.");
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        if (!authenticated.id) throw new Error("기본 관리자 계정의 비밀번호는 관리자 관리에서 변경할 수 없습니다.");
+        await db.update(admins).set({ passwordHash: encodeAdminPassword(input.newPassword) }).where(eq(admins.id, authenticated.id));
+        return { success: true };
+      }),
     list: adminKeyProcedure.query(async () => {
       const db = await getDb();
       if (!db) return [];
@@ -946,8 +965,7 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
-        // simple hash for demo — in production use bcrypt
-        const passwordHash = Buffer.from(input.password).toString('base64');
+        const passwordHash = encodeAdminPassword(input.password);
         const result = await db.insert(admins).values({ username: input.username, passwordHash, displayName: input.displayName, permissions: input.permissions });
         return { id: (result as any).insertId };
       }),
@@ -958,7 +976,7 @@ export const appRouter = router({
         if (!db) throw new Error('DB unavailable');
         const { id, password, ...rest } = input;
         const updateData: Record<string, unknown> = { ...rest };
-        if (password) updateData.passwordHash = Buffer.from(password).toString('base64');
+        if (password) updateData.passwordHash = encodeAdminPassword(password);
         await db.update(admins).set(updateData).where(eq(admins.id, id));
         return { success: true };
       }),

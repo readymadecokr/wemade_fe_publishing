@@ -2955,28 +2955,41 @@ export default function AdminPage() {
   const [currentPw, setCurrentPw] = useState(""); const [newPw, setNewPw] = useState(""); const [confirmPw, setConfirmPw] = useState(""); const [changePwError, setChangePwError] = useState("");
   const [activeMenu, setActiveMenu] = useState("dashboard");
 
-  const handleAdminLogin = (e: React.FormEvent) => {
+  const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!adminId.trim() || !adminPw.trim()) { setAdminLoginError("ID와 Password를 입력해 주세요."); return; }
-    const storedPw = localStorage.getItem(`admin_pw_${adminId}`) ?? (adminId === "cyanima" || adminId === "blue0246" ? "0000" : null);
-    if (!storedPw || adminPw !== storedPw) { setAdminLoginError("ID 또는 Password가 올바르지 않습니다."); return; }
-    setAdminLoginError(""); sessionStorage.setItem("admin_session", adminId); setAdminLoggedIn(adminId);
+    try {
+      const loginClient = createAdminClient(`${adminId.trim()}:${adminPw}`);
+      const admin = await loginClient.adminAccounts.authenticate.mutate({ username: adminId.trim(), password: adminPw });
+      setAdminLoginError("");
+      sessionStorage.setItem("admin_session", admin.username);
+      sessionStorage.setItem(`admin_pw_${admin.username}`, adminPw);
+      setAdminLoggedIn(admin.username);
+    } catch (error) {
+      setAdminLoginError(error instanceof Error ? error.message : "ID 또는 Password가 올바르지 않습니다.");
+    }
   };
-  const handleAdminLogout = () => { sessionStorage.removeItem("admin_session"); setAdminLoggedIn(null); setAdminId(""); setAdminPw(""); };
-  const handleChangePw = (e: React.FormEvent) => {
+  const handleAdminLogout = () => { if (adminLoggedIn) sessionStorage.removeItem(`admin_pw_${adminLoggedIn}`); sessionStorage.removeItem("admin_session"); setAdminLoggedIn(null); setAdminId(""); setAdminPw(""); };
+  const handleChangePw = async (e: React.FormEvent) => {
     e.preventDefault();
-    const storedPw = localStorage.getItem(`admin_pw_${adminLoggedIn}`) ?? (adminLoggedIn === "cyanima" || adminLoggedIn === "blue0246" ? "0000" : "");
+    const storedPw = sessionStorage.getItem(`admin_pw_${adminLoggedIn}`) ?? (adminLoggedIn === "cyanima" || adminLoggedIn === "blue0246" ? "0000" : "");
     if (!currentPw.trim()) { setChangePwError("현재 비밀번호를 입력해 주세요."); return; }
     if (currentPw !== storedPw) { setChangePwError("현재 비밀번호가 올바르지 않습니다."); return; }
     if (!newPw.trim()) { setChangePwError("새 비밀번호를 입력해 주세요."); return; }
     if (newPw !== confirmPw) { setChangePwError("비밀번호가 일치하지 않습니다."); return; }
     if (newPw.length < 4) { setChangePwError("비밀번호는 4자 이상이어야 합니다."); return; }
-    localStorage.setItem(`admin_pw_${adminLoggedIn}`, newPw);
-    setChangePwError(""); setCurrentPw(""); setNewPw(""); setConfirmPw(""); setShowChangePw(false);
-    toast.success("비밀번호가 변경되었습니다.");
+    try {
+      const loginClient = createAdminClient(`${adminLoggedIn}:${storedPw}`);
+      await loginClient.adminAccounts.changePassword.mutate({ username: adminLoggedIn!, currentPassword: currentPw, newPassword: newPw });
+      sessionStorage.setItem(`admin_pw_${adminLoggedIn}`, newPw);
+      setChangePwError(""); setCurrentPw(""); setNewPw(""); setConfirmPw(""); setShowChangePw(false);
+      toast.success("비밀번호가 변경되었습니다.");
+    } catch (error) {
+      setChangePwError(error instanceof Error ? error.message : "비밀번호 변경에 실패했습니다.");
+    }
   };
 
-  const adminKey = adminLoggedIn ? `${adminLoggedIn}:${localStorage.getItem(`admin_pw_${adminLoggedIn}`) ?? "0000"}` : "";
+  const adminKey = adminLoggedIn ? `${adminLoggedIn}:${sessionStorage.getItem(`admin_pw_${adminLoggedIn}`) ?? "0000"}` : "";
   const adminClient = useMemo(() => adminKey ? createAdminClient(adminKey) : null, [adminKey]);
 
   if (!adminLoggedIn) {
