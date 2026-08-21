@@ -9,8 +9,16 @@ export type CouponRow = {
   id: number;
   code: string;
   name: string;
+  eventName?: string;
+  gameCode?: string;
+  couponType?: "common" | "random";
   benefitType: "point" | "product";
   benefitValue: number;
+  bonusRcoin?: number;
+  rewardItems?: string | null;
+  serverCodes?: string | null;
+  validFrom?: Date | string | null;
+  expiresAt?: Date | string | null;
 };
 
 export type ChargePaymentRow = {
@@ -28,7 +36,7 @@ export function filterMemberCouponHistory(uses: CouponUsageRow[], coupons: Coupo
   return uses
     .map(usage => ({ ...usage, coupon: couponById.get(usage.couponId) }))
     .filter((item): item is typeof item & { coupon: CouponRow } => Boolean(item.coupon))
-    .filter(item => !keyword || [item.coupon.code, item.coupon.name].some(value => value.toLocaleLowerCase().includes(keyword)))
+    .filter(item => !keyword || [item.coupon.code, item.coupon.name, item.coupon.eventName ?? "", item.coupon.gameCode ?? ""].some(value => value.toLocaleLowerCase().includes(keyword)))
     .filter(item => {
       const usedAt = new Date(item.usedAt).getTime();
       return usedAt >= startTime && usedAt <= endTime;
@@ -38,8 +46,17 @@ export function filterMemberCouponHistory(uses: CouponUsageRow[], coupons: Coupo
       id: item.id,
       couponCode: item.coupon.code,
       couponName: item.coupon.name,
+      eventName: item.coupon.eventName ?? item.coupon.name,
+      gameCode: item.coupon.gameCode ?? "ROU",
+      couponType: item.coupon.couponType ?? "common",
       benefitType: item.coupon.benefitType,
       benefitValue: item.coupon.benefitValue,
+      bonusRcoin: item.coupon.bonusRcoin ?? 0,
+      rewardItems: item.coupon.rewardItems ?? "[]",
+      serverCodes: item.coupon.serverCodes ?? null,
+      validFrom: item.coupon.validFrom ?? null,
+      expiresAt: item.coupon.expiresAt ?? null,
+      status: "used",
       usedAt: item.usedAt,
     }));
 }

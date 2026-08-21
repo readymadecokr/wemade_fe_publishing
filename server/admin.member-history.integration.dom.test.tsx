@@ -14,7 +14,7 @@ const transactions = [
   { id: 2, type: "use" as const, gameCode: "ROU", pgName: null, itemName: "Kafra Card", createdAt: new Date("2026-08-11T12:00:00Z"), beforeRuCash: 3000, beforeBonusCash: 150, ruCashDelta: 1000, bonusCashDelta: 150, afterRuCash: 2000, afterBonusCash: 0, priceUsd: null, itemQty: 1, itemPriceRuc: 1000, totalPriceRuc: 1000, status: "completed" },
 ];
 const couponUses = [{ id: 9, couponId: 22, userId: 701, usedAt: new Date("2026-08-10T12:00:00Z") }];
-const coupons = [{ id: 22, code: "WELCOME", name: "Welcome rCoin", benefitType: "point" as const, benefitValue: 500 }];
+const coupons = [{ id: 22, code: "WELCOME", name: "Welcome rCoin", eventName: "WELCOME EVENT", gameCode: "ROU", couponType: "common" as const, benefitType: "point" as const, benefitValue: 500, bonusRcoin: 500, rewardItems: "[]", serverCodes: "1,2", validFrom: new Date("2026-08-01T00:00:00Z"), expiresAt: new Date("2026-08-31T23:59:00Z") }];
 
 afterEach(() => cleanup());
 
@@ -67,8 +67,11 @@ describe("admin member detail transaction history integration", () => {
     await user.clear(search);
     await user.click(screen.getAllByRole("button", { name: "검색" }).at(-1)!);
     await user.click(screen.getByRole("tab", { name: "쿠폰 사용이력" }));
-    await screen.findByText("Coupon Code");
+    await screen.findByText("쿠폰 코드");
     expect(screen.getByText("WELCOME")).toBeTruthy();
+    expect(screen.getByText("WELCOME EVENT")).toBeTruthy();
+    expect(screen.getByText("Bonus rCoin 500")).toBeTruthy();
+    expect(screen.getByText("사용")).toBeTruthy();
     await waitFor(() => expect(couponHistory).toHaveBeenLastCalledWith(expect.objectContaining({ search: "" })));
   });
 });

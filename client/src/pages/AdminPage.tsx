@@ -170,7 +170,7 @@ export function MemberHistoryControls({ tab, searchInput, startDate, endDate, pa
           <Input type="date" value={endDate} onChange={e => onEndDateChange(e.target.value)} className="h-8 w-36 text-sm" aria-label="거래 이력 종료일" />
         </div>
         <div className="flex w-full gap-2 lg:w-80">
-          <Input value={searchInput} onChange={e => onSearchInputChange(e.target.value)} onKeyDown={e => { if (e.key === "Enter") onSearch(); }} placeholder={tab === "coupon" ? "쿠폰 코드, 쿠폰명 검색" : "게임 코드, PG, 아이템명 검색"} className="h-8 text-sm" aria-label="회원 거래 이력 검색" />
+          <Input value={searchInput} onChange={e => onSearchInputChange(e.target.value)} onKeyDown={e => { if (e.key === "Enter") onSearch(); }} placeholder={tab === "coupon" ? "이벤트명, 쿠폰 코드 검색" : "게임 코드, PG, 아이템명 검색"} className="h-8 text-sm" aria-label="회원 거래 이력 검색" />
           <Button size="sm" className="h-8 shrink-0" onClick={onSearch}>검색</Button>
         </div>
         <Select value={String(pageSize)} onValueChange={value => onPageSizeChange(Number(value))}>
@@ -211,12 +211,16 @@ export function MemberTransactionTable({ items, tab, loading }: { items: any[]; 
 }
 
 export function MemberCouponHistoryTable({ items, loading }: { items: any[]; loading: boolean }) {
-  const formatBenefit = (item: any) => item.benefitType === "point" ? `rCoin ${Number(item.benefitValue ?? 0).toLocaleString()}` : `Product #${item.benefitValue ?? "-"}`;
+  const formatBenefit = (item: any) => {
+    const rewards = (() => { try { return JSON.parse(item.rewardItems ?? "[]") as Array<{ itemId: string; quantity: number }>; } catch { return []; } })();
+    const values = [Number(item.bonusRcoin ?? 0) > 0 ? `Bonus rCoin ${Number(item.bonusRcoin).toLocaleString()}` : "", ...rewards.filter(reward => reward.itemId).map(reward => `ItemID ${reward.itemId} × ${reward.quantity}`)].filter(Boolean);
+    return values.join(" / ") || (item.benefitType === "point" ? `rCoin ${Number(item.benefitValue ?? 0).toLocaleString()}` : `Product #${item.benefitValue ?? "-"}`);
+  };
   return (
     <div data-testid="member-coupon-history-table" className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
-      <table className="w-full min-w-[640px] text-xs">
-        <thead className="bg-slate-50 text-slate-500 dark:bg-slate-800 dark:text-slate-300"><tr><th className="px-3 py-2 text-left">Usage Date</th><th className="px-3 py-2 text-left">Coupon Code</th><th className="px-3 py-2 text-left">Coupon Name</th><th className="px-3 py-2 text-left">Benefit Type</th><th className="px-3 py-2 text-right">Benefit</th></tr></thead>
-        <tbody>{loading ? <tr><td colSpan={5} className="px-3 py-4 text-center text-muted-foreground">이력 조회 중...</td></tr> : !items.length ? <tr><td colSpan={5} className="px-3 py-4 text-center text-muted-foreground">쿠폰 사용이력이 없습니다.</td></tr> : items.map(item => <tr key={item.id} className="border-t border-slate-100 dark:border-slate-800"><td className="px-3 py-2 text-muted-foreground">{fmt(item.usedAt)}</td><td className="px-3 py-2 font-mono">{item.couponCode}</td><td className="px-3 py-2">{item.couponName}</td><td className="px-3 py-2">{item.benefitType === "point" ? "rCoin" : "Product"}</td><td className="px-3 py-2 text-right font-medium">{formatBenefit(item)}</td></tr>)}</tbody>
+      <table className="w-full min-w-[1080px] text-xs">
+        <thead className="bg-slate-50 text-slate-500 dark:bg-slate-800 dark:text-slate-300"><tr><th className="px-3 py-2 text-left">사용일시</th><th className="px-3 py-2 text-left">이벤트명</th><th className="px-3 py-2 text-left">쿠폰 코드</th><th className="px-3 py-2 text-left">게임코드</th><th className="px-3 py-2 text-left">타입</th><th className="px-3 py-2 text-left">쿠폰사용기간</th><th className="px-3 py-2 text-left">보상</th><th className="px-3 py-2 text-left">서버</th><th className="px-3 py-2 text-center">상태</th></tr></thead>
+        <tbody>{loading ? <tr><td colSpan={9} className="px-3 py-4 text-center text-muted-foreground">이력 조회 중...</td></tr> : !items.length ? <tr><td colSpan={9} className="px-3 py-4 text-center text-muted-foreground">쿠폰 사용이력이 없습니다.</td></tr> : items.map(item => <tr key={item.id} className="border-t border-slate-100 dark:border-slate-800"><td className="px-3 py-2 whitespace-nowrap text-muted-foreground">{fmt(item.usedAt)}</td><td className="px-3 py-2 font-medium">{item.eventName}</td><td className="px-3 py-2 font-mono">{item.couponCode}</td><td className="px-3 py-2">{item.gameCode}</td><td className="px-3 py-2">{item.couponType === "random" ? "난수" : "공용"}</td><td className="px-3 py-2 whitespace-nowrap">{item.validFrom ? <>{fmt(item.validFrom)}<br />~ {fmt(item.expiresAt)}</> : "-"}</td><td className="px-3 py-2 font-medium">{formatBenefit(item)}</td><td className="px-3 py-2">{item.serverCodes || "전 서버"}</td><td className="px-3 py-2 text-center"><span className="rounded-full bg-blue-100 px-2 py-1 font-semibold text-blue-700">사용</span></td></tr>)}</tbody>
       </table>
     </div>
   );
