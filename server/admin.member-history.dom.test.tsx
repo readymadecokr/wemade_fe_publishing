@@ -3,7 +3,7 @@ import React from "react";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { MemberHistoryControls, MemberTransactionTable } from "../client/src/pages/AdminPage";
+import { MemberCouponHistoryTable, MemberHistoryControls, MemberTransactionTable } from "../client/src/pages/AdminPage";
 
 const charge = {
   id: 2, type: "charge", gameCode: "ROU", createdAt: new Date("2026-08-12T00:00:00Z"),
@@ -52,6 +52,13 @@ beforeAll(() => {
     expect(screen.queryByText("Bonus Δ")).toBeNull();
     expect(screen.getByText("PayPal")).toBeTruthy();
     expect(screen.getByText("Kafra Card")).toBeTruthy();
+  });
+
+  it("omits the coupon usage period from the member coupon history columns", () => {
+    render(<MemberCouponHistoryTable items={[{ id: 1, usedAt: new Date("2026-08-12T00:00:00Z"), eventName: "DEMO EXAMPLE 01", couponCode: "DEMO-0001-0001", gameCode: "ROU", couponType: "random", bonusRcoin: 500, rewardItems: "[]", serverCodes: "1" }]} loading={false} />);
+    const headers = within(screen.getByTestId("member-coupon-history-table")).getAllByRole("columnheader").map(header => header.textContent);
+    expect(headers).toEqual(["사용일시", "이벤트명", "쿠폰 코드", "게임코드", "타입", "보상", "서버", "상태"]);
+    expect(screen.queryByText("쿠폰사용기간")).toBeNull();
   });
 
   it("switches tabs and submits the entered transaction search", async () => {
