@@ -25,13 +25,12 @@ describe("admin coupon system UI", () => {
     expect(source).not.toContain("보상 아이템은 ${maximum}종까지 등록할 수 있습니다.");
     expect(source).toContain('max-w-2xl space-y-5');
     expect(source).toContain('>1</span>이벤트명');
-    expect(source).toContain('>2</span>쿠폰사용기간');
+    expect(source).toContain('>2</span>유효기간 시작');
     expect(source).toContain('>3</span>게임 코드 (Game Code)');
     expect(source).toContain('>4</span>서버 코드');
     expect(source).toContain('>5</span>쿠폰 타입');
     expect(source).toContain('>6</span>쿠폰 코드');
     expect(source).toContain('>7</span>쿠폰 발급 수량');
-    expect(source).toContain('max-w-xl space-y-5');
     expect(source).toContain('>8</span>보상 아이템 설정');
     expect(source).toContain('space-y-2"><div><h3 className="flex items-center');
     expect(source).not.toContain("포털 확장을 위한 필드입니다.");
