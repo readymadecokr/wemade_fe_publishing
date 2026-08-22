@@ -1,0 +1,28 @@
+<slide id="admin_coupon_list_ui">
+  <background color="paper"/>
+  <text id="header-label" x="60" y="34" width="390" height="22" font="code" size="14" color="muted" wrap="false">RAGNAROK UNIVERSE / COUPON API</text>
+  <text id="version-tag" x="1080" y="34" width="140" height="22" font="code" size="14" color="brand" align="right" wrap="false">v1.0 API 가이드</text>
+  <shape id="header-divider" type="line" x="60" y="72" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="slide-title" x="60" y="94" width="900" height="46" font="heading" size="32" color="ink" wrap="false">관리자 쿠폰 목록: 이벤트 단위 운영 화면</text>
+  <text id="slide-subtitle" x="60" y="148" width="1000" height="26" font="body" size="17" color="muted">이벤트 요약을 검색·필터링하고, 상태·보상·수정·삭제를 한 화면에서 관리합니다.</text>
+  <shape id="screenshot-frame" type="rect" x="60" y="210" width="690" height="430" fill="#FFFFFF" stroke="hairline" stroke-width="1" corner-radius="12" shadow="true"/>
+  <image id="admin-list-screenshot" src="https://private-us-east-1.manuscdn.com/sessionFile/9Gavre8pqqCMxaH0e9qryb/sandbox/slides_resource_iuagwhjlbd90b47lmn1id-9665e069-e2b-prod-sg1_1787392414987_na1fn_L2hvbWUvdWJ1bnR1L3VwbG9hZC9wYXN0ZWRfZmlsZV9XcVRTSWlfaW1hZ2U.png?x-oss-process=image/resize,w_1560,h_1560/format,webp&Expires=1789430400&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvOUdhdnJlOHBxcUNNeGFIMGU5cXJ5Yi9zYW5kYm94L3NsaWRlc19yZXNvdXJjZV9pdWFnd2hqbGJkOTBiNDdsbW4xaWQtOTY2NWUwNjktZTJiLXByb2Qtc2cxXzE3ODczOTI0MTQ5ODdfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzVndiRzloWkM5d1lYTjBaV1JmWm1sc1pWOVhjVlJUU1dsZmFXMWhaMlUucG5nP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTU2MCxoXzE1NjAvZm9ybWF0LHdlYnAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__&Key-Pair-Id=K2QY5QTL8JSY6C&Signature=MEYCIQDOAbf1z0e7mWllyNuP9GIOXNQjIACw0lY~vSZSAcOBVgIhAPwpx0IQBn9e5N6zle8UORCoXfMVOoPdfqoAP7BE7i39" x="72" y="220" width="666" height="410" fit="contain"/>
+  <shape id="feature-one" type="rect" x="785" y="220" width="435" height="96" fill="surface" stroke="hairline" stroke-width="1" corner-radius="12"/>
+  <shape id="feature-one-badge" type="ellipse" x="809" y="244" width="34" height="34" fill="brand"/>
+  <text id="feature-one-number" x="809" y="252" width="34" height="18" font="heading" size="16" color="#FFFFFF" align="center">1</text>
+  <text id="feature-one-title" x="862" y="238" width="310" height="24" font="heading" size="19" color="ink">검색 및 페이지 제어</text>
+  <text id="feature-one-body" x="862" y="270" width="330" height="30" font="body" size="15" color="muted">기간·이벤트명·쿠폰 코드 검색과 페이지 크기를 이벤트 요약 API 입력값으로 전달합니다.</text>
+  <shape id="feature-two" type="rect" x="785" y="340" width="435" height="96" fill="surface" stroke="hairline" stroke-width="1" corner-radius="12"/>
+  <shape id="feature-two-badge" type="ellipse" x="809" y="364" width="34" height="34" fill="brand"/>
+  <text id="feature-two-number" x="809" y="372" width="34" height="18" font="heading" size="16" color="#FFFFFF" align="center">2</text>
+  <text id="feature-two-title" x="862" y="358" width="310" height="24" font="heading" size="19" color="ink">이벤트 요약 정보</text>
+  <text id="feature-two-body" x="862" y="390" width="330" height="30" font="body" size="15" color="muted">기간·상태·게임·서버·타입·발급/사용 수량은 개별 코드의 집계 결과를 표시합니다.</text>
+  <shape id="feature-three" type="rect" x="785" y="460" width="435" height="130" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1" corner-radius="12"/>
+  <shape id="feature-three-badge" type="ellipse" x="809" y="486" width="34" height="34" fill="accent"/>
+  <text id="feature-three-number" x="809" y="494" width="34" height="18" font="heading" size="16" color="#FFFFFF" align="center">3</text>
+  <text id="feature-three-title" x="862" y="480" width="310" height="24" font="heading" size="19" color="ink">운영 제어</text>
+  <text id="feature-three-body" x="862" y="512" width="332" height="54" font="body" size="15" color="muted" line-height="1.35"><p>활성 On/Off는 쿠폰 사용 가능 여부를 제어합니다.</p><p>눈 아이콘은 보상, 연필은 수정, 휴지통은 삭제 기능을 실행합니다.</p></text>
+  <text id="list-note" x="60" y="652" width="1160" height="18" font="caption" size="13" color="muted" align="center">목록은 이벤트 요약이며, 실제 개별 코드와 사용자 현황은 이벤트 상세의 개별 쿠폰 현황에서 조회합니다.</text>
+  <shape id="footer-divider" type="line" x="60" y="680" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="page-number" x="1150" y="690" width="70" height="18" font="code" size="13" color="muted" align="right">12 / 14</text>
+</slide>

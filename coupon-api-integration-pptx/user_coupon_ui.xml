@@ -1,0 +1,28 @@
+<slide id="user_coupon_ui">
+  <background color="paper"/>
+  <text id="header-label" x="60" y="34" width="390" height="22" font="code" size="14" color="muted" wrap="false">RAGNAROK UNIVERSE / COUPON API</text>
+  <text id="version-tag" x="1080" y="34" width="140" height="22" font="code" size="14" color="brand" align="right" wrap="false">v1.0 API 가이드</text>
+  <shape id="header-divider" type="line" x="60" y="72" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="slide-title" x="60" y="94" width="900" height="46" font="heading" size="32" color="ink" wrap="false">사용자 My Page Coupon: 등록과 이력 확인</text>
+  <text id="slide-subtitle" x="60" y="148" width="1000" height="26" font="body" size="17" color="muted">사용자는 서버·캐릭터·쿠폰 코드를 입력하고, 성공 결과는 잔액과 Coupon Use History에 표시됩니다.</text>
+  <shape id="screenshot-frame" type="rect" x="60" y="210" width="690" height="430" fill="#FFFFFF" stroke="hairline" stroke-width="1" corner-radius="12" shadow="true"/>
+  <image id="user-coupon-screenshot" src="https://private-us-east-1.manuscdn.com/sessionFile/9Gavre8pqqCMxaH0e9qryb/sandbox/slides_resource_iuagwhjlbd90b47lmn1id-9665e069-e2b-prod-sg1_1787392489039_na1fn_L2hvbWUvdWJ1bnR1L3VwbG9hZC9wYXN0ZWRfZmlsZV9xa1NNamhfaW1hZ2U.png?x-oss-process=image/resize,w_1560,h_1560/format,webp&Expires=1789430400&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvOUdhdnJlOHBxcUNNeGFIMGU5cXJ5Yi9zYW5kYm94L3NsaWRlc19yZXNvdXJjZV9pdWFnd2hqbGJkOTBiNDdsbW4xaWQtOTY2NWUwNjktZTJiLXByb2Qtc2cxXzE3ODczOTI0ODkwMzlfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzVndiRzloWkM5d1lYTjBaV1JmWm1sc1pWOXhhMU5OYW1oZmFXMWhaMlUucG5nP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTU2MCxoXzE1NjAvZm9ybWF0LHdlYnAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__&Key-Pair-Id=K2QY5QTL8JSY6C&Signature=MEUCIQDkAzr91BRHXS4QPQOpl29fHZpL5Mt2SHaci9yYXt02-AIgRZ8f~ZxGn6GOV3j8Rv3Q98JGkR0MdzfYYdHVSEPzLGU_" x="72" y="220" width="666" height="410" fit="contain"/>
+  <shape id="user-feature-one" type="rect" x="785" y="220" width="435" height="104" fill="surface" stroke="hairline" stroke-width="1" corner-radius="12"/>
+  <shape id="user-feature-one-badge" type="ellipse" x="809" y="244" width="34" height="34" fill="brand"/>
+  <text id="user-feature-one-number" x="809" y="252" width="34" height="18" font="heading" size="16" color="#FFFFFF" align="center">1</text>
+  <text id="user-feature-one-title" x="862" y="238" width="310" height="24" font="heading" size="19" color="ink">Coupon 등록 입력</text>
+  <text id="user-feature-one-body" x="862" y="270" width="330" height="38" font="body" size="15" color="muted">서버·캐릭터·코드를 coupon.redeem에 전달합니다. 로그인 사용자는 OAuth 세션에서 서버가 식별합니다.</text>
+  <shape id="user-feature-two" type="rect" x="785" y="340" width="435" height="104" fill="surface" stroke="hairline" stroke-width="1" corner-radius="12"/>
+  <shape id="user-feature-two-badge" type="ellipse" x="809" y="364" width="34" height="34" fill="brand"/>
+  <text id="user-feature-two-number" x="809" y="372" width="34" height="18" font="heading" size="16" color="#FFFFFF" align="center">2</text>
+  <text id="user-feature-two-title" x="862" y="358" width="310" height="24" font="heading" size="19" color="ink">rCoin 및 Bonus rCoin</text>
+  <text id="user-feature-two-body" x="862" y="390" width="330" height="38" font="body" size="15" color="muted">등록 성공 후 잔액을 다시 조회합니다. Bonus rCoin 보상은 거래 원장과 함께 즉시 반영됩니다.</text>
+  <shape id="user-feature-three" type="rect" x="785" y="470" width="435" height="124" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1" corner-radius="12"/>
+  <shape id="user-feature-three-badge" type="ellipse" x="809" y="496" width="34" height="34" fill="accent"/>
+  <text id="user-feature-three-number" x="809" y="504" width="34" height="18" font="heading" size="16" color="#FFFFFF" align="center">3</text>
+  <text id="user-feature-three-title" x="862" y="490" width="310" height="24" font="heading" size="19" color="ink">Coupon Use History</text>
+  <text id="user-feature-three-body" x="862" y="522" width="332" height="50" font="body" size="15" color="muted" line-height="1.35"><p>이벤트명·코드·캐릭터·등록일·상태를 최신순으로 표시합니다.</p><p>coupon.myHistory 응답과 페이지네이션을 사용합니다.</p></text>
+  <text id="user-note" x="60" y="652" width="1160" height="18" font="caption" size="13" color="muted" align="center">아이템 보상은 Coupon Use History 표시와 별개로 게임 서버의 멱등성 지급 프로세스에 전달합니다.</text>
+  <shape id="footer-divider" type="line" x="60" y="680" width="1160" height="0" stroke="hairline" stroke-width="1"/>
+  <text id="page-number" x="1150" y="690" width="70" height="18" font="code" size="13" color="muted" align="right">14 / 14</text>
+</slide>

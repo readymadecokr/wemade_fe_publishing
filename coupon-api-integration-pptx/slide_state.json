@@ -2,8 +2,8 @@
   "project_info": {
     "title": "Ragnarok Universe Coupon API Integration Guide",
     "created": 1787305973.888,
-    "last_updated": 1787306752.317,
-    "total_slides": 11
+    "last_updated": 1787392496.584,
+    "total_slides": 14
   },
   "slides": [
     {
@@ -60,6 +60,21 @@
       "id": "checklist",
       "state": "edited",
       "pageNum": 11
+    },
+    {
+      "id": "admin_coupon_list_ui",
+      "state": "edited",
+      "pageNum": 12
+    },
+    {
+      "id": "admin_coupon_edit_ui",
+      "state": "edited",
+      "pageNum": 13
+    },
+    {
+      "id": "user_coupon_ui",
+      "state": "edited",
+      "pageNum": 14
     }
   ],
   "outline": [
@@ -128,6 +143,24 @@
       "title": "Integration Checklist",
       "summary": "외부 프로그래머가 구현 전에 확인할 인증·배치·검증·보상 전달 체크리스트입니다.",
       "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "admin_coupon_list_ui",
+      "title": "관리자 쿠폰 목록 인터페이스",
+      "summary": "관리자 쿠폰 목록 스크린샷을 기반으로 검색·상태·보상·수정·삭제 기능과 이벤트 요약 정보의 의미를 설명합니다.",
+      "image_plan": "사용자 제공 관리자 쿠폰 목록 스크린샷: /home/ubuntu/upload/pasted_file_WqTSIi_image.png. 화면 좌측에 배치하고 우측에 기능 설명을 배치합니다."
+    },
+    {
+      "id": "admin_coupon_edit_ui",
+      "title": "관리자 쿠폰 수정 인터페이스",
+      "summary": "관리자 쿠폰 수정 스크린샷을 기반으로 발급 수량·보상 아이템·쿠폰 수정 버튼이 어떤 API 설정을 갱신하는지 설명합니다.",
+      "image_plan": "사용자 제공 관리자 쿠폰 수정 스크린샷: /home/ubuntu/upload/pasted_file_inIT3Z_image.png. 화면 좌측에 배치하고 우측에 기능 설명을 배치합니다."
+    },
+    {
+      "id": "user_coupon_ui",
+      "title": "사용자 My Page Coupon 인터페이스",
+      "summary": "사용자 Coupon 화면 스크린샷을 기반으로 서버·캐릭터·쿠폰 코드 입력, rCoin 잔액, Coupon Use History를 설명합니다.",
+      "image_plan": "사용자 제공 My Page Coupon 스크린샷: /home/ubuntu/upload/pasted_file_qkSMjh_image.png. 화면 좌측에 배치하고 우측에 기능 설명을 배치합니다."
     }
   ]
 }
