@@ -219,7 +219,7 @@ export default function Login() {
           {/* Background Decorative Blur */}
           <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-[#36598f] to-[#d5bd7d] opacity-20 blur-xl"></div>
           
-          <div className="fantasy-card relative rounded-3xl p-8 shadow-2xl">
+          <div className="fantasy-card login-contrast-surface relative rounded-3xl p-8 shadow-2xl">
             
             {/* STEP 1: LOGIN PAGE */}
             {step === "login" && (

@@ -298,6 +298,45 @@
     box-shadow: 0 9px 22px rgba(93,73,43,.12), inset 0 1px rgba(255,255,255,.8), inset 0 0 0 3px rgba(255,246,222,.45);
   }
 
+  .login-contrast-surface {
+    background: rgba(255, 253, 247, .97);
+    color: #241d14;
+    box-shadow: 0 16px 36px rgba(70, 55, 35, .22), inset 0 1px rgba(255, 255, 255, .9), inset 0 0 0 3px rgba(255, 246, 222, .58);
+  }
+
+  .login-consent-panel {
+    background: rgba(246, 240, 225, .88);
+    border: 1px solid rgba(174, 151, 103, .42);
+  }
+
+  .login-contrast-surface .text-white,
+  .login-contrast-surface .text-slate-300,
+  .login-contrast-surface .text-slate-400,
+  .login-contrast-surface .text-slate-500 {
+    color: #334155 !important;
+  }
+
+  .login-contrast-surface [class~="bg-white/5"] {
+    background: rgba(246, 240, 225, .88) !important;
+    border-color: rgba(174, 151, 103, .42) !important;
+  }
+
+  .login-contrast-surface input {
+    background: #ffffff !important;
+    border-color: #bfae8c !important;
+    color: #1e293b !important;
+  }
+
+  .login-contrast-surface input::placeholder {
+    color: #64748b !important;
+  }
+
+  .login-contrast-surface button.bg-primary,
+  .login-contrast-surface button.bg-blue-600,
+  .login-contrast-surface button.bg-blue-700 {
+    color: #ffffff !important;
+  }
+
   .fantasy-frame {
     border: 1px solid rgba(67,97,151,.42);
     box-shadow: 0 0 0 3px rgba(255,252,241,.72), 0 8px 20px rgba(69,87,117,.14);
