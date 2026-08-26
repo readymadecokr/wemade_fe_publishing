@@ -115,6 +115,9 @@ describe("admin coupon system UI", () => {
   it("locks immutable coupon fields during edit and only permits issue quantity increases", () => {
     expect(source).toContain('disabled={Boolean(form.id)}');
     expect(source).toContain('쿠폰 발급 수량은 기존 수량보다 줄일 수 없습니다.');
+    expect(source).toContain('const lockedFieldClass');
+    expect(source).toContain('bg-slate-100/80 text-slate-400');
+    expect(source).not.toContain('쿠폰 수정에서는 변경할 수 없습니다.');
     expect(routerSource).toContain("input.issueQuantity < currentIssueQuantity");
     expect(routerSource).toContain("additionalQuantity");
     expect(routerSource).toContain("existingCoupon.gameCode");
