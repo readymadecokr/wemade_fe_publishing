@@ -36,6 +36,7 @@ describe("coupon system rules", () => {
     expect(getCouponStatus({ ...base, isActive: 0 }, now)).toBe("active");
     expect(getCouponStatus({ ...base, validFrom: new Date("2026-08-22T00:00:00Z") }, now)).toBe("scheduled");
     expect(getCouponStatus({ ...base, expiresAt: new Date("2026-08-20T00:00:00Z") }, now)).toBe("expired");
+    expect(getCouponStatus({ ...base, expiresAt: "2026-05-14 23:59:00" }, now)).toBe("expired");
     expect(getCouponStatus({ ...base, usedCount: 1 }, now)).toBe("active");
     expect(getCouponStatus(base, now)).toBe("active");
   });

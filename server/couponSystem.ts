@@ -33,8 +33,21 @@ export function validateCouponSystemInput(input: CouponSystemInput) {
   return null;
 }
 
-export function getCouponStatus(input: { isActive: number; validFrom: Date | null; expiresAt: Date | null; usedCount: number; maxUses: number; couponType: "common" | "random" }, now = new Date()) {
-  if (input.validFrom && input.validFrom > now) return "scheduled" as const;
-  if (input.expiresAt && input.expiresAt < now) return "expired" as const;
+function toCouponDate(value: Date | string | null) {
+  if (!value) return null;
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+
+  const normalized = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(value)
+    ? `${value.replace(" ", "T")}Z`
+    : value;
+  const parsed = new Date(normalized);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+export function getCouponStatus(input: { isActive: number; validFrom: Date | string | null; expiresAt: Date | string | null; usedCount: number; maxUses: number; couponType: "common" | "random" }, now = new Date()) {
+  const validFrom = toCouponDate(input.validFrom);
+  const expiresAt = toCouponDate(input.expiresAt);
+  if (validFrom && validFrom > now) return "scheduled" as const;
+  if (expiresAt && expiresAt < now) return "expired" as const;
   return "active" as const;
 }
