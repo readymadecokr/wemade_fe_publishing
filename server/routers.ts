@@ -814,15 +814,41 @@ export const appRouter = router({
         const { id, ...couponInput } = input;
         const [existingCoupon] = await db.select().from(coupons).where(eq(coupons.id, id)).limit(1);
         if (!existingCoupon) throw new Error('쿠폰을 찾을 수 없습니다.');
+        const [eventQuantity] = existingCoupon.couponType === 'random'
+          ? await db.select({ count: sql<number>`COUNT(*)` }).from(coupons).where(eq(coupons.eventName, existingCoupon.eventName))
+          : [{ count: Number(existingCoupon.issueQuantity ?? 1) }];
+        const currentIssueQuantity = Number(eventQuantity?.count ?? 1);
+        if (input.issueQuantity < currentIssueQuantity) throw new Error('쿠폰 발급 수량은 기존 수량보다 줄일 수 없습니다.');
+        let existingRewards: Array<{ itemId: string; quantity: number }> = [];
+        try {
+          existingRewards = existingCoupon.rewardItems ? JSON.parse(existingCoupon.rewardItems) : [];
+        } catch {
+          existingRewards = [];
+        }
         const resolvedInput = {
           ...couponInput,
-          code: couponInput.code.trim() || existingCoupon.code,
-          randomGenerated: couponInput.couponType === 'random' ? 1 : couponInput.randomGenerated,
+          gameCode: existingCoupon.gameCode,
+          couponType: existingCoupon.couponType,
+          code: existingCoupon.code,
+          serverCodes: existingCoupon.serverCodes ?? '',
+          bonusRcoin: Number(existingCoupon.bonusRcoin ?? 0),
+          rewardItems: existingRewards,
+          randomGenerated: Number(existingCoupon.randomGenerated ?? 0),
+          isActive: Number(existingCoupon.isActive ?? 1),
         };
         const values = toCouponSystemValues(resolvedInput);
         if (existingCoupon.couponType === 'random') {
-          const { code: _code, ...eventValues } = values;
+          const { code: _code, issueQuantity: _issueQuantity, ...eventValues } = values;
           await db.update(coupons).set(eventValues).where(eq(coupons.eventName, existingCoupon.eventName));
+          const additionalQuantity = input.issueQuantity - currentIssueQuantity;
+          if (additionalQuantity > 0) {
+            const codes = new Set<string>();
+            while (codes.size < additionalQuantity) codes.add(generateRandomCouponCode());
+            const rows = Array.from(codes, code => toCouponSystemValues({ ...resolvedInput, eventName: values.eventName, code, randomGenerated: 1, issueQuantity: 1 }));
+            for (let start = 0; start < rows.length; start += 1000) {
+              await db.insert(coupons).values(rows.slice(start, start + 1000));
+            }
+          }
         } else {
           await db.update(coupons).set(values).where(eq(coupons.id, id));
         }
