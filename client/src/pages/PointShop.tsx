@@ -13,7 +13,7 @@ const COIN_ICONS: Record<number, string> = {
   1: "/manus-storage/rcoin-product-normalized-1_3a54dcfa.png",
   2: "/manus-storage/rcoin-product-normalized-2_e83f10a6.png",
   3: "/manus-storage/rcoin-product-normalized-3_a2066f09.png",
-  4: "/manus-storage/rcoin-product-1500_2a3acd2f.png",
+  4: "/manus-storage/rcoin-product-normalized-4-original_0c88b775.png",
   5: "/manus-storage/rcoin-product-normalized-5_1f2fcd6a.png",
   6: "/manus-storage/rcoin-product-normalized-6_f8d73a29.png",
   7: "/manus-storage/rcoin-product-normalized-7_1846f0d0.png",
