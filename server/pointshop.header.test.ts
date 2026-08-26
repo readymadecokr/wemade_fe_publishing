@@ -8,6 +8,6 @@ describe("Shop category header", () => {
     expect(source).toContain('bg-[linear-gradient(110deg,#314b66,#557494_55%,#314b66)]');
     expect(source).toContain('font-serif text-4xl font-bold');
     expect(source).toContain('>Shop</h1>');
-    expect(source).toContain('Top up rCoin');
+    expect(source).toContain('Purchase rCoin');
   });
 });

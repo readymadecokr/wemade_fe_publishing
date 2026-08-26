@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useLocation } from "wouter";
-import { Check, ChevronDown, ChevronLeft, ShieldCheck } from "lucide-react";
+import { Check, ChevronDown, CreditCard, Globe2, ShieldCheck, WalletCards } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
@@ -14,7 +13,7 @@ const COIN_ICONS: Record<number, string> = {
   1: "/manus-storage/rcoin-product-normalized-1_3a54dcfa.png",
   2: "/manus-storage/rcoin-product-normalized-2_e83f10a6.png",
   3: "/manus-storage/rcoin-product-normalized-3_a2066f09.png",
-  4: "/manus-storage/rcoin-product-normalized-4_c97d1b25.png",
+  4: "/manus-storage/rcoin-product-normalized-4_c97d1c25.png",
   5: "/manus-storage/rcoin-product-normalized-5_1f2fcd6a.png",
   6: "/manus-storage/rcoin-product-normalized-6_f8d73a29.png",
   7: "/manus-storage/rcoin-product-normalized-7_1846f0d0.png",
@@ -30,20 +29,18 @@ type Product = {
 };
 
 function BalanceCards({ rCoin, bonusCoin }: { rCoin: number; bonusCoin: number }) {
-  return (
-    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div className="fantasy-card rounded-xl px-6 py-5">
-        <p className="text-xs font-black uppercase tracking-wide text-[#786850]">rCoin</p>
-        <p className="mt-1 text-3xl font-black text-[#a51f24]">{fmtCoin(rCoin)}</p>
-        <p className="mt-1 text-xs text-[#8a795e]">Paid Currency</p>
-      </div>
-      <div className="fantasy-card rounded-xl px-6 py-5">
-        <p className="text-xs font-black uppercase tracking-wide text-[#786850]">Bonus rCoin</p>
-        <p className="mt-1 text-3xl font-black text-green-700">{fmtCoin(bonusCoin)}</p>
-        <p className="mt-1 text-xs text-[#8a795e]">Bonus Currency (Used First)</p>
-      </div>
-    </section>
-  );
+  return <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div className="fantasy-card rounded-xl px-6 py-5">
+      <p className="text-xs font-black uppercase tracking-wide text-[#786850]">rCoin</p>
+      <p className="mt-1 text-3xl font-black text-[#a51f24]">{fmtCoin(rCoin)}</p>
+      <p className="mt-1 text-xs text-[#8a795e]">Paid Currency</p>
+    </div>
+    <div className="fantasy-card rounded-xl px-6 py-5">
+      <p className="text-xs font-black uppercase tracking-wide text-[#786850]">Bonus rCoin</p>
+      <p className="mt-1 text-3xl font-black text-green-700">{fmtCoin(bonusCoin)}</p>
+      <p className="mt-1 text-xs text-[#8a795e]">Bonus Currency (Used First)</p>
+    </div>
+  </section>;
 }
 
 const primaryPaymentMethods = [
@@ -56,10 +53,16 @@ const extraPaymentMethods = [
   { id: "ebanx", label: "EBANX" },
   { id: "payermax", label: "PayerMax" },
 ];
+const shopEntryProviders = [
+  { id: "xsolla", label: "Xsolla", description: "Global payments", icon: Globe2, accent: "bg-[#315d9d]" },
+  { id: "mycard", label: "MyCard", description: "Taiwan payment service", icon: CreditCard, accent: "bg-[#c13c3c]" },
+  { id: "goc", label: "GOC Pay", description: "Game-focused payments", icon: WalletCards, accent: "bg-[#21815d]" },
+] as const;
+type ShopEntryProvider = (typeof shopEntryProviders)[number]["id"];
 
-export function PurchaseDialog({ products, productId, open, onOpenChange, onSelectProduct }: { products: Product[]; productId: number | null; open: boolean; onOpenChange: (open: boolean) => void; onSelectProduct: (id: number) => void }) {
+export function PurchaseDialog({ products, productId, open, onOpenChange, onSelectProduct, defaultMethod = "goc" }: { products: Product[]; productId: number | null; open: boolean; onOpenChange: (open: boolean) => void; onSelectProduct: (id: number) => void; defaultMethod?: string }) {
   const [priceOpen, setPriceOpen] = useState(false);
-  const [method, setMethod] = useState("goc");
+  const [method, setMethod] = useState(defaultMethod);
   const [showMore, setShowMore] = useState(false);
   const [captchaChecked, setCaptchaChecked] = useState(false);
   const selected = products.find(product => product.id === productId) ?? products[0];
@@ -67,95 +70,86 @@ export function PurchaseDialog({ products, productId, open, onOpenChange, onSele
   useEffect(() => {
     if (open) {
       setPriceOpen(false);
-      setMethod("goc");
+      setMethod(defaultMethod);
       setShowMore(false);
       setCaptchaChecked(false);
     }
-  }, [open, productId]);
+  }, [open, productId, defaultMethod]);
 
   if (!selected) return null;
   const bonusText = selected.bonusCashAmount > 0 ? ` +${fmtCoin(selected.bonusCashAmount)} Bonus` : "";
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100%-1rem)] max-h-[90vh] max-w-[500px] overflow-x-hidden overflow-y-auto rounded-2xl border-[#b9a57b] bg-[#fffaf0] p-0 text-[#2c241c] shadow-[0_18px_45px_rgba(75,55,29,.3)]">
-        <div className="border-b border-[#ddcfad] px-6 py-5">
-          <DialogTitle className="font-serif text-lg font-bold text-[#3b5688]">Purchase rCoin</DialogTitle>
-          <DialogDescription className="sr-only">Choose a package, payment method, and confirm the security check.</DialogDescription>
-          <div className="mt-3 flex items-center justify-between gap-3">
-            <p className="whitespace-nowrap text-[22px] font-black leading-none tracking-tight text-[#2c241c]">{fmtCoin(selected.ruCashAmount)} rCoin<span className="ml-1.5 text-green-700">{bonusText}</span></p>
-            <div className="relative shrink-0">
-              <button type="button" onClick={() => setPriceOpen(value => !value)} className="inline-flex min-w-[92px] items-center justify-between gap-2 rounded-lg border border-[#b8a57d] bg-white px-3 py-2 text-sm font-bold text-[#3a4659] shadow-sm hover:border-[#5371a8]">
-                ${Number(selected.priceUsd).toFixed(2)} <ChevronDown className="h-4 w-4" />
-              </button>
-              {priceOpen && <div className="absolute right-0 z-30 mt-2 max-h-52 w-28 overflow-y-auto rounded-lg border border-[#cbb98f] bg-[#fffaf0] p-1 shadow-xl">
-                {products.map(product => <button type="button" key={product.id} onClick={() => { onSelectProduct(product.id); setPriceOpen(false); }} className={`block w-full rounded px-2 py-2 text-left text-sm font-semibold hover:bg-[#e7eefb] ${product.id === selected.id ? "bg-[#e7eefb] text-[#3b5c93]" : "text-[#5a4b38]"}`}>${Number(product.priceUsd).toFixed(2)}</button>)}
-              </div>}
-            </div>
+  return <Dialog open={open} onOpenChange={onOpenChange}>
+    <DialogContent className="w-[calc(100%-1rem)] max-h-[90vh] max-w-[500px] overflow-x-hidden overflow-y-auto rounded-2xl border-[#b9a57b] bg-[#fffaf0] p-0 text-[#2c241c] shadow-[0_18px_45px_rgba(75,55,29,.3)]">
+      <div className="border-b border-[#ddcfad] px-6 py-5">
+        <DialogTitle className="font-serif text-lg font-bold text-[#3b5688]">Purchase rCoin</DialogTitle>
+        <DialogDescription className="sr-only">Choose a package, payment method, and confirm the security check.</DialogDescription>
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <p className="whitespace-nowrap text-[22px] font-black leading-none tracking-tight text-[#2c241c]">{fmtCoin(selected.ruCashAmount)} rCoin<span className="ml-1.5 text-green-700">{bonusText}</span></p>
+          <div className="relative shrink-0">
+            <button type="button" onClick={() => setPriceOpen(value => !value)} className="inline-flex min-w-[92px] items-center justify-between gap-2 rounded-lg border border-[#b8a57d] bg-white px-3 py-2 text-sm font-bold text-[#3a4659] shadow-sm hover:border-[#5371a8]">${Number(selected.priceUsd).toFixed(2)} <ChevronDown className="h-4 w-4" /></button>
+            {priceOpen && <div className="absolute right-0 z-30 mt-2 max-h-52 w-28 overflow-y-auto rounded-lg border border-[#cbb98f] bg-[#fffaf0] p-1 shadow-xl">{products.map(product => <button type="button" key={product.id} onClick={() => { onSelectProduct(product.id); setPriceOpen(false); }} className={`block w-full rounded px-2 py-2 text-left text-sm font-semibold hover:bg-[#e7eefb] ${product.id === selected.id ? "bg-[#e7eefb] text-[#3b5c93]" : "text-[#5a4b38]"}`}>${Number(product.priceUsd).toFixed(2)}</button>)}</div>}
           </div>
         </div>
-
-        <div className="space-y-5 px-6 py-5">
-          <section>
-            <p className="mb-2 text-sm font-black text-[#3b2f22]">Payment Method</p>
-            <div className="space-y-2">
-              {primaryPaymentMethods.map(item => <button type="button" key={item.id} onClick={() => setMethod(item.id)} className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${method === item.id ? "border-[#5d78aa] bg-[#e9f0fb] ring-1 ring-[#5d78aa]" : "border-[#ded0ad] hover:border-[#7994c1]"}`}>
-                <span className="font-bold text-[#3b2f22]">{item.label}</span><span className={`text-xs font-semibold ${item.id === "goc" ? "text-[#4668a3]" : "text-[#8c7b61]"}`}>{item.sublabel}</span>
-              </button>)}
-              {showMore && extraPaymentMethods.map(item => <button type="button" key={item.id} onClick={() => setMethod(item.id)} className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${method === item.id ? "border-[#5d78aa] bg-[#e9f0fb] ring-1 ring-[#5d78aa]" : "border-[#ded0ad] hover:border-[#7994c1]"}`}><span className="font-bold text-[#3b2f22]">{item.label}</span><span className="text-xs text-[#8c7b61]">Payment partner</span></button>)}
-            </div>
-            <button type="button" onClick={() => setShowMore(value => !value)} className="mt-3 text-sm font-bold text-[#4668a3] hover:text-[#2f4f83]">{showMore ? "Show less" : "More payment methods"}</button>
-          </section>
-
-          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#ded0ad] bg-[#f9f2e2] p-3 text-sm text-[#5a4b38]">
-            <input type="checkbox" checked={captchaChecked} onChange={event => setCaptchaChecked(event.target.checked)} className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-            <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-slate-500" />I am not a robot</span>
-          </label>
-        </div>
-        <div className="border-t border-[#ddcfad] px-6 py-4">
-          <button type="button" disabled={!captchaChecked} onClick={() => alert("Payment provider integration will be available soon.")} className="w-full rounded-lg border border-[#2e5189] bg-[#4668a3] px-4 py-3 text-sm font-black text-white transition-colors hover:bg-[#385a92] disabled:cursor-not-allowed disabled:bg-slate-300">Pay ${Number(selected.priceUsd).toFixed(2)}</button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
+      </div>
+      <div className="space-y-5 px-6 py-5">
+        <section>
+          <p className="mb-2 text-sm font-black text-[#3b2f22]">Payment Method</p>
+          <div className="space-y-2">
+            {primaryPaymentMethods.map(item => <button type="button" key={item.id} onClick={() => setMethod(item.id)} className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${method === item.id ? "border-[#5d78aa] bg-[#e9f0fb] ring-1 ring-[#5d78aa]" : "border-[#ded0ad] hover:border-[#7994c1]"}`}><span className="font-bold text-[#3b2f22]">{item.label}</span><span className={`text-xs font-semibold ${item.id === "goc" ? "text-[#4668a3]" : "text-[#8c7b61]"}`}>{item.sublabel}</span></button>)}
+            {showMore && extraPaymentMethods.map(item => <button type="button" key={item.id} onClick={() => setMethod(item.id)} className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${method === item.id ? "border-[#5d78aa] bg-[#e9f0fb] ring-1 ring-[#5d78aa]" : "border-[#ded0ad] hover:border-[#7994c1]"}`}><span className="font-bold text-[#3b2f22]">{item.label}</span><span className="text-xs text-[#8c7b61]">Payment partner</span></button>)}
+          </div>
+          <button type="button" onClick={() => setShowMore(value => !value)} className="mt-3 text-sm font-bold text-[#4668a3] hover:text-[#2f4f83]">{showMore ? "Show less" : "More payment methods"}</button>
+        </section>
+        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#ded0ad] bg-[#f9f2e2] p-3 text-sm text-[#5a4b38]"><input type="checkbox" checked={captchaChecked} onChange={event => setCaptchaChecked(event.target.checked)} className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" /><span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-slate-500" />I am not a robot</span></label>
+      </div>
+      <div className="border-t border-[#ddcfad] px-6 py-4"><button type="button" disabled={!captchaChecked} onClick={() => alert("Payment provider integration will be available soon.")} className="w-full rounded-lg border border-[#2e5189] bg-[#4668a3] px-4 py-3 text-sm font-black text-white transition-colors hover:bg-[#385a92] disabled:cursor-not-allowed disabled:bg-slate-300">Pay ${Number(selected.priceUsd).toFixed(2)}</button></div>
+    </DialogContent>
+  </Dialog>;
 }
 
-function ChargeTab({ rCoin, bonusCoin }: { rCoin: number; bonusCoin: number }) {
+function ChargeTab({ rCoin, bonusCoin, paymentProvider }: { rCoin: number; bonusCoin: number; paymentProvider: ShopEntryProvider }) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [purchaseOpen, setPurchaseOpen] = useState(false);
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
   const orderedProducts = useMemo(() => [...(products as Product[])].sort((a, b) => (a.sortOrder ?? a.id) - (b.sortOrder ?? b.id)), [products]);
+  const providerLabel = shopEntryProviders.find(item => item.id === paymentProvider)?.label ?? "";
 
-  return (
-    <div className="space-y-5">
-      <BalanceCards rCoin={rCoin} bonusCoin={bonusCoin} />
-      <div className="flex flex-col items-start gap-1 border-b border-[#cdbb91] pb-3 text-sm text-[#776952] sm:flex-row sm:items-center sm:justify-between"><span>All prices are shown in USD.</span><span>rCoin is bound to your account.</span></div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {orderedProducts.map((product, index) => {
-          const order = product.sortOrder ?? index + 1;
-          const isBestSeller = order === 5;
-          const isBestValue = order === 8;
-          return <button type="button" key={product.id} data-shop-product={product.id} onClick={() => { setSelectedId(product.id); setPurchaseOpen(true); }} className="fantasy-card relative min-h-[154px] rounded-xl p-4 text-left transition-all hover:-translate-y-0.5 hover:border-[#5c79ad] hover:shadow-md">
-            {(isBestSeller || isBestValue) && <span className={`absolute -left-1 -top-3 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-wide text-white shadow-sm ${isBestSeller ? "bg-[#a51f24]" : "bg-[#5d4387]"}`}>{isBestSeller ? "Best Seller" : "Best Value"}</span>}
-            <div className="flex items-center gap-3 pt-2">
-              <div className="flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-lg bg-[#f0e7d2]"><img src={COIN_ICONS[order] ?? COIN_ICONS[index + 1]} alt="rCoin package" className="h-[76px] w-[76px] object-contain" /></div>
-              <div className="min-w-0 flex-1"><div className="flex flex-wrap items-baseline gap-x-1 gap-y-1"><span className="text-2xl font-black leading-none text-[#2c241c]">{fmtCoin(product.ruCashAmount)}</span><span className="text-sm font-bold text-[#655540]">rCoin</span>{product.bonusCashAmount > 0 && <span className="text-sm font-black text-green-700">+{fmtCoin(product.bonusCashAmount)} Bonus</span>}</div></div>
-            </div>
-            <div className="mt-3 rounded-lg border border-[#4a68a0] bg-gradient-to-b from-[#5e80bb] to-[#3d609d] px-3 py-2 text-center text-lg font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,.35),0_3px_0_rgba(46,73,123,.45)]">${Number(product.priceUsd).toFixed(2)}</div>
-          </button>;
-        })}
-      </div>
-      <PurchaseDialog products={orderedProducts} productId={selectedId} open={purchaseOpen} onOpenChange={setPurchaseOpen} onSelectProduct={setSelectedId} />
+  return <div className="space-y-5">
+    <BalanceCards rCoin={rCoin} bonusCoin={bonusCoin} />
+    <div className="flex flex-col items-start gap-1 border-b border-[#cdbb91] pb-3 text-sm text-[#776952] sm:flex-row sm:items-center sm:justify-between"><span>All prices are shown in USD.</span><span>Payment provider: <strong className="text-[#3b5688]">{providerLabel}</strong></span></div>
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {orderedProducts.map((product, index) => {
+        const order = product.sortOrder ?? index + 1;
+        const isBestSeller = order === 5;
+        const isBestValue = order === 8;
+        return <button type="button" key={product.id} data-shop-product={product.id} onClick={() => { setSelectedId(product.id); setPurchaseOpen(true); }} className="fantasy-card relative min-h-[154px] rounded-xl p-4 text-left transition-all hover:-translate-y-0.5 hover:border-[#5c79ad] hover:shadow-md">
+          {(isBestSeller || isBestValue) && <span className={`absolute -left-1 -top-3 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-wide text-white shadow-sm ${isBestSeller ? "bg-[#a51f24]" : "bg-[#5d4387]"}`}>{isBestSeller ? "Best Seller" : "Best Value"}</span>}
+          <div className="flex items-center gap-3 pt-2"><div className="flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-lg bg-[#f0e7d2]"><img src={COIN_ICONS[order] ?? COIN_ICONS[index + 1]} alt="rCoin package" className="h-[76px] w-[76px] object-contain" /></div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-baseline gap-x-1 gap-y-1"><span className="text-2xl font-black leading-none text-[#2c241c]">{fmtCoin(product.ruCashAmount)}</span><span className="text-sm font-bold text-[#655540]">rCoin</span>{product.bonusCashAmount > 0 && <span className="text-sm font-black text-green-700">+{fmtCoin(product.bonusCashAmount)} Bonus</span>}</div></div></div>
+          <div className="mt-3 rounded-lg border border-[#4a68a0] bg-gradient-to-b from-[#5e80bb] to-[#3d609d] px-3 py-2 text-center text-lg font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,.35),0_3px_0_rgba(46,73,123,.45)]">${Number(product.priceUsd).toFixed(2)}</div>
+        </button>;
+      })}
     </div>
-  );
+    <PurchaseDialog products={orderedProducts} productId={selectedId} open={purchaseOpen} onOpenChange={setPurchaseOpen} onSelectProduct={setSelectedId} defaultMethod={paymentProvider} />
+  </div>;
+}
+
+function ShopProviderDialog({ onSelect }: { onSelect: (provider: ShopEntryProvider) => void }) {
+  return <Dialog open onOpenChange={() => undefined}>
+    <DialogContent showCloseButton={false} className="w-[calc(100%-2rem)] max-w-[620px] rounded-2xl border-[#b9a57b] bg-[#fffaf0] p-0 text-[#2c241c] shadow-[0_22px_60px_rgba(75,55,29,.35)]">
+      <div className="border-b border-[#ddcfad] px-7 py-6 text-center"><p className="text-xs font-black uppercase tracking-[0.22em] text-[#a51f24]">Shop payment provider</p><DialogTitle className="mt-2 font-serif text-3xl font-bold text-[#2c241c]">Choose a payment method</DialogTitle><DialogDescription className="mt-2 text-sm text-[#776952]">Select a provider to view available rCoin packages.</DialogDescription></div>
+      <div className="grid gap-3 px-7 py-6 sm:grid-cols-3">{shopEntryProviders.map(provider => { const Icon = provider.icon; return <button key={provider.id} type="button" onClick={() => onSelect(provider.id)} className="group rounded-2xl border border-[#ded0ad] bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#5575aa] hover:shadow-md"><span className={`mb-5 inline-flex size-11 items-center justify-center rounded-xl text-white shadow-sm ${provider.accent}`}><Icon className="size-5" /></span><strong className="block text-lg text-[#2c241c]">{provider.label}</strong><span className="mt-1 block text-xs leading-5 text-[#776952]">{provider.description}</span><span className="mt-5 inline-flex items-center text-xs font-black text-[#3b5688]">Select provider <span className="ml-1 transition-transform group-hover:translate-x-1">→</span></span></button>; })}</div>
+    </DialogContent>
+  </Dialog>;
 }
 
 export default function PointShop() {
-  const [, setLocation] = useLocation();
   const { user } = useAuth();
   const { data: balance } = trpc.shop.myBalance.useQuery(undefined, { enabled: !!user });
+  const [paymentProvider, setPaymentProvider] = useState<ShopEntryProvider | null>(null);
   return <Layout>
-    <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#557494_55%,#314b66)] py-10 text-white"><div className="container"><h1 className="font-serif text-4xl font-bold mb-2">Shop</h1><p className="text-[#e9dfc8]">Top up rCoin</p></div></div>
-    <div className="fantasy-page-shell"><div className="container fantasy-content-guide py-8"><div className="flex gap-6"><aside className="hidden w-44 shrink-0 md:flex md:flex-col"><button className="rounded-lg border border-[#385a92] bg-[#4668a3] px-4 py-3 text-left text-sm font-bold text-white shadow-sm">Top Up</button><button onClick={() => setLocation("/")} className="mt-auto inline-flex items-center gap-1 border-t border-[#cdbb91] pt-6 text-left text-sm font-medium text-[#776952] hover:text-[#4668a3]"><ChevronLeft size={16} />Back to Home</button></aside><main className="min-w-0 flex-1"><ChargeTab rCoin={balance?.ruCash ?? 0} bonusCoin={balance?.bonusCash ?? 0} /></main></div></div></div>
+    <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#557494_55%,#314b66)] py-10 text-white"><div className="container"><h1 className="mb-2 font-serif text-4xl font-bold">Shop</h1><p className="text-[#e9dfc8]">Purchase rCoin</p></div></div>
+    <div className="fantasy-page-shell"><div className="container fantasy-content-guide py-8"><main className="min-w-0 w-full">{paymentProvider ? <ChargeTab rCoin={balance?.ruCash ?? 0} bonusCoin={balance?.bonusCash ?? 0} paymentProvider={paymentProvider} /> : <div className="fantasy-card flex min-h-[350px] items-center justify-center rounded-2xl px-6 text-center"><div><p className="font-serif text-3xl font-bold text-[#2c241c]">Select a payment provider</p><p className="mt-3 text-sm text-[#776952]">Available rCoin packages will appear after choosing a payment method.</p></div></div>}</main></div></div>
+    {!paymentProvider && <ShopProviderDialog onSelect={setPaymentProvider} />}
   </Layout>;
 }
