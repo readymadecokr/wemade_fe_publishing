@@ -2528,7 +2528,8 @@ function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof c
   const statusClass = (item: any) => item.status === "active" ? "bg-emerald-100 text-emerald-700" : item.status === "expired" ? "bg-slate-100 text-slate-600" : "bg-amber-100 text-amber-700";
 
   const downloadTemplate = () => {
-    const worksheet = XLSX.utils.json_to_sheet([{ "Game Code": "ROU", "Coupon Type": "COMMON", "Event Name": "ROU PREREG 2026", "Coupon Code": "ABCD-EFGH-JKLM", "Issue Quantity": 1, "Valid From": "2026-08-01T00:00", "Valid To": "2026-08-31T23:59", "Bonus rCoin": 100, "Reward Items": "501039:1|501040:5", "Server Codes": "5,7,9", "Active": 1 }]);
+    const worksheet = XLSX.utils.json_to_sheet([{ "Game Code": "ROU", "Coupon Type": "COMMON", "Event Name": "ROU PREREG 2026", "Coupon Code": "ABCD-EFGH-JKLM", "Issue Quantity": 1, "Valid From": "2026-08-01T00:00", "Valid To": "2026-08-31T23:59", "Bonus rCoin": 100, "Reward Items 1": "501039:1", "Reward Items 2": "501040:5", "Reward Items 3": "", "Reward Items 4": "", "Reward Items 5": "", "Server Codes": "5,7,9", "Active": 1 }]);
+    worksheet["!cols"] = [{ wch: 12 }, { wch: 14 }, { wch: 24 }, { wch: 18 }, { wch: 16 }, { wch: 20 }, { wch: 20 }, { wch: 14 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 16 }, { wch: 10 }];
     const workbook = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(workbook, worksheet, "Coupons"); XLSX.writeFile(workbook, "ROU_coupon_upload_template.xlsx");
   };
   const readCell = (row: Record<string, any>, ...names: string[]) => names.map(name => row[name]).find(value => value !== undefined && value !== null && String(value).trim() !== "");
@@ -2547,7 +2548,9 @@ function CouponSystemSection({ adminClient }: { adminClient: ReturnType<typeof c
       const rawRows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, { defval: "" });
       const items = rawRows.map(row => {
         const couponType = String(readCell(row, "Coupon Type", "쿠폰타입") ?? "COMMON").toLowerCase() === "random" ? "random" as const : "common" as const;
-        const rewards = String(readCell(row, "Reward Items", "보상") ?? "").split("|").map(value => value.trim()).filter(Boolean).map(value => { const [itemId, quantity] = value.split(":"); return { itemId: itemId?.trim() ?? "", quantity: Number(quantity ?? 1) }; });
+        const separateRewards = [1, 2, 3, 4, 5].map(index => String(readCell(row, `Reward Items ${index}`, `보상 아이템 ${index}`) ?? "").trim()).filter(Boolean);
+        const legacyRewards = String(readCell(row, "Reward Items", "보상") ?? "").split("|").map(value => value.trim()).filter(Boolean);
+        const rewards = (separateRewards.length ? separateRewards : legacyRewards).map(value => { const [itemId, quantity] = value.split(":"); return { itemId: itemId?.trim() ?? "", quantity: Number(quantity ?? 1) }; });
         return { gameCode: String(readCell(row, "Game Code", "게임코드") ?? "ROU"), couponType, eventName: String(readCell(row, "Event Name", "이벤트명") ?? ""), code: formatCouponCode(String(readCell(row, "Coupon Code", "쿠폰코드") ?? "")), issueQuantity: Number(readCell(row, "Issue Quantity", "쿠폰 발급 수량") ?? 1), validFrom: toSpreadsheetDate(readCell(row, "Valid From", "유효기간 시작")) || null, expiresAt: toSpreadsheetDate(readCell(row, "Valid To", "유효기간 종료")) || null, serverCodes: String(readCell(row, "Server Codes", "서버") ?? "").trim() || null, bonusRcoin: Number(readCell(row, "Bonus rCoin", "Bonus rCoin") ?? 0), rewardItems: rewards, isActive: Number(readCell(row, "Active", "활성화") ?? 1) === 0 ? 0 : 1, randomGenerated: couponType === "random" ? 1 : 0 };
       }).filter(item => item.code && item.eventName);
       if (!items.length) throw new Error("업로드 가능한 쿠폰 행을 찾지 못했습니다.");
