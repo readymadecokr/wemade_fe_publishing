@@ -16,10 +16,10 @@ describe("My Page history layout", () => {
     expect(historySource).not.toMatch(/<h[1-6][^>]*>\{?isPurchase \? \"Purchase History\"/);
   });
 
-  it("removes the Shop sidebar and requires a payment-provider selection", () => {
+  it("removes the Shop sidebar and provides an inline payment-provider selector", () => {
     expect(pointShop).not.toContain(">Top Up<");
-    expect(pointShop).toContain("function ShopProviderDialog");
-    expect(pointShop).toContain("Select a payment provider");
+    expect(pointShop).toContain('id="shop-payment-provider"');
+    expect(pointShop).toContain('useState<ShopEntryProvider>("xsolla")');
     expect(pointShop).not.toContain('"charge-history"');
     expect(pointShop).not.toContain('"use-history"');
   });

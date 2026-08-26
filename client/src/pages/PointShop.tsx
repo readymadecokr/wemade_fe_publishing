@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Check, ChevronDown, CreditCard, Globe2, ShieldCheck, WalletCards } from "lucide-react";
+import { Check, ChevronDown, ShieldCheck } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
@@ -54,9 +54,9 @@ const extraPaymentMethods = [
   { id: "payermax", label: "PayerMax" },
 ];
 const shopEntryProviders = [
-  { id: "xsolla", label: "Xsolla", description: "Global payments", icon: Globe2, accent: "bg-[#315d9d]" },
-  { id: "mycard", label: "MyCard", description: "Taiwan payment service", icon: CreditCard, accent: "bg-[#c13c3c]" },
-  { id: "goc", label: "GOC Pay", description: "Game-focused payments", icon: WalletCards, accent: "bg-[#21815d]" },
+  { id: "xsolla", label: "Xsolla", description: "Global payments" },
+  { id: "mycard", label: "MyCard", description: "Taiwan payment service" },
+  { id: "goc", label: "GOC Pay", description: "Game-focused payments" },
 ] as const;
 type ShopEntryProvider = (typeof shopEntryProviders)[number]["id"];
 
@@ -108,7 +108,7 @@ export function PurchaseDialog({ products, productId, open, onOpenChange, onSele
   </Dialog>;
 }
 
-function ChargeTab({ rCoin, bonusCoin, paymentProvider }: { rCoin: number; bonusCoin: number; paymentProvider: ShopEntryProvider }) {
+function ChargeTab({ rCoin, bonusCoin, paymentProvider, onPaymentProviderChange }: { rCoin: number; bonusCoin: number; paymentProvider: ShopEntryProvider; onPaymentProviderChange: (provider: ShopEntryProvider) => void }) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [purchaseOpen, setPurchaseOpen] = useState(false);
   const { data: products = [] } = trpc.shop.listProducts.useQuery();
@@ -117,7 +117,16 @@ function ChargeTab({ rCoin, bonusCoin, paymentProvider }: { rCoin: number; bonus
 
   return <div className="space-y-5">
     <BalanceCards rCoin={rCoin} bonusCoin={bonusCoin} />
-    <div className="flex flex-col items-start gap-1 border-b border-[#cdbb91] pb-3 text-sm text-[#776952] sm:flex-row sm:items-center sm:justify-between"><span>All prices are shown in USD.</span><span>Payment provider: <strong className="text-[#3b5688]">{providerLabel}</strong></span></div>
+    <div className="flex flex-col gap-3 border-b border-[#cdbb91] pb-3 text-sm text-[#776952] sm:flex-row sm:items-center sm:justify-between">
+      <div className="relative w-full sm:w-[264px]">
+        <label htmlFor="shop-payment-provider" className="sr-only">Payment provider</label>
+        <select id="shop-payment-provider" value={paymentProvider} onChange={event => onPaymentProviderChange(event.target.value as ShopEntryProvider)} className="h-10 w-full appearance-none rounded-lg border border-[#b8a57d] bg-white px-4 pr-10 text-sm font-black text-[#3b5688] shadow-sm outline-none transition-colors hover:border-[#5371a8] focus:border-[#5371a8] focus:ring-2 focus:ring-[#5371a8]/20">
+          {shopEntryProviders.map(provider => <option key={provider.id} value={provider.id}>{provider.label}</option>)}
+        </select>
+        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[#6b7e9d]" />
+      </div>
+      <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-6"><span>All prices are shown in USD.</span><span>Payment provider: <strong className="text-[#3b5688]">{providerLabel}</strong></span></div>
+    </div>
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {orderedProducts.map((product, index) => {
         const order = product.sortOrder ?? index + 1;
@@ -134,22 +143,12 @@ function ChargeTab({ rCoin, bonusCoin, paymentProvider }: { rCoin: number; bonus
   </div>;
 }
 
-function ShopProviderDialog({ onSelect }: { onSelect: (provider: ShopEntryProvider) => void }) {
-  return <Dialog open onOpenChange={() => undefined}>
-    <DialogContent showCloseButton={false} className="w-[calc(100%-2rem)] max-w-[620px] rounded-2xl border-[#b9a57b] bg-[#fffaf0] p-0 text-[#2c241c] shadow-[0_22px_60px_rgba(75,55,29,.35)]">
-      <div className="border-b border-[#ddcfad] px-7 py-6 text-center"><p className="text-xs font-black uppercase tracking-[0.22em] text-[#a51f24]">Shop payment provider</p><DialogTitle className="mt-2 font-serif text-3xl font-bold text-[#2c241c]">Choose a payment method</DialogTitle><DialogDescription className="mt-2 text-sm text-[#776952]">Select a provider to view available rCoin packages.</DialogDescription></div>
-      <div className="grid gap-3 px-7 py-6 sm:grid-cols-3">{shopEntryProviders.map(provider => { const Icon = provider.icon; return <button key={provider.id} type="button" onClick={() => onSelect(provider.id)} className="group rounded-2xl border border-[#ded0ad] bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#5575aa] hover:shadow-md"><span className={`mb-5 inline-flex size-11 items-center justify-center rounded-xl text-white shadow-sm ${provider.accent}`}><Icon className="size-5" /></span><strong className="block text-lg text-[#2c241c]">{provider.label}</strong><span className="mt-1 block text-xs leading-5 text-[#776952]">{provider.description}</span><span className="mt-5 inline-flex items-center text-xs font-black text-[#3b5688]">Select provider <span className="ml-1 transition-transform group-hover:translate-x-1">→</span></span></button>; })}</div>
-    </DialogContent>
-  </Dialog>;
-}
-
 export default function PointShop() {
   const { user } = useAuth();
   const { data: balance } = trpc.shop.myBalance.useQuery(undefined, { enabled: !!user });
-  const [paymentProvider, setPaymentProvider] = useState<ShopEntryProvider | null>(null);
+  const [paymentProvider, setPaymentProvider] = useState<ShopEntryProvider>("xsolla");
   return <Layout>
     <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#557494_55%,#314b66)] py-10 text-white"><div className="container"><h1 className="mb-2 font-serif text-4xl font-bold">Shop</h1><p className="text-[#e9dfc8]">Purchase rCoin</p></div></div>
-    <div className="fantasy-page-shell"><div className="container fantasy-content-guide py-8"><main className="min-w-0 w-full">{paymentProvider ? <ChargeTab rCoin={balance?.ruCash ?? 0} bonusCoin={balance?.bonusCash ?? 0} paymentProvider={paymentProvider} /> : <div className="fantasy-card flex min-h-[350px] items-center justify-center rounded-2xl px-6 text-center"><div><p className="font-serif text-3xl font-bold text-[#2c241c]">Select a payment provider</p><p className="mt-3 text-sm text-[#776952]">Available rCoin packages will appear after choosing a payment method.</p></div></div>}</main></div></div>
-    {!paymentProvider && <ShopProviderDialog onSelect={setPaymentProvider} />}
+    <div className="fantasy-page-shell"><div className="container fantasy-content-guide py-8"><main className="min-w-0 w-full"><ChargeTab rCoin={balance?.ruCash ?? 0} bonusCoin={balance?.bonusCash ?? 0} paymentProvider={paymentProvider} onPaymentProviderChange={setPaymentProvider} /></main></div></div>
   </Layout>;
 }

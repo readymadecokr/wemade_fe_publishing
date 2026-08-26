@@ -5,13 +5,13 @@ import path from "node:path";
 const source = fs.readFileSync(path.resolve(process.cwd(), "client/src/pages/PointShop.tsx"), "utf8");
 
 describe("Shop payment provider selection", () => {
-  it("requires selecting Xsolla, MyCard, or GOC Pay before rendering packages", () => {
+  it("offers Xsolla, MyCard, and GOC Pay in the Shop provider selector", () => {
     expect(source).toContain('label: "Xsolla"');
     expect(source).toContain('label: "MyCard"');
     expect(source).toContain('label: "GOC Pay"');
-    expect(source).toContain("function ShopProviderDialog");
-    expect(source).toContain("showCloseButton={false}");
-    expect(source).toContain("paymentProvider ? <ChargeTab");
+    expect(source).toContain('id="shop-payment-provider"');
+    expect(source).toContain("onPaymentProviderChange");
+    expect(source).toContain('useState<ShopEntryProvider>("xsolla")');
   });
 
   it("uses the selected provider for the purchase dialog and removes the Top Up sidebar", () => {
