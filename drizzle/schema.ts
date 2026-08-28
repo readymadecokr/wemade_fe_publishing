@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, bigint } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, bigint, uniqueIndex } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -10,6 +10,7 @@ export const users = mysqlTable("users", {
   status: mysqlEnum("status", ["active", "suspended", "banned"]).default("active").notNull(),
   suspendedUntil: timestamp("suspendedUntil"),
   suspendReason: text("suspendReason"),
+  csCode: varchar("csCode", { length: 32 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -17,6 +18,18 @@ export const users = mysqlTable("users", {
 });
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+
+export const memberRestrictionHistories = mysqlTable("memberRestrictionHistories", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: mysqlEnum("status", ["active", "suspended", "banned"]).notNull(),
+  csCode: varchar("csCode", { length: 32 }),
+  reason: text("reason"),
+  suspendedUntil: timestamp("suspendedUntil"),
+  appliedAt: timestamp("appliedAt").defaultNow().notNull(),
+});
+export type MemberRestrictionHistory = typeof memberRestrictionHistories.$inferSelect;
+export type InsertMemberRestrictionHistory = typeof memberRestrictionHistories.$inferInsert;
 
 export const files = mysqlTable("files", {
   id: int("id").autoincrement().primaryKey(),
@@ -44,6 +57,8 @@ export const banners = mysqlTable("banners", {
   contentBody: text("contentBody"),
   sortOrder: int("sortOrder").default(0).notNull(),
   isActive: int("isActive").default(1).notNull(),
+  startDate: varchar("startDate", { length: 20 }),
+  endDate: varchar("endDate", { length: 20 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -59,6 +74,7 @@ export const news = mysqlTable("news", {
   content: text("content"),
   imageUrl: text("imageUrl"),
   isActive: int("isActive").default(1).notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
   publishedAt: timestamp("publishedAt").defaultNow().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -127,17 +143,28 @@ export type Payment = typeof payments.$inferSelect;
 /** Coupons */
 export const coupons = mysqlTable("coupons", {
   id: int("id").autoincrement().primaryKey(),
-  code: varchar("code", { length: 64 }).notNull().unique(),
+  gameCode: varchar("gameCode", { length: 32 }).default("ROU").notNull(),
+  couponType: mysqlEnum("couponType", ["common", "random"]).default("common").notNull(),
+  eventName: varchar("eventName", { length: 20 }).default("Legacy Coupon").notNull(),
+  code: varchar("code", { length: 64 }).notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   benefitType: mysqlEnum("benefitType", ["point", "product"]).default("point").notNull(),
   benefitValue: int("benefitValue").default(0).notNull(), // points or productId
+  bonusRcoin: int("bonusRcoin").default(0).notNull(),
+  rewardItems: text("rewardItems"), // JSON: [{ itemId, quantity }]
+  serverCodes: varchar("serverCodes", { length: 255 }),
+  validFrom: timestamp("validFrom"),
   maxUses: int("maxUses").default(1).notNull(),
   usedCount: int("usedCount").default(0).notNull(),
   expiresAt: timestamp("expiresAt"),
   isActive: int("isActive").default(1).notNull(),
+  randomGenerated: int("randomGenerated").default(0).notNull(),
+  issueQuantity: int("issueQuantity").default(1).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  couponCodeEventUnique: uniqueIndex("coupons_code_eventName_unique").on(table.code, table.eventName),
+}));
 export type Coupon = typeof coupons.$inferSelect;
 
 /** Coupon usage log */
@@ -145,6 +172,9 @@ export const couponUses = mysqlTable("couponUses", {
   id: int("id").autoincrement().primaryKey(),
   couponId: int("couponId").notNull().references(() => coupons.id, { onDelete: "cascade" }),
   userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  serverCode: varchar("serverCode", { length: 32 }),
+  characterName: varchar("characterName", { length: 128 }),
+  couponCodeSnapshot: varchar("couponCodeSnapshot", { length: 64 }),
   usedAt: timestamp("usedAt").defaultNow().notNull(),
 });
 
@@ -176,6 +206,62 @@ export const games = mysqlTable("games", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 export type Game = typeof games.$inferSelect;
+
+/** Statistics event log */
+/** RU Cash 충전 상품 */
+export const ruCashProducts = mysqlTable("ruCashProducts", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  priceUsd: decimal("priceUsd", { precision: 10, scale: 2 }).notNull(), // USD 가격
+  ruCashAmount: int("ruCashAmount").default(0).notNull(),               // 지급 RU Cash
+  bonusCashAmount: int("bonusCashAmount").default(0).notNull(),         // 지급 Bonus RU Cash
+  imageUrl: text("imageUrl"),
+  isActive: int("isActive").default(1).notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type RuCashProduct = typeof ruCashProducts.$inferSelect;
+
+/** RU Cash 잔액 (사용자별 단일 행) */
+export const ruCashBalances = mysqlTable("ruCashBalances", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  ruCash: int("ruCash").default(0).notNull(),
+  bonusCash: int("bonusCash").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type RuCashBalance = typeof ruCashBalances.$inferSelect;
+
+/** RU Cash 트랜잭션 (충전/차감 이력) */
+export const ruCashTransactions = mysqlTable("ruCashTransactions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: mysqlEnum("type", ["charge", "use"]).notNull(),                // charge=충전, use=사용
+  gameCode: varchar("gameCode", { length: 32 }).default("ROU").notNull(),
+  // 충전 전 잔액
+  beforeRuCash: int("beforeRuCash").default(0).notNull(),
+  beforeBonusCash: int("beforeBonusCash").default(0).notNull(),
+  // 변동량 (충전 시 양수, 차감 시 양수 = 차감된 양)
+  ruCashDelta: int("ruCashDelta").default(0).notNull(),
+  bonusCashDelta: int("bonusCashDelta").default(0).notNull(),
+  // 충전 후 잔액
+  afterRuCash: int("afterRuCash").default(0).notNull(),
+  afterBonusCash: int("afterBonusCash").default(0).notNull(),
+  // 충전 전용 필드
+  productId: int("productId").references(() => ruCashProducts.id),
+  pgName: varchar("pgName", { length: 64 }),                           // PayPal, PayerMax 등
+  priceUsd: decimal("priceUsd", { precision: 10, scale: 2 }),
+  // 사용 전용 필드
+  itemName: varchar("itemName", { length: 255 }),
+  itemQty: int("itemQty").default(1),
+  itemPriceRuc: int("itemPriceRuc").default(0),                        // 아이템 단가(RUC)
+  totalPriceRuc: int("totalPriceRuc").default(0),                      // 총 차감(RUC)
+  transactionId: varchar("transactionId", { length: 128 }),            // 멱등 키
+  status: mysqlEnum("status", ["completed", "failed", "pending"]).default("completed").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type RuCashTransaction = typeof ruCashTransactions.$inferSelect;
 
 /** Statistics event log */
 export const statsEvents = mysqlTable("statsEvents", {

@@ -173,7 +173,7 @@ function NewsPageContent() {
   };
 
   const renderCard = (news: any) => (
-    <div className="bg-white border border-purple-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
+    <div className="fantasy-card flex h-full flex-col overflow-hidden rounded-lg transition-shadow hover:shadow-lg">
       {/* Image */}
       <div className="w-full h-20 md:h-48 overflow-hidden">
         <img
@@ -186,14 +186,14 @@ function NewsPageContent() {
       {/* Content */}
       <div className="p-1.5 md:p-4 flex flex-col justify-between flex-1">
         <div>
-          <span className={`px-2 py-0.5 rounded text-xs font-semibold ${getCategoryColor(news.category)}`}>
+          <span className="rounded bg-[#e2eaf7] px-2 py-0.5 text-xs font-semibold text-[#4668a3]">
             {news.category.toLowerCase()}
           </span>
-          <h3 className="text-xs md:text-lg font-bold text-slate-900 mt-0.5 md:mt-2 line-clamp-2">
+          <h3 className="mt-0.5 text-xs font-bold text-[#2c241c] md:mt-2 md:text-lg line-clamp-2">
             {news.title}
           </h3>
         </div>
-        <span className="text-xs md:text-sm text-slate-500 mt-0.5 md:mt-3">{news.date}</span>
+        <span className="mt-0.5 text-xs text-[#7b6a51] md:mt-3 md:text-sm">{news.date}</span>
       </div>
     </div>
   );
@@ -201,22 +201,22 @@ function NewsPageContent() {
   return (
     <>
       {/* Page Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-12">
+      <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#526f8d_50%,#314b66)] py-11 text-white">
         <div className="container">
-          <h1 className="text-4xl font-black mb-2">📰 News</h1>
-          <p className="text-purple-100">Latest news, interviews, and community highlights</p>
+          <h1 className="mb-2 font-serif text-4xl font-bold">News</h1>
+          <p className="text-[#e9dfc8]">Latest news, interviews, and community highlights</p>
         </div>
       </div>
 
       {/* Content - 2 columns grid on mobile, 3 columns on desktop */}
-      <main className="container py-4 px-2 md:px-4 md:py-12">
+      <main className="container fantasy-content-guide px-2 py-6 md:px-4 md:py-12">
         {(() => {
           const totalPages = Math.ceil(newsData.length / ITEMS_PER_PAGE);
           const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
           const pageData = newsData.slice(startIdx, startIdx + ITEMS_PER_PAGE);
           return (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-6">
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-6">
                 {pageData.map((news) => (
                   <div key={news.id}>
                     {isMobile ? (

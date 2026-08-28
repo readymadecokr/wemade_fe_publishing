@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
-import { User, Shield, LogOut, Trash2, CheckCircle2, ShieldAlert, CreditCard, Clock, ArrowRight, Edit2, Ticket, Unlink, Mail, Users, LogIn, Bell } from "lucide-react";
+import { User, Shield, LogOut, Trash2, CheckCircle2, ShieldAlert, CreditCard, Clock, ArrowRight, Edit2, Ticket, Unlink, Mail, Users, LogIn, Bell, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,6 +12,151 @@ import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import { trpc } from "@/lib/trpc";
 
+type HistorySection = "purchase" | "usage";
+type MyPageSection = "account" | HistorySection | "coupon";
+
+const formatHistoryNumber = (value: number | null | undefined) => Number(value ?? 0).toLocaleString();
+
+function HistoryTime({ value }: { value: Date | string | null | undefined }) {
+  if (!value) return <>-</>;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return <>-</>;
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const hh = String(date.getHours()).padStart(2, "0");
+  const min = String(date.getMinutes()).padStart(2, "0");
+  return <><span>{yyyy}-{mm}-{dd}</span><br /><span>{hh}:{min}</span></>;
+}
+
+function MyPageHistory({ section }: { section: HistorySection }) {
+  const [page, setPage] = useState(1);
+  const { data: balance } = trpc.shop.myBalance.useQuery();
+  const { data: purchaseHistory } = trpc.shop.myChargeHistory.useQuery({ page, pageSize: 10 }, { enabled: section === "purchase" });
+  const { data: usageHistory } = trpc.shop.myUseHistory.useQuery({ page, pageSize: 10 }, { enabled: section === "usage" });
+  const data = section === "purchase" ? purchaseHistory : usageHistory;
+  const items = (data?.items ?? []) as any[];
+  const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / 10));
+  const isPurchase = section === "purchase";
+  const headers = isPurchase
+    ? ["Game\nCode", "Time", "rCoin\nBefore", "Bonus rCoin\nBefore", "PG", "Price", "rCoin\nCharged", "Bonus rCoin\nCharged", "rCoin\nAfter", "Bonus rCoin\nAfter"]
+    : ["Game\nCode", "Time", "rCoin\nBefore", "Bonus rCoin\nBefore", "Item\nName", "Qty", "Item\nPrice", "Total\nPrice", "rCoin\nAfter", "Bonus rCoin\nAfter"];
+
+  return (
+    <div data-testid="history-layout" className="space-y-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">rCoin</p>
+          <p className="mt-1 text-3xl font-black text-[#9b2020]">{formatHistoryNumber(balance?.ruCash)}</p>
+          <p className="mt-1 text-xs text-slate-400">Paid Currency</p>
+        </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Bonus rCoin</p>
+          <p className="mt-1 text-3xl font-black text-green-700">{formatHistoryNumber(balance?.bonusCash)}</p>
+          <p className="mt-1 text-xs text-slate-400">Bonus Currency (Used First)</p>
+        </div>
+      </div>
+
+      {!items.length ? (
+        <div className="rounded-2xl border border-slate-200 bg-white py-14 text-center text-sm text-slate-400">No {isPurchase ? "purchase" : "usage"} history available.</div>
+      ) : (
+        <div data-testid="history-table" className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          <table className="w-full table-fixed border-collapse text-[11px] sm:text-xs">
+            <thead>
+              <tr className="bg-[#9b2020] text-white">
+                {headers.map((header, index) => <th key={header} className={`border-r border-red-800 px-1 py-2 text-center font-semibold whitespace-pre-line leading-tight last:border-r-0 ${index === 1 ? "w-[92px]" : ""}`}>{header}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((tx) => (
+                <tr key={tx.id} className="border-b border-slate-200 last:border-b-0 hover:bg-slate-50">
+                  <td className="px-1 py-2 text-center font-medium text-[#9b2020]">{tx.gameCode ?? "ROU"}</td>
+                  <td className="w-[92px] px-1 py-2 text-center leading-4 text-slate-700"><HistoryTime value={tx.createdAt} /></td>
+                  <td className="px-1 py-2 text-right">{formatHistoryNumber(tx.beforeRuCash)}</td>
+                  <td className="px-1 py-2 text-right text-green-700">{formatHistoryNumber(tx.beforeBonusCash)}</td>
+                  {isPurchase ? <>
+                    <td className="px-1 py-2 text-center">{tx.pgName ?? "-"}</td>
+                    <td className="px-1 py-2 text-right">{tx.priceUsd ? `$${Number(tx.priceUsd).toFixed(0)}` : "-"}</td>
+                    <td className="px-1 py-2 text-right font-bold text-[#9b2020]">{formatHistoryNumber(Math.abs(tx.ruCashDelta ?? 0))}</td>
+                    <td className="px-1 py-2 text-right font-bold text-green-700">{formatHistoryNumber(Math.abs(tx.bonusCashDelta ?? 0))}</td>
+                  </> : <>
+                    <td className="px-1 py-2 text-center break-words">{tx.itemName ?? "-"}</td>
+                    <td className="px-1 py-2 text-right">{tx.itemQty ?? 1}</td>
+                    <td className="px-1 py-2 text-right">{formatHistoryNumber(Math.abs(tx.itemPriceRuc ?? 0))}</td>
+                    <td className="px-1 py-2 text-right font-bold">{formatHistoryNumber(Math.abs(tx.totalPriceRuc ?? 0))}</td>
+                  </>}
+                  <td className="px-1 py-2 text-right font-bold">{formatHistoryNumber(tx.afterRuCash)}</td>
+                  <td className="px-1 py-2 text-right font-bold text-green-700">{formatHistoryNumber(tx.afterBonusCash)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex flex-wrap justify-center gap-1 pt-1">
+          <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(1)}>«</Button>
+          <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>‹</Button>
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map((number) => <Button key={number} size="sm" variant={page === number ? "default" : "outline"} onClick={() => setPage(number)}>{number}</Button>)}
+          <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage((current) => Math.min(totalPages, current + 1))}>›</Button>
+          <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(totalPages)}>»</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MyPageCouponEntry() {
+  const [serverCode, setServerCode] = useState("");
+  const [characterName, setCharacterName] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [notice, setNotice] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [historyPage, setHistoryPage] = useState(1);
+  const couponBalance = trpc.shop.myBalance.useQuery();
+  const couponHistory = trpc.coupon.myHistory.useQuery({ page: historyPage, pageSize: 20 });
+  const redeemCoupon = trpc.coupon.redeem.useMutation({
+    onSuccess: () => {
+      setNotice({ type: "success", message: "Your coupon has been registered. Please check your mailbox." });
+      setCouponCode("");
+      setConfirmOpen(false);
+      couponBalance.refetch();
+      couponHistory.refetch();
+    },
+    onError: (error) => {
+      setNotice({ type: "error", message: error.message || "This coupon code is invalid." });
+      setConfirmOpen(false);
+    },
+  });
+  const totalPages = Math.max(1, Math.ceil((couponHistory.data?.total ?? 0) / 20));
+  const requestConfirmation = () => {
+    setNotice(null);
+    if (!serverCode || !characterName || !couponCode) {
+      setNotice({ type: "error", message: "Please complete all fields required to receive your coupon rewards." });
+      return;
+    }
+    setConfirmOpen(true);
+  };
+
+  return <div data-testid="coupon-entry" className="space-y-5">
+    <section className="rounded-2xl border border-[#decfc0] bg-[#fffdf9]/95 p-6 shadow-[0_8px_24px_rgba(93,73,43,.1)]">
+      <div className="mb-6 border-b border-[#e7d9c8] pb-4"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">MY PAGE · COUPON USE</p><h2 className="mt-1 font-serif text-2xl font-bold text-[#302419]">Coupon</h2><p className="mt-2 text-sm text-[#776952]">Select the server and character that will receive your coupon reward.</p></div>
+      <div className="mb-5 grid gap-3 sm:grid-cols-2"><div className="rounded-lg border border-[#eadfce] bg-white px-4 py-3"><p className="text-xs font-bold uppercase tracking-wide text-[#786850]">rCoin</p><p className="mt-1 text-xl font-black text-[#a51f24]">{Number(couponBalance.data?.ruCash ?? 0).toLocaleString()}</p></div><div className="rounded-lg border border-[#eadfce] bg-white px-4 py-3"><p className="text-xs font-bold uppercase tracking-wide text-[#786850]">Bonus rCoin</p><p className="mt-1 text-xl font-black text-emerald-700">{Number(couponBalance.data?.bonusCash ?? 0).toLocaleString()}</p></div></div>
+      {notice && <div role="status" className={`mb-5 flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-semibold ${notice.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-red-200 bg-red-50 text-red-700"}`}>{notice.type === "success" ? <CheckCircle2 className="h-5 w-5 shrink-0" /> : <AlertCircle className="h-5 w-5 shrink-0" />}{notice.message}</div>}
+      <div className="grid gap-4 md:grid-cols-2">
+        <label className="space-y-2 text-sm font-semibold text-[#4e402f]"><span>Server</span><select aria-label="Coupon server" value={serverCode} onChange={event => { setServerCode(event.target.value); setCharacterName(""); }} className="h-10 w-full rounded-md border border-[#cbb797] bg-white px-3 text-sm outline-none focus:border-[#a51f24] focus:ring-2 focus:ring-[#a51f24]/15"><option value="">Select server</option><option value="1">Server 1 · Prontera</option><option value="2">Server 2 · Geffen</option><option value="3">Server 3 · Payon</option><option value="4">Server 4 · Morroc</option><option value="5">Server 5 · Aldebaran</option><option value="6">Server 6 · Comodo</option></select></label>
+        <label className="space-y-2 text-sm font-semibold text-[#4e402f]"><span>Character Name</span><select aria-label="Coupon character" value={characterName} disabled={!serverCode} onChange={event => setCharacterName(event.target.value)} className="h-10 w-full rounded-md border border-[#cbb797] bg-white px-3 text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-100 focus:border-[#a51f24] focus:ring-2 focus:ring-[#a51f24]/15"><option value="">Select character</option><option value="ValkyrieKnight">ValkyrieKnight</option><option value="RuneMage">RuneMage</option><option value="ShadowRanger">ShadowRanger</option></select></label>
+      </div>
+      <label className="mt-4 block space-y-2 text-sm font-semibold text-[#4e402f]"><span>Coupon Code</span><Input aria-label="Coupon code" value={couponCode} onChange={event => setCouponCode(event.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ""))} placeholder="NNNN-NNNN-NNNN" maxLength={64} className="border-[#cbb797] bg-white font-mono tracking-[.08em] focus-visible:ring-[#a51f24]" /></label>
+      <div className="mt-6 flex justify-end"><Button onClick={requestConfirmation} className="min-w-36 bg-[#a51f24] font-bold text-white hover:bg-[#86191d]"><Ticket className="mr-2 h-4 w-4" />Redeem Coupon</Button></div>
+    </section>
+
+    <section className="overflow-hidden rounded-2xl border border-[#decfc0] bg-[#fffdf9]/95 shadow-[0_8px_24px_rgba(93,73,43,.1)]"><div className="border-b border-[#e7d9c8] px-6 py-4"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">COUPON HISTORY</p><h2 className="mt-1 font-serif text-xl font-bold text-[#302419]">Coupon Use History</h2></div>{couponHistory.isLoading ? <p className="px-6 py-10 text-center text-sm text-[#776952]">Loading coupon history...</p> : !couponHistory.data?.items.length ? <p className="px-6 py-10 text-center text-sm text-[#776952]">No coupon history available.</p> : <><div className="overflow-x-auto"><table className="w-full min-w-[680px] text-sm"><thead className="bg-[#a51f24] text-white"><tr><th className="px-4 py-3 text-left">Event Name</th><th className="px-4 py-3 text-left">Coupon Code</th><th className="px-4 py-3 text-left">Character Name</th><th className="px-4 py-3 text-left">Registered Date</th><th className="px-4 py-3 text-center">Status</th></tr></thead><tbody>{couponHistory.data.items.map(item => <tr key={item.id} className="border-t border-[#eadfce]"><td className="px-4 py-3 font-medium text-[#302419]">{item.eventName}</td><td className="px-4 py-3 font-mono text-xs text-[#4e402f]">{item.couponCode}</td><td className="px-4 py-3 text-[#4e402f]">{item.characterName}</td><td className="px-4 py-3 text-[#776952]">{new Date(item.registeredAt).toLocaleDateString("en-CA")}</td><td className="px-4 py-3 text-center font-semibold text-emerald-700">{item.status}</td></tr>)}</tbody></table></div>{totalPages > 1 && <div className="flex justify-center gap-1 border-t border-[#e7d9c8] p-3">{Array.from({ length: totalPages }, (_, index) => index + 1).map(page => <Button key={page} size="sm" variant={historyPage === page ? "default" : "outline"} onClick={() => setHistoryPage(page)}>{page}</Button>)}</div>}</>}</section>
+
+    {confirmOpen && <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4"><div className="w-full max-w-md rounded-2xl border border-[#decfc0] bg-[#fffdf9] p-6 shadow-2xl"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">CONFIRM COUPON USE</p><h3 className="mt-2 font-serif text-xl font-bold text-[#302419]">Redeem this coupon?</h3><p className="mt-3 text-sm leading-6 text-[#675843]">Coupon rewards will be registered to <strong>{characterName}</strong> on <strong>{`Server ${serverCode}`}</strong>.</p><div className="mt-6 flex justify-end gap-2"><Button variant="outline" onClick={() => setConfirmOpen(false)}>Cancel</Button><Button disabled={redeemCoupon.isPending} onClick={() => redeemCoupon.mutate({ code: couponCode, serverCode, characterName })} className="bg-[#a51f24] text-white hover:bg-[#86191d]">{redeemCoupon.isPending ? "Registering..." : "Confirm"}</Button></div></div></div>}
+  </div>;
+}
+
 export default function MyPage() {
   const [, setLocation] = useLocation();
   const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
@@ -21,9 +166,7 @@ export default function MyPage() {
   const [showNicknameEdit, setShowNicknameEdit] = useState(false);
   const [newNickname, setNewNickname] = useState("");
   const [isEditingNickname, setIsEditingNickname] = useState(false);
-  const [showCouponInput, setShowCouponInput] = useState(false);
-  const [couponCode, setCouponCode] = useState("");
-  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+  const [activeSection, setActiveSection] = useState<MyPageSection>("account");
 
   // Generate random nickname (10 characters: letters + numbers)
   const generateRandomNickname = (): string => {
@@ -49,6 +192,7 @@ export default function MyPage() {
 
   // DB에서 실제 createdAt 가져오기
   const { data: meData } = trpc.auth.me.useQuery();
+  const userIdDisplay = meData?.id ? String(meData.id) : "-";
 
   const formatRegistrationDate = (date: Date | string | null | undefined): string => {
     if (!date) return "-";
@@ -114,7 +258,12 @@ export default function MyPage() {
   // Initialize with stored nickname or generate a new one if not found
   const [userNickname, setUserNickname] = useState(() => {
     const stored = localStorage.getItem("rou_nickname");
-    if (stored && stored !== "모험가") {
+    const legacyDefaultNickname = "\uBAA8\uD5D8\uAC00";
+    if (stored === legacyDefaultNickname) {
+      localStorage.setItem("rou_nickname", "Adventurer");
+      return "Adventurer";
+    }
+    if (stored) {
       return stored;
     }
     const newNickname = generateRandomNickname();
@@ -127,11 +276,11 @@ export default function MyPage() {
   const getLoginTypeInfo = () => {
     const provider = socialProvider;
     if (provider === "Google") {
-      return { icon: "🔵", label: "Google 로그인" };
+      return { icon: "🔵", label: "Google Login" };
     } else if (provider === "Facebook") {
-      return { icon: "📘", label: "Facebook 로그인" };
+      return { icon: "📘", label: "Facebook Login" };
     }
-    return { icon: "👤", label: "Guest 로그인" };
+    return { icon: "👤", label: "Guest Login" };
   };
 
   const loginInfo = getLoginTypeInfo();
@@ -139,13 +288,13 @@ export default function MyPage() {
   if (!isLoggedIn) {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-background dark:to-slate-900 px-4">
-          <div className="text-center">
-            <LogIn size={48} className="mx-auto mb-4 text-slate-400" />
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Not Logged In</h1>
-            <p className="text-slate-600 dark:text-slate-400 mb-6">Please log in to access your profile.</p>
+        <div className="fantasy-page-shell flex min-h-screen items-center justify-center px-4">
+          <div className="fantasy-card w-full max-w-md rounded-2xl p-9 text-center">
+            <LogIn size={48} className="mx-auto mb-4 text-[#5871a0]" />
+            <h1 className="mb-2 font-serif text-3xl font-bold text-[#302419]">Not Logged In</h1>
+            <p className="mb-6 text-[#75664f]">Please log in to access your profile.</p>
             <Link href="/login">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold">
+              <Button className="border border-[#395b94] bg-[#4668a3] font-semibold text-white hover:bg-[#385a92]">
                 Go to Login
               </Button>
             </Link>
@@ -165,29 +314,6 @@ export default function MyPage() {
     toast.success(`Nickname changed to ${newNickname}!`);
     setShowNicknameEdit(false);
     setNewNickname("");
-  };
-
-  const handleCouponSubmit = async () => {
-    if (!couponCode.trim()) {
-      toast.error("Please enter a coupon code.");
-      return;
-    }
-
-    setIsValidatingCoupon(true);
-    
-    // Simulate coupon validation
-    const validCoupons = ["WELCOME2026", "SUMMER100", "NEWPLAYER50"];
-    
-    setTimeout(() => {
-      if (validCoupons.includes(couponCode.toUpperCase())) {
-        toast.success(`Coupon ${couponCode} applied successfully!`);
-        setCouponCode("");
-        setShowCouponInput(false);
-      } else {
-        toast.error("Invalid coupon code. Please try again.");
-      }
-      setIsValidatingCoupon(false);
-    }, 1000);
   };
 
   const handleLogout = () => {
@@ -224,25 +350,25 @@ export default function MyPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-background dark:to-slate-900 py-8 px-4">
+      <div className="fantasy-page-shell fantasy-account min-h-screen py-8 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">My Page</h1>
+          <h1 className="fantasy-section-title mb-8 flex items-center gap-3 text-3xl"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb]">✦</span>My Page</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left Sidebar */}
             <div className="lg:col-span-1">
-              <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50 sticky top-8">
+              <div className="fantasy-card sticky top-8 rounded-2xl p-6">
                 {/* Profile Card */}
-                <div className="flex flex-col items-center mb-6 pb-6 border-b border-black/10 dark:border-white/10">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center mb-3">
+                <div className="mb-6 flex flex-col items-center border-b border-[#d8c8a3] pb-6">
+                  <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full border border-[#bca76d] bg-[linear-gradient(135deg,#5474aa,#334f82)]">
                     <User size={32} className="text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-black dark:text-white text-center">{userNickname}</h3>
-                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">{loginInfo.icon} {loginInfo.label}</p>
+                  <h3 className="text-center font-serif text-lg font-bold text-[#302419]">{userNickname}</h3>
+                  <p className="mt-1 text-xs text-[#776952]">{loginInfo.icon} {loginInfo.label}</p>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="mt-3 w-full text-xs border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5"
+                    className="mt-3 w-full border-[#bca76d] text-xs text-[#405f95] hover:bg-[#e7eef9]"
                     onClick={() => { setShowNicknameEdit(true); setNewNickname(userNickname); }}
                   >
                     <Edit2 size={12} className="mr-1" /> Change Nickname
@@ -251,27 +377,27 @@ export default function MyPage() {
 
                 {/* Navigation Menu */}
                 <nav className="space-y-2">
-                  <button onClick={() => toast.info("Payment history feature coming soon.")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-sm font-medium">
-                    <CreditCard size={16} className="text-black dark:text-white" />
+                  <button onClick={() => setActiveSection("purchase")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "purchase" ? "bg-[#4668a3] text-white" : "text-[#4e402f] hover:bg-[#eadfc4]"}`}>
+                    <CreditCard size={16} className={activeSection === "purchase" ? "text-white" : "text-[#4e402f]"} />
                     <span>Payment History</span>
                   </button>
-                  <button onClick={() => toast.info("Usage history feature coming soon.")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-sm font-medium">
-                    <Clock size={16} className="text-black dark:text-white" />
+                  <button onClick={() => setActiveSection("usage")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "usage" ? "bg-[#4668a3] text-white" : "text-[#4e402f] hover:bg-[#eadfc4]"}`}>
+                    <Clock size={16} className={activeSection === "usage" ? "text-white" : "text-[#4e402f]"} />
                     <span>Points/Item Usage</span>
                   </button>
-                  <button onClick={() => toast.info("Customer inquiry feature coming soon.")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-sm font-medium">
-                    <Mail size={16} className="text-black dark:text-white" />
+                  <button onClick={() => toast.info("Customer inquiry feature coming soon.")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#4e402f] hover:bg-[#eadfc4] transition-colors text-sm font-medium">
+                    <Mail size={16} className="text-[#4e402f]" />
                     <span>1:1 Inquiry</span>
                   </button>
-                  <button onClick={() => setShowCouponInput(true)} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-sm font-medium">
-                    <Ticket size={16} className="text-black dark:text-white" />
-                    <span>Enter Coupon</span>
+                  <button onClick={() => setActiveSection("coupon")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${activeSection === "coupon" ? "bg-[#4668a3] text-white" : "text-[#4e402f] hover:bg-[#eadfc4]"}`}>
+                    <Ticket size={16} className={activeSection === "coupon" ? "text-white" : "text-[#4e402f]"} />
+                    <span>Coupon</span>
                   </button>
                 </nav>
 
                 {/* Account Actions */}
-                <div className="mt-6 pt-6 border-t border-black/10 dark:border-white/10 space-y-2">
-                  <Button variant="outline" onClick={handleLogout} className="w-full text-xs border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5">
+                <div className="mt-6 space-y-2 border-t border-[#d8c8a3] pt-6">
+                  <Button variant="outline" onClick={handleLogout} className="w-full border-[#bca76d] text-xs text-[#4e402f] hover:bg-[#eadfc4]">
                     <LogOut size={12} className="mr-1" /> Logout
                   </Button>
 
@@ -289,7 +415,13 @@ export default function MyPage() {
 
             {/* Right Content Area */}
             <div className="lg:col-span-3">
-              {showWithdrawDialog ? (
+              {activeSection === "purchase" ? (
+                <MyPageHistory key="purchase" section="purchase" />
+              ) : activeSection === "usage" ? (
+                <MyPageHistory key="usage" section="usage" />
+              ) : activeSection === "coupon" ? (
+                <MyPageCouponEntry />
+              ) : showWithdrawDialog ? (
                 // Withdrawal Dialog
                 <div className="glass-panel p-6 rounded-3xl border border-white/10 dark:bg-[#131313] bg-[#f2f2f2] dark:border-slate-700/50">
                     <h3 className="text-lg font-bold text-black dark:text-white mb-4 flex items-center gap-2">
@@ -346,7 +478,8 @@ export default function MyPage() {
                       <Table className="text-xs">
                         <TableHeader>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-transparent">
-                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Name</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">Nickname</TableHead>
+                            <TableHead className="text-black/70 dark:text-white/70 font-semibold">User ID</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Provider</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Registration Date</TableHead>
                             <TableHead className="text-black/70 dark:text-white/70 font-semibold">Last Account Activity</TableHead>
@@ -355,6 +488,7 @@ export default function MyPage() {
                         <TableBody>
                           <TableRow className="border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5">
                             <TableCell className="text-black dark:text-white font-medium">{userNickname}</TableCell>
+                            <TableCell className="text-black/70 dark:text-white/70">{userIdDisplay}</TableCell>
                             <TableCell>
                               {socialProvider === "Google" ? (
                                 <span className="inline-flex items-center gap-1 text-black dark:text-white">
@@ -383,8 +517,12 @@ export default function MyPage() {
                     {/* Mobile Card View */}
                     <div className="md:hidden space-y-3">
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
-                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Name</p>
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Nickname</p>
                         <p className="text-sm text-black dark:text-white font-medium">{userNickname}</p>
+                      </div>
+                      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
+                        <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">User ID</p>
+                        <p className="text-sm text-black dark:text-white">{userIdDisplay}</p>
                       </div>
                       <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg">
                         <p className="text-xs font-semibold text-black/70 dark:text-white/70 mb-1">Provider</p>
@@ -540,37 +678,6 @@ export default function MyPage() {
         </div>
       )}
 
-      {/* Coupon Input Dialog */}
-      {showCouponInput && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-[#131313] rounded-2xl p-6 max-w-sm w-full border border-white/10 dark:border-slate-700/50">
-            <h3 className="text-lg font-bold text-black dark:text-white mb-4">Enter Coupon</h3>
-            <Input
-              type="text"
-              placeholder="Enter coupon code"
-              value={couponCode}
-              onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-              className="mb-4 bg-white dark:bg-slate-800 border-black/20 dark:border-white/20 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40"
-            />
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setShowCouponInput(false)}
-                className="flex-1 border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleCouponSubmit}
-                disabled={isValidatingCoupon}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                {isValidatingCoupon ? "Validating..." : "Apply Coupon"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
       {/* Delete Account Confirmation Popup */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">

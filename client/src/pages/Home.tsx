@@ -34,6 +34,7 @@ export default function Home() {
 
   // DB에서 배너 데이터 가져오기 (fallback: 하드코딩 배너)
   const { data: dbBanners } = trpc.banner.list.useQuery(undefined, { retry: false });
+  const { data: dbNews } = trpc.publicNews.list.useQuery(undefined, { retry: false });
 
   const fallbackBanners = [
     {
@@ -64,23 +65,29 @@ export default function Home() {
     contentDate: b.contentDate,
     contentBody: b.contentBody,
   }));
+  const currentBanner = bannerImages[currentBannerIndex] ?? bannerImages[0];
+
+  useEffect(() => {
+    setCurrentBannerIndex(previous => bannerImages.length ? Math.min(previous, bannerImages.length - 1) : 0);
+  }, [bannerImages.length]);
 
   const nextBanner = () => {
-    setCurrentBannerIndex((prev) => (prev + 1) % bannerImages.length);
+    setCurrentBannerIndex((prev) => bannerImages.length ? (prev + 1) % bannerImages.length : 0);
   };
 
   const prevBanner = () => {
-    setCurrentBannerIndex((prev) => (prev - 1 + bannerImages.length) % bannerImages.length);
+    setCurrentBannerIndex((prev) => bannerImages.length ? (prev - 1 + bannerImages.length) % bannerImages.length : 0);
   };
 
   // Auto-rotate banner every 5 seconds
   useEffect(() => {
+    if (bannerImages.length < 2) return;
     const interval = setInterval(nextBanner, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [bannerImages.length]);
 
-  // News data - unified single section (6 items for 2 rows x 3 columns) with banner images
-  const newsData = [
+  // News fallback - 공개 News API가 비어 있을 때만 표시
+  const fallbackNewsData = [
     {
       id: 1,
       title: "Ragnarok Online: Patch Update June 17, 2026",
@@ -118,6 +125,14 @@ export default function Home() {
       image: `${ASSET_BASE_URL}/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_bc640d8a_0c8f7386.png`,
     },
   ];
+  const newsData = dbNews && dbNews.length > 0
+    ? dbNews.map(item => ({
+        id: item.id,
+        title: item.title,
+        date: item.publishedAt ? new Date(item.publishedAt).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }) : "",
+        image: item.imageUrl || `${ASSET_BASE_URL}/manus-storage/ragnarok-news-default-banner_0d5427e8.png`,
+      }))
+    : fallbackNewsData;
 
   const handleGameStart = () => {
     if (!isLoggedIn) {
@@ -191,31 +206,31 @@ export default function Home() {
 
   // News Card Component
   const NewsCard = ({ item, category }: { item: any; category: string }) => (
-    <div className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer">
+    <div className="fantasy-card flex h-full flex-col overflow-hidden rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-xl cursor-pointer">
       <div className="aspect-video overflow-hidden bg-foreground/10">
         <img src={item.image} alt={item.title} className="w-full h-full object-cover hover:scale-105 transition-transform" />
       </div>
-      <div className="p-4">
-        <p className="text-xs font-bold text-foreground/60 uppercase mb-2">{category}</p>
-        <h3 className="text-base font-bold text-foreground mb-2 line-clamp-2">{item.title}</h3>
-        <p className="text-xs text-foreground/70">{item.date}</p>
+      <div className="flex min-h-[84px] flex-1 flex-col p-3">
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[#5971a3]">{category}</p>
+        <h3 className="mb-1 min-h-[2.5rem] text-sm font-bold leading-snug text-[#2c241c] line-clamp-2">{item.title}</h3>
+        <p className="mt-auto text-[11px] text-[#7c6a52]">{item.date}</p>
       </div>
     </div>
   );
 
   return (
     <Layout>
-      <div className="bg-background">
+      <div className="fantasy-page-shell">
         {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
         <div className="relative w-full">
           {/* BANNER SECTION */}
           <section className="relative w-full bg-foreground/10 overflow-hidden flex items-center justify-center" style={{ aspectRatio: '1900 / 600' }}>
             {/* Banner Image */}
-            <img
-              src={bannerImages[currentBannerIndex].url}
-              alt={bannerImages[currentBannerIndex].title}
+            {currentBanner ? <img
+              src={currentBanner.url}
+              alt={currentBanner.title}
               onClick={() => {
-                const banner = bannerImages[currentBannerIndex];
+                const banner = currentBanner;
                 if (banner.actionType === "url") {
                   if (banner.actionUrl === "game-start") {
                     handleGameStart();
@@ -228,9 +243,9 @@ export default function Home() {
                 }
               }}
               className="h-full w-full object-cover cursor-pointer"
-            />
+            /> : <div className="flex h-full w-full items-center justify-center bg-[#213b58] text-sm font-semibold text-white">No banner is currently available.</div>}
             {/* Banner Navigation Buttons */}
-            <button
+            {bannerImages.length > 1 && <><button
               onClick={(e) => { e.stopPropagation(); prevBanner(); }}
               className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm"
             >
@@ -241,7 +256,7 @@ export default function Home() {
               className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm"
             >
               <ChevronRight size={16} />
-            </button>
+            </button></>}
           </section>
 
           {/* GAME START Button — 배너 하단 중앙, 절반 걸치기 */}
@@ -271,26 +286,26 @@ export default function Home() {
         </div>
 
         {/* Spacer: 버튼 높이의 50% (translate-y[50%] 기준) */}
-        <div className="bg-background" style={{ height: 'clamp(60px, 8vw, 130px)' }} />
+        <div style={{ height: 'clamp(60px, 8vw, 130px)' }} />
 
         {/* NEWS SECTION - Unified layout */}
-        <section id="news" className="py-0 bg-background">
-          <div className="container pt-3 md:pt-4">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
-                News
+        <section id="news" className="py-2">
+          <div className="container fantasy-content-guide pt-5 md:pt-7">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb] shadow-sm">✦</span>News
               </h2>
               <Link href="/news">
-                <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white font-semibold text-sm px-5">
+                <Button variant="outline" className="border-[#7386a5] bg-[#fffdf7]/78 px-5 text-sm font-semibold text-[#3e609b] hover:bg-[#4668a3] hover:text-white">
                   View More
                 </Button>
               </Link>
             </div>
 
             {/* News Grid - 2 rows of 3 cards on desktop, 2 columns on mobile */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
               {newsData.map((item) => (
-                <Link key={item.id} href={`/news/${item.id}`}>
+                <Link key={item.id} href={`/news/${item.id}`} className="block h-full">
                   <NewsCard item={item} category="NEWS" />
                 </Link>
               ))}
@@ -301,20 +316,20 @@ export default function Home() {
 
 
         {/* GAME INFO SECTION */}
-        <section id="game-info" className="py-0 bg-background">
-          <div className="container py-0" style={{paddingTop: '30px'}}>
+        <section id="game-info" className="py-0">
+          <div className="container fantasy-content-guide py-0" style={{paddingTop: '48px', paddingBottom: '0px'}}>
             {/* Header */}
-            <div>
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2 tracking-tight">
-                About Ragnarok Universe
+            <div className="mb-5">
+              <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb] shadow-sm">✦</span>About Ragnarok Universe
               </h2>
-              <p className="text-lg text-foreground/60">Discover the world of Ragnarok</p>
+              <p className="mt-1 text-sm text-[#786850] md:text-base">Discover the heart of Ragnarok</p>
             </div>
 
             {/* Game Info Card */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 items-center">
+            <div className="grid grid-cols-1 items-center gap-5 lg:grid-cols-2 lg:gap-8">
               {/* Game Image */}
-              <div className="rounded-2xl overflow-hidden shadow-lg">
+              <div className="fantasy-frame overflow-hidden rounded-xl">
                 <img
                   src={`${ASSET_BASE_URL}/manus-storage/main2_0c694426_d1284510.png`}
                   alt="Ragnarok Universe Gameplay"
@@ -323,36 +338,36 @@ export default function Home() {
               </div>
 
               {/* Game Details */}
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
                 <div>
-                  <h3 className="text-3xl font-black text-foreground mb-3">Romantic Fantasy MMORPG</h3>
-                  <p className="text-base text-foreground/70 leading-relaxed">
+                  <h3 className="font-serif text-3xl font-bold text-[#302419] mb-3">Discover the Heart of Ragnarok Universe</h3>
+                  <p className="text-sm leading-relaxed text-[#675843] md:text-base">
                     Ragnarok Universe brings the legendary online game to a new era. Play directly in your web browser without any downloads. Experience epic battles, explore vast worlds, and join millions of adventurers in this timeless fantasy universe.
                   </p>
                 </div>
 
                 {/* Game Specs Grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Platform</p>
-                    <p className="text-lg font-black text-foreground">Web Browser</p>
+                  <div className="fantasy-card rounded-lg p-3">
+                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Platform</p>
+                    <p className="text-base font-black text-[#2c241c]">Web Browser</p>
                   </div>
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Genre</p>
-                    <p className="text-lg font-black text-foreground">Fantasy MMORPG</p>
+                  <div className="fantasy-card rounded-lg p-3">
+                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Genre</p>
+                    <p className="text-base font-black text-[#2c241c]">Fantasy MMORPG</p>
                   </div>
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Age Rating</p>
-                    <p className="text-lg font-black text-foreground">18+</p>
+                  <div className="fantasy-card rounded-lg p-3">
+                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Age Rating</p>
+                    <p className="text-base font-black text-[#2c241c]">18+</p>
                   </div>
-                  <div className="bg-card border border-border rounded-xl p-4">
-                    <p className="text-xs font-bold text-foreground/60 uppercase mb-2">Status</p>
-                    <p className="text-lg font-black text-primary">Beta Testing</p>
+                  <div className="fantasy-card rounded-lg p-3">
+                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Status</p>
+                    <p className="text-base font-black text-[#4668a3]">Beta Testing</p>
                   </div>
                 </div>
 
                 <Link href="/game-info">
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold">
+                  <Button className="w-full border border-[#2f568f] bg-[#4668a3] text-white font-bold shadow-md hover:bg-[#385a92]">
                     Learn More <ArrowRight size={16} className="ml-2" />
                   </Button>
                 </Link>
@@ -366,15 +381,15 @@ export default function Home() {
 
         {/* Sign In Modal — full login panel as popup */}
         {showSignInDialog && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17283b]/55 p-4 backdrop-blur-sm">
             <div className="relative w-full max-w-md">
               {/* Decorative blur */}
-              <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-primary to-accent opacity-20 blur-xl pointer-events-none"></div>
-              <div className="relative rounded-3xl border border-white/10 p-8 shadow-2xl bg-slate-900/90 backdrop-blur-2xl">
+              <div className="pointer-events-none absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-[#37598e] to-[#d7ba74] opacity-30 blur-xl"></div>
+              <div className="fantasy-card relative rounded-3xl p-8 shadow-2xl">
                 {/* Close button */}
                 <button
                   onClick={() => setShowSignInDialog(false)}
-                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-10"
+                  className="absolute right-4 top-4 z-10 text-[#766347] transition-colors hover:text-[#355d9d]"
                 >
                   <X size={22} />
                 </button>
@@ -501,9 +516,9 @@ function MediaSection() {
         const embedUrl = getYoutubeEmbedUrl(item.youtubeUrl);
         if (!embedUrl) return null;
         return (
-          <div key={item.id} style={{ paddingTop: '0px' }}>
-            <h3 className="text-2xl md:text-3xl font-black text-foreground mb-4 tracking-tight" >Media</h3>
-            <div className="rounded-2xl overflow-hidden shadow-lg">
+          <div key={item.id} className="mb-0" style={{ paddingTop: '0px' }}>
+            <h3 className="fantasy-section-title mb-4 flex items-center gap-3 text-2xl md:text-3xl"><span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-xs text-[#f9edcb]">✦</span>Media</h3>
+            <div className="fantasy-frame overflow-hidden rounded-xl">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                 <iframe
                   className="absolute inset-0 w-full h-full"

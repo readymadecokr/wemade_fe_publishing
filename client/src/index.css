@@ -43,10 +43,10 @@
 }
 
 :root {
-  /* Light Mode (Default) - White + Blue Theme */
-  --primary: #2563eb; /* Blue-600 */
+  /* White service UI — blue primary and neutral surfaces */
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --sidebar-primary: #1e40af; /* Blue-700 */
+  --sidebar-primary: #1e40af;
   --sidebar-primary-foreground: #ffffff;
   --chart-1: #3b82f6; /* Blue-500 */
   --chart-2: #2563eb; /* Blue-600 */
@@ -56,27 +56,27 @@
   --radius: 0.65rem;
   
   /* Light backgrounds */
-  --background: #ffffff; /* Pure white */
-  --foreground: #1f2937; /* Slate-900 */
+  --background: #ffffff;
+  --foreground: #1f2937;
   --card: #ffffff;
   --card-foreground: #1f2937;
   --popover: #ffffff;
   --popover-foreground: #1f2937;
   
   /* Light secondary colors */
-  --secondary: #f3f4f6; /* Gray-100 */
-  --secondary-foreground: #374151; /* Gray-700 */
-  --muted: #e5e7eb; /* Gray-200 */
-  --muted-foreground: #6b7280; /* Gray-500 */
-  --accent: #eff6ff; /* Blue-50 */
-  --accent-foreground: #1e40af; /* Blue-700 */
+  --secondary: #f3f4f6;
+  --secondary-foreground: #374151;
+  --muted: #e5e7eb;
+  --muted-foreground: #6b7280;
+  --accent: #eff6ff;
+  --accent-foreground: #1e40af;
   
   /* Light borders and inputs */
   --destructive: #dc2626; /* Red-600 */
   --destructive-foreground: #ffffff;
-  --border: #e0e7ff; /* Indigo-100 */
-  --input: #f3f4f6; /* Gray-100 */
-  --ring: #2563eb; /* Blue-600 */
+  --border: #e0e7ff;
+  --input: #f3f4f6;
+  --ring: #2563eb;
   
   /* Sidebar colors */
   --sidebar: #ffffff;
@@ -136,14 +136,54 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
+    background-image: none;
   }
   header a, header h3, header span {
     font-family: 'Poppins', sans-serif;
   }
   nav a {
     font-family: 'Poppins', sans-serif;
-    font-size: 16px;
     font-weight: 700;
+  }
+  header .portal-nav a {
+    font-size: inherit;
+  }
+
+  header .portal-nav > a,
+  header .portal-nav > button {
+    position: relative;
+    padding: .35rem 0;
+    font-weight: 800;
+    letter-spacing: .015em;
+    text-shadow: 0 1px 0 rgba(15,31,47,.42);
+    transition: color 180ms ease, transform 180ms ease, text-shadow 180ms ease;
+  }
+
+  header .portal-nav > a::after,
+  header .portal-nav > button::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: .05rem;
+    left: 0;
+    height: 1px;
+    transform: scaleX(0);
+    transform-origin: center;
+    background: linear-gradient(90deg, transparent, #fff3b8 25%, #edc35f 50%, #fff3b8 75%, transparent);
+    box-shadow: 0 0 8px rgba(246,209,111,.78);
+    transition: transform 180ms ease;
+  }
+
+  header .portal-nav > a:hover,
+  header .portal-nav > button:hover {
+    color: #fff1b4 !important;
+    transform: translateY(-1px);
+    text-shadow: 0 0 9px rgba(246,211,117,.7), 0 1px 0 rgba(15,31,47,.42);
+  }
+
+  header .portal-nav > a:hover::after,
+  header .portal-nav > button:hover::after {
+    transform: scaleX(1);
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -159,6 +199,170 @@
 }
 
 @layer components {
+  .fantasy-page-shell {
+    position: relative;
+    overflow: visible;
+    background: transparent;
+  }
+
+  .fantasy-page-shell::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    opacity: .09;
+    background-image: radial-gradient(circle at 11% 78%, rgba(105,130,173,.34), transparent 17%), radial-gradient(circle at 89% 64%, rgba(174,129,58,.28), transparent 20%);
+    background-size: cover;
+    background-position: center center;
+    mix-blend-mode: soft-light;
+  }
+
+  .fantasy-site-atlas {
+    position: relative;
+    isolation: isolate;
+    background-color: #f3ead5;
+    background-image: radial-gradient(ellipse 68% 66% at 50% 51%, rgba(255,253,244,.93) 0%, rgba(251,246,230,.87) 42%, rgba(246,236,207,.52) 67%, transparent 92%), url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png');
+    background-position: center center, center center;
+    background-size: cover, cover;
+    background-repeat: no-repeat;
+  }
+
+  .fantasy-site-atlas::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(180deg, rgba(49,42,30,.22) 0%, rgba(49,42,30,.08) 13%, transparent 29%, transparent 72%, rgba(49,42,30,.09) 88%, rgba(49,42,30,.24) 100%);
+    mix-blend-mode: multiply;
+  }
+
+  .fantasy-site-atlas > header,
+  .fantasy-site-atlas > main,
+  .fantasy-site-atlas > footer {
+    position: relative;
+    z-index: 1;
+  }
+
+  .fantasy-content-guide {
+    position: relative;
+    padding-left: clamp(0rem, 4vw, 3.4rem);
+    z-index: 1;
+  }
+
+  .fantasy-content-guide::before {
+    content: "";
+    position: absolute;
+    left: 1.2rem;
+    top: .8rem;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(76,97,133,.38) 4%, rgba(76,97,133,.28) 94%, transparent);
+  }
+
+  .fantasy-section-decorated::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: .15rem;
+    width: min(42vw, 430px);
+    height: 3rem;
+    opacity: .82;
+    background: url('/manus-storage/ragnarok-fantasy-section-ornament_f3f3bf5d.png') right center / contain no-repeat;
+  }
+
+
+  @media (max-width: 640px) {
+    .fantasy-site-atlas {
+      background-position: center center, center 42%;
+      background-size: cover, cover;
+    }
+
+    .fantasy-site-atlas::before {
+      background: linear-gradient(180deg, rgba(49,42,30,.18) 0%, rgba(49,42,30,.06) 11%, transparent 24%, transparent 76%, rgba(49,42,30,.08) 89%, rgba(49,42,30,.22) 100%);
+    }
+
+    .floating-social-box {
+      top: auto !important;
+      right: .55rem !important;
+      bottom: .7rem !important;
+      transform: scale(.78) !important;
+      transform-origin: bottom right;
+    }
+  }
+
+  .fantasy-card {
+    background: rgba(255,253,247,.9);
+    border: 1px solid rgba(174,151,103,.55);
+    box-shadow: 0 9px 22px rgba(93,73,43,.12), inset 0 1px rgba(255,255,255,.8), inset 0 0 0 3px rgba(255,246,222,.45);
+  }
+
+  .login-contrast-surface {
+    background: rgba(255, 253, 247, .97);
+    color: #241d14;
+    box-shadow: 0 16px 36px rgba(70, 55, 35, .22), inset 0 1px rgba(255, 255, 255, .9), inset 0 0 0 3px rgba(255, 246, 222, .58);
+  }
+
+  .login-consent-panel {
+    background: rgba(246, 240, 225, .88);
+    border: 1px solid rgba(174, 151, 103, .42);
+  }
+
+  .login-contrast-surface .text-white,
+  .login-contrast-surface .text-slate-300,
+  .login-contrast-surface .text-slate-400,
+  .login-contrast-surface .text-slate-500 {
+    color: #334155 !important;
+  }
+
+  .login-contrast-surface [class~="bg-white/5"] {
+    background: rgba(246, 240, 225, .88) !important;
+    border-color: rgba(174, 151, 103, .42) !important;
+  }
+
+  .login-contrast-surface input {
+    background: #ffffff !important;
+    border-color: #bfae8c !important;
+    color: #1e293b !important;
+  }
+
+  .login-contrast-surface input::placeholder {
+    color: #64748b !important;
+  }
+
+  .login-contrast-surface button.bg-primary,
+  .login-contrast-surface button.bg-blue-600,
+  .login-contrast-surface button.bg-blue-700 {
+    color: #ffffff !important;
+  }
+
+  .fantasy-frame {
+    border: 1px solid rgba(67,97,151,.42);
+    box-shadow: 0 0 0 3px rgba(255,252,241,.72), 0 8px 20px rgba(69,87,117,.14);
+  }
+
+  .fantasy-section-title {
+    color: #302419;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    letter-spacing: -.025em;
+  }
+
+  .fantasy-account .glass-panel {
+    background: rgba(255,253,247,.9) !important;
+    border-color: rgba(174,151,103,.55) !important;
+    box-shadow: 0 9px 22px rgba(93,73,43,.12), inset 0 1px rgba(255,255,255,.8);
+  }
+
+  .fantasy-account .glass-panel table thead {
+    background: rgba(240,230,204,.7);
+  }
+
+  .fantasy-account .glass-panel table tr {
+    border-color: rgba(174,151,103,.38) !important;
+  }
+
   /**
    * Custom container utility that centers content and adds responsive padding.
    *
@@ -222,4 +426,16 @@
 
 .floating-discord {
   animation: float 3s ease-in-out infinite, pulse-glow 2s ease-in-out infinite;
+}
+
+/* datetime-local 24시간 강제 적용: 오전/오후 선택 컬럼 숨김 */
+.datetime-24h::-webkit-datetime-edit-ampm-field {
+  display: none;
+}
+.datetime-24h::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+/* 크롬/엣지 달력 팝업 내 AM/PM 컬럼 숨김 */
+input[type="datetime-local"].datetime-24h {
+  /* hour12 강제 비활성화는 CSS만으로 불가하므로 ampm 필드만 숨김 */
 }

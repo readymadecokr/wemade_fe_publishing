@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ragnarok Universe Admin HTML</title>
+    <style>
+      :root{--navy:#18324b;--blue:#2563eb;--line:#dbe5ee;--muted:#64748b;--bg:#f5f8fb;--green:#059669}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#1e293b;font-family:Inter,Arial,sans-serif}.header{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 36px;font-weight:700}.brand{color:var(--navy);font-size:20px}.brand small{display:block;font-size:12px;color:var(--muted);font-weight:500}.layout{display:flex;min-height:calc(100vh - 72px)}aside{width:242px;background:#fff;border-right:1px solid var(--line);padding:22px 14px}.nav{padding:13px 16px;border-radius:10px;color:#475569;margin:4px 0}.nav.active{background:#2563eb;color:#fff;font-weight:700}main{flex:1;padding:38px}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.top h1{margin:0 0 8px;font-size:28px}.top p{margin:0;color:var(--muted)}.actions{display:flex;gap:10px}.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:12px 16px;font-weight:700}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;margin-top:28px}.filters{display:flex;gap:10px;margin:20px 0}input,select{height:42px;border:1px solid var(--line);border-radius:8px;padding:0 12px;background:#fff}.search{flex:1}table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;background:#f8fafc;color:#64748b;padding:15px}td{padding:16px 15px;border-top:1px solid var(--line)}.pill{display:inline-block;background:#dcfce7;color:#047857;border-radius:999px;padding:5px 10px;font-weight:700}.toggle{background:#059669;color:#fff;border-radius:7px;padding:7px 12px;font-weight:700}.icon{font-size:18px;color:#334155;margin-right:12px}.note{margin-top:20px;color:var(--muted);font-size:13px}
+    </style>
+  </head>
+  <body>
+    <header class="header"><div class="brand">관리자 페이지<small>Ragnarok Universe Admin</small></div></header>
+    <div class="layout">
+      <aside><div class="nav">Dashboard</div><div class="nav">회원 관리</div><div class="nav">Game</div><div class="nav">Main Banner</div><div class="nav">News</div><div class="nav active">쿠폰 관리</div><div class="nav">관리자 관리</div></aside>
+      <main>
+        <div class="top"><div><h1>쿠폰 관리</h1><p>쿠폰 발급과 엑셀 업로드를 관리합니다.</p></div><div class="actions"><button class="btn primary">＋ 신규 쿠폰 생성</button><button class="btn">▣ 신규 쿠폰 (엑셀 업로드)</button></div></div>
+        <section class="card"><h2>쿠폰 목록</h2><div class="filters"><input type="date"/><input type="date"/><input class="search" placeholder="이벤트명 또는 쿠폰코드 검색"/><select><option>10개씩</option><option>20개씩</option></select><button class="btn primary">검색</button></div>
+          <table><thead><tr><th>이벤트명</th><th>쿠폰사용기간</th><th>상태</th><th>게임코드</th><th>서버코드</th><th>쿠폰타입</th><th>발급수량</th><th>사용수량</th><th>활성</th><th>보상</th><th>수정</th><th>삭제</th></tr></thead><tbody><tr><td>New Year Gift</td><td>2026.09.01 ~ 2026.11.01</td><td><span class="pill">예정</span></td><td>ROU</td><td>3</td><td>난수</td><td>91</td><td>40</td><td><span class="toggle">On</span></td><td class="icon">◉</td><td class="icon">✎</td><td class="icon">⌫</td></tr><tr><td>Winter Prelude</td><td>2026.08.01 ~ 2026.08.31</td><td><span class="pill">활성</span></td><td>ROU</td><td>2,4,6</td><td>난수</td><td>55</td><td>24</td><td><span class="toggle">On</span></td><td class="icon">◉</td><td class="icon">✎</td><td class="icon">⌫</td></tr></tbody></table><p class="note">이 파일은 관리자 UI 전달·검토용 독립 HTML입니다. 실제 인증, API 호출, 데이터 저장 기능은 실행 중인 웹 애플리케이션에서 제공됩니다.</p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

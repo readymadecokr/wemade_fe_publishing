@@ -6,18 +6,18 @@ export default function CookiePolicy() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-white dark:bg-[#0a0a0a]">
+      <div className="fantasy-page-shell min-h-screen">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-12">
+        <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#526f8d_50%,#314b66)] py-11 text-white">
           <div className="container">
-            <h1 className="text-4xl font-black mb-2">Cookie Policy</h1>
-            <p className="text-blue-100">Last updated: May 6, 2021</p>
+            <h1 className="mb-2 font-serif text-4xl font-bold">Cookie Policy</h1>
+            <p className="text-[#e9dfc8]">Last updated: May 6, 2021</p>
           </div>
         </div>
 
         {/* Content */}
-        <div className="container py-12">
-          <div className="max-w-4xl mx-auto prose prose-sm dark:prose-invert">
+        <div className="container fantasy-content-guide py-12">
+          <div className="fantasy-card prose prose-sm max-w-4xl mx-auto rounded-xl p-6 md:p-9">
             <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4">What Are Cookies?</h2>
             <p className="text-foreground/70 dark:text-white/70 mb-6">
               Cookies are pieces of information that a website sends to your computer while you are viewing the website. We and other companies use cookies for a variety of purposes. For example, when you return to one of our websites after logging in, cookies provide information to the website so that the website will remember who you are.

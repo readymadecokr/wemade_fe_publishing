@@ -81,24 +81,25 @@ function GameInfoPageContent() {
   return (
     <>
       {/* Page Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
+      <div className="relative overflow-hidden border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#526f8d_50%,#314b66)] py-11 text-white">
+        <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_18%_10%,white_0,transparent_28%),radial-gradient(circle_at_82%_80%,#efcf8b_0,transparent_30%)]" />
         <div className="container">
-          <h1 className="text-4xl font-black mb-2">🎮 Game Info</h1>
-          <p className="text-blue-100">Learn everything about Ragnarok Universe</p>
+          <h1 className="relative font-serif text-4xl font-bold mb-2">Game Info</h1>
+          <p className="relative text-[#e9dfc8]">Learn everything about Ragnarok Universe</p>
         </div>
       </div>
 
       {/* Content */}
-      <main className="container py-6">
+      <main className="container fantasy-content-guide py-8">
         {/* Game Overview */}
         <section className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-4">About Ragnarok Universe</h2>
-          <div className="bg-card border border-border rounded-lg p-4">
-            <p className="text-foreground/80 text-lg leading-relaxed mb-4">
+          <h2 className="fantasy-section-title mb-4 flex items-center gap-3 text-3xl"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb]">✦</span>About Ragnarok Universe</h2>
+          <div className="fantasy-card rounded-xl p-5">
+            <p className="mb-4 text-lg leading-relaxed text-[#5d4f3d]">
               Ragnarok Universe is an immersive MMORPG that brings together the classic gameplay of the legendary Ragnarok series with modern graphics and mechanics. 
               Explore a vast world filled with adventure, danger, and opportunity.
             </p>
-            <p className="text-foreground/80 text-lg leading-relaxed">
+            <p className="text-lg leading-relaxed text-[#5d4f3d]">
               Whether you're a seasoned adventurer or new to the world of Ragnarok, you'll find countless hours of engaging content, from solo quests to cooperative dungeons 
               and competitive PvP battles. Join millions of players worldwide in this epic fantasy realm.
             </p>
@@ -107,8 +108,8 @@ function GameInfoPageContent() {
 
         {/* Gameplay Trailer */}
         <section className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-4">Gameplay Trailer</h2>
-          <div className="bg-card border border-border rounded-lg overflow-hidden">
+          <h2 className="fantasy-section-title mb-4 flex items-center gap-3 text-3xl"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb]">✦</span>Gameplay Trailer</h2>
+          <div className="fantasy-frame overflow-hidden rounded-xl bg-[#283e55]">
             <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
               <iframe
                 className="absolute inset-0 w-full h-full"
@@ -124,13 +125,13 @@ function GameInfoPageContent() {
 
         {/* Game Features */}
         <section className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-4">Game Features</h2>
+          <h2 className="fantasy-section-title mb-4 flex items-center gap-3 text-3xl"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb]">✦</span>Game Features</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {gameFeatures.map((feature) => (
-              <div key={feature.id} className="bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
+              <div key={feature.id} className="fantasy-card rounded-xl p-6 transition-shadow hover:shadow-lg">
                 <div className="text-4xl mb-3">{feature.icon}</div>
-                <h3 className="text-xl font-bold text-foreground mb-2">{feature.title}</h3>
-                <p className="text-foreground/70">{feature.description}</p>
+                <h3 className="mb-2 font-serif text-xl font-bold text-[#302419]">{feature.title}</h3>
+                <p className="text-[#675843]">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -138,23 +139,23 @@ function GameInfoPageContent() {
 
         {/* Game Classes */}
         <section>
-          <h2 className="text-3xl font-bold text-foreground mb-4">Character Classes</h2>
+          <h2 className="fantasy-section-title mb-4 flex items-center gap-3 text-3xl"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb]">✦</span>Character Classes</h2>
           <div className="grid md:grid-cols-2 gap-4">
             {gameClasses.map((gameClass) => (
-              <div key={gameClass.id} className="border border-border rounded-lg p-6 bg-card">
-                <h3 className="text-2xl font-bold text-foreground mb-2">{gameClass.name}</h3>
-                <p className="text-foreground/70">{gameClass.description}</p>
+              <div key={gameClass.id} className="fantasy-card rounded-xl p-6">
+                <h3 className="mb-2 font-serif text-2xl font-bold text-[#302419]">{gameClass.name}</h3>
+                <p className="text-[#675843]">{gameClass.description}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* Call to Action */}
-        <section className="mt-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-6 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to Start Your Adventure?</h2>
-          <p className="text-blue-100 mb-6">Join thousands of adventurers in Ragnarok Universe today!</p>
+        <section className="mt-8 rounded-xl border border-[#405e90] bg-[linear-gradient(110deg,#395782,#5277ad,#395782)] p-7 text-center shadow-lg">
+          <h2 className="mb-3 font-serif text-3xl font-bold text-[#fff6e4]">Ready to Start Your Adventure?</h2>
+          <p className="mb-6 text-[#e8dfcd]">Join thousands of adventurers in Ragnarok Universe today!</p>
           <Link href="/">
-            <Button className="bg-white text-blue-600 hover:bg-blue-50 font-bold px-8 py-3">
+            <Button className="border border-[#d5bd7d] bg-[#fff8e8] px-8 py-3 font-bold text-[#34588f] hover:bg-white">
               Play Now
             </Button>
           </Link>

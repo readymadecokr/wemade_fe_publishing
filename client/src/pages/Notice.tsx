@@ -53,19 +53,19 @@ function NoticePageContent() {
   return (
     <>
       {/* Page Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
+      <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#526f8d_50%,#314b66)] py-11 text-white">
         <div className="container">
-          <h1 className="text-4xl font-black mb-2">📋 Notice</h1>
-          <p className="text-blue-100">Stay updated with the latest announcements and updates</p>
+          <h1 className="mb-2 font-serif text-4xl font-bold">Notice</h1>
+          <p className="text-[#e9dfc8]">Stay updated with the latest announcements and updates</p>
         </div>
       </div>
 
       {/* Content */}
-      <main className="container py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <main className="container fantasy-content-guide py-10">
+        <div className="grid grid-cols-3 gap-2 md:gap-6">
           {noticeData.map((notice) => (
             <Link key={notice.id} href={`/notice/${notice.id}`}>
-              <div className="bg-white border border-blue-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
+              <div className="fantasy-card flex h-full cursor-pointer flex-col overflow-hidden rounded-lg transition-shadow hover:shadow-lg">
                 {/* Image */}
                 <div className="w-full h-48 overflow-hidden">
                   <img
@@ -77,10 +77,10 @@ function NoticePageContent() {
 
                 {/* Content */}
                 <div className="p-4 flex flex-col justify-between flex-1">
-                  <h3 className="text-base font-bold text-slate-900 line-clamp-3">
+                  <h3 className="text-[11px] font-bold text-[#2c241c] md:text-base line-clamp-3">
                     {notice.title}
                   </h3>
-                  <span className="text-xs text-slate-500 mt-3">{notice.date}</span>
+                  <span className="mt-3 text-[10px] text-[#7b6a51] md:text-xs">{notice.date}</span>
                 </div>
               </div>
             </Link>
