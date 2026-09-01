@@ -634,3 +634,8 @@
 - [x] News 섹션을 Discord 위젯 아래로 이동
 - [x] 우측 플로팅 배너를 Discord·Facebook·YouTube·X 순서로 구성하고 소셜 링크 연결
 - [x] TypeScript·Vitest·데스크톱·모바일 화면 검증 후 체크포인트 저장
+
+## 홈 About·News 간격 정비
+- [x] About 영역의 중복 소개 제목과 해당 세로 여백 제거
+- [x] 메인 화면 News 노출을 최신 3개로 축소하고 영역 높이 조정
+- [x] TypeScript·Vitest·데스크톱·모바일 화면 검증 후 체크포인트 저장

@@ -318,9 +318,9 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* News Grid - 2 rows of 3 cards on desktop, 2 columns on mobile */}
+            {/* Home shows the three most recent News items; full archive remains available via View More. */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-              {newsData.map((item) => (
+              {newsData.slice(0, 3).map((item) => (
                 <Link key={item.id} href={`/news/${item.id}`} className="block h-full">
                   <NewsCard item={item} category="NEWS" />
                 </Link>
@@ -343,7 +343,7 @@ export default function Home() {
             </div>
 
             {/* Game Info Card */}
-            <div className="grid grid-cols-1 items-center gap-5 lg:grid-cols-2 lg:gap-8">
+            <div className="grid grid-cols-1 items-center gap-5 lg:grid-cols-2 lg:items-start lg:gap-8">
               {/* Game Image */}
               <div className="fantasy-frame overflow-hidden rounded-xl">
                 <img
@@ -355,12 +355,9 @@ export default function Home() {
 
               {/* Game Details */}
               <div className="flex flex-col gap-4">
-                <div>
-                  <h3 className="font-serif text-3xl font-bold text-[#302419] mb-3">Discover the Heart of Ragnarok Universe</h3>
-                  <p className="text-sm leading-relaxed text-[#675843] md:text-base">
-                    Ragnarok Universe brings the legendary online game to a new era. Play directly in your web browser without any downloads. Experience epic battles, explore vast worlds, and join millions of adventurers in this timeless fantasy universe.
-                  </p>
-                </div>
+                <p className="text-sm leading-relaxed text-[#675843] md:text-base">
+                  Ragnarok Universe brings the legendary online game to a new era. Play directly in your web browser without any downloads. Experience epic battles, explore vast worlds, and join millions of adventurers in this timeless fantasy universe.
+                </p>
 
                 {/* Game Specs Grid */}
                 <div className="grid grid-cols-2 gap-4">
