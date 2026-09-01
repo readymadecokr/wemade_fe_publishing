@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Globe, X, Disc, Moon, Sun } from "lucide-react";
+import { Globe, X, Disc } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -24,7 +24,7 @@ export default function Layout({ children }: LayoutProps) {
   const [showPrivacySettings, setShowPrivacySettings] = useState(false);
   const [showTTKeyDialog, setShowTTKeyDialog] = useState(false);
   const [showComingSoonDialog, setShowComingSoonDialog] = useState(false);
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
 
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
   const userNickname = localStorage.getItem("rou_nickname") || "Adventurer";
@@ -136,8 +136,8 @@ export default function Layout({ children }: LayoutProps) {
               </Link>
             )}
 
-            {/* Language and Theme */}
-            <div className="flex items-center gap-3">
+            {/* Language */}
+            <div className="flex items-center">
               <div className="relative">
                 <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="flex cursor-pointer items-center gap-1 text-[10px] font-bold text-slate-100 transition-colors hover:text-[#f3d991] sm:text-xs">
                   <Globe size={14} /> {lang}
@@ -159,9 +159,6 @@ export default function Layout({ children }: LayoutProps) {
                   </div>
                 )}
               </div>
-              <button onClick={toggleTheme} disabled={!toggleTheme} className="flex cursor-pointer items-center gap-1 text-slate-100 transition-colors hover:text-[#f3d991] disabled:cursor-not-allowed disabled:opacity-50">
-                {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
-              </button>
             </div>
           </div>
 
@@ -177,7 +174,7 @@ export default function Layout({ children }: LayoutProps) {
 
 
       {/* Footer */}
-      <footer className="mt-auto w-full bg-transparent text-[#17120c]">
+      <footer className="mt-auto w-full border-t border-[#e7e1d5] bg-white text-[#17120c]">
         <div className="container py-12" style={{paddingTop: '30px'}}>
           {/* Footer Top: Company Logos */}
           <div className="mb-8 flex items-center justify-center gap-6 text-xs font-semibold text-[#17120c]">
