@@ -628,3 +628,9 @@
 - [x] 관리자·서비스 저장소의 원격·브랜치·변경사항 확인
 - [x] 최신 변경사항 커밋 및 각 원격 저장소 푸시
 - [x] 원격 커밋 반영 확인 및 결과 전달
+
+## 홈 Discord 위젯·소셜 플로팅 배너
+- [x] 메인 배너 바로 아래에 WidgetBot Discord 임베드 영역 추가
+- [x] News 섹션을 Discord 위젯 아래로 이동
+- [x] 우측 플로팅 배너를 Discord·Facebook·YouTube·X 순서로 구성하고 소셜 링크 연결
+- [x] TypeScript·Vitest·데스크톱·모바일 화면 검증 후 체크포인트 저장

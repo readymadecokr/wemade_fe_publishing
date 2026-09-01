@@ -288,6 +288,22 @@ export default function Home() {
         {/* Spacer: 버튼 높이의 50% (translate-y[50%] 기준) */}
         <div style={{ height: 'clamp(60px, 8vw, 130px)' }} />
 
+        {/* DISCORD COMMUNITY — 메인 배너 바로 아래 WidgetBot 임베드 */}
+        <section id="discord-community" className="pb-8 pt-2 md:pb-10">
+          <div className="container fantasy-content-guide">
+            <div className="overflow-hidden rounded-2xl border border-[#d7c5a3] bg-[#fffdf9] shadow-[0_14px_34px_rgba(59,49,35,.18)]">
+              <iframe
+                src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051"
+                title="Ragnarok Universe Discord community"
+                className="block h-[560px] w-full border-0 md:h-[500px]"
+                loading="lazy"
+                allow="clipboard-read; clipboard-write; fullscreen"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </section>
+
         {/* NEWS SECTION - Unified layout */}
         <section id="news" className="py-2">
           <div className="container fantasy-content-guide pt-5 md:pt-7">
