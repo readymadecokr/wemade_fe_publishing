@@ -8,13 +8,14 @@ describe("Home About action and footer presentation", () => {
   it("places the About View More action in the section header and removes Learn More", () => {
     expect(homeSource).toContain('<Link href="/game-info" className="shrink-0 pt-1">');
     expect(homeSource).toContain('About Ragnarok Universe');
+    expect(homeSource).not.toContain('<p className="mt-1 text-sm text-[#786850] md:text-base">Discover the heart of Ragnarok</p>');
     expect(homeSource).not.toContain('Learn More');
     expect(homeSource).not.toContain('ArrowRight');
   });
 
-  it("removes the dark mode control and separates the footer with a solid white background", () => {
+  it("removes the dark mode control and applies the reference footer surface", () => {
     expect(layoutSource).not.toContain('Moon, Sun');
     expect(layoutSource).not.toContain('toggleTheme');
-    expect(layoutSource).toContain('className="mt-auto w-full border-t border-[#e7e1d5] bg-white text-[#17120c]"');
+    expect(layoutSource).toContain('className="fantasy-site-footer mt-auto w-full text-[#17120c]"');
   });
 });

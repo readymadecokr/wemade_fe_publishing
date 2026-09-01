@@ -174,7 +174,7 @@ export default function Layout({ children }: LayoutProps) {
 
 
       {/* Footer */}
-      <footer className="mt-auto w-full border-t border-[#e7e1d5] bg-white text-[#17120c]">
+      <footer className="fantasy-site-footer mt-auto w-full text-[#17120c]">
         <div className="container py-12" style={{paddingTop: '30px'}}>
           {/* Footer Top: Company Logos */}
           <div className="mb-8 flex items-center justify-center gap-6 text-xs font-semibold text-[#17120c]">

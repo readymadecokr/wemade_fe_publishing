@@ -335,12 +335,11 @@ export default function Home() {
         <section id="game-info" className="py-0">
           <div className="container fantasy-content-guide py-0" style={{paddingTop: '48px', paddingBottom: '0px'}}>
             {/* Header */}
-            <div className="mb-5 flex items-start justify-between gap-4">
+            <div className="mb-3 flex items-start justify-between gap-4">
               <div>
                 <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">
                   <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb] shadow-sm">✦</span>About Ragnarok Universe
                 </h2>
-                <p className="mt-1 text-sm text-[#786850] md:text-base">Discover the heart of Ragnarok</p>
               </div>
               <Link href="/game-info" className="shrink-0 pt-1">
                 <Button variant="outline" className="border-[#7386a5] bg-[#fffdf7]/78 px-5 text-sm font-semibold text-[#3e609b] hover:bg-[#4668a3] hover:text-white">
@@ -531,7 +530,7 @@ function MediaSection() {
         const embedUrl = getYoutubeEmbedUrl(item.youtubeUrl);
         if (!embedUrl) return null;
         return (
-          <div key={item.id} className="mb-0" style={{ paddingTop: '0px' }}>
+          <div key={item.id} className="pb-10 md:pb-12">
             <h3 className="fantasy-section-title mb-4 flex items-center gap-3 text-2xl md:text-3xl"><span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-xs text-[#f9edcb]">✦</span>Media</h3>
             <div className="fantasy-frame overflow-hidden rounded-xl">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>

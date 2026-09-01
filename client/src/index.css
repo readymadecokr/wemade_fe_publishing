@@ -199,6 +199,11 @@
 }
 
 @layer components {
+  .fantasy-site-footer {
+    background: linear-gradient(180deg, rgba(211,198,172,.72), rgba(199,182,151,.82));
+    border-top: 1px solid rgba(112,92,54,.28);
+  }
+
   .fantasy-page-shell {
     position: relative;
     overflow: visible;

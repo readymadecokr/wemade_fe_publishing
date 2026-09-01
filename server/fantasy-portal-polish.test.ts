@@ -20,7 +20,7 @@ describe("service background visual restoration", () => {
     expect(styleSource).toContain('background: rgba(255,253,247,.9)');
     expect(styleSource).toContain('.fantasy-site-atlas::before');
     expect(layoutSource).toContain('fantasy-site-atlas');
-    expect(layoutSource).toContain('border-t border-[#e7e1d5] bg-white text-[#17120c]');
+    expect(layoutSource).toContain('fantasy-site-footer mt-auto w-full text-[#17120c]');
     expect(styleSource).toContain('ragnarok-fantasy-section-ornament_f3f3bf5d.png');
     expect(homeSource).not.toContain('fantasy-section-decorated');
   });
@@ -37,11 +37,11 @@ describe("service background visual restoration", () => {
     expect(layoutSource).toContain('hover:bg-[#6188c5]');
   });
 
-  it("keeps a solid white footer and mobile social control placement without misplaced ornaments", () => {
+  it("keeps the reference footer surface and mobile social control placement without misplaced ornaments", () => {
     expect(layoutSource).not.toContain('ragnarok-fantasy-footer-atlas_e83c8727.png');
     expect(styleSource).not.toContain('.fantasy-view-more::before');
     expect(styleSource).toContain('.floating-social-box');
-    expect(homeSource).toContain('className="mb-0"');
+    expect(homeSource).toContain('className="pb-10 md:pb-12"');
   });
 
   it("keeps portal navigation equally bold with a gold hover effect and My Page copy", () => {
@@ -51,8 +51,10 @@ describe("service background visual restoration", () => {
     expect(layoutSource).toContain('>\n                  My Page\n');
   });
 
-  it("keeps footer content readable on a solid white surface", () => {
-    expect(layoutSource).toContain('border-t border-[#e7e1d5] bg-white text-[#17120c]');
+  it("keeps footer content readable on the reference gradient surface", () => {
+    expect(layoutSource).toContain('fantasy-site-footer mt-auto w-full text-[#17120c]');
+    expect(styleSource).toContain('background: linear-gradient(180deg, rgba(211,198,172,.72), rgba(199,182,151,.82))');
+    expect(styleSource).toContain('border-top: 1px solid rgba(112,92,54,.28)');
     expect(layoutSource).toContain('font-medium text-[#17120c]');
   });
 });
