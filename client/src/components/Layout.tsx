@@ -91,19 +91,19 @@ export default function Layout({ children }: LayoutProps) {
 
           {/* Desktop Navigation */}
           <nav className="portal-nav flex items-center justify-center gap-3 text-[11px] sm:gap-5 sm:text-xs lg:gap-7" aria-label="Primary navigation">
-            <Link href="/" className={`transition-colors cursor-pointer ${location === "/" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
+            <Link href="/" className={`portal-nav-link ${location === "/" ? "portal-nav-link--active" : ""}`}>
               Home
             </Link>
-            <Link href="/news" className={`transition-colors cursor-pointer ${location === "/news" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
+            <Link href="/news" className={`portal-nav-link ${location === "/news" ? "portal-nav-link--active" : ""}`}>
               News
             </Link>
-            <Link href="/game-info" className={`transition-colors cursor-pointer ${location === "/game-info" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
+            <Link href="/game-info" className={`portal-nav-link ${location === "/game-info" ? "portal-nav-link--active" : ""}`}>
               Game Info
             </Link>
-            <Link href="/point-shop" className={`transition-colors cursor-pointer ${location === "/point-shop" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
+            <Link href="/point-shop" className={`portal-nav-link ${location === "/point-shop" ? "portal-nav-link--active" : ""}`}>
               Shop
             </Link>
-            <button onClick={() => setShowTTKeyDialog(true)} className="cursor-pointer text-[11px] text-slate-100 transition-colors hover:text-[#f3d991] sm:text-xs">
+            <button onClick={() => setShowTTKeyDialog(true)} className="portal-nav-action">
               Discord
             </button>
           </nav>

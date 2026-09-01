@@ -152,38 +152,66 @@
   header .portal-nav > a,
   header .portal-nav > button {
     position: relative;
-    padding: .35rem 0;
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    padding: .35rem .65rem;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    color: #eef4fa;
     font-weight: 800;
-    letter-spacing: .015em;
+    letter-spacing: .045em;
     text-shadow: 0 1px 0 rgba(15,31,47,.42);
-    transition: color 180ms ease, transform 180ms ease, text-shadow 180ms ease;
+    transition: color .18s ease, background .18s ease, border-color .18s ease, transform .18s ease, text-shadow .18s ease;
   }
 
   header .portal-nav > a::after,
   header .portal-nav > button::after {
     content: "";
     position: absolute;
-    right: 0;
-    bottom: .05rem;
-    left: 0;
-    height: 1px;
-    transform: scaleX(0);
-    transform-origin: center;
-    background: linear-gradient(90deg, transparent, #fff3b8 25%, #edc35f 50%, #fff3b8 75%, transparent);
-    box-shadow: 0 0 8px rgba(246,209,111,.78);
-    transition: transform 180ms ease;
+    bottom: .18rem;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    transform: translateX(-50%);
+    background: #d9b35d;
+    box-shadow: 0 0 8px rgba(246,209,111,.6);
+    transition: width .2s ease;
+  }
+
+  header .portal-nav > a.portal-nav-link--active {
+    color: #f7daa1;
+    background: rgba(255,255,255,.045);
+    border-color: rgba(230,197,120,.18);
   }
 
   header .portal-nav > a:hover,
-  header .portal-nav > button:hover {
-    color: #fff1b4 !important;
-    transform: translateY(-1px);
-    text-shadow: 0 0 9px rgba(246,211,117,.7), 0 1px 0 rgba(15,31,47,.42);
+  header .portal-nav > a:focus-visible,
+  header .portal-nav > button:hover,
+  header .portal-nav > button:focus-visible {
+    color: #ffe4a3 !important;
+    background: rgba(255,255,255,.07);
+    border-color: rgba(229,194,111,.26);
+    transform: translateY(-2px);
+    text-shadow: 0 0 15px rgba(255,214,120,.38);
   }
 
   header .portal-nav > a:hover::after,
+  header .portal-nav > a.portal-nav-link--active::after,
   header .portal-nav > button:hover::after {
-    transform: scaleX(1);
+    width: calc(100% - 1.3rem);
+  }
+
+  header .portal-nav > a:focus-visible,
+  header .portal-nav > button:focus-visible {
+    outline: 2px solid rgba(255,226,161,.8);
+    outline-offset: 2px;
+  }
+
+  header .portal-nav > a:active,
+  header .portal-nav > button:active {
+    transform: translateY(0) scale(.97);
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),

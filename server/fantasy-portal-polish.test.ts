@@ -44,10 +44,17 @@ describe("service background visual restoration", () => {
     expect(homeSource).toContain('className="pb-10 md:pb-12"');
   });
 
-  it("keeps portal navigation equally bold with a gold hover effect and My Page copy", () => {
+  it("matches the reference menu's gold underline, active surface, hover lift, and click feedback", () => {
     expect(styleSource).toContain('header .portal-nav > a');
     expect(styleSource).toContain('font-weight: 800');
-    expect(styleSource).toContain('color: #fff1b4 !important');
+    expect(styleSource).toContain('portal-nav-link--active');
+    expect(styleSource).toContain('background: rgba(255,255,255,.045)');
+    expect(styleSource).toContain('color: #ffe4a3 !important');
+    expect(styleSource).toContain('transform: translateY(-2px)');
+    expect(styleSource).toContain('transform: translateY(0) scale(.97)');
+    expect(styleSource).toContain('width: calc(100% - 1.3rem)');
+    expect(layoutSource).toContain('className={`portal-nav-link ${location === "/" ? "portal-nav-link--active" : ""}`}');
+    expect(layoutSource).toContain('className="portal-nav-action"');
     expect(layoutSource).toContain('>\n                  My Page\n');
   });
 
