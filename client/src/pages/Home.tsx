@@ -304,7 +304,7 @@ export default function Home() {
               <div
                 aria-label="Read-only Discord chat"
                 role="note"
-                className="absolute inset-x-0 bottom-0 z-10 flex h-12 items-center justify-center border-t border-white/10 bg-[#2f3136] px-4 shadow-[0_-6px_14px_rgba(0,0,0,.18)]"
+                className="absolute inset-x-0 bottom-0 z-10 flex h-[68px] items-start justify-center border-t border-white/10 bg-[#2f3136] px-4 pt-2 shadow-[0_-6px_14px_rgba(0,0,0,.18)] md:h-[72px] md:pt-3"
               >
                 <a
                   href="https://discord.gg/yVWJkWdkAU"

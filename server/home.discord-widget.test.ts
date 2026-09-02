@@ -16,6 +16,9 @@ describe("Home Discord WidgetBot and social links", () => {
     expect(homeSource).toContain('rel="noopener noreferrer"');
     expect(homeSource).not.toContain('Read-only channel');
     expect(homeSource).toContain('tabIndex={-1}');
+    expect(homeSource).toContain('h-[68px]');
+    expect(homeSource).toContain('md:h-[72px]');
+    expect(homeSource).toContain('items-start');
     expect(homeSource.indexOf(widgetUrl)).toBeLessThan(homeSource.indexOf('{/* NEWS SECTION - Unified layout */}'));
   });
 
