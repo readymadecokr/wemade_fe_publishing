@@ -304,9 +304,16 @@ export default function Home() {
               <div
                 aria-label="Read-only Discord chat"
                 role="note"
-                className="absolute inset-x-0 bottom-0 z-10 flex h-12 cursor-default items-center justify-center border-t border-white/10 bg-[#2f3136] px-4 text-center text-xs font-semibold tracking-wide text-[#d8dae0] shadow-[0_-6px_14px_rgba(0,0,0,.18)]"
+                className="absolute inset-x-0 bottom-0 z-10 flex h-12 items-center justify-center border-t border-white/10 bg-[#2f3136] px-4 shadow-[0_-6px_14px_rgba(0,0,0,.18)]"
               >
-                Read-only channel
+                <a
+                  href="https://discord.gg/yVWJkWdkAU"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-md border border-[#7b87ff]/70 bg-[#5865f2] px-4 py-1.5 text-xs font-bold tracking-wide text-white shadow-[0_4px_12px_rgba(47,55,170,.38)] transition-transform duration-150 hover:-translate-y-0.5 hover:bg-[#6974f5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c8ceff] active:translate-y-0 active:scale-[.97]"
+                >
+                  Join Official Discord <span aria-hidden="true">↗</span>
+                </a>
               </div>
             </div>
           </div>
