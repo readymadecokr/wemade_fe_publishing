@@ -291,7 +291,7 @@ export default function Home() {
         {/* DISCORD COMMUNITY — 메인 배너 바로 아래 WidgetBot 임베드 */}
         <section id="discord-community" className="pb-8 pt-2 md:pb-10">
           <div className="container fantasy-content-guide">
-            <div className="overflow-hidden rounded-2xl border border-[#d7c5a3] bg-[#fffdf9] shadow-[0_14px_34px_rgba(59,49,35,.18)]">
+            <div className="relative overflow-hidden rounded-2xl border border-[#d7c5a3] bg-[#fffdf9] shadow-[0_14px_34px_rgba(59,49,35,.18)]">
               <iframe
                 src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051"
                 title="Ragnarok Universe Discord community"
@@ -299,7 +299,15 @@ export default function Home() {
                 loading="lazy"
                 allow="clipboard-read; clipboard-write; fullscreen"
                 allowFullScreen
+                tabIndex={-1}
               />
+              <div
+                aria-label="Read-only Discord chat"
+                role="note"
+                className="absolute inset-x-0 bottom-0 z-10 flex h-12 cursor-default items-center justify-center border-t border-white/10 bg-[#2f3136] px-4 text-center text-xs font-semibold tracking-wide text-[#d8dae0] shadow-[0_-6px_14px_rgba(0,0,0,.18)]"
+              >
+                Read-only channel
+              </div>
             </div>
           </div>
         </section>

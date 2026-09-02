@@ -9,6 +9,9 @@ describe("Home Discord WidgetBot and social links", () => {
     const widgetUrl = "https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051";
     expect(homeSource).toContain(widgetUrl);
     expect(homeSource).toContain('title="Ragnarok Universe Discord community"');
+    expect(homeSource).toContain('aria-label="Read-only Discord chat"');
+    expect(homeSource).toContain('Read-only channel');
+    expect(homeSource).toContain('tabIndex={-1}');
     expect(homeSource.indexOf(widgetUrl)).toBeLessThan(homeSource.indexOf('{/* NEWS SECTION - Unified layout */}'));
   });
 
