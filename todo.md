@@ -726,3 +726,8 @@
 - [x] Home 정적 참조 화면의 중복 상단 영역을 제거하고 실제 헤더 연결
 - [x] 실제 서비스 로그인·rCoin·Bonus rCoin·My Page·Logout 상태 연결
 - [x] 로그인 흐름·데스크톱·모바일·TypeScript·Vitest 검증 후 체크포인트 저장
+
+## 상단 Discord·Game Start 기존 버튼 복원
+- [x] 우측 상단 Discord 버튼을 첨부 기준의 흰색 테두리 버튼으로 복원
+- [x] 우측 상단 Game Start 버튼을 첨부 기준의 블루·골드 장식 버튼으로 복원
+- [x] 데스크톱·모바일 화면 및 TypeScript·Vitest 검증 후 체크포인트 저장

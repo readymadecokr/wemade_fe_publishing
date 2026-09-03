@@ -12,3 +12,113 @@
   border: 0;
   background: #ffffff;
 }
+
+.reference-header-cta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reference-header-discord {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 2px solid #5865f2;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #4a54cd;
+  padding: 0 18px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  box-shadow: 0 2px 0 rgba(21, 33, 64, .08);
+  transition: transform 160ms cubic-bezier(.23, 1, .32, 1), box-shadow 160ms cubic-bezier(.23, 1, .32, 1), background 160ms ease;
+}
+
+.reference-header-discord:hover {
+  background: #f4f5ff;
+  box-shadow: 0 5px 12px rgba(62, 76, 204, .24);
+  transform: translateY(-1px);
+}
+
+.reference-header-game-start {
+  display: inline-flex;
+  min-height: 52px;
+  min-width: 216px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 2px solid #e5bc55;
+  border-radius: 11px;
+  background: linear-gradient(180deg, #3c8ed1 0%, #1760a5 52%, #0d477e 100%);
+  box-shadow: 0 5px 0 #0b345f, 0 7px 13px rgba(11, 37, 72, .45), inset 0 1px 0 rgba(255, 255, 255, .7);
+  color: #ffffff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: .055em;
+  text-shadow: 0 2px 1px rgba(10, 34, 70, .72);
+  transition: transform 160ms cubic-bezier(.23, 1, .32, 1), filter 160ms ease;
+}
+
+.reference-header-game-start:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.reference-header-discord:active,
+.reference-header-game-start:active {
+  transform: translateY(1px) scale(.98);
+}
+
+.reference-header-game-start__coin {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #fff0a0 0 18%, #f0c84d 20% 60%, #c18c18 62% 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55), 0 1px 2px rgba(4, 31, 61, .45);
+  color: #78590f;
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+}
+
+@media (max-width: 640px) {
+  .reference-header-cta {
+    gap: 6px;
+  }
+
+  .reference-header-discord {
+    min-height: 34px;
+    gap: 4px;
+    padding: 0 8px;
+    font-size: 8px;
+  }
+
+  .reference-header-discord img {
+    width: 12px;
+    height: 12px;
+  }
+
+  .reference-header-game-start {
+    min-height: 36px;
+    min-width: 96px;
+    gap: 6px;
+    border-radius: 8px;
+    font-size: 10px;
+  }
+
+  .reference-header-game-start__coin {
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+  }
+}
