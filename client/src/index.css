@@ -252,6 +252,69 @@
     justify-content: center;
   }
 
+  .home-section-surface {
+    isolation: isolate;
+    position: relative;
+  }
+
+  .home-section-surface::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 2;
+    height: 10px;
+    border-top: 1px solid rgba(255,255,255,.72);
+    border-bottom: 1px solid rgba(77,96,116,.28);
+    background: linear-gradient(90deg, transparent 0%, rgba(194,155,79,.48) 14%, rgba(255,247,222,.9) 50%, rgba(194,155,79,.48) 86%, transparent 100%);
+    box-shadow: 0 4px 13px rgba(43,49,54,.18);
+  }
+
+  .home-section-surface > .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-surface--hero::before {
+    display: none;
+  }
+
+  .home-surface--discord {
+    color: #eef5ff;
+    background: radial-gradient(circle at 82% 5%, rgba(89,101,242,.28), transparent 30%), linear-gradient(145deg, #0f2238, #172f4b 58%, #10243a);
+  }
+
+  .home-surface--discord::before {
+    border-top-color: rgba(232,242,255,.25);
+    border-bottom-color: rgba(118,153,192,.42);
+    background: linear-gradient(90deg, transparent, rgba(107,143,188,.72) 16%, rgba(221,236,255,.8) 50%, rgba(107,143,188,.72) 84%, transparent);
+  }
+
+  .home-surface--news {
+    background: radial-gradient(circle at 12% 8%, rgba(255,255,255,.88), transparent 28%), linear-gradient(150deg, #f9f4e8, #e7dac1);
+  }
+
+  .home-surface--game-info {
+    background: linear-gradient(rgba(249,246,238,.91), rgba(249,246,238,.94)), url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png') center / cover;
+  }
+
+  .home-surface--media {
+    background: radial-gradient(circle at 76% 4%, rgba(255,255,255,.82), transparent 30%), linear-gradient(rgba(249,245,235,.94), rgba(238,228,207,.96)), url('/manus-storage/ragnarok-fantasy-continuous-atlas_fb2301c6.png') center / cover;
+  }
+
+  .fantasy-site-footer.home-surface--closing {
+    color: #26313d;
+    background: #fffdf7;
+    border-top: 0;
+  }
+
+  .home-surface--closing::before {
+    border-top-color: rgba(202,176,117,.7);
+    border-bottom-color: rgba(129,105,57,.38);
+    background: linear-gradient(90deg, transparent, rgba(203,170,92,.72) 16%, rgba(255,248,225,.95) 50%, rgba(203,170,92,.72) 84%, transparent);
+  }
+
   .home-hero-visual {
     height: 100%;
     min-height: 100%;

@@ -293,7 +293,7 @@ export default function Home() {
     <Layout>
       <div className="fantasy-page-shell">
         {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
-        <div id="game-start" className="home-scroll-panel home-hero-panel relative w-full">
+        <div id="game-start" className="home-scroll-panel home-section-surface home-surface--hero home-hero-panel relative w-full">
           {/* BANNER SECTION */}
           <section className="home-hero-visual relative flex h-full min-h-full w-full items-center justify-center overflow-hidden bg-foreground/10">
             {/* Banner Image */}
@@ -353,12 +353,12 @@ export default function Home() {
         </div>
 
         {/* DISCORD COMMUNITY — 메인 배너 바로 아래 WidgetBot 임베드 */}
-        <section id="discord-community" className="home-scroll-panel home-panel-fill home-discord-panel pb-5 pt-5 md:pb-7 md:pt-7">
+        <section id="discord-community" className="home-scroll-panel home-section-surface home-surface--discord home-panel-fill home-discord-panel pb-5 pt-5 md:pb-7 md:pt-7">
           <div className="container fantasy-content-guide flex h-full w-full flex-col">
             <div className="mb-4 shrink-0 text-center md:mb-5">
-              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#735c39]">Official Community</p>
-              <h2 className="font-serif text-3xl font-black tracking-tight text-[#2c241c] md:text-4xl">Discord</h2>
-              <p className="mx-auto mt-2 max-w-xl text-sm text-[#675843]">Development news and community updates from the official Ragnarok Universe Discord.</p>
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#f4d78e]">Official Community</p>
+              <h2 className="font-serif text-3xl font-black tracking-tight text-[#fff6df] md:text-4xl">Discord</h2>
+              <p className="mx-auto mt-2 max-w-xl text-sm text-[#d6e3f0]">Development news and community updates from the official Ragnarok Universe Discord.</p>
             </div>
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[#d7c5a3] bg-[#fffdf9] shadow-[0_14px_34px_rgba(59,49,35,.18)]">
               <div className="min-h-0 flex-1 overflow-hidden">
@@ -391,7 +391,7 @@ export default function Home() {
         </section>
 
         {/* NEWS SECTION - Unified layout */}
-        <section id="news" className="home-scroll-panel home-panel-fill flex items-center py-0">
+        <section id="news" className="home-scroll-panel home-section-surface home-surface--news home-panel-fill flex items-center py-0">
           <div className="container fantasy-content-guide w-full">
             <div className="mb-5 flex items-center justify-between">
               <div>
@@ -419,7 +419,7 @@ export default function Home() {
 
 
         {/* GAME INFO SECTION */}
-        <section id="game-info" className="home-scroll-panel home-panel-fill flex items-center py-0">
+        <section id="game-info" className="home-scroll-panel home-section-surface home-surface--game-info home-panel-fill flex items-center py-0">
           <div className="container fantasy-content-guide w-full py-0" style={{paddingTop: '48px', paddingBottom: '0px'}}>
             {/* Header */}
             <div className="mb-3 flex items-start justify-between gap-4">
@@ -620,7 +620,7 @@ function MediaSection() {
   if (mediaItems.length === 0) return null;
 
   return (
-    <section id="media" className="home-scroll-panel home-panel-fill home-media-panel flex pb-5 pt-5 md:pb-7 md:pt-7">
+    <section id="media" className="home-scroll-panel home-section-surface home-surface--media home-panel-fill home-media-panel flex pb-5 pt-5 md:pb-7 md:pt-7">
       <div className="container fantasy-content-guide flex h-full w-full flex-col">
         <div className="mb-4 shrink-0 text-center md:mb-5">
           <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#735c39]">See the World in Motion</p>

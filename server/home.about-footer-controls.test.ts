@@ -16,6 +16,6 @@ describe("Home About action and footer presentation", () => {
   it("removes the dark mode control and applies the reference footer surface", () => {
     expect(layoutSource).not.toContain('Moon, Sun');
     expect(layoutSource).not.toContain('toggleTheme');
-    expect(layoutSource).toContain('id="site-footer" className="fantasy-site-footer home-scroll-panel home-panel-fill mt-auto w-full text-[#17120c]"');
+    expect(layoutSource).toContain('id="site-footer" className="fantasy-site-footer home-scroll-panel home-section-surface home-surface--closing home-panel-fill mt-auto w-full text-[#17120c]"');
   });
 });

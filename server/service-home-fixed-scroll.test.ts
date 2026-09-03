@@ -27,6 +27,16 @@ describe("service home fixed navigation and scroll presentation", () => {
     expect(homeSource).toContain('data-allow-native-scroll');
     expect(homeSource).toContain('absolute bottom-5 left-1/2 z-30 -translate-x-1/2 sm:bottom-7');
     expect(styleSource).toContain('.home-hero-panel .game-start-btn-wrap');
+    expect(homeSource).toContain('home-surface--discord');
+    expect(homeSource).toContain('home-surface--news');
+    expect(homeSource).toContain('home-surface--game-info');
+    expect(homeSource).toContain('home-surface--media');
+    expect(layoutSource).toContain('home-surface--closing');
+    expect(styleSource).toContain('.home-section-surface::before');
+    expect(styleSource).toContain('.home-surface--discord');
+    expect(styleSource).toContain('.home-surface--news');
+    expect(styleSource).toContain('.home-surface--game-info');
+    expect(styleSource).toContain('.home-surface--media');
   });
 
   it("adds a banner information link and four official footer social links", () => {
