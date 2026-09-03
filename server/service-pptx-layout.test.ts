@@ -5,9 +5,10 @@ const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.m
 const referenceSource = readFileSync("/home/ubuntu/upload/ragnarok-universe-fullpage-responsive-260831_FINAL.html", "utf8");
 
 describe("user-supplied final service page layout", () => {
-  it("uses the final supplied document as the sole Home visual source", () => {
-    expect(homeSource).toContain("The user supplied this final design as the source of truth.");
+  it("keeps the final supplied document as the Home canvas while restoring the live service header", () => {
+    expect(homeSource).toContain("The supplied final document remains the complete Home canvas;");
     expect(homeSource).toContain("src={REFERENCE_HOME_URL}");
+    expect(homeSource).toContain("<ReferenceHomeHeader />");
     expect(homeSource).not.toContain("reference-community-card");
   });
 
