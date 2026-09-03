@@ -22,10 +22,8 @@ describe("admin news automatic order and main exposure", () => {
     expect(adminSource).toContain(">활성</span>");
   });
 
-  it("connects the Home grid to public latest news with an explicit fallback", () => {
-    expect(homeSource).toContain("trpc.publicNews.list.useQuery");
-    expect(homeSource).toContain("const fallbackNews = [");
-    expect(homeSource).toContain("if (!dbNews || dbNews.length === 0) return fallbackNews;");
-    expect(homeSource).toContain("dbNews.slice(0, 3).map");
+  it("uses the user-supplied final document as the Home News presentation source", () => {
+    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL_95e295ba.html");
+    expect(homeSource).not.toContain("trpc.publicNews.list.useQuery");
   });
 });
