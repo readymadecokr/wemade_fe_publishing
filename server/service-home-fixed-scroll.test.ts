@@ -25,6 +25,8 @@ describe("service home fixed navigation and scroll presentation", () => {
     expect(styleSource).toContain('min-height: calc(100svh - var(--service-header-offset))');
     expect(styleSource).toContain('--service-header-offset: 136px');
     expect(homeSource).toContain('data-allow-native-scroll');
+    expect(homeSource).toContain('absolute bottom-5 left-1/2 z-30 -translate-x-1/2 sm:bottom-7');
+    expect(styleSource).toContain('.home-hero-panel .game-start-btn-wrap');
   });
 
   it("adds a banner information link and four official footer social links", () => {

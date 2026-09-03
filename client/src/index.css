@@ -257,6 +257,14 @@
     min-height: 100%;
   }
 
+  .home-hero-panel .game-start-btn-wrap {
+    max-height: min(26vh, 15rem);
+  }
+
+  .home-hero-panel .game-start-img {
+    max-height: min(26vh, 15rem);
+  }
+
   .fantasy-site-footer.home-panel-fill {
     align-items: center;
   }

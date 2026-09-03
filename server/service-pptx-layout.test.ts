@@ -23,7 +23,10 @@ describe("PPTX service page layout", () => {
     expect(homeSource).toContain("Rune-Midgarts Library");
     expect(homeSource).toContain("See the World in Motion");
     expect(homeSource).toContain("slice(0, 12)");
-    expect(homeSource).toContain("aria-label=\"Next media\"");
+    expect(homeSource).toContain("REFERENCE_MEDIA_SCREENSHOTS");
+    expect(homeSource).toContain("REFERENCE_MEDIA_SCREENSHOTS.slice(0, 12)");
+    expect(homeSource).toContain("aria-label={`View screenshot ${index + 1} full screen`}");
+    expect(homeSource).toContain("aria-label=\"Next screenshot\"");
     expect(layoutSource).toContain("Your story begins here");
     expect(layoutSource).toContain("Two Clicks to Midgard");
   });

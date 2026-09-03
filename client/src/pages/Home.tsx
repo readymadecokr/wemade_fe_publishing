@@ -10,6 +10,21 @@ import { trpc } from "@/lib/trpc";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
+const REFERENCE_MEDIA_SCREENSHOTS = [
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/main2_0c694426_d1284510.png",
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281494281_bb3eae6d.webp",
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281479124_091e48a2.webp",
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281449016_eb9de628.jpg",
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/main2_0c694426_d1284510.png",
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281494281_bb3eae6d.webp",
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281479124_091e48a2.webp",
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281449016_eb9de628.jpg",
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/main2_0c694426_d1284510.png",
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281494281_bb3eae6d.webp",
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281479124_091e48a2.webp",
+  "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281449016_eb9de628.jpg",
+] as const;
+
 /**
  * Design Philosophy: Flyff Universe + Play2Bit Style
  * - Professional gaming portal design
@@ -311,8 +326,8 @@ export default function Home() {
             </button></>}
           </section>
 
-          {/* GAME START Button — 배너 하단 중앙, 절반 걸치기 */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[50%] z-30">
+          {/* GAME START Button — 첫 번째 전체 화면 패널 안에서 하단 중앙에 고정 */}
+          <div className="absolute bottom-5 left-1/2 z-30 -translate-x-1/2 sm:bottom-7">
             <style>{`
               .game-start-btn-wrap {
                 width: clamp(154px, 32vw, 520px);
@@ -585,7 +600,7 @@ export default function Home() {
 // Media 섹션 컴포넌트 - DB에서 활성 상태인 영상만 표시
 function MediaSection() {
   const { data: mediaList } = trpc.publicMedia.list.useQuery();
-  const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(null);
+  const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState<number | null>(null);
 
   // 활성 영상이 없으면 섹션 자체를 숨김
   if (!mediaList || mediaList.length === 0) return null;
@@ -600,7 +615,7 @@ function MediaSection() {
     .map((item) => ({ ...item, embedUrl: getYoutubeEmbedUrl(item.youtubeUrl) }))
     .filter((item): item is typeof item & { embedUrl: string } => Boolean(item.embedUrl))
     .slice(0, 12);
-  const selectedMedia = selectedMediaIndex === null ? null : mediaItems[selectedMediaIndex];
+  const selectedScreenshot = selectedScreenshotIndex === null ? null : REFERENCE_MEDIA_SCREENSHOTS[selectedScreenshotIndex];
 
   if (mediaItems.length === 0) return null;
 
@@ -616,21 +631,25 @@ function MediaSection() {
             <iframe className="absolute inset-0 h-full w-full" src={mediaItems[0].embedUrl} title={mediaItems[0].title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
           </div>
         </div>
-        <div data-allow-native-scroll className="mt-4 shrink-0 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {mediaItems.map((item, index) => {
-            const videoId = item.embedUrl.split("/").pop();
-            return <button key={item.id} onClick={() => setSelectedMediaIndex(index)} className="group relative aspect-video overflow-hidden rounded-lg border border-[#d7c5a3] bg-[#263746] text-left shadow-sm transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4068a5]">
-              <img src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`} alt={`${item.title} preview`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105" />
-              <span className="absolute inset-0 flex items-center justify-center bg-[#17283b]/30 text-2xl text-white transition-colors group-hover:bg-[#17283b]/15">▶</span>
-            </button>;
-          })}
+        <div className="mt-3 flex shrink-0 items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[0.18em] text-[#45669a]">
+          <span>Screenshots</span>
+          <span className="text-[#9a793a]">Drag to explore</span>
+        </div>
+        <div data-allow-native-scroll className="mt-2 flex shrink-0 snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden pb-2 [scrollbar-color:#b69043_rgba(65,72,69,.16)] [scrollbar-width:thin]">
+          {REFERENCE_MEDIA_SCREENSHOTS.slice(0, 12).map((source, index) => (
+            <button key={`${source}-${index}`} onClick={() => setSelectedScreenshotIndex(index)} className="group relative w-[clamp(132px,15vw,216px)] shrink-0 snap-start overflow-hidden rounded-lg border border-[#a88440]/60 bg-[#263746] text-left shadow-sm transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4068a5]" aria-label={`View screenshot ${index + 1} full screen`}>
+              <img src={source} alt={`Ragnarok Universe screenshot ${index + 1}`} className="aspect-[1.8] w-full object-cover transition-transform duration-200 group-hover:scale-105" draggable={false} />
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#071b2d]/85 to-transparent px-2 pb-1.5 pt-5 text-center text-[8px] font-black tracking-[0.11em] text-white opacity-80 transition-opacity group-hover:opacity-100">VIEW FULLSCREEN</span>
+            </button>
+          ))}
         </div>
       </div>
-      {selectedMedia && <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#101825]/85 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={`${selectedMedia.title} media viewer`}>
-        <div className="relative w-full max-w-5xl overflow-hidden rounded-xl bg-[#111d2b] shadow-2xl">
-          <button onClick={() => setSelectedMediaIndex(null)} className="absolute right-3 top-3 z-10 rounded-full bg-black/60 p-2 text-white transition-colors hover:bg-black" aria-label="Close media viewer"><X size={20} /></button>
-          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}><iframe className="absolute inset-0 h-full w-full" src={selectedMedia.embedUrl} title={selectedMedia.title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
-          {mediaItems.length > 1 && <div className="absolute inset-x-3 top-1/2 flex -translate-y-1/2 justify-between"><button onClick={() => setSelectedMediaIndex((selectedMediaIndex! - 1 + mediaItems.length) % mediaItems.length)} className="rounded-full bg-black/55 p-2 text-white hover:bg-black" aria-label="Previous media"><ChevronLeft /></button><button onClick={() => setSelectedMediaIndex((selectedMediaIndex! + 1) % mediaItems.length)} className="rounded-full bg-black/55 p-2 text-white hover:bg-black" aria-label="Next media"><ChevronRight /></button></div>}
+      {selectedScreenshot && <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#101825]/90 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={`Screenshot ${selectedScreenshotIndex! + 1} viewer`}>
+        <div className="relative flex h-full w-full max-w-6xl items-center justify-center">
+          <button onClick={() => setSelectedScreenshotIndex(null)} className="absolute right-1 top-1 z-10 rounded-full border border-white/50 bg-black/60 p-2 text-white transition-colors hover:bg-white hover:text-[#101825]" aria-label="Close screenshot viewer"><X size={20} /></button>
+          <button onClick={() => setSelectedScreenshotIndex((selectedScreenshotIndex! - 1 + REFERENCE_MEDIA_SCREENSHOTS.length) % REFERENCE_MEDIA_SCREENSHOTS.length)} className="absolute left-0 rounded-full bg-black/55 p-2 text-white transition-colors hover:bg-black" aria-label="Previous screenshot"><ChevronLeft /></button>
+          <img src={selectedScreenshot} alt={`Ragnarok Universe screenshot ${selectedScreenshotIndex! + 1}`} className="max-h-[calc(100svh-4rem)] max-w-[calc(100vw-7rem)] rounded-lg border border-[#dcbf72]/80 object-contain shadow-2xl" />
+          <button onClick={() => setSelectedScreenshotIndex((selectedScreenshotIndex! + 1) % REFERENCE_MEDIA_SCREENSHOTS.length)} className="absolute right-0 rounded-full bg-black/55 p-2 text-white transition-colors hover:bg-black" aria-label="Next screenshot"><ChevronRight /></button>
         </div>
       </div>}
     </section>
