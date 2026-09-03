@@ -23,7 +23,7 @@ describe("admin news automatic order and main exposure", () => {
   });
 
   it("uses the user-supplied final document as the Home News presentation source", () => {
-    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-hero-controls_2b597045.html");
+    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-widgetbot_fc4090cd.html");
     expect(homeSource).not.toContain("trpc.publicNews.list.useQuery");
   });
 });

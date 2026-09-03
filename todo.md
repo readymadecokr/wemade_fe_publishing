@@ -737,3 +737,8 @@
 - [x] 좌·우 화살표와 중앙 점 페이지 표시 방식으로 배너 제어 복원
 - [x] 우측 플로팅 소셜 아이콘은 Hero에서 숨기고 Discord 섹션부터 표시
 - [x] 배너 전환·스크롤별 노출·데스크톱·모바일·TypeScript·Vitest 검증 후 체크포인트 저장
+
+## WidgetBot Discord 영역 및 플로팅 소셜 복원
+- [x] Discord 영역에 WidgetBot 읽기 전용 커뮤니티 화면 복원
+- [x] Hero에서는 숨기고 Discord 영역에서 플로팅 소셜 아이콘을 확실히 표시
+- [x] WidgetBot·플로팅 아이콘·반응형 화면과 회귀 테스트 검증
