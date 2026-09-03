@@ -227,6 +227,39 @@
 }
 
 @layer components {
+  html:has(.fantasy-page-shell) {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+  }
+
+  .home-scroll-panel {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    scroll-margin-top: 6.75rem;
+  }
+
+  .footer-social-link {
+    display: inline-flex;
+    width: 2.15rem;
+    height: 2.15rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,.72);
+    border-radius: 9999px;
+    color: #fff;
+    font-size: .9rem;
+    font-weight: 800;
+    box-shadow: 0 6px 14px rgba(31,30,27,.2);
+    transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+  }
+
+  .footer-social-link:hover,
+  .footer-social-link:focus-visible {
+    transform: translateY(-2px) scale(1.06);
+    filter: brightness(1.1);
+    box-shadow: 0 9px 18px rgba(31,30,27,.27);
+  }
+
   .fantasy-site-footer {
     background: linear-gradient(180deg, rgba(211,198,172,.72), rgba(199,182,151,.82));
     border-top: 1px solid rgba(112,92,54,.28);
@@ -307,6 +340,28 @@
 
 
   @media (max-width: 640px) {
+    html:has(.fantasy-page-shell) {
+      scroll-snap-type: y proximity;
+    }
+
+    .home-scroll-panel {
+      scroll-margin-top: 8.75rem;
+    }
+
+    header .portal-nav > a {
+      min-height: 1.75rem;
+      padding: .22rem .1rem;
+      border-radius: 3px;
+      font-size: .52rem;
+      letter-spacing: .01em;
+      white-space: nowrap;
+    }
+
+    header .portal-nav > a::after {
+      bottom: .06rem;
+      height: 1px;
+    }
+
     .fantasy-site-atlas {
       background-position: center center, center 42%;
       background-size: cover, cover;

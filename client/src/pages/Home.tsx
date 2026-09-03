@@ -66,6 +66,9 @@ export default function Home() {
     contentBody: b.contentBody,
   }));
   const currentBanner = bannerImages[currentBannerIndex] ?? bannerImages[0];
+  const heroEyebrow = currentBanner?.contentDate || "Ragnarok Universe";
+  const heroTitle = currentBanner?.contentTitle || currentBanner?.title || "Begin Your Adventure";
+  const heroBody = currentBanner?.contentBody || "Explore Midgard in your browser. Join the official community for updates, events, and the next chapter of Ragnarok Universe.";
 
   useEffect(() => {
     setCurrentBannerIndex(previous => bannerImages.length ? Math.min(previous, bannerImages.length - 1) : 0);
@@ -78,6 +81,58 @@ export default function Home() {
   const prevBanner = () => {
     setCurrentBannerIndex((prev) => bannerImages.length ? (prev - 1 + bannerImages.length) % bannerImages.length : 0);
   };
+
+  const handleCurrentBannerAction = () => {
+    const banner = currentBanner;
+    if (!banner) return;
+    if (banner.actionType === "url") {
+      if (banner.actionUrl === "game-start") {
+        handleGameStart();
+      } else if (banner.actionUrl) {
+        window.open(banner.actionUrl, "_blank");
+      }
+      return;
+    }
+    if (banner.actionType === "content") {
+      toast.info(banner.contentTitle ?? banner.title);
+    }
+  };
+
+  useEffect(() => {
+    const sectionIds = ["game-start", "discord-community", "news", "game-info", "media", "site-footer"];
+    let wheelLocked = false;
+    let unlockTimer = 0;
+
+    const handleSectionWheel = (event: WheelEvent) => {
+      if (window.innerWidth <= 900 || Math.abs(event.deltaY) < 8) return;
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest("iframe, [data-allow-native-scroll]")) return;
+      const sections = sectionIds
+        .map((id) => document.getElementById(id))
+        .filter((section): section is HTMLElement => Boolean(section));
+      if (sections.length === 0) return;
+
+      event.preventDefault();
+      if (wheelLocked) return;
+      wheelLocked = true;
+      window.clearTimeout(unlockTimer);
+      unlockTimer = window.setTimeout(() => { wheelLocked = false; }, 520);
+
+      const currentIndex = sections.reduce((closestIndex, section, index) => (
+        Math.abs(section.getBoundingClientRect().top) < Math.abs(sections[closestIndex].getBoundingClientRect().top)
+          ? index
+          : closestIndex
+      ), 0);
+      const nextIndex = Math.max(0, Math.min(sections.length - 1, currentIndex + (event.deltaY > 0 ? 1 : -1)));
+      sections[nextIndex].scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    window.addEventListener("wheel", handleSectionWheel, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", handleSectionWheel);
+      window.clearTimeout(unlockTimer);
+    };
+  }, []);
 
   // Auto-rotate banner every 5 seconds
   useEffect(() => {
@@ -222,28 +277,24 @@ export default function Home() {
     <Layout>
       <div className="fantasy-page-shell">
         {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
-        <div id="game-start" className="relative w-full">
+        <div id="game-start" className="home-scroll-panel relative w-full">
           {/* BANNER SECTION */}
           <section className="relative w-full bg-foreground/10 overflow-hidden flex items-center justify-center" style={{ aspectRatio: '1900 / 600' }}>
             {/* Banner Image */}
             {currentBanner ? <img
               src={currentBanner.url}
               alt={currentBanner.title}
-              onClick={() => {
-                const banner = currentBanner;
-                if (banner.actionType === "url") {
-                  if (banner.actionUrl === "game-start") {
-                    handleGameStart();
-                  } else if (banner.actionUrl) {
-                    window.open(banner.actionUrl, '_blank');
-                  }
-                } else if (banner.actionType === "content") {
-                  // 콘텐츠 모달 표시 (TODO: 콘텐츠 모달 구현)
-                  toast.info(banner.contentTitle ?? banner.title);
-                }
-              }}
+              onClick={handleCurrentBannerAction}
               className="h-full w-full object-cover cursor-pointer"
             /> : <div className="flex h-full w-full items-center justify-center bg-[#213b58] text-sm font-semibold text-white">No banner is currently available.</div>}
+            {currentBanner && <div className="pointer-events-none absolute inset-0 z-10 flex items-start bg-gradient-to-r from-[#071b2d]/55 via-transparent to-transparent px-4 py-4 sm:px-7 sm:py-6 lg:px-12 lg:py-8">
+              <article className="pointer-events-auto max-w-[290px] rounded-md border border-white/20 bg-[#112c43]/78 p-3 text-left text-white shadow-[0_12px_24px_rgba(5,18,31,.2)] backdrop-blur-[2px] sm:max-w-sm sm:p-4">
+                <p className="mb-1 text-[9px] font-black uppercase tracking-[0.17em] text-[#f4d78e]">{heroEyebrow}</p>
+                <h1 className="font-serif text-lg font-black leading-tight sm:text-2xl">{heroTitle}</h1>
+                <p className="mt-1.5 line-clamp-2 text-[10px] leading-relaxed text-[#edf4fb] sm:text-xs">{heroBody}</p>
+                <button onClick={handleCurrentBannerAction} className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.11em] text-[#f8d57e] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f8d57e]">Explore More <ChevronRight size={14} aria-hidden="true" /></button>
+              </article>
+            </div>}
             {/* Banner Navigation Buttons */}
             {bannerImages.length > 1 && <><button
               onClick={(e) => { e.stopPropagation(); prevBanner(); }}
@@ -289,7 +340,7 @@ export default function Home() {
         <div style={{ height: 'clamp(60px, 8vw, 130px)' }} />
 
         {/* DISCORD COMMUNITY — 메인 배너 바로 아래 WidgetBot 임베드 */}
-        <section id="discord-community" className="pb-8 pt-2 md:pb-10">
+        <section id="discord-community" className="home-scroll-panel pb-8 pt-2 md:pb-10">
           <div className="container fantasy-content-guide">
             <div className="mb-5 text-center md:mb-6">
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#735c39]">Official Community</p>
@@ -327,7 +378,7 @@ export default function Home() {
         </section>
 
         {/* NEWS SECTION - Unified layout */}
-        <section id="news" className="py-2">
+        <section id="news" className="home-scroll-panel py-2">
           <div className="container fantasy-content-guide pt-5 md:pt-7">
             <div className="mb-5 flex items-center justify-between">
               <div>
@@ -355,7 +406,7 @@ export default function Home() {
 
 
         {/* GAME INFO SECTION */}
-        <section id="game-info" className="py-0">
+        <section id="game-info" className="home-scroll-panel py-0">
           <div className="container fantasy-content-guide py-0" style={{paddingTop: '48px', paddingBottom: '0px'}}>
             {/* Header */}
             <div className="mb-3 flex items-start justify-between gap-4">
@@ -556,7 +607,7 @@ function MediaSection() {
   if (mediaItems.length === 0) return null;
 
   return (
-    <section id="media" className="pb-12 pt-12 md:pb-16 md:pt-16">
+    <section id="media" className="home-scroll-panel pb-12 pt-12 md:pb-16 md:pt-16">
       <div className="container fantasy-content-guide">
         <div className="mb-5 text-center md:mb-7">
           <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#735c39]">See the World in Motion</p>
