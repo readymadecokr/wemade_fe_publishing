@@ -24,7 +24,8 @@ describe("admin news automatic order and main exposure", () => {
 
   it("connects the Home grid to public latest news with an explicit fallback", () => {
     expect(homeSource).toContain("trpc.publicNews.list.useQuery");
-    expect(homeSource).toContain("const fallbackNewsData");
-    expect(homeSource).toContain("const newsData = dbNews && dbNews.length > 0");
+    expect(homeSource).toContain("const fallbackNews = [");
+    expect(homeSource).toContain("if (!dbNews || dbNews.length === 0) return fallbackNews;");
+    expect(homeSource).toContain("dbNews.slice(0, 3).map");
   });
 });

@@ -3,51 +3,30 @@ import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
 const layoutSource = readFileSync(new URL("../client/src/components/Layout.tsx", import.meta.url), "utf8");
-const styleSource = readFileSync(new URL("../client/src/index.css", import.meta.url), "utf8");
+const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
-describe("service home fixed navigation and scroll presentation", () => {
-  it("keeps the account and game navigation fixed at the top", () => {
-    expect(layoutSource).toContain("fixed inset-x-0 top-0 z-40");
-    expect(layoutSource).toContain('pt-[136px] sm:pt-[106px]');
-    expect(layoutSource).toContain('order-3 grid w-full grid-cols-6');
-    expect(layoutSource).toContain("Two-tier Global Navigation");
+describe("final reference home navigation and scroll presentation", () => {
+  it("uses the six requested top-level full-screen panel anchors", () => {
+    ["game-start", "discord-community", "news", "game-info", "media", "site-footer"].forEach((section) => {
+      expect(homeSource + layoutSource).toContain(`id="${section}"`);
+    });
+    expect(styleSource).toContain("height: calc(100svh - var(--reference-header))");
+    expect(styleSource).toContain("scroll-snap-align: start");
+    expect(styleSource).toContain("scroll-snap-stop: always");
   });
 
-  it("moves one full-screen home section per desktop wheel gesture and provides a mobile snap fallback", () => {
-    expect(homeSource).toContain('const sectionIds = ["game-start", "discord-community", "news", "game-info", "media", "site-footer"]');
-    expect(homeSource).toContain('window.addEventListener("wheel", handleSectionWheel, { passive: false })');
-    expect(homeSource).toContain('window.setTimeout(() => { wheelLocked = false; }, 760)');
-    expect(homeSource).toContain('document.querySelector("header")?.getBoundingClientRect().height ?? 106');
+  it("moves exactly one section for a desktop wheel gesture while retaining native internal scroll", () => {
+    expect(homeSource).toContain("window.addEventListener(\"wheel\", onWheel, { passive: false })");
+    expect(homeSource).toContain("iframe, [data-allow-native-scroll], [role=dialog]");
+    expect(homeSource).toContain("const next = Math.max(0, Math.min(sections.length - 1, activeIndex + direction))");
     expect(homeSource).toContain('scrollIntoView({ behavior: "smooth", block: "start" })');
-    expect(styleSource).toContain('scroll-snap-type: y mandatory');
-    expect(styleSource).toContain('scroll-snap-stop: always');
-    expect(styleSource).toContain('height: calc(100svh - var(--service-header-offset))');
-    expect(styleSource).toContain('min-height: calc(100svh - var(--service-header-offset))');
-    expect(styleSource).toContain('--service-header-offset: 136px');
-    expect(homeSource).toContain('data-allow-native-scroll');
-    expect(homeSource).toContain('absolute bottom-5 left-1/2 z-30 -translate-x-1/2 sm:bottom-7');
-    expect(styleSource).toContain('.home-hero-panel .game-start-btn-wrap');
-    expect(homeSource).toContain('home-surface--discord');
-    expect(homeSource).toContain('home-surface--news');
-    expect(homeSource).toContain('home-surface--game-info');
-    expect(homeSource).toContain('home-surface--media');
-    expect(layoutSource).toContain('home-surface--closing');
-    expect(styleSource).toContain('.home-section-surface::before');
-    expect(styleSource).toContain('.home-surface--discord');
-    expect(styleSource).toContain('.home-surface--news');
-    expect(styleSource).toContain('.home-surface--game-info');
-    expect(styleSource).toContain('.home-surface--media');
+    expect(homeSource).toContain("window.innerWidth <= 900");
   });
 
-  it("adds a banner information link and four official footer social links", () => {
-    expect(homeSource).toContain("Explore More");
-    expect(homeSource).toContain("heroEyebrow");
-    expect(layoutSource).toContain('aria-label="Official social links"');
-    expect(layoutSource).toContain('footer-social-link bg-[#5865f2]');
-    expect(layoutSource).toContain('footer-social-link bg-[#1877f2]');
-    expect(layoutSource).toContain('footer-social-link bg-[#e62429]');
-    expect(layoutSource).toContain('footer-social-link bg-[#171717]');
-    expect(layoutSource).toContain('mb-8 flex justify-end');
-    expect(layoutSource).toContain('Discord_icon_230fdb89_6026051e.png');
+  it("keeps the fixed account and game navigation separate from the reference Home panels", () => {
+    expect(layoutSource).toContain("Two-tier Global Navigation");
+    expect(layoutSource).toContain("fixed inset-x-0 top-0 z-40");
+    expect(layoutSource).toContain('className="flex-1 w-full pt-[136px] sm:pt-[106px]"');
+    expect(layoutSource).toContain('href="/#game-start"');
   });
 });

@@ -1,16 +1,44 @@
-import { ChevronRight, ChevronLeft, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, Pause, Play, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "wouter";
 import SignInPanel from "@/components/SignInPanel";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import Layout from "@/components/Layout";
-import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
+import "./reference-home.css";
 
-const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
+const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? "";
+const DISCORD_URL = "https://discord.gg/yVWJkWdkAU";
 
-const REFERENCE_MEDIA_SCREENSHOTS = [
+const fallbackBanners = [
+  {
+    id: 1,
+    imageUrl: `${ASSET_BASE_URL}/manus-storage/mainbanner_01_new_1c67868c.jpg`,
+    title: "MIDGARD RUNS IN YOUR BROWSER",
+    actionUrl: DISCORD_URL,
+    actionType: "url" as const,
+    contentTitle: null,
+    contentDate: null,
+    contentBody: null,
+    eyebrow: "OPEN BETA · PLAY IN YOUR BROWSER",
+    description: "No download, no install, no launcher. Open a tab on your phone or PC and begin your adventure.",
+    actionLabel: "EXPLORE THE BETA",
+  },
+  {
+    id: 2,
+    imageUrl: `${ASSET_BASE_URL}/manus-storage/mainbanner_02_e759d77c.jpg`,
+    title: "A NEW CHAPTER AWAITS",
+    actionUrl: "/game-info",
+    actionType: "url" as const,
+    contentTitle: null,
+    contentDate: null,
+    contentBody: null,
+    eyebrow: "RAGNAROK UNIVERSE",
+    description: "Meet a familiar world, shape a new story, and play directly from your browser.",
+    actionLabel: "EXPLORE GAME INFO",
+  },
+];
+
+const screenshots = [
   "https://raguniverse-izcifhmz.manus.space/manus-storage/main2_0c694426_d1284510.png",
   "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281494281_bb3eae6d.webp",
   "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281479124_091e48a2.webp",
@@ -25,633 +53,197 @@ const REFERENCE_MEDIA_SCREENSHOTS = [
   "https://raguniverse-izcifhmz.manus.space/manus-storage/banners/news-img-1787281449016_eb9de628.jpg",
 ] as const;
 
-/**
- * Design Philosophy: Flyff Universe + Play2Bit Style
- * - Professional gaming portal design
- * - Large hero banner with game start CTA
- * - Multi-category news section
- * - Clean white background with blue accents
- * - English content throughout
- */
+const fallbackNews = [
+  { id: 1, category: "NOTICE", title: "Ragnarok Universe Beta Roadmap", summary: "A look at the next testing phase, planned improvements, and the road ahead.", publishedAt: "2026-08-21T09:00:00.000Z", imageUrl: screenshots[1] },
+  { id: 2, category: "EVENT", title: "Discord Founders Event Now Open", summary: "Meet fellow adventurers and take part in the first founders mission.", publishedAt: "2026-08-21T09:00:00.000Z", imageUrl: screenshots[2] },
+  { id: 3, category: "NEWS", title: "Welcome to a New Era of Midgard", summary: "Discover the vision behind a browser-based return to Ragnarok.", publishedAt: "2026-08-21T09:00:00.000Z", imageUrl: screenshots[3] },
+];
+
+const communityChannels = ["Announcements", "Dev Message", "Patch Notes", "Early Preview"];
 
 export default function Home() {
-  const [, setLocation] = useLocation();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
-  const [showTTKeyDialog, setShowTTKeyDialog] = useState(false);
-  const [showSignInDialog, setShowSignInDialog] = useState(false);
-  const [showTTEndedDialog, setShowTTEndedDialog] = useState(false);
-  const [ttKeyInput, setTTKeyInput] = useState("");
-  const [ttKeyError, setTTKeyError] = useState("");
-
-  const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
-  const isTTKeyVerified = localStorage.getItem("rou_ttkey_verified") === "true";
-
-  // DB에서 배너 데이터 가져오기 (fallback: 하드코딩 배너)
   const { data: dbBanners } = trpc.banner.list.useQuery(undefined, { retry: false });
   const { data: dbNews } = trpc.publicNews.list.useQuery(undefined, { retry: false });
+  const [bannerIndex, setBannerIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [selectedChannel, setSelectedChannel] = useState(0);
+  const [selectedScreenshot, setSelectedScreenshot] = useState<number | null>(null);
+  const [showSignInDialog, setShowSignInDialog] = useState(false);
 
-  const fallbackBanners = [
-    {
-      id: 1,
-      imageUrl: `${ASSET_BASE_URL}/manus-storage/mainbanner_01_new_1c67868c.jpg`,
-      title: "PLAY WITH DISCORD",
-      actionType: "url" as const,
-      actionUrl: "https://discord.com/invite/yVWJkWdkAU",
-      contentTitle: null, contentDate: null, contentBody: null,
-    },
-    {
-      id: 2,
-      imageUrl: `${ASSET_BASE_URL}/manus-storage/mainbanner_02_e759d77c.jpg`,
-      title: "Enter The Ragnarok Universe",
-      actionType: "url" as const,
-      actionUrl: "game-start",
-      contentTitle: null, contentDate: null, contentBody: null,
-    },
-  ];
+  const banners = useMemo(() => {
+    const source = dbBanners && dbBanners.length > 0 ? dbBanners : fallbackBanners;
+    return source.map((banner, index) => ({
+      id: banner.id,
+      imageUrl: banner.imageUrl,
+      title: banner.contentTitle || banner.title || fallbackBanners[index % fallbackBanners.length].title,
+      actionUrl: banner.actionUrl || fallbackBanners[index % fallbackBanners.length].actionUrl,
+      eyebrow: banner.contentDate || fallbackBanners[index % fallbackBanners.length].eyebrow,
+      description: banner.contentBody || fallbackBanners[index % fallbackBanners.length].description,
+      actionLabel: banner.actionType === "content" ? "VIEW DETAILS" : fallbackBanners[index % fallbackBanners.length].actionLabel,
+    }));
+  }, [dbBanners]);
 
-  const bannerImages = (dbBanners && dbBanners.length > 0 ? dbBanners : fallbackBanners).map(b => ({
-    id: b.id,
-    url: b.imageUrl,
-    title: b.title,
-    actionType: b.actionType,
-    actionUrl: b.actionUrl ?? "",
-    contentTitle: b.contentTitle,
-    contentDate: b.contentDate,
-    contentBody: b.contentBody,
-  }));
-  const currentBanner = bannerImages[currentBannerIndex] ?? bannerImages[0];
-  const heroEyebrow = currentBanner?.contentDate || "Ragnarok Universe";
-  const heroTitle = currentBanner?.contentTitle || currentBanner?.title || "Begin Your Adventure";
-  const heroBody = currentBanner?.contentBody || "Explore Midgard in your browser. Join the official community for updates, events, and the next chapter of Ragnarok Universe.";
+  const activeBanner = banners[bannerIndex] ?? banners[0];
+  const newsItems = useMemo(() => {
+    if (!dbNews || dbNews.length === 0) return fallbackNews;
+    return dbNews.slice(0, 3).map((item) => ({
+      id: item.id,
+      category: "NEWS",
+      title: item.title,
+      summary: "Read the latest official Ragnarok Universe update.",
+      publishedAt: item.publishedAt,
+      imageUrl: item.imageUrl || screenshots[0],
+    }));
+  }, [dbNews]);
 
   useEffect(() => {
-    setCurrentBannerIndex(previous => bannerImages.length ? Math.min(previous, bannerImages.length - 1) : 0);
-  }, [bannerImages.length]);
+    if (bannerIndex >= banners.length) setBannerIndex(0);
+  }, [bannerIndex, banners.length]);
 
-  const nextBanner = () => {
-    setCurrentBannerIndex((prev) => bannerImages.length ? (prev + 1) % bannerImages.length : 0);
-  };
-
-  const prevBanner = () => {
-    setCurrentBannerIndex((prev) => bannerImages.length ? (prev - 1 + bannerImages.length) % bannerImages.length : 0);
-  };
-
-  const handleCurrentBannerAction = () => {
-    const banner = currentBanner;
-    if (!banner) return;
-    if (banner.actionType === "url") {
-      if (banner.actionUrl === "game-start") {
-        handleGameStart();
-      } else if (banner.actionUrl) {
-        window.open(banner.actionUrl, "_blank");
-      }
-      return;
-    }
-    if (banner.actionType === "content") {
-      toast.info(banner.contentTitle ?? banner.title);
-    }
-  };
+  useEffect(() => {
+    if (paused || banners.length < 2) return;
+    const interval = window.setInterval(() => setBannerIndex((current) => (current + 1) % banners.length), 5500);
+    return () => window.clearInterval(interval);
+  }, [banners.length, paused]);
 
   useEffect(() => {
     const sectionIds = ["game-start", "discord-community", "news", "game-info", "media", "site-footer"];
     let wheelLocked = false;
     let unlockTimer = 0;
 
-    const handleSectionWheel = (event: WheelEvent) => {
-      if (window.innerWidth <= 900 || Math.abs(event.deltaY) < 18) return;
+    const onWheel = (event: WheelEvent) => {
+      if (window.innerWidth <= 900 || Math.abs(event.deltaY) < 10) return;
       const target = event.target instanceof Element ? event.target : null;
-      if (target?.closest("iframe, [data-allow-native-scroll]")) return;
-      const sections = sectionIds
-        .map((id) => document.getElementById(id))
-        .filter((section): section is HTMLElement => Boolean(section));
+      if (target?.closest("iframe, [data-allow-native-scroll], [role=dialog]")) return;
+      const sections = sectionIds.map((id) => document.getElementById(id)).filter((section): section is HTMLElement => Boolean(section));
       if (sections.length === 0) return;
-
       event.preventDefault();
       if (wheelLocked) return;
       wheelLocked = true;
       window.clearTimeout(unlockTimer);
-      unlockTimer = window.setTimeout(() => { wheelLocked = false; }, 760);
+      unlockTimer = window.setTimeout(() => { wheelLocked = false; }, 240);
 
       const headerHeight = document.querySelector("header")?.getBoundingClientRect().height ?? 106;
-      const currentIndex = sections.reduce((closestIndex, section, index) => (
-        Math.abs(section.getBoundingClientRect().top - headerHeight) < Math.abs(sections[closestIndex].getBoundingClientRect().top - headerHeight)
-          ? index
-          : closestIndex
+      const activeIndex = sections.reduce((closest, section, index) => (
+        Math.abs(section.getBoundingClientRect().top - headerHeight) < Math.abs(sections[closest].getBoundingClientRect().top - headerHeight) ? index : closest
       ), 0);
-      const nextIndex = Math.max(0, Math.min(sections.length - 1, currentIndex + (event.deltaY > 0 ? 1 : -1)));
-      sections[nextIndex].scrollIntoView({ behavior: "smooth", block: "start" });
+      const direction = event.deltaY > 0 ? 1 : -1;
+      const next = Math.max(0, Math.min(sections.length - 1, activeIndex + direction));
+      sections[next].scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
-    window.addEventListener("wheel", handleSectionWheel, { passive: false });
+    window.addEventListener("wheel", onWheel, { passive: false });
     return () => {
-      window.removeEventListener("wheel", handleSectionWheel);
+      window.removeEventListener("wheel", onWheel);
       window.clearTimeout(unlockTimer);
     };
   }, []);
 
-  // Auto-rotate banner every 5 seconds
-  useEffect(() => {
-    if (bannerImages.length < 2) return;
-    const interval = setInterval(nextBanner, 5000);
-    return () => clearInterval(interval);
-  }, [bannerImages.length]);
-
-  // News fallback - 공개 News API가 비어 있을 때만 표시
-  const fallbackNewsData = [
-    {
-      id: 1,
-      title: "Ragnarok Online: Patch Update June 17, 2026",
-      date: "6/17/2026 10:38 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/RO1_pathupdate_17062026_f83f13b8_0ccbefaa.jpg`,
-    },
-    {
-      id: 2,
-      title: "Ragnarok Online: Patch Update June 10, 2026",
-      date: "6/17/2026 10:32 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_10062026_219a465c_5903482d.jpg`,
-    },
-    {
-      id: 3,
-      title: "Ragnarok Online: Patch Update June 4, 2026",
-      date: "6/17/2026 1:08:40 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_04062026-1_29153260_878bf95f.jpg`,
-    },
-    {
-      id: 4,
-      title: "Ragnarok Online: Patch Update May 27, 2026",
-      date: "5/28/2026 4:07:24 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/RO_PatchUpdate_27052026_953943aa_fa54354f.webp`,
-    },
-    {
-      id: 5,
-      title: "Gravity Game Tech Launches LINE Official Account",
-      date: "5/28/2026 2:18:45 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/PR-pack-Line-OA-Cover-700x36020052026_d4332f85_70996280.webp`,
-    },
-    {
-      id: 6,
-      title: "Ragnarok Online: Music Contest Winners Announced",
-      date: "5/22/2026 2:03:43 PM",
-      image: `${ASSET_BASE_URL}/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_bc640d8a_0c8f7386.png`,
-    },
-  ];
-  const newsData = dbNews && dbNews.length > 0
-    ? dbNews.map(item => ({
-        id: item.id,
-        title: item.title,
-        date: item.publishedAt ? new Date(item.publishedAt).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }) : "",
-        image: item.imageUrl || `${ASSET_BASE_URL}/manus-storage/ragnarok-news-default-banner_0d5427e8.png`,
-      }))
-    : fallbackNewsData;
+  const openBannerAction = () => {
+    if (!activeBanner?.actionUrl) return;
+    if (activeBanner.actionUrl.startsWith("http")) {
+      window.open(activeBanner.actionUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    window.location.href = activeBanner.actionUrl;
+  };
 
   const handleGameStart = () => {
-    if (!isLoggedIn) {
-      // 1. 비로그인 → Sign In 팝업
-      setShowSignInDialog(true);
+    if (localStorage.getItem("rou_logged_in") === "true") {
+      window.open(DISCORD_URL, "_blank", "noopener,noreferrer");
       return;
     }
-    if (isTTKeyVerified) {
-      // 3. TT Key 인증 완료 → 바로 게임 실행
-      toast.success("Launching game...");
-      window.open("https://discord.gg/yVWJkWdkAU", "_blank");
-      return;
-    }
-    // 2. 로그인 O, TT Key 미인증 → TT Key 팝업
-    setShowTTKeyDialog(true);
+    setShowSignInDialog(true);
   };
 
-  const handleTTKeySubmit = () => {
-    if (!ttKeyInput.trim()) {
-      setTTKeyError("Please enter a valid Technical Test Key");
-      return;
-    }
-    // Save verified state
-    localStorage.setItem("rou_ttkey_verified", "true");
-    toast.success("Technical Test Key verified! Launching game...");
-    setShowTTKeyDialog(false);
-    setTTKeyInput("");
-    setTTKeyError("");
-    window.open("https://discord.gg/yVWJkWdkAU", "_blank");
-  };
-
-  // Notice data
-  const noticeData = [
-    {
-      id: 1,
-      category: "Maintenance",
-      categoryColor: "bg-yellow-400",
-      title: "Server Maintenance Scheduled for June 10",
-      description: "Game servers will be down from 2:00 AM to 6:00 AM UTC for system updates and improvements. Thank you for your patience.",
-      date: "2026.06.08",
-      featured: true,
-    },
-    {
-      id: 2,
-      category: "Events",
-      categoryColor: "bg-blue-500",
-      title: "New Player Welcome Bonus Extended",
-      description: "Extended until end of June! New players enjoy 30 days of premium benefits including double experience and exclusive items.",
-      date: "2026.06.05",
-      featured: false,
-    },
-    {
-      id: 3,
-      category: "Security",
-      categoryColor: "bg-red-500",
-      title: "Anti-Cheat System Update",
-      description: "Enhanced anti-cheat system implemented to ensure fair gameplay. Accounts violating terms will face immediate suspension.",
-      date: "2026.06.01",
-      featured: false,
-    },
-    {
-      id: 4,
-      category: "Policy",
-      categoryColor: "bg-purple-500",
-      title: "Community Guidelines Update",
-      description: "Review updated community guidelines to ensure compliance. Violations may result in account restrictions or bans.",
-      date: "2026.05.28",
-      featured: false,
-    },
-  ];
-
-  // News Card Component
-  const NewsCard = ({ item, category }: { item: any; category: string }) => (
-    <div className="fantasy-card flex h-full flex-col overflow-hidden rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-xl cursor-pointer">
-      <div className="aspect-video overflow-hidden bg-foreground/10">
-        <img src={item.image} alt={item.title} className="w-full h-full object-cover hover:scale-105 transition-transform" />
-      </div>
-      <div className="flex min-h-[84px] flex-1 flex-col p-3">
-        <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[#5971a3]">{category}</p>
-        <h3 className="mb-1 min-h-[2.5rem] text-sm font-bold leading-snug text-[#2c241c] line-clamp-2">{item.title}</h3>
-        <p className="mt-auto text-[11px] text-[#7c6a52]">{item.date}</p>
-      </div>
-    </div>
-  );
+  const previousBanner = () => setBannerIndex((current) => (current - 1 + banners.length) % banners.length);
+  const nextBanner = () => setBannerIndex((current) => (current + 1) % banners.length);
 
   return (
     <Layout>
-      <div className="fantasy-page-shell">
-        {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
-        <div id="game-start" className="home-scroll-panel home-section-surface home-surface--hero home-hero-panel relative w-full">
-          {/* BANNER SECTION */}
-          <section className="home-hero-visual relative flex h-full min-h-full w-full items-center justify-center overflow-hidden bg-foreground/10">
-            {/* Banner Image */}
-            {currentBanner ? <img
-              src={currentBanner.url}
-              alt={currentBanner.title}
-              onClick={handleCurrentBannerAction}
-              className="h-full w-full object-cover cursor-pointer"
-            /> : <div className="flex h-full w-full items-center justify-center bg-[#213b58] text-sm font-semibold text-white">No banner is currently available.</div>}
-            {currentBanner && <div className="pointer-events-none absolute inset-0 z-10 flex items-start bg-gradient-to-r from-[#071b2d]/55 via-transparent to-transparent px-4 py-4 sm:px-7 sm:py-6 lg:px-12 lg:py-8">
-              <article className="pointer-events-auto max-w-[290px] rounded-md border border-white/20 bg-[#112c43]/78 p-3 text-left text-white shadow-[0_12px_24px_rgba(5,18,31,.2)] backdrop-blur-[2px] sm:max-w-sm sm:p-4">
-                <p className="mb-1 text-[9px] font-black uppercase tracking-[0.17em] text-[#f4d78e]">{heroEyebrow}</p>
-                <h1 className="font-serif text-lg font-black leading-tight sm:text-2xl">{heroTitle}</h1>
-                <p className="mt-1.5 line-clamp-2 text-[10px] leading-relaxed text-[#edf4fb] sm:text-xs">{heroBody}</p>
-                <button onClick={handleCurrentBannerAction} className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.11em] text-[#f8d57e] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f8d57e]">Explore More <ChevronRight size={14} aria-hidden="true" /></button>
-              </article>
-            </div>}
-            {/* Banner Navigation Buttons */}
-            {bannerImages.length > 1 && <><button
-              onClick={(e) => { e.stopPropagation(); prevBanner(); }}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); nextBanner(); }}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/25 hover:bg-white/40 text-white p-2 rounded-none transition-all backdrop-blur-sm"
-            >
-              <ChevronRight size={16} />
-            </button></>}
-          </section>
-
-          {/* GAME START Button — 첫 번째 전체 화면 패널 안에서 하단 중앙에 고정 */}
-          <div className="absolute bottom-5 left-1/2 z-30 -translate-x-1/2 sm:bottom-7">
-            <style>{`
-              .game-start-btn-wrap {
-                width: clamp(154px, 32vw, 520px);
-                height: auto;
-              }
-              .game-start-btn:hover .game-start-img {
-                transform: scale(1.04);
-              }
-            `}</style>
-            <button
-              onClick={handleGameStart}
-              className="game-start-btn game-start-btn-wrap group relative transition-all duration-300 active:scale-95 focus:outline-none block"
-
-              title="Game Start"
-            >
-              <img
-                src={`${ASSET_BASE_URL}/manus-storage/gamestart_BTN2_cdf3e7b7.png`}
-                alt="Game Start"
-                className="game-start-img w-full h-auto object-contain transition-transform duration-300"
-              />
-            </button>
-          </div>
-        </div>
-
-        {/* DISCORD COMMUNITY — 메인 배너 바로 아래 WidgetBot 임베드 */}
-        <section id="discord-community" className="home-scroll-panel home-section-surface home-surface--discord home-panel-fill home-discord-panel pb-5 pt-5 md:pb-7 md:pt-7">
-          <div className="container fantasy-content-guide flex h-full w-full flex-col">
-            <div className="mb-4 shrink-0 text-center md:mb-5">
-              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#f4d78e]">Official Community</p>
-              <h2 className="font-serif text-3xl font-black tracking-tight text-[#fff6df] md:text-4xl">Discord</h2>
-              <p className="mx-auto mt-2 max-w-xl text-sm text-[#d6e3f0]">Development news and community updates from the official Ragnarok Universe Discord.</p>
-            </div>
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[#d7c5a3] bg-[#fffdf9] shadow-[0_14px_34px_rgba(59,49,35,.18)]">
-              <div className="min-h-0 flex-1 overflow-hidden">
-                <iframe
-                  src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051"
-                  title="Ragnarok Universe Discord community"
-                  className="block h-[calc(100%+72px)] w-full border-0"
-                  loading="lazy"
-                  allow="clipboard-read; clipboard-write; fullscreen"
-                  allowFullScreen
-                  tabIndex={-1}
-                />
+      <div className="reference-home">
+        <section id="game-start" className="reference-panel reference-hero-panel">
+          <div className="reference-hero-stage">
+            {activeBanner && <img src={activeBanner.imageUrl} alt={activeBanner.title} className="reference-hero-image" />}
+            <div className="reference-hero-shade" />
+            <div className="reference-home-container reference-hero-content">
+              <div className="reference-hero-copy">
+                <p className="reference-hero-eyebrow">{activeBanner?.eyebrow}</p>
+                <h1>{activeBanner?.title}</h1>
+                <p>{activeBanner?.description}</p>
+                <button type="button" onClick={openBannerAction} className="reference-light-cta">{activeBanner?.actionLabel} <ChevronRight size={15} aria-hidden="true" /></button>
               </div>
-              <div
-                aria-label="Read-only Discord chat"
-                role="note"
-                className="flex h-[68px] shrink-0 items-start justify-center border-t border-white/10 bg-[#2f3136] px-4 pt-2 shadow-[0_-6px_14px_rgba(0,0,0,.18)] md:h-[72px] md:pt-3"
-              >
-                <a
-                  href="https://discord.gg/yVWJkWdkAU"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-md border border-[#7b87ff]/70 bg-[#5865f2] px-4 py-1.5 text-xs font-bold tracking-wide text-white shadow-[0_4px_12px_rgba(47,55,170,.38)] transition-transform duration-150 hover:-translate-y-0.5 hover:bg-[#6974f5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c8ceff] active:translate-y-0 active:scale-[.97]"
-                >
-                  Join Official Discord <span aria-hidden="true">↗</span>
-                </a>
+            </div>
+            <div className="reference-home-container reference-hero-controls" aria-label="Banner controls">
+              <div className="reference-banner-tabs">
+                {banners.slice(0, 3).map((banner, index) => <button type="button" key={banner.id} className={index === bannerIndex ? "is-active" : ""} onClick={() => setBannerIndex(index)}><b>{String(index + 1).padStart(2, "0")}</b><span>{index === 0 ? "OPEN BETA S2" : index === 1 ? "FOUNDERS EVENT" : "WAR OF EMPERIUM"}</span></button>)}
+              </div>
+              <div className="reference-banner-arrows">
+                <button type="button" onClick={previousBanner} aria-label="Previous banner"><ChevronLeft size={17} /></button>
+                <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Resume banner" : "Pause banner"}>{paused ? <Play size={14} /> : <Pause size={14} />}</button>
+                <button type="button" onClick={nextBanner} aria-label="Next banner"><ChevronRight size={17} /></button>
+              </div>
+            </div>
+          </div>
+          <div className="reference-hero-cta-rail">
+            <button type="button" onClick={handleGameStart} className="reference-game-start"><img src={`${ASSET_BASE_URL}/manus-storage/gamestart_BTN2_cdf3e7b7.png`} alt="Game Start" /></button>
+            <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="reference-discord-cta">● <strong>JOIN DISCORD</strong><small>Official community</small><ChevronRight size={17} aria-hidden="true" /></a>
+            <p><span>✓ Free to play</span><span>✓ No download, runs in your browser</span><span>✓ Works on low-spec phones</span><span>✓ Chrome · Safari · Edge</span></p>
+          </div>
+        </section>
+
+        <section id="discord-community" className="reference-panel reference-discord-panel">
+          <div className="reference-home-container reference-community-wrap">
+            <div className="reference-section-heading reference-section-heading--light">
+              <div><span>OFFICIAL COMMUNITY</span><h2>Discord</h2></div>
+              <p>Development news and community updates from the official Ragnarok Universe Discord.</p>
+            </div>
+            <div className="reference-community-card">
+              <aside>
+                <div className="reference-community-brand"><span>●</span><strong>Ragnarok Universe</strong><small>Official Discord</small></div>
+                <div className="reference-community-channels">{communityChannels.map((channel, index) => <button key={channel} type="button" onClick={() => setSelectedChannel(index)} className={selectedChannel === index ? "is-active" : ""}># {channel}</button>)}</div>
+                <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="reference-community-join">Join Discord <ChevronRight size={14} /></a>
+              </aside>
+              <div className="reference-community-feed">
+                <img src={`${ASSET_BASE_URL}/manus-storage/mainbanner_01_new_1c67868c.jpg`} alt="Ragnarok Universe Discord community" />
+                <article>
+                  <div className="reference-post-meta"><span>R</span><b>Ragnarok Universe</b><em>OFFICIAL</em><time>AUG 26, 2026</time></div>
+                  <small>OFFICIAL ANNOUNCEMENT</small>
+                  <h3>{selectedChannel === 0 ? "Developer Note #1 is Here" : `${communityChannels[selectedChannel]} Update`}</h3>
+                  <p>Read the latest note covering the current direction, improvements based on player feedback, and what comes next.</p>
+                  <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer">Continue on Discord <ChevronRight size={13} /></a>
+                </article>
               </div>
             </div>
           </div>
         </section>
 
-        {/* NEWS SECTION - Unified layout */}
-        <section id="news" className="home-scroll-panel home-section-surface home-surface--news home-panel-fill flex items-center py-0">
-          <div className="container fantasy-content-guide w-full">
-            <div className="mb-5 flex items-center justify-between">
-              <div>
-                <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c39]">News and Notice</p>
-                <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb] shadow-sm">✦</span>Latest From Midgard</h2>
-              </div>
-              <Link href="/news">
-                <Button variant="outline" aria-label="View all news" className="h-10 w-10 rounded-full border-[#7386a5] bg-[#fffdf7]/78 p-0 text-xl font-semibold text-[#3e609b] hover:bg-[#4668a3] hover:text-white">
-                  +
-                </Button>
-              </Link>
-            </div>
-
-            {/* Home shows the three most recent News items; full archive remains available via View More. */}
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-              {newsData.slice(0, 3).map((item) => (
-                <Link key={item.id} href={`/news/${item.id}`} className="block h-full">
-                  <NewsCard item={item} category="NEWS" />
-                </Link>
-              ))}
-            </div>
+        <section id="news" className="reference-panel reference-news-panel">
+          <div className="reference-home-container reference-news-wrap">
+            <div className="reference-section-heading"><div><span>NEWS AND NOTICE</span><h2>Latest from Midgard</h2></div><Link href="/news" className="reference-plus-link" aria-label="View all news">+</Link></div>
+            <div className="reference-news-grid">{newsItems.map((item) => <Link href={`/news/${item.id}`} key={item.id} className="reference-news-card"><img src={item.imageUrl} alt="" /><div><div className="reference-news-meta"><span>PINNED</span><b>{item.category}</b><time>{new Date(item.publishedAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }).toUpperCase()}</time></div><h3>{item.title}</h3><p>{item.summary}</p><i>Read more <ChevronRight size={14} /></i></div></Link>)}</div>
           </div>
         </section>
 
-
-
-        {/* GAME INFO SECTION */}
-        <section id="game-info" className="home-scroll-panel home-section-surface home-surface--game-info home-panel-fill flex items-center py-0">
-          <div className="container fantasy-content-guide w-full py-0" style={{paddingTop: '48px', paddingBottom: '0px'}}>
-            {/* Header */}
-            <div className="mb-3 flex items-start justify-between gap-4">
-              <div>
-                <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c39]">About Ragnarok Universe</p>
-                <h2 className="font-serif text-3xl font-black leading-[.92] tracking-tight text-[#2c241c] md:text-5xl">Classic Adventure<br />A New Way to Play</h2>
-              </div>
-              <Link href="/game-info" className="shrink-0 pt-1">
-                <Button variant="outline" className="border-[#7386a5] bg-[#fffdf7]/78 px-5 text-sm font-semibold text-[#3e609b] hover:bg-[#4668a3] hover:text-white">
-                  View More
-                </Button>
-              </Link>
-            </div>
-
-            {/* Game Info Card */}
-            <div className="grid grid-cols-1 items-center gap-5 lg:grid-cols-2 lg:items-start lg:gap-8">
-              {/* Game Image */}
-              <div className="fantasy-frame overflow-hidden rounded-xl">
-                <img
-                  src={`${ASSET_BASE_URL}/manus-storage/main2_0c694426_d1284510.png`}
-                  alt="Ragnarok Universe Gameplay"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
-
-              {/* Game Details */}
-              <div className="flex flex-col gap-4">
-                <p className="text-sm leading-relaxed text-[#675843] md:text-base">
-                  Experience the legendary fantasy MMORPG directly in your web browser. Explore a familiar world, meet a growing community, and help shape the next chapter.
-                </p>
-
-                {/* Game Specs Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="fantasy-card rounded-lg p-3">
-                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Platform</p>
-                    <p className="text-base font-black text-[#2c241c]">Web Browser</p>
-                  </div>
-                  <div className="fantasy-card rounded-lg p-3">
-                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Genre</p>
-                    <p className="text-base font-black text-[#2c241c]">Fantasy MMORPG</p>
-                  </div>
-                  <div className="fantasy-card rounded-lg p-3">
-                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Age Rating</p>
-                    <p className="text-base font-black text-[#2c241c]">18+</p>
-                  </div>
-                  <div className="fantasy-card rounded-lg p-3">
-                    <p className="mb-1 text-[10px] font-bold uppercase text-[#786850]">Status</p>
-                    <p className="text-base font-black text-[#4668a3]">Beta Testing</p>
-                  </div>
-                </div>
-                <button onClick={() => toast.info("Rune-Midgarts Library is coming soon.")} className="inline-flex w-fit items-center gap-2 rounded-md bg-[#4068a5] px-5 py-3 text-xs font-bold text-white shadow-[0_5px_12px_rgba(36,70,120,.28)] transition-transform hover:-translate-y-0.5 hover:bg-[#537fbe] active:scale-[.97]">Rune-Midgarts Library <ChevronRight size={15} aria-hidden="true" /></button>
-              </div>
-            </div>
+        <section id="game-info" className="reference-panel reference-game-info-panel">
+          <div className="reference-home-container reference-game-info-wrap">
+            <div className="reference-game-visual"><img src={`${ASSET_BASE_URL}/manus-storage/main2_0c694426_d1284510.png`} alt="Ragnarok Universe gameplay" /><span>HTML5 MMORPG</span></div>
+            <div className="reference-game-copy"><span>ABOUT RAGNAROK UNIVERSE</span><h2>Classic adventure.<br />A new way to play.</h2><p>Experience the legendary fantasy MMORPG directly in your web browser. Explore a familiar world, meet a growing community, and help shape the next chapter.</p><dl><div><dt>Platform</dt><dd>Web Browser</dd></div><div><dt>Genre</dt><dd>Fantasy MMORPG</dd></div><div><dt>Status</dt><dd>Beta Testing</dd></div><div><dt>Access</dt><dd>No Download</dd></div></dl><Link href="/game-info" className="reference-blue-cta">Explore Game Info <ChevronRight size={16} /></Link></div>
           </div>
         </section>
 
-        {/* Gameplay Trailer and media gallery */}
-        <MediaSection />
-
-        {/* Sign In Modal — full login panel as popup */}
-        {showSignInDialog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17283b]/55 p-4 backdrop-blur-sm">
-            <div className="relative w-full max-w-md">
-              {/* Decorative blur */}
-              <div className="pointer-events-none absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-[#37598e] to-[#d7ba74] opacity-30 blur-xl"></div>
-              <div className="fantasy-card relative rounded-3xl p-8 shadow-2xl">
-                {/* Close button */}
-                <button
-                  onClick={() => setShowSignInDialog(false)}
-                  className="absolute right-4 top-4 z-10 text-[#766347] transition-colors hover:text-[#355d9d]"
-                >
-                  <X size={22} />
-                </button>
-                <SignInPanel onLoginSuccess={() => setShowSignInDialog(false)} />
-              </div>
-            </div>
+        <section id="media" className="reference-panel reference-media-panel">
+          <div className="reference-home-container reference-media-wrap">
+            <div className="reference-section-heading"><div><span>SEE THE WORLD IN MOTION</span><h2>Media</h2></div><p>Gameplay PV</p></div>
+            <a href="https://www.youtube.com/watch?v=8QmGQ_sjbLo" target="_blank" rel="noopener noreferrer" className="reference-media-video"><img src={`${ASSET_BASE_URL}/manus-storage/main2_0c694426_d1284510.png`} alt="Ragnarok Universe gameplay video" /><span>▶</span><b>GAMEPLAY PVE</b></a>
+            <div className="reference-shot-label"><b>SCREENSHOTS</b><span>DRAG TO EXPLORE ›</span></div>
+            <div data-allow-native-scroll className="reference-shot-strip" aria-label="Ragnarok Universe screenshots">{screenshots.map((source, index) => <button type="button" key={`${source}-${index}`} onClick={() => setSelectedScreenshot(index)} aria-label={`View screenshot ${index + 1} full screen`}><img src={source} alt={`Ragnarok Universe screenshot ${index + 1}`} draggable={false} /><span>VIEW FULLSCREEN</span></button>)}</div>
           </div>
-        )}
+        </section>
 
-        {/* TT Ended Dialog */}
-        {showTTEndedDialog && (
-          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-sm w-full shadow-2xl overflow-hidden">
-              {/* Close button */}
-              <div className="flex justify-end p-3 pb-0">
-                <button
-                  onClick={() => setShowTTEndedDialog(false)}
-                  className="text-slate-400 hover:text-slate-700 transition-colors"
-                >
-                  <X size={22} />
-                </button>
-              </div>
-              {/* Content */}
-              <div className="px-8 pb-6 pt-2">
-                <h2 className="text-xl font-black text-slate-900 text-center mb-2">The Technical Test has ended.</h2>
-                <p className="text-slate-500 text-sm text-center mb-6">Thanks for playing!</p>
-                <hr className="border-slate-200 mb-5" />
-                <div className="flex items-center justify-between gap-4">
-                  <p className="text-slate-600 text-sm leading-relaxed">
-                    Stay tuned for future tests, and join our Discord for the latest updates.
-                  </p>
-                  <a
-                    href="https://discord.com/invite/yVWJkWdkAU"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0 w-12 h-12 flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-full transition-colors shadow-lg"
-                    title="Join Discord"
-                  >
-                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.211.375-.444.864-.607 1.25a18.27 18.27 0 0 0-5.487 0c-.163-.386-.395-.875-.607-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.975 14.975 0 0 0 1.293-2.1a.07.07 0 0 0-.038-.098a13.11 13.11 0 0 1-1.872-.892a.072.072 0 0 1-.007-.12a10.15 10.15 0 0 0 .372-.294a.074.074 0 0 1 .076-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .076.01c.12.098.246.198.373.294a.072.072 0 0 1-.006.12a12.3 12.3 0 0 1-1.873.892a.077.077 0 0 0-.037.099c.36.698.772 1.362 1.293 2.1a.074.074 0 0 0 .084.028a19.963 19.963 0 0 0 6.002-3.03a.079.079 0 0 0 .033-.057c.5-4.761-.838-8.898-3.557-12.562a.06.06 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-.967-2.157-2.156c0-1.193.93-2.157 2.157-2.157c1.226 0 2.157.964 2.157 2.157c0 1.19-.93 2.155-2.157 2.155zm7.975 0c-1.183 0-2.157-.967-2.157-2.156c0-1.193.93-2.157 2.157-2.157c1.226 0 2.157.964 2.157 2.157c0 1.19-.931 2.155-2.157 2.155z"/></svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TT Key Dialog */}
-        {showTTKeyDialog && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-background border border-border rounded-2xl p-6 md:p-8 max-w-lg w-full shadow-2xl">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-black text-foreground whitespace-nowrap">Please enter your Technical Test Key</h3>
-                <button
-                  onClick={() => setShowTTKeyDialog(false)}
-                  className="text-foreground/60 hover:text-foreground transition-colors"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <Input
-                  type="password"
-                  placeholder="Enter your Technical Test Key"
-                  value={ttKeyInput}
-                  onChange={(e) => {
-                    setTTKeyInput(e.target.value);
-                    setTTKeyError("");
-                  }}
-                  className="w-full"
-                />
-
-                {ttKeyError && (
-                  <p className="text-red-500 text-sm font-semibold">{ttKeyError}</p>
-                )}
-
-                <Button
-                  onClick={handleTTKeySubmit}
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-bold"
-                >
-                  Confirm
-                </Button>
-
-                {/* Discord info row below Confirm */}
-                <div className="flex items-center gap-3 pt-1">
-                  <p className="text-foreground/60 text-sm flex-1">
-                    Check the "Technical Test Key" on our official Discord.
-                  </p>
-                  <a
-                    href="https://discord.gg/yVWJkWdkAU"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0 w-9 h-9 flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-                    title="Go to Discord"
-                  >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.211.375-.444.864-.607 1.25a18.27 18.27 0 0 0-5.487 0c-.163-.386-.395-.875-.607-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.975 14.975 0 0 0 1.293-2.1a.07.07 0 0 0-.038-.098a13.11 13.11 0 0 1-1.872-.892a.072.072 0 0 1-.007-.12a10.15 10.15 0 0 0 .372-.294a.074.074 0 0 1 .076-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .076.01c.12.098.246.198.373.294a.072.072 0 0 1-.006.12a12.3 12.3 0 0 1-1.873.892a.077.077 0 0 0-.037.099c.36.698.772 1.362 1.293 2.1a.074.074 0 0 0 .084.028a19.963 19.963 0 0 0 6.002-3.03a.079.079 0 0 0 .033-.057c.5-4.761-.838-8.898-3.557-12.562a.06.06 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-.967-2.157-2.156c0-1.193.93-2.157 2.157-2.157c1.226 0 2.157.964 2.157 2.157c0 1.19-.93 2.155-2.157 2.155zm7.975 0c-1.183 0-2.157-.967-2.157-2.156c0-1.193.93-2.157 2.157-2.157c1.226 0 2.157.964 2.157 2.157c0 1.19-.931 2.155-2.157 2.155z"/></svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {showSignInDialog && <div role="dialog" aria-modal="true" className="reference-signin-dialog"><div><button type="button" onClick={() => setShowSignInDialog(false)} aria-label="Close sign in"><X size={20} /></button><SignInPanel onLoginSuccess={() => setShowSignInDialog(false)} /></div></div>}
+        {selectedScreenshot !== null && <div role="dialog" aria-modal="true" className="reference-lightbox"><button type="button" onClick={() => setSelectedScreenshot(null)} aria-label="Close screenshot viewer"><X size={22} /></button><button type="button" onClick={() => setSelectedScreenshot((current) => current === null ? 0 : (current - 1 + screenshots.length) % screenshots.length)} aria-label="Previous screenshot"><ChevronLeft /></button><img src={screenshots[selectedScreenshot]} alt={`Ragnarok Universe screenshot ${selectedScreenshot + 1}`} /><button type="button" onClick={() => setSelectedScreenshot((current) => current === null ? 0 : (current + 1) % screenshots.length)} aria-label="Next screenshot"><ChevronRight /></button></div>}
       </div>
     </Layout>
-  );
-}
-
-// Media 섹션 컴포넌트 - DB에서 활성 상태인 영상만 표시
-function MediaSection() {
-  const { data: mediaList } = trpc.publicMedia.list.useQuery();
-  const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState<number | null>(null);
-
-  // 활성 영상이 없으면 섹션 자체를 숨김
-  if (!mediaList || mediaList.length === 0) return null;
-
-  // YouTube URL에서 embed ID 추출
-  const getYoutubeEmbedUrl = (url: string) => {
-    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^&?/\s]+)/);
-    return m ? `https://www.youtube.com/embed/${m[1]}` : null;
-  };
-
-  const mediaItems = mediaList
-    .map((item) => ({ ...item, embedUrl: getYoutubeEmbedUrl(item.youtubeUrl) }))
-    .filter((item): item is typeof item & { embedUrl: string } => Boolean(item.embedUrl))
-    .slice(0, 12);
-  const selectedScreenshot = selectedScreenshotIndex === null ? null : REFERENCE_MEDIA_SCREENSHOTS[selectedScreenshotIndex];
-
-  if (mediaItems.length === 0) return null;
-
-  return (
-    <section id="media" className="home-scroll-panel home-section-surface home-surface--media home-panel-fill home-media-panel flex pb-5 pt-5 md:pb-7 md:pt-7">
-      <div className="container fantasy-content-guide flex h-full w-full flex-col">
-        <div className="mb-4 shrink-0 text-center md:mb-5">
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#735c39]">See the World in Motion</p>
-          <h2 className="font-serif text-3xl font-black tracking-tight text-[#2c241c] md:text-4xl">Media</h2>
-        </div>
-        <div className="fantasy-frame min-h-0 flex-1 overflow-hidden rounded-xl">
-          <div className="relative h-full min-h-[250px] w-full">
-            <iframe className="absolute inset-0 h-full w-full" src={mediaItems[0].embedUrl} title={mediaItems[0].title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
-          </div>
-        </div>
-        <div className="mt-3 flex shrink-0 items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[0.18em] text-[#45669a]">
-          <span>Screenshots</span>
-          <span className="text-[#9a793a]">Drag to explore</span>
-        </div>
-        <div data-allow-native-scroll className="mt-2 flex shrink-0 snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden pb-2 [scrollbar-color:#b69043_rgba(65,72,69,.16)] [scrollbar-width:thin]">
-          {REFERENCE_MEDIA_SCREENSHOTS.slice(0, 12).map((source, index) => (
-            <button key={`${source}-${index}`} onClick={() => setSelectedScreenshotIndex(index)} className="group relative w-[clamp(132px,15vw,216px)] shrink-0 snap-start overflow-hidden rounded-lg border border-[#a88440]/60 bg-[#263746] text-left shadow-sm transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4068a5]" aria-label={`View screenshot ${index + 1} full screen`}>
-              <img src={source} alt={`Ragnarok Universe screenshot ${index + 1}`} className="aspect-[1.8] w-full object-cover transition-transform duration-200 group-hover:scale-105" draggable={false} />
-              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#071b2d]/85 to-transparent px-2 pb-1.5 pt-5 text-center text-[8px] font-black tracking-[0.11em] text-white opacity-80 transition-opacity group-hover:opacity-100">VIEW FULLSCREEN</span>
-            </button>
-          ))}
-        </div>
-      </div>
-      {selectedScreenshot && <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#101825]/90 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={`Screenshot ${selectedScreenshotIndex! + 1} viewer`}>
-        <div className="relative flex h-full w-full max-w-6xl items-center justify-center">
-          <button onClick={() => setSelectedScreenshotIndex(null)} className="absolute right-1 top-1 z-10 rounded-full border border-white/50 bg-black/60 p-2 text-white transition-colors hover:bg-white hover:text-[#101825]" aria-label="Close screenshot viewer"><X size={20} /></button>
-          <button onClick={() => setSelectedScreenshotIndex((selectedScreenshotIndex! - 1 + REFERENCE_MEDIA_SCREENSHOTS.length) % REFERENCE_MEDIA_SCREENSHOTS.length)} className="absolute left-0 rounded-full bg-black/55 p-2 text-white transition-colors hover:bg-black" aria-label="Previous screenshot"><ChevronLeft /></button>
-          <img src={selectedScreenshot} alt={`Ragnarok Universe screenshot ${selectedScreenshotIndex! + 1}`} className="max-h-[calc(100svh-4rem)] max-w-[calc(100vw-7rem)] rounded-lg border border-[#dcbf72]/80 object-contain shadow-2xl" />
-          <button onClick={() => setSelectedScreenshotIndex((selectedScreenshotIndex! + 1) % REFERENCE_MEDIA_SCREENSHOTS.length)} className="absolute right-0 rounded-full bg-black/55 p-2 text-white transition-colors hover:bg-black" aria-label="Next screenshot"><ChevronRight /></button>
-        </div>
-      </div>}
-    </section>
   );
 }

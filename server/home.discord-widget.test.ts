@@ -2,38 +2,20 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
-const layoutSource = readFileSync(new URL("../client/src/components/Layout.tsx", import.meta.url), "utf8");
+const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
-describe("Home Discord WidgetBot and social links", () => {
-  it("places the WidgetBot Discord embed before the News section", () => {
-    const widgetUrl = "https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051";
-    expect(homeSource).toContain(widgetUrl);
-    expect(homeSource).toContain('title="Ragnarok Universe Discord community"');
-    expect(homeSource).toContain('aria-label="Read-only Discord chat"');
-    expect(homeSource).toContain('Join Official Discord');
-    expect(homeSource).toContain('href="https://discord.gg/yVWJkWdkAU"');
-    expect(homeSource).toContain('target="_blank"');
-    expect(homeSource).toContain('rel="noopener noreferrer"');
-    expect(homeSource).not.toContain('Read-only channel');
-    expect(homeSource).toContain('tabIndex={-1}');
-    expect(homeSource).toContain('min-h-0 flex-1 overflow-hidden');
-    expect(homeSource).toContain('h-[calc(100%+72px)] w-full border-0');
-    expect(homeSource).toContain('h-[68px]');
-    expect(homeSource).toContain('md:h-[72px]');
-    expect(homeSource).toContain('home-panel-fill home-discord-panel');
-    expect(homeSource).not.toContain('absolute inset-x-0 bottom-0 z-10');
-    expect(homeSource.indexOf(widgetUrl)).toBeLessThan(homeSource.indexOf('{/* NEWS SECTION - Unified layout */}'));
+describe("Home Discord community presentation", () => {
+  it("places the complete official Discord panel before the News panel", () => {
+    expect(homeSource.indexOf('id="discord-community"')).toBeLessThan(homeSource.indexOf('id="news"'));
+    expect(homeSource).toContain('const DISCORD_URL = "https://discord.gg/yVWJkWdkAU"');
+    expect(homeSource).toContain("communityChannels");
+    expect(homeSource).toContain("reference-community-join");
+    expect(homeSource).toContain("selectedChannel");
   });
 
-  it("renders floating social links in Discord, Facebook, YouTube, and X order", () => {
-    const discord = "https://discord.gg/yVWJkWdkAU";
-    const facebook = "https://facebook.com/RagnarokUniverseEN";
-    const youtube = "https://www.youtube.com/@RagnarokUniverse";
-    const x = "https://x.com/RagUniOfficial";
-    expect(layoutSource.indexOf(discord)).toBeLessThan(layoutSource.indexOf(facebook));
-    expect(layoutSource.indexOf(facebook)).toBeLessThan(layoutSource.indexOf(youtube));
-    expect(layoutSource.indexOf(youtube)).toBeLessThan(layoutSource.indexOf(x));
-    expect(layoutSource).toContain('aria-label="Visit Ragnarok Universe on Facebook"');
-    expect(layoutSource).toContain('aria-label="Visit Ragnarok Universe on X"');
+  it("uses the reference community card rather than the removed WidgetBot input workaround", () => {
+    expect(homeSource).not.toContain("Read-only channel");
+    expect(homeSource).not.toContain("e.widgetbot.io/channels");
+    expect(styleSource).toContain(".reference-discord-panel");
   });
 });

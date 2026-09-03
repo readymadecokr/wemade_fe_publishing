@@ -2,32 +2,26 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
+const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 const layoutSource = readFileSync(new URL("../client/src/components/Layout.tsx", import.meta.url), "utf8");
 
-describe("PPTX service page layout", () => {
-  it("uses separated account and game navigation with the requested game links", () => {
-    expect(layoutSource).toContain("Two-tier Global Navigation");
-    expect(layoutSource).toContain("HOME");
-    expect(layoutSource).toContain("GAME INFO");
-    expect(layoutSource).toContain("COMMUNITY");
-    expect(layoutSource).toContain("GAME START");
-    expect(layoutSource).toContain("https://discord.gg/yVWJkWdkAU");
+describe("final reference service page layout", () => {
+  it("renders the reference community presentation instead of an iframe-only section", () => {
+    expect(homeSource).toContain("OFFICIAL COMMUNITY");
+    expect(homeSource).toContain("Developer Note #1 is Here");
+    expect(homeSource).toContain("Continue on Discord");
+    expect(homeSource).toContain("Join Discord");
+    expect(styleSource).toContain(".reference-community-card");
+    expect(styleSource).toContain("grid-template-columns:196px 1fr");
   });
 
-  it("adds PPTX copy and media browsing without removing service routes", () => {
-    expect(homeSource).toContain("Official Community");
-    expect(homeSource).toContain("Development news and community updates from the official Ragnarok Universe Discord.");
-    expect(homeSource).toContain("News and Notice");
-    expect(homeSource).toContain("Latest From Midgard");
-    expect(homeSource).toContain("Classic Adventure");
-    expect(homeSource).toContain("Rune-Midgarts Library");
-    expect(homeSource).toContain("See the World in Motion");
-    expect(homeSource).toContain("slice(0, 12)");
-    expect(homeSource).toContain("REFERENCE_MEDIA_SCREENSHOTS");
-    expect(homeSource).toContain("REFERENCE_MEDIA_SCREENSHOTS.slice(0, 12)");
-    expect(homeSource).toContain("aria-label={`View screenshot ${index + 1} full screen`}");
-    expect(homeSource).toContain("aria-label=\"Next screenshot\"");
-    expect(layoutSource).toContain("Your story begins here");
-    expect(layoutSource).toContain("Two Clicks to Midgard");
+  it("keeps reference headings, media browsing, and live service routes together", () => {
+    expect(homeSource).toContain("Latest from Midgard");
+    expect(homeSource).toContain("Classic adventure.");
+    expect(homeSource).toContain("A new way to play.");
+    expect(homeSource).toContain("SEE THE WORLD IN MOTION");
+    expect(homeSource).toContain('href="/game-info"');
+    expect(homeSource).toContain('href="/news"');
+    expect(layoutSource).toContain('href="/point-shop"');
   });
 });
