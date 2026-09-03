@@ -1,6 +1,6 @@
 import "./reference-home.css";
 
-const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL_95e295ba.html";
+const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-scrollfix_ea04e1dd.html";
 
 /**
  * The user supplied this final design as the source of truth. It is displayed

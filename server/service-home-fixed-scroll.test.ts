@@ -3,10 +3,11 @@ import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
 const referenceSource = readFileSync("/home/ubuntu/upload/ragnarok-universe-fullpage-responsive-260831_FINAL.html", "utf8");
+const scrollFixedReferenceSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-scrollfix.html", "utf8");
 
 describe("user-supplied final Home full-page navigation", () => {
-  it("renders the original final document directly rather than recreating its scroll shell", () => {
-    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL_95e295ba.html");
+  it("renders the supplied final document directly with only the Latest section scroll calculation corrected", () => {
+    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-scrollfix_ea04e1dd.html");
     expect(homeSource).toContain("reference-home-embed__frame");
     expect(homeSource).not.toContain("window.addEventListener(\"wheel\"");
   });
@@ -15,5 +16,10 @@ describe("user-supplied final Home full-page navigation", () => {
     ["#home", "#discord", "#news", "#game-info", "#media"].forEach((anchor) => expect(referenceSource).toContain(anchor));
     expect(referenceSource).toMatch(/game\s+start/i);
     expect(referenceSource).toMatch(/join\s+discord/i);
+  });
+
+  it("uses scroll position to select the next panel when the News observer state is stale", () => {
+    expect(scrollFixedReferenceSource).toContain("const scrollAnchor=window.scrollY+window.innerHeight*.35");
+    expect(scrollFixedReferenceSource).toContain("section.offsetTop<=scrollAnchor?index:closestIndex");
   });
 });
