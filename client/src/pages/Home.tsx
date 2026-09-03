@@ -222,7 +222,7 @@ export default function Home() {
     <Layout>
       <div className="fantasy-page-shell">
         {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
-        <div className="relative w-full">
+        <div id="game-start" className="relative w-full">
           {/* BANNER SECTION */}
           <section className="relative w-full bg-foreground/10 overflow-hidden flex items-center justify-center" style={{ aspectRatio: '1900 / 600' }}>
             {/* Banner Image */}
@@ -291,6 +291,11 @@ export default function Home() {
         {/* DISCORD COMMUNITY — 메인 배너 바로 아래 WidgetBot 임베드 */}
         <section id="discord-community" className="pb-8 pt-2 md:pb-10">
           <div className="container fantasy-content-guide">
+            <div className="mb-5 text-center md:mb-6">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#735c39]">Official Community</p>
+              <h2 className="font-serif text-3xl font-black tracking-tight text-[#2c241c] md:text-4xl">Discord</h2>
+              <p className="mx-auto mt-2 max-w-xl text-sm text-[#675843]">Development news and community updates from the official Ragnarok Universe Discord.</p>
+            </div>
             <div className="overflow-hidden rounded-2xl border border-[#d7c5a3] bg-[#fffdf9] shadow-[0_14px_34px_rgba(59,49,35,.18)]">
               <div className="h-[560px] overflow-hidden md:h-[500px]">
                 <iframe
@@ -325,12 +330,13 @@ export default function Home() {
         <section id="news" className="py-2">
           <div className="container fantasy-content-guide pt-5 md:pt-7">
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb] shadow-sm">✦</span>News
-              </h2>
+              <div>
+                <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c39]">News and Notice</p>
+                <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb] shadow-sm">✦</span>Latest From Midgard</h2>
+              </div>
               <Link href="/news">
-                <Button variant="outline" className="border-[#7386a5] bg-[#fffdf7]/78 px-5 text-sm font-semibold text-[#3e609b] hover:bg-[#4668a3] hover:text-white">
-                  View More
+                <Button variant="outline" aria-label="View all news" className="h-10 w-10 rounded-full border-[#7386a5] bg-[#fffdf7]/78 p-0 text-xl font-semibold text-[#3e609b] hover:bg-[#4668a3] hover:text-white">
+                  +
                 </Button>
               </Link>
             </div>
@@ -354,9 +360,8 @@ export default function Home() {
             {/* Header */}
             <div className="mb-3 flex items-start justify-between gap-4">
               <div>
-                <h2 className="fantasy-section-title flex items-center gap-3 text-3xl md:text-4xl">
-                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb] shadow-sm">✦</span>About Ragnarok Universe
-                </h2>
+                <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c39]">About Ragnarok Universe</p>
+                <h2 className="font-serif text-3xl font-black leading-[.92] tracking-tight text-[#2c241c] md:text-5xl">Classic Adventure<br />A New Way to Play</h2>
               </div>
               <Link href="/game-info" className="shrink-0 pt-1">
                 <Button variant="outline" className="border-[#7386a5] bg-[#fffdf7]/78 px-5 text-sm font-semibold text-[#3e609b] hover:bg-[#4668a3] hover:text-white">
@@ -379,7 +384,7 @@ export default function Home() {
               {/* Game Details */}
               <div className="flex flex-col gap-4">
                 <p className="text-sm leading-relaxed text-[#675843] md:text-base">
-                  Ragnarok Universe brings the legendary online game to a new era. Play directly in your web browser without any downloads. Experience epic battles, explore vast worlds, and join millions of adventurers in this timeless fantasy universe.
+                  Experience the legendary fantasy MMORPG directly in your web browser. Explore a familiar world, meet a growing community, and help shape the next chapter.
                 </p>
 
                 {/* Game Specs Grid */}
@@ -401,14 +406,14 @@ export default function Home() {
                     <p className="text-base font-black text-[#4668a3]">Beta Testing</p>
                   </div>
                 </div>
-
+                <button onClick={() => toast.info("Rune-Midgarts Library is coming soon.")} className="inline-flex w-fit items-center gap-2 rounded-md bg-[#4068a5] px-5 py-3 text-xs font-bold text-white shadow-[0_5px_12px_rgba(36,70,120,.28)] transition-transform hover:-translate-y-0.5 hover:bg-[#537fbe] active:scale-[.97]">Rune-Midgarts Library <ChevronRight size={15} aria-hidden="true" /></button>
               </div>
             </div>
-
-            {/* Gameplay Trailer - DB 기반 */}
-            <MediaSection />
           </div>
         </section>
+
+        {/* Gameplay Trailer and media gallery */}
+        <MediaSection />
 
         {/* Sign In Modal — full login panel as popup */}
         {showSignInDialog && (
@@ -531,6 +536,7 @@ export default function Home() {
 // Media 섹션 컴포넌트 - DB에서 활성 상태인 영상만 표시
 function MediaSection() {
   const { data: mediaList } = trpc.publicMedia.list.useQuery();
+  const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(null);
 
   // 활성 영상이 없으면 섹션 자체를 숨김
   if (!mediaList || mediaList.length === 0) return null;
@@ -541,29 +547,43 @@ function MediaSection() {
     return m ? `https://www.youtube.com/embed/${m[1]}` : null;
   };
 
+  const mediaItems = mediaList
+    .map((item) => ({ ...item, embedUrl: getYoutubeEmbedUrl(item.youtubeUrl) }))
+    .filter((item): item is typeof item & { embedUrl: string } => Boolean(item.embedUrl))
+    .slice(0, 12);
+  const selectedMedia = selectedMediaIndex === null ? null : mediaItems[selectedMediaIndex];
+
+  if (mediaItems.length === 0) return null;
+
   return (
-    <>
-      {mediaList.map((item) => {
-        const embedUrl = getYoutubeEmbedUrl(item.youtubeUrl);
-        if (!embedUrl) return null;
-        return (
-          <div key={item.id} className="pb-10 md:pb-12">
-            <h3 className="fantasy-section-title mb-4 flex items-center gap-3 text-2xl md:text-3xl"><span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-xs text-[#f9edcb]">✦</span>Media</h3>
-            <div className="fantasy-frame overflow-hidden rounded-xl">
-              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                <iframe
-                  className="absolute inset-0 w-full h-full"
-                  src={embedUrl}
-                  title={item.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
-            </div>
+    <section id="media" className="pb-12 pt-12 md:pb-16 md:pt-16">
+      <div className="container fantasy-content-guide">
+        <div className="mb-5 text-center md:mb-7">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#735c39]">See the World in Motion</p>
+          <h2 className="font-serif text-3xl font-black tracking-tight text-[#2c241c] md:text-4xl">Media</h2>
+        </div>
+        <div className="fantasy-frame overflow-hidden rounded-xl">
+          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+            <iframe className="absolute inset-0 h-full w-full" src={mediaItems[0].embedUrl} title={mediaItems[0].title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
           </div>
-        );
-      })}
-    </>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {mediaItems.map((item, index) => {
+            const videoId = item.embedUrl.split("/").pop();
+            return <button key={item.id} onClick={() => setSelectedMediaIndex(index)} className="group relative aspect-video overflow-hidden rounded-lg border border-[#d7c5a3] bg-[#263746] text-left shadow-sm transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4068a5]">
+              <img src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`} alt={`${item.title} preview`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105" />
+              <span className="absolute inset-0 flex items-center justify-center bg-[#17283b]/30 text-2xl text-white transition-colors group-hover:bg-[#17283b]/15">▶</span>
+            </button>;
+          })}
+        </div>
+      </div>
+      {selectedMedia && <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#101825]/85 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={`${selectedMedia.title} media viewer`}>
+        <div className="relative w-full max-w-5xl overflow-hidden rounded-xl bg-[#111d2b] shadow-2xl">
+          <button onClick={() => setSelectedMediaIndex(null)} className="absolute right-3 top-3 z-10 rounded-full bg-black/60 p-2 text-white transition-colors hover:bg-black" aria-label="Close media viewer"><X size={20} /></button>
+          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}><iframe className="absolute inset-0 h-full w-full" src={selectedMedia.embedUrl} title={selectedMedia.title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
+          {mediaItems.length > 1 && <div className="absolute inset-x-3 top-1/2 flex -translate-y-1/2 justify-between"><button onClick={() => setSelectedMediaIndex((selectedMediaIndex! - 1 + mediaItems.length) % mediaItems.length)} className="rounded-full bg-black/55 p-2 text-white hover:bg-black" aria-label="Previous media"><ChevronLeft /></button><button onClick={() => setSelectedMediaIndex((selectedMediaIndex! + 1) % mediaItems.length)} className="rounded-full bg-black/55 p-2 text-white hover:bg-black" aria-label="Next media"><ChevronRight /></button></div>}
+        </div>
+      </div>}
+    </section>
   );
 }

@@ -28,11 +28,11 @@ describe("service background visual restoration", () => {
   it("keeps the logged-in Logout control legible against the translucent service header", () => {
     expect(layoutSource).toContain('border-[#e6c972] bg-[#fffaf0]');
     expect(layoutSource).toContain('text-[#263b5b]');
-    expect(layoutSource).toContain('>\n                Logout\n');
+    expect(layoutSource).toContain('>Logout</Button>');
   });
 
   it("keeps the portal header translucent and the sign-in call to action distinguishable", () => {
-    expect(layoutSource).toContain('border-b border-[#c8d8e7]/30 bg-[#1c3147]/72 text-white');
+    expect(layoutSource).toContain('border-b border-[#c8d8e7]/30 bg-[#1c3147]/92 text-white');
     expect(layoutSource).toContain('portal-nav');
     expect(layoutSource).toContain('hover:bg-[#6188c5]');
   });
@@ -41,7 +41,7 @@ describe("service background visual restoration", () => {
     expect(layoutSource).not.toContain('ragnarok-fantasy-footer-atlas_e83c8727.png');
     expect(styleSource).not.toContain('.fantasy-view-more::before');
     expect(styleSource).toContain('.floating-social-box');
-    expect(homeSource).toContain('className="pb-10 md:pb-12"');
+    expect(homeSource).toContain('section id="media" className="pb-12 pt-12 md:pb-16 md:pt-16"');
   });
 
   it("matches the reference menu's gold underline, active surface, hover lift, and click feedback", () => {
@@ -54,8 +54,8 @@ describe("service background visual restoration", () => {
     expect(styleSource).toContain('transform: translateY(0) scale(.97)');
     expect(styleSource).toContain('width: calc(100% - 1.3rem)');
     expect(layoutSource).toContain('className={`portal-nav-link ${location === "/" ? "portal-nav-link--active" : ""}`}');
-    expect(layoutSource).toContain('className="portal-nav-action"');
-    expect(layoutSource).toContain('>\n                  My Page\n');
+    expect(layoutSource).toContain('COMMUNITY <ExternalLink');
+    expect(layoutSource).toContain('>My Page</Link>');
   });
 
   it("keeps footer content readable on the reference gradient surface", () => {
