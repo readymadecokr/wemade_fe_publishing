@@ -5,7 +5,7 @@ import { ChevronDown, ExternalLink, Globe } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import "./reference-home.css";
 
-const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_b1e314b0.html";
+const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_2e57bdc1.html";
 const LOGO_URL = "/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png";
 
 function formatRcoin(value: number): string {

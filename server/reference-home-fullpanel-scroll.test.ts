@@ -6,7 +6,7 @@ const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnaro
 
 describe("reference Home full-panel scroll restoration", () => {
   it("uses the full-panel document for Home", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_b1e314b0.html");
+    expect(homeSource).toContain("FINAL-fullpanel-scroll_2e57bdc1.html");
   });
 
   it("snaps desktop wheel input through the Discord, News, Game Info, Media, and footer panels", () => {
@@ -17,6 +17,7 @@ describe("reference Home full-panel scroll restoration", () => {
 
   it("hides floating social links only while the Hero is the current panel", () => {
     expect(staticHomeSource).toContain("const heroIsCurrentPanel");
+    expect(staticHomeSource).toContain('rect.bottom > window.innerHeight * 0.35');
     expect(staticHomeSource).toContain('floating.classList.toggle("hero-hidden", heroIsCurrentPanel)');
   });
 });
