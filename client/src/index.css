@@ -227,15 +227,42 @@
 }
 
 @layer components {
+  :root {
+    --service-header-offset: 106px;
+  }
+
   html:has(.fantasy-page-shell) {
     scroll-behavior: smooth;
+    scroll-padding-top: var(--service-header-offset);
     scroll-snap-type: y mandatory;
   }
 
   .home-scroll-panel {
+    height: calc(100svh - var(--service-header-offset));
+    min-height: calc(100svh - var(--service-header-offset));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     scroll-snap-align: start;
     scroll-snap-stop: always;
-    scroll-margin-top: 6.75rem;
+    scroll-margin-top: var(--service-header-offset);
+  }
+
+  .home-panel-fill {
+    justify-content: center;
+  }
+
+  .home-hero-visual {
+    height: 100%;
+    min-height: 100%;
+  }
+
+  .fantasy-site-footer.home-panel-fill {
+    align-items: center;
+  }
+
+  .fantasy-site-footer.home-panel-fill > .container {
+    width: 100%;
   }
 
   .footer-social-link {
@@ -339,13 +366,26 @@
   }
 
 
-  @media (max-width: 640px) {
+  @media (max-width: 900px) {
+    :root {
+      --service-header-offset: 136px;
+    }
+
     html:has(.fantasy-page-shell) {
       scroll-snap-type: y proximity;
     }
 
     .home-scroll-panel {
-      scroll-margin-top: 8.75rem;
+      height: auto;
+      min-height: 0;
+      overflow: visible;
+      scroll-margin-top: var(--service-header-offset);
+    }
+
+    .home-hero-visual {
+      height: auto !important;
+      min-height: 0 !important;
+      aspect-ratio: 1900 / 600;
     }
 
     header .portal-nav > a {

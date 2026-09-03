@@ -13,12 +13,18 @@ describe("service home fixed navigation and scroll presentation", () => {
     expect(layoutSource).toContain("Two-tier Global Navigation");
   });
 
-  it("moves one home section per desktop wheel gesture and provides scroll snap fallback", () => {
+  it("moves one full-screen home section per desktop wheel gesture and provides a mobile snap fallback", () => {
     expect(homeSource).toContain('const sectionIds = ["game-start", "discord-community", "news", "game-info", "media", "site-footer"]');
     expect(homeSource).toContain('window.addEventListener("wheel", handleSectionWheel, { passive: false })');
+    expect(homeSource).toContain('window.setTimeout(() => { wheelLocked = false; }, 760)');
+    expect(homeSource).toContain('document.querySelector("header")?.getBoundingClientRect().height ?? 106');
     expect(homeSource).toContain('scrollIntoView({ behavior: "smooth", block: "start" })');
     expect(styleSource).toContain('scroll-snap-type: y mandatory');
     expect(styleSource).toContain('scroll-snap-stop: always');
+    expect(styleSource).toContain('height: calc(100svh - var(--service-header-offset))');
+    expect(styleSource).toContain('min-height: calc(100svh - var(--service-header-offset))');
+    expect(styleSource).toContain('--service-header-offset: 136px');
+    expect(homeSource).toContain('data-allow-native-scroll');
   });
 
   it("adds a banner information link and four official footer social links", () => {

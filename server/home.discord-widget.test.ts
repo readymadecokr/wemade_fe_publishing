@@ -16,10 +16,11 @@ describe("Home Discord WidgetBot and social links", () => {
     expect(homeSource).toContain('rel="noopener noreferrer"');
     expect(homeSource).not.toContain('Read-only channel');
     expect(homeSource).toContain('tabIndex={-1}');
-    expect(homeSource).toContain('h-[560px] overflow-hidden md:h-[500px]');
-    expect(homeSource).toContain('h-[632px] w-full border-0 md:h-[572px]');
+    expect(homeSource).toContain('min-h-0 flex-1 overflow-hidden');
+    expect(homeSource).toContain('h-[calc(100%+72px)] w-full border-0');
     expect(homeSource).toContain('h-[68px]');
     expect(homeSource).toContain('md:h-[72px]');
+    expect(homeSource).toContain('home-panel-fill home-discord-panel');
     expect(homeSource).not.toContain('absolute inset-x-0 bottom-0 z-10');
     expect(homeSource.indexOf(widgetUrl)).toBeLessThan(homeSource.indexOf('{/* NEWS SECTION - Unified layout */}'));
   });

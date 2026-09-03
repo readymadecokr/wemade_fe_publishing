@@ -129,7 +129,7 @@ export default function Layout({ children }: LayoutProps) {
 
 
       {/* Footer */}
-      <footer id="site-footer" className="fantasy-site-footer home-scroll-panel mt-auto w-full text-[#17120c]">
+      <footer id="site-footer" className="fantasy-site-footer home-scroll-panel home-panel-fill mt-auto w-full text-[#17120c]">
         <div className="container py-12" style={{paddingTop: '30px'}}>
           <div className="mx-auto mb-10 max-w-2xl text-center">
             <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#735c39]">Your story begins here</p>

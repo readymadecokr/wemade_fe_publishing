@@ -104,7 +104,7 @@ export default function Home() {
     let unlockTimer = 0;
 
     const handleSectionWheel = (event: WheelEvent) => {
-      if (window.innerWidth <= 900 || Math.abs(event.deltaY) < 8) return;
+      if (window.innerWidth <= 900 || Math.abs(event.deltaY) < 18) return;
       const target = event.target instanceof Element ? event.target : null;
       if (target?.closest("iframe, [data-allow-native-scroll]")) return;
       const sections = sectionIds
@@ -116,10 +116,11 @@ export default function Home() {
       if (wheelLocked) return;
       wheelLocked = true;
       window.clearTimeout(unlockTimer);
-      unlockTimer = window.setTimeout(() => { wheelLocked = false; }, 520);
+      unlockTimer = window.setTimeout(() => { wheelLocked = false; }, 760);
 
+      const headerHeight = document.querySelector("header")?.getBoundingClientRect().height ?? 106;
       const currentIndex = sections.reduce((closestIndex, section, index) => (
-        Math.abs(section.getBoundingClientRect().top) < Math.abs(sections[closestIndex].getBoundingClientRect().top)
+        Math.abs(section.getBoundingClientRect().top - headerHeight) < Math.abs(sections[closestIndex].getBoundingClientRect().top - headerHeight)
           ? index
           : closestIndex
       ), 0);
@@ -277,9 +278,9 @@ export default function Home() {
     <Layout>
       <div className="fantasy-page-shell">
         {/* BANNER + GAME START — wrapper with overflow visible so button can overlap */}
-        <div id="game-start" className="home-scroll-panel relative w-full">
+        <div id="game-start" className="home-scroll-panel home-hero-panel relative w-full">
           {/* BANNER SECTION */}
-          <section className="relative w-full bg-foreground/10 overflow-hidden flex items-center justify-center" style={{ aspectRatio: '1900 / 600' }}>
+          <section className="home-hero-visual relative flex h-full min-h-full w-full items-center justify-center overflow-hidden bg-foreground/10">
             {/* Banner Image */}
             {currentBanner ? <img
               src={currentBanner.url}
@@ -336,23 +337,20 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Spacer: 버튼 높이의 50% (translate-y[50%] 기준) */}
-        <div style={{ height: 'clamp(60px, 8vw, 130px)' }} />
-
         {/* DISCORD COMMUNITY — 메인 배너 바로 아래 WidgetBot 임베드 */}
-        <section id="discord-community" className="home-scroll-panel pb-8 pt-2 md:pb-10">
-          <div className="container fantasy-content-guide">
-            <div className="mb-5 text-center md:mb-6">
+        <section id="discord-community" className="home-scroll-panel home-panel-fill home-discord-panel pb-5 pt-5 md:pb-7 md:pt-7">
+          <div className="container fantasy-content-guide flex h-full w-full flex-col">
+            <div className="mb-4 shrink-0 text-center md:mb-5">
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#735c39]">Official Community</p>
               <h2 className="font-serif text-3xl font-black tracking-tight text-[#2c241c] md:text-4xl">Discord</h2>
               <p className="mx-auto mt-2 max-w-xl text-sm text-[#675843]">Development news and community updates from the official Ragnarok Universe Discord.</p>
             </div>
-            <div className="overflow-hidden rounded-2xl border border-[#d7c5a3] bg-[#fffdf9] shadow-[0_14px_34px_rgba(59,49,35,.18)]">
-              <div className="h-[560px] overflow-hidden md:h-[500px]">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[#d7c5a3] bg-[#fffdf9] shadow-[0_14px_34px_rgba(59,49,35,.18)]">
+              <div className="min-h-0 flex-1 overflow-hidden">
                 <iframe
                   src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051"
                   title="Ragnarok Universe Discord community"
-                  className="block h-[632px] w-full border-0 md:h-[572px]"
+                  className="block h-[calc(100%+72px)] w-full border-0"
                   loading="lazy"
                   allow="clipboard-read; clipboard-write; fullscreen"
                   allowFullScreen
@@ -362,7 +360,7 @@ export default function Home() {
               <div
                 aria-label="Read-only Discord chat"
                 role="note"
-                className="flex h-[68px] items-start justify-center border-t border-white/10 bg-[#2f3136] px-4 pt-2 shadow-[0_-6px_14px_rgba(0,0,0,.18)] md:h-[72px] md:pt-3"
+                className="flex h-[68px] shrink-0 items-start justify-center border-t border-white/10 bg-[#2f3136] px-4 pt-2 shadow-[0_-6px_14px_rgba(0,0,0,.18)] md:h-[72px] md:pt-3"
               >
                 <a
                   href="https://discord.gg/yVWJkWdkAU"
@@ -378,8 +376,8 @@ export default function Home() {
         </section>
 
         {/* NEWS SECTION - Unified layout */}
-        <section id="news" className="home-scroll-panel py-2">
-          <div className="container fantasy-content-guide pt-5 md:pt-7">
+        <section id="news" className="home-scroll-panel home-panel-fill flex items-center py-0">
+          <div className="container fantasy-content-guide w-full">
             <div className="mb-5 flex items-center justify-between">
               <div>
                 <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c39]">News and Notice</p>
@@ -406,8 +404,8 @@ export default function Home() {
 
 
         {/* GAME INFO SECTION */}
-        <section id="game-info" className="home-scroll-panel py-0">
-          <div className="container fantasy-content-guide py-0" style={{paddingTop: '48px', paddingBottom: '0px'}}>
+        <section id="game-info" className="home-scroll-panel home-panel-fill flex items-center py-0">
+          <div className="container fantasy-content-guide w-full py-0" style={{paddingTop: '48px', paddingBottom: '0px'}}>
             {/* Header */}
             <div className="mb-3 flex items-start justify-between gap-4">
               <div>
@@ -607,18 +605,18 @@ function MediaSection() {
   if (mediaItems.length === 0) return null;
 
   return (
-    <section id="media" className="home-scroll-panel pb-12 pt-12 md:pb-16 md:pt-16">
-      <div className="container fantasy-content-guide">
-        <div className="mb-5 text-center md:mb-7">
+    <section id="media" className="home-scroll-panel home-panel-fill home-media-panel flex pb-5 pt-5 md:pb-7 md:pt-7">
+      <div className="container fantasy-content-guide flex h-full w-full flex-col">
+        <div className="mb-4 shrink-0 text-center md:mb-5">
           <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#735c39]">See the World in Motion</p>
           <h2 className="font-serif text-3xl font-black tracking-tight text-[#2c241c] md:text-4xl">Media</h2>
         </div>
-        <div className="fantasy-frame overflow-hidden rounded-xl">
-          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+        <div className="fantasy-frame min-h-0 flex-1 overflow-hidden rounded-xl">
+          <div className="relative h-full min-h-[250px] w-full">
             <iframe className="absolute inset-0 h-full w-full" src={mediaItems[0].embedUrl} title={mediaItems[0].title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div data-allow-native-scroll className="mt-4 shrink-0 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {mediaItems.map((item, index) => {
             const videoId = item.embedUrl.split("/").pop();
             return <button key={item.id} onClick={() => setSelectedMediaIndex(index)} className="group relative aspect-video overflow-hidden rounded-lg border border-[#d7c5a3] bg-[#263746] text-left shadow-sm transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4068a5]">
