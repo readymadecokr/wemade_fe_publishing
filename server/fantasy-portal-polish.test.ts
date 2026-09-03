@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
 const uploadedReference = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-scrollfix.html", "utf8");
-const widgetbotReference = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-widgetbot.html", "utf8");
+const widgetbotReference = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll.html", "utf8");
 const originalReference = readFileSync("/home/ubuntu/upload/ragnarok-universe-fullpage-responsive-260831_FINAL.html", "utf8");
 const originalWheelSelection = "const current=Math.max(0,sectionIds.indexOf(activeSection));";
 const correctedWheelSelection = "const scrollAnchor=window.scrollY+window.innerHeight*.35;const current=sectionIds.reduce((closestIndex,sectionId,index)=>{const section=document.getElementById(sectionId);return section&&section.offsetTop<=scrollAnchor?index:closestIndex},0);";
@@ -16,7 +16,7 @@ describe("final Home source integrity", () => {
     expect(widgetbotReference).toContain("hero-minimal-controls");
     expect(widgetbotReference).toContain("floating-community.hero-hidden");
     expect(widgetbotReference).toContain("widgetbot-community");
-    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-widgetbot_fc4090cd.html");
+    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_b1e314b0.html");
   });
 
   it("does not place a custom visual shell around the supplied document", () => {

@@ -2,11 +2,11 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
-const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-widgetbot.html", "utf8");
+const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll.html", "utf8");
 
 describe("reference Home hero controls", () => {
   it("uses the dedicated hero-control document that replaces card controls", () => {
-    expect(homeSource).toContain("FINAL-widgetbot_fc4090cd.html");
+    expect(homeSource).toContain("FINAL-fullpanel-scroll_b1e314b0.html");
     expect(homeSource).toContain("src={REFERENCE_HOME_URL}");
     expect(staticHomeSource).toContain(".hero-rail { display:none !important; }");
     expect(staticHomeSource).toContain("hero-minimal-controls");

@@ -4,11 +4,11 @@ import { describe, expect, it } from "vitest";
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
 const referenceSource = readFileSync("/home/ubuntu/upload/ragnarok-universe-fullpage-responsive-260831_FINAL.html", "utf8");
 const scrollFixedReferenceSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-scrollfix.html", "utf8");
-const widgetbotReferenceSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-widgetbot.html", "utf8");
+const widgetbotReferenceSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll.html", "utf8");
 
 describe("user-supplied final Home full-page navigation", () => {
   it("renders the supplied final document directly with targeted scrolling and Hero control corrections", () => {
-    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-widgetbot_fc4090cd.html");
+    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_b1e314b0.html");
     expect(homeSource).toContain("reference-home-embed__frame");
     expect(homeSource).not.toContain("window.addEventListener(\"wheel\"");
     expect(widgetbotReferenceSource).toContain("hero-minimal-controls");
