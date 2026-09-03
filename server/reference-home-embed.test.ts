@@ -6,7 +6,7 @@ const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css
 
 describe("user-supplied final HTML Home", () => {
   it("uses the original final reference HTML without a React restyle layer", () => {
-    expect(homeSource).toContain('const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-scrollfix_ea04e1dd.html"');
+    expect(homeSource).toContain('const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-hero-controls_2b597045.html"');
     expect(homeSource).toContain("src={REFERENCE_HOME_URL}");
     expect(homeSource).toContain('title="Ragnarok Universe homepage"');
     expect(homeSource).not.toContain("reference-hero-panel");
