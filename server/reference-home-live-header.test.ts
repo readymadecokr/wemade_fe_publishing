@@ -20,6 +20,9 @@ describe("reference Home live service header", () => {
     expect(headerStyles).toContain("background: #2252a2;");
     expect(homeSource).toContain('const GAME_START_BUTTON_URL = "/manus-storage/Gamestart_Button2_6537c714.png"');
     expect(headerStyles).toContain("width: 154px;");
+    expect(headerStyles).toContain(".reference-header-discord:hover");
+    expect(headerStyles).toContain(".reference-header-game-start:hover");
+    expect(headerStyles).toContain("transition: none;");
   });
 
   it("uses the real OAuth session, balance query, and logout mutation instead of legacy local storage", () => {

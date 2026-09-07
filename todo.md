@@ -801,3 +801,9 @@
 - [x] 상단 Game Start에 남은 노란색 테두리 제거
 - [x] 마무리 Join Discord 심볼을 Discord-Symbol-White.png로 변경하고 #5865F2 버튼 스타일 적용
 - [x] 상단·마무리 버튼 렌더링과 전체 회귀 테스트 검증
+
+## Hero·Discord·마무리 CTA 시각 통일
+- [x] Hero·마무리 Game Start 버튼에 남은 노란색 테두리·외곽 효과 제거
+- [x] 관련 CTA의 밝아지는 hover 효과 제거
+- [x] Hero 하단·Discord 섹션 Join Discord 버튼을 마무리 Join Discord의 #5865F2 스타일로 통일
+- [x] CTA 렌더링과 전체 회귀 테스트 검증

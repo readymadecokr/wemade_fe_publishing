@@ -46,11 +46,20 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("font-size:clamp(28px,8vw,34px) !important");
   });
 
-  it("uses the provided white Discord symbol in the #5865F2-style closing Join Discord button", () => {
-    expect(staticHomeSource).toContain('id="manus-closing-discord-button-style"');
-    expect(staticHomeSource).toContain('const closingDiscordSymbol = "https://raguniverse-izcifhmz.manus.space/manus-storage/Discord-Symbol-White_5305126f.png"');
-    expect(staticHomeSource).toContain('button.querySelector(".closing-discord__symbol")');
+  it("uses the provided white Discord symbol and a unified #5865F2 button style for every Join Discord CTA", () => {
+    expect(staticHomeSource).toContain('id="manus-cta-unification-style"');
+    expect(staticHomeSource).toContain('const communityDiscordSymbol = "https://raguniverse-izcifhmz.manus.space/manus-storage/Discord-Symbol-White_5305126f.png"');
+    expect(staticHomeSource).toContain('document.querySelectorAll(".hero-discord, .closing-discord")');
+    expect(staticHomeSource).toContain('document.querySelectorAll(".widgetbot-join")');
+    expect(staticHomeSource).toContain("widgetbot-join__symbol");
     expect(staticHomeSource).toContain("background:#5865f2 !important");
     expect(staticHomeSource).toContain("border:0 !important");
+  });
+
+  it("removes the outer yellow Game Start treatment and hover brightening from Hero and closing CTAs", () => {
+    expect(staticHomeSource).toContain(".hero-game-start,\n  .closing-game-start");
+    expect(staticHomeSource).toContain("background:transparent !important");
+    expect(staticHomeSource).toContain("box-shadow:none !important");
+    expect(staticHomeSource).toContain(".hero-game-start:hover,\n  .closing-game-start:hover { transform:none !important; filter:none !important; }");
   });
 });
