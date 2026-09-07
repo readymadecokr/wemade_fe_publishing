@@ -65,9 +65,9 @@
 
 .reference-header-game-start__image {
   display: block;
-  width: 128px;
+  width: 134px;
   height: auto;
-  max-height: 22px;
+  max-height: 44px;
   object-fit: contain;
 }
 
@@ -124,7 +124,7 @@
   }
 
   .reference-header-game-start__image {
-    width: 78px;
-    max-height: 14px;
+    width: 90px;
+    max-height: 32px;
   }
 }

@@ -46,23 +46,26 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("font-size:clamp(28px,8vw,34px) !important");
   });
 
-  it("uses the provided white Discord symbol and a unified #5865F2 button style for every Join Discord CTA", () => {
+  it("uses the provided Game Start and Discord logo images for all homepage CTAs", () => {
     expect(staticHomeSource).toContain('id="manus-cta-unification-style"');
-    expect(staticHomeSource).toContain('const communityDiscordSymbol = "https://raguniverse-izcifhmz.manus.space/manus-storage/Discord-Symbol-White_5305126f.png"');
+    expect(staticHomeSource).toContain('const gameStartButtonImage = "https://raguniverse-izcifhmz.manus.space/manus-storage/gamestart_BTN_1c6449da.png"');
+    expect(staticHomeSource).toContain('const discordButtonLogo = "https://raguniverse-izcifhmz.manus.space/manus-storage/Discord-Logo-White_b3128ea2.png"');
+    expect(staticHomeSource).toContain('document.querySelectorAll(".hero-game-start, .closing-game-start")');
     expect(staticHomeSource).toContain('document.querySelectorAll(".hero-discord, .closing-discord")');
     expect(staticHomeSource).toContain('document.querySelectorAll(".widgetbot-join")');
-    expect(staticHomeSource).toContain("widgetbot-join__symbol");
+    expect(staticHomeSource).toContain("widgetbot-game-start");
+    expect(staticHomeSource).toContain("home-game-start-art");
+    expect(staticHomeSource).toContain("home-discord-logo");
+    expect(staticHomeSource).toContain("width:100% !important; max-width:none !important; height:auto !important; max-height:none !important");
     expect(staticHomeSource).toContain("background:#5865f2 !important");
     expect(staticHomeSource).toContain("border:0 !important");
   });
 
-  it("matches the Discord read-only CTA to the Two Clicks Join Discord desktop dimensions and typography", () => {
-    expect(staticHomeSource).toContain("#discord .widgetbot-readonly-bar { height:80px !important; min-height:80px !important; padding:0 !important; display:flex; align-items:center; justify-content:center; }");
-    expect(staticHomeSource).toContain("#discord .widgetbot-join { width:285px !important; min-width:285px !important; height:76px !important; min-height:76px !important; padding:0 24px !important");
-    expect(staticHomeSource).toContain("gap:15px !important; border:0 !important; border-radius:10px !important");
-    expect(staticHomeSource).toContain("#discord .widgetbot-join__symbol { display:block; width:42px !important; height:42px !important");
-    expect(staticHomeSource).toContain("#discord .widgetbot-join__copy b { font:900 italic 21px/1 Arial,Helvetica,sans-serif !important; letter-spacing:normal; white-space:nowrap; }");
-    expect(staticHomeSource).toContain("#discord .widgetbot-join__copy small { font:800 9px/1 Arial,Helvetica,sans-serif !important");
+  it("keeps Game Start left and Discord right in every homepage CTA pair", () => {
+    expect(staticHomeSource).toContain("#discord .widgetbot-readonly-bar { height:96px !important; min-height:96px !important; padding:0 !important; display:flex; align-items:center; justify-content:center; gap:16px !important; }");
+    expect(staticHomeSource).toContain("#discord .widgetbot-game-start,\n  #discord .widgetbot-join { width:285px !important; min-width:285px !important; height:76px !important");
+    expect(staticHomeSource).toContain("readonlyBar.insertBefore(gameStart, button);");
+    expect(staticHomeSource).toContain("#discord .widgetbot-game-start .home-game-start-art { display:block; width:auto !important; max-width:100% !important; height:76px !important; max-height:none !important; }");
   });
 
   it("removes the outer yellow Game Start treatment and makes shadow buttons press down on hover", () => {

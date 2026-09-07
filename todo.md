@@ -856,3 +856,9 @@
 - [x] 모바일 Latest from Midgard에서 뉴스 카드 4개 노출
 - [x] 모바일 Media 영상 영역 하단의 빈 공간 제거
 - [x] 실제 모바일 화면과 전체 회귀 테스트 검증
+
+## 홈 전체 Game Start·Discord CTA 통일
+- [x] 모든 Game Start CTA를 제공된 gamestart_BTN.png 이미지로 교체
+- [x] 모든 Join Discord CTA를 Discord-Logo-White.png 이미지 기반 버튼으로 교체
+- [x] Hero·Discord·Two Clicks의 CTA 순서를 좌측 Game Start, 우측 Discord로 통일
+- [x] 데스크톱·모바일 CTA 이미지·순서와 전체 회귀 테스트 검증

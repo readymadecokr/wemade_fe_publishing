@@ -5,10 +5,10 @@ import { ChevronDown, ExternalLink, Globe } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import "./reference-home.css";
 
-const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_85815a74.html";
+const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_1d3b287c.html";
 const LOGO_URL = "/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png";
-const GAME_START_BUTTON_URL = "/manus-storage/Gamestart_Button2_6537c714.png";
-const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_68e7fbe1.png";
+const GAME_START_BUTTON_URL = "/manus-storage/gamestart_BTN_1c6449da.png";
+const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_b3128ea2.png";
 
 function formatRcoin(value: number): string {
   return Math.min(value, 9_999_999).toLocaleString("en-US");
@@ -69,11 +69,11 @@ function ReferenceHomeHeader() {
             <Link href="/point-shop" className={`portal-nav-link inline-flex items-center gap-0.5 ${location === "/point-shop" ? "portal-nav-link--active" : ""}`}>SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
           </nav>
           <div className="reference-header-cta shrink-0" aria-label="Quick actions">
-            <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="reference-header-discord" aria-label="Join Ragnarok Universe on Discord">
-              <img src={DISCORD_BUTTON_URL} alt="Discord" className="reference-header-discord__image" />
-            </a>
             <a href={sectionHref("game-start")} target="ragnarok-reference-frame" className="reference-header-game-start">
               <img src={GAME_START_BUTTON_URL} alt="Game Start" className="reference-header-game-start__image" />
+            </a>
+            <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="reference-header-discord" aria-label="Join Ragnarok Universe on Discord">
+              <img src={DISCORD_BUTTON_URL} alt="Discord" className="reference-header-discord__image" />
             </a>
           </div>
         </div>
