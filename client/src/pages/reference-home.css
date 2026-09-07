@@ -58,28 +58,36 @@
 
 .reference-header-game-start {
   border: 0;
-  background: #2252a2;
-  box-shadow: 0 4px 0 #173978, 0 6px 12px rgba(13, 41, 91, .38), inset 0 1px 0 rgba(255, 255, 255, .24);
+  min-height: 0;
+  height: auto;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   transition: none;
 }
 
 .reference-header-game-start__image {
   display: block;
-  width: 134px;
+  width: 154px;
   height: auto;
-  max-height: 44px;
+  max-height: none;
   object-fit: contain;
 }
 
 .reference-header-game-start:hover {
-  background: #2252a2;
-  box-shadow: 0 0 0 #173978, 0 2px 4px rgba(13, 41, 91, .22), inset 0 1px 0 rgba(255, 255, 255, .24);
-  transform: translateY(4px);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
 }
 
 .reference-header-discord:active,
 .reference-header-game-start:active {
   transform: translateY(1px) scale(.98);
+}
+
+.reference-header-game-start:active {
+  transform: none;
 }
 
 .reference-header-game-start__coin {
@@ -110,12 +118,12 @@
 
   .reference-header-discord,
   .reference-header-game-start {
+    min-height: 0;
+    height: auto;
+    padding: 0;
+    border-radius: 0;
     width: 96px;
     min-width: 96px;
-    height: 34px;
-    min-height: 34px;
-    padding: 0 7px;
-    border-radius: 8px;
   }
 
   .reference-header-discord__image {
@@ -124,7 +132,7 @@
   }
 
   .reference-header-game-start__image {
-    width: 90px;
-    max-height: 32px;
+    width: 96px;
+    max-height: none;
   }
 }

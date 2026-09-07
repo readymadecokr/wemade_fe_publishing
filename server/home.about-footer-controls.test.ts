@@ -72,11 +72,11 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("#discord .widgetbot-game-start .home-game-start-art { display:block; width:auto !important; max-width:100% !important; height:76px !important; max-height:none !important; }");
   });
 
-  it("removes the outer yellow Game Start treatment and makes shadow buttons press down on hover", () => {
+  it("removes the outer Game Start treatment while shadowed Discord buttons press down on hover", () => {
     expect(staticHomeSource).toContain(".hero-game-start,\n  .closing-game-start");
     expect(staticHomeSource).toContain("background:transparent !important");
     expect(staticHomeSource).toContain("box-shadow:none !important");
-    expect(staticHomeSource).toContain(".hero-game-start:hover,\n  .closing-game-start:hover { transform:translateY(4px) !important; filter:none !important; }");
+    expect(staticHomeSource).toContain(".hero-game-start:hover,\n  .closing-game-start:hover { transform:none !important; filter:none !important; }");
     expect(staticHomeSource).toContain(".hero-discord:hover,\n  .closing-discord:hover { background:#5865f2 !important; box-shadow:0 0 0 #4049b8");
     expect(staticHomeSource).toContain("#discord .widgetbot-join:hover { background:#5865f2 !important; box-shadow:0 0 0 #4049b8");
   });
@@ -88,7 +88,7 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("#home .hero-game-start,\n    #home .hero-discord { width:calc((100vw - 34px) / 2) !important; min-width:0 !important; flex:0 1 calc((100vw - 34px) / 2) !important; }");
   });
 
-  it("keeps a two-line Hero title, four mobile News cards, proportional imagery, and side-by-side Two Clicks CTAs", () => {
+  it("keeps a two-line Hero title, four vertical mobile News cards, proportional imagery, and side-by-side Two Clicks CTAs", () => {
     expect(staticHomeSource).toContain("#home #hero-title { font-size:clamp(34px,5.25vw,72px) !important; line-height:.96 !important; }");
     expect(staticHomeSource).toContain("#home #hero-title span { display:block !important; white-space:nowrap !important; }");
     expect(staticHomeSource).toContain("#news .pinned-news-grid { display:grid !important; grid-template-columns:1fr !important; gap:10px !important; overflow:visible !important; }");
@@ -96,7 +96,8 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("#news .pinned-news-card.mobile-fourth-news { display:block !important; }");
     expect(staticHomeSource).toContain('const newsGrid = document.querySelector("#news .pinned-news-grid");');
     expect(staticHomeSource).toContain('fourthCard.classList.add("mobile-fourth-news");');
-    expect(staticHomeSource).toContain("#news .pinned-news-card > a { display:grid !important; grid-template-columns:42% 58% !important; min-height:132px !important; }");
+    expect(staticHomeSource).toContain("#news .pinned-news-card > a { display:flex !important; flex-direction:column !important; min-height:0 !important; }");
+    expect(staticHomeSource).toContain("#news .pinned-news-card img { display:block !important; width:100% !important; height:auto !important; object-fit:contain !important; }");
     expect(staticHomeSource).toContain("#game-info .game-info-visual,\n    #media .media-video { width:100% !important; height:auto !important; min-height:0 !important; aspect-ratio:auto !important; overflow:visible !important; }");
     expect(staticHomeSource).toContain("#media .media-video { flex:none !important; }");
     expect(staticHomeSource).toContain("#game-info .game-info-visual img,\n    #media .media-video img { display:block !important; width:100% !important; height:auto !important; object-fit:contain !important; }");

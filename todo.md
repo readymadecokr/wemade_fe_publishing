@@ -867,3 +867,12 @@
 - [x] 서비스 Home iframe 안에서 Hero·Discord·Two Clicks CTA 이미지가 실제로 로드되는지 점검
 - [x] 이미지 로드 실패 시 정적 문서 자산 경로·스타일 충돌 보정
 - [x] 수정 후 서비스 Home과 정적 문서 렌더링·전체 회귀 테스트 검증
+
+## 모바일 News 세로 카드·Game Start 단독 이미지 보정
+- [x] 모바일 Latest from Midgard의 첫 4개 카드를 이미지 위·텍스트 아래 세로형으로 표시
+- [x] 모바일 News 카드 이미지가 잘리지 않도록 원본 비율·전체 가시 영역 유지
+- [x] 모든 Game Start CTA에서 배경색·버튼 박스·그림자를 제거하고 제공 이미지 자체만 표시
+- [x] 모바일 실화면과 전체 회귀 테스트 검증
+
+## Hero Join Discord 로고 표시 보정
+- [x] Hero Join Discord 버튼의 Discord-Logo-White.png가 실제 화면에서 비어 보이지 않도록 표시 보정
