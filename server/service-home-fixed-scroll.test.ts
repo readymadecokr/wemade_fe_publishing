@@ -7,11 +7,14 @@ const scrollFixedReferenceSource = readFileSync("/home/ubuntu/webdev-static-asse
 const widgetbotReferenceSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll.html", "utf8");
 
 describe("user-supplied final Home full-page navigation", () => {
-  it("renders the supplied final document directly with targeted scrolling and no Hero control overlay", () => {
-    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_6a93287c.html");
+  it("renders the supplied final document directly with targeted scrolling and minimal Hero controls", () => {
+    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_4de62e73.html");
     expect(homeSource).toContain("reference-home-embed__frame");
     expect(homeSource).not.toContain("window.addEventListener(\"wheel\"");
-    expect(widgetbotReferenceSource).not.toContain("hero-minimal-controls");
+    expect(widgetbotReferenceSource).toContain("hero-minimal-controls");
+    expect(widgetbotReferenceSource).toContain("hero-minimal-arrow--prev");
+    expect(widgetbotReferenceSource).toContain("hero-minimal-arrow--next");
+    expect(widgetbotReferenceSource).toContain("hero-minimal-dots");
     expect(widgetbotReferenceSource).toContain('class="hero-rail" aria-label="Main banners" hidden aria-hidden="true" style="display:none!important"');
   });
 

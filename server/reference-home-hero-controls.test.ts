@@ -5,13 +5,18 @@ const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.m
 const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll.html", "utf8");
 
 describe("reference Home hero controls", () => {
-  it("removes the Hero rail and minimal controls before the document is rendered", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_6a93287c.html");
+  it("keeps the Hero rail hidden but restores only the minimal arrows and page indicators", () => {
+    expect(homeSource).toContain("FINAL-fullpanel-scroll_4de62e73.html");
     expect(homeSource).toContain("src={REFERENCE_HOME_URL}");
     expect(staticHomeSource).toContain('class="hero-rail" aria-label="Main banners" hidden aria-hidden="true" style="display:none!important"');
-    expect(staticHomeSource).not.toContain('id="manus-hero-controls-script"');
-    expect(staticHomeSource).not.toContain("hero-minimal-controls");
-    expect(staticHomeSource).not.toContain("hero-minimal-dot");
+    expect(staticHomeSource).toContain('id="manus-hero-controls-script"');
+    expect(staticHomeSource).toContain("hero-minimal-controls");
+    expect(staticHomeSource).toContain("hero-minimal-arrow--prev");
+    expect(staticHomeSource).toContain("hero-minimal-arrow--next");
+    expect(staticHomeSource).toContain("hero-minimal-dots");
+    expect(staticHomeSource).toContain("hero-minimal-dot");
+    expect(staticHomeSource).toContain(".hero-minimal-arrow:hover,");
+    expect(staticHomeSource).toContain("transform:translateY(calc(-50% + 2px)) !important");
   });
 
   it("keeps external community and Game Start actions available from the live header", () => {

@@ -9,15 +9,18 @@ const originalWheelSelection = "const current=Math.max(0,sectionIds.indexOf(acti
 const correctedWheelSelection = "const scrollAnchor=window.scrollY+window.innerHeight*.35;const current=sectionIds.reduce((closestIndex,sectionId,index)=>{const section=document.getElementById(sectionId);return section&&section.offsetTop<=scrollAnchor?index:closestIndex},0);";
 
 describe("final Home source integrity", () => {
-  it("uses the supplied HTML with targeted Latest scrolling and no Hero control overlay", () => {
+  it("uses the supplied HTML with targeted Latest scrolling and only the minimal Hero controls", () => {
     expect(originalReference).toContain(originalWheelSelection);
     expect(uploadedReference).toContain(correctedWheelSelection);
     expect(uploadedReference.replace(correctedWheelSelection, originalWheelSelection)).toBe(originalReference);
-    expect(widgetbotReference).not.toContain("hero-minimal-controls");
+    expect(widgetbotReference).toContain("hero-minimal-controls");
+    expect(widgetbotReference).toContain("hero-minimal-arrow--prev");
+    expect(widgetbotReference).toContain("hero-minimal-arrow--next");
+    expect(widgetbotReference).toContain("hero-minimal-dots");
     expect(widgetbotReference).toContain('class="hero-rail" aria-label="Main banners" hidden aria-hidden="true" style="display:none!important"');
     expect(widgetbotReference).toContain("floating-community.hero-hidden");
     expect(widgetbotReference).toContain("widgetbot-community");
-    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_6a93287c.html");
+    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_4de62e73.html");
   });
 
   it("does not place a custom visual shell around the supplied document", () => {
