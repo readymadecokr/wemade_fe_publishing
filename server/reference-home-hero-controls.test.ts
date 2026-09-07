@@ -17,7 +17,7 @@ describe("reference Home hero controls", () => {
   it("keeps external community and Game Start actions available from the live header", () => {
     expect(homeSource).toContain("https://discord.gg/yVWJkWdkAU");
     expect(homeSource).toContain('sectionHref("game-start")');
-    expect(homeSource).toContain('const GAME_START_BUTTON_URL = "/manus-storage/Gamestart_Button_8b4790d7.png"');
+    expect(homeSource).toContain('const GAME_START_BUTTON_URL = "/manus-storage/Gamestart_Button-header-latest_83e85578.png"');
     expect(homeSource).toContain('src={GAME_START_BUTTON_URL}');
   });
 

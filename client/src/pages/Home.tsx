@@ -7,7 +7,8 @@ import "./reference-home.css";
 
 const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_8e3ad00e.html";
 const LOGO_URL = "/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png";
-const GAME_START_BUTTON_URL = "/manus-storage/Gamestart_Button_8b4790d7.png";
+const GAME_START_BUTTON_URL = "/manus-storage/Gamestart_Button-header-latest_83e85578.png";
+const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_68e7fbe1.png";
 
 function formatRcoin(value: number): string {
   return Math.min(value, 9_999_999).toLocaleString("en-US");
@@ -69,8 +70,7 @@ function ReferenceHomeHeader() {
           </nav>
           <div className="reference-header-cta shrink-0" aria-label="Quick actions">
             <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="reference-header-discord" aria-label="Join Ragnarok Universe on Discord">
-              <img src="/manus-storage/Discord_icon_230fdb89_6026051e.png" alt="" className="h-4 w-4 object-contain" />
-              <span>DISCORD</span>
+              <img src={DISCORD_BUTTON_URL} alt="Discord" className="reference-header-discord__image" />
             </a>
             <a href={sectionHref("game-start")} target="ragnarok-reference-frame" className="reference-header-game-start">
               <img src={GAME_START_BUTTON_URL} alt="Game Start" className="reference-header-game-start__image" />

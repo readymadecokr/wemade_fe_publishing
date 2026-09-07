@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
+const headerStyles = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
 describe("reference Home live service header", () => {
   it("restores the two-tier navy service header over the supplied reference document", () => {
@@ -13,6 +14,10 @@ describe("reference Home live service header", () => {
     expect(homeSource).toContain("reference-header-game-start");
     expect(homeSource).toContain("GAME_START_BUTTON_URL");
     expect(homeSource).toContain("reference-header-game-start__image");
+    expect(homeSource).toContain("DISCORD_BUTTON_URL");
+    expect(homeSource).toContain("reference-header-discord__image");
+    expect(headerStyles).toContain("background: #5865f2;");
+    expect(headerStyles).toContain("width: 154px;");
   });
 
   it("uses the real OAuth session, balance query, and logout mutation instead of legacy local storage", () => {

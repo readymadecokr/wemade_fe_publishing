@@ -16,41 +16,45 @@
 .reference-header-cta {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+}
+
+.reference-header-discord,
+.reference-header-game-start {
+  display: inline-flex;
+  width: 154px;
+  min-width: 154px;
+  height: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border-radius: 10px;
 }
 
 .reference-header-discord {
-  display: inline-flex;
-  min-height: 46px;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  border: 2px solid #5865f2;
-  border-radius: 12px;
-  background: #ffffff;
-  color: #4a54cd;
-  padding: 0 18px;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: .04em;
-  box-shadow: 0 2px 0 rgba(21, 33, 64, .08);
+  border: 0;
+  background: #5865f2;
+  box-shadow: 0 4px 0 #4049b8, 0 6px 12px rgba(28, 37, 119, .34), inset 0 1px 0 rgba(255, 255, 255, .28);
   transition: transform 160ms cubic-bezier(.23, 1, .32, 1), box-shadow 160ms cubic-bezier(.23, 1, .32, 1), background 160ms ease;
 }
 
+.reference-header-discord__image {
+  display: block;
+  width: 118px;
+  height: auto;
+  max-height: 19px;
+  object-fit: contain;
+}
+
 .reference-header-discord:hover {
-  background: #f4f5ff;
-  box-shadow: 0 5px 12px rgba(62, 76, 204, .24);
+  background: #6b76ff;
+  box-shadow: 0 5px 13px rgba(28, 37, 119, .42), inset 0 1px 0 rgba(255, 255, 255, .38);
   transform: translateY(-1px);
 }
 
 .reference-header-game-start {
-  display: inline-flex;
-  min-height: 52px;
-  min-width: 216px;
-  align-items: center;
-  justify-content: center;
   border: 0;
-  border-radius: 11px;
   background: linear-gradient(180deg, #3c8ed1 0%, #1760a5 52%, #0d477e 100%);
   box-shadow: 0 5px 0 #0b345f, 0 7px 13px rgba(11, 37, 72, .45), inset 0 1px 0 rgba(255, 255, 255, .7);
   transition: transform 160ms cubic-bezier(.23, 1, .32, 1), filter 160ms ease;
@@ -58,9 +62,9 @@
 
 .reference-header-game-start__image {
   display: block;
-  width: min(178px, 84%);
+  width: 128px;
   height: auto;
-  max-height: 32px;
+  max-height: 22px;
   object-fit: contain;
 }
 
@@ -96,26 +100,23 @@
     gap: 6px;
   }
 
-  .reference-header-discord {
-    min-height: 34px;
-    gap: 4px;
-    padding: 0 8px;
-    font-size: 8px;
-  }
-
-  .reference-header-discord img {
-    width: 12px;
-    height: 12px;
-  }
-
+  .reference-header-discord,
   .reference-header-game-start {
-    min-height: 36px;
+    width: 96px;
     min-width: 96px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0 7px;
     border-radius: 8px;
   }
 
+  .reference-header-discord__image {
+    width: 74px;
+    max-height: 12px;
+  }
+
   .reference-header-game-start__image {
-    width: min(84px, 80%);
-    max-height: 20px;
+    width: 78px;
+    max-height: 14px;
   }
 }

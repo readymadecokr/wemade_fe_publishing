@@ -789,3 +789,9 @@
 - [x] 상단 Game Start 버튼의 노란색 테두리 제거
 - [x] 상단 Game Start 텍스트를 제공된 Gamestart_Button.png 이미지로 교체
 - [x] Hero 초기 렌더·상단 버튼·전체 회귀 테스트 검증
+
+## 상단 Discord·Game Start 이미지 버튼 통일
+- [x] 제공된 Gamestart_Button.png로 상단 Game Start 이미지 교체 및 버튼 여백 축소
+- [x] 제공된 Discord-Logo-White.png 적용 및 Discord 배경색 #5865F2 설정
+- [x] 두 상단 버튼의 데스크톱·모바일 외형 크기 통일
+- [x] 상단 버튼 렌더링과 전체 회귀 테스트 검증
