@@ -57,18 +57,20 @@ describe("user-supplied final Home closing panel", () => {
   });
 
   it("matches the Discord read-only CTA to the Two Clicks Join Discord desktop dimensions and typography", () => {
-    expect(staticHomeSource).toContain("#discord .widgetbot-readonly-bar { min-height:96px !important; display:flex; align-items:center; justify-content:center; }");
+    expect(staticHomeSource).toContain("#discord .widgetbot-readonly-bar { height:80px !important; min-height:80px !important; padding:0 !important; display:flex; align-items:center; justify-content:center; }");
     expect(staticHomeSource).toContain("#discord .widgetbot-join { width:285px !important; min-width:285px !important; height:76px !important; min-height:76px !important; padding:0 24px !important");
     expect(staticHomeSource).toContain("gap:15px !important; border:0 !important; border-radius:10px !important");
     expect(staticHomeSource).toContain("#discord .widgetbot-join__symbol { display:block; width:42px !important; height:42px !important");
-    expect(staticHomeSource).toContain("#discord .widgetbot-join__copy b { font:900 italic 16px/1 Arial,Helvetica,sans-serif !important; letter-spacing:normal; white-space:nowrap; }");
+    expect(staticHomeSource).toContain("#discord .widgetbot-join__copy b { font:900 italic 21px/1 Arial,Helvetica,sans-serif !important; letter-spacing:normal; white-space:nowrap; }");
     expect(staticHomeSource).toContain("#discord .widgetbot-join__copy small { font:800 9px/1 Arial,Helvetica,sans-serif !important");
   });
 
-  it("removes the outer yellow Game Start treatment and hover brightening from Hero and closing CTAs", () => {
+  it("removes the outer yellow Game Start treatment and makes shadow buttons press down on hover", () => {
     expect(staticHomeSource).toContain(".hero-game-start,\n  .closing-game-start");
     expect(staticHomeSource).toContain("background:transparent !important");
     expect(staticHomeSource).toContain("box-shadow:none !important");
-    expect(staticHomeSource).toContain(".hero-game-start:hover,\n  .closing-game-start:hover { transform:none !important; filter:none !important; }");
+    expect(staticHomeSource).toContain(".hero-game-start:hover,\n  .closing-game-start:hover { transform:translateY(4px) !important; filter:none !important; }");
+    expect(staticHomeSource).toContain(".hero-discord:hover,\n  .closing-discord:hover { background:#5865f2 !important; box-shadow:0 0 0 #4049b8");
+    expect(staticHomeSource).toContain("#discord .widgetbot-join:hover { background:#5865f2 !important; box-shadow:0 0 0 #4049b8");
   });
 });

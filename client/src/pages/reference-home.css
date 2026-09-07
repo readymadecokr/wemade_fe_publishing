@@ -49,8 +49,8 @@
 
 .reference-header-discord:hover {
   background: #5865f2;
-  box-shadow: 0 4px 0 #4049b8, 0 6px 12px rgba(28, 37, 119, .34), inset 0 1px 0 rgba(255, 255, 255, .28);
-  transform: none;
+  box-shadow: 0 0 0 #4049b8, 0 2px 4px rgba(28, 37, 119, .22), inset 0 1px 0 rgba(255, 255, 255, .28);
+  transform: translateY(4px);
 }
 
 .reference-header-game-start {
@@ -70,8 +70,8 @@
 
 .reference-header-game-start:hover {
   background: #2252a2;
-  box-shadow: 0 4px 0 #173978, 0 6px 12px rgba(13, 41, 91, .38), inset 0 1px 0 rgba(255, 255, 255, .24);
-  transform: none;
+  box-shadow: 0 0 0 #173978, 0 2px 4px rgba(13, 41, 91, .22), inset 0 1px 0 rgba(255, 255, 255, .24);
+  transform: translateY(4px);
 }
 
 .reference-header-discord:active,

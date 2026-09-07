@@ -6,7 +6,7 @@ const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnaro
 
 describe("reference Home hero controls", () => {
   it("removes the Hero rail and minimal controls before the document is rendered", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_5bc5be81.html");
+    expect(homeSource).toContain("FINAL-fullpanel-scroll_6a93287c.html");
     expect(homeSource).toContain("src={REFERENCE_HOME_URL}");
     expect(staticHomeSource).toContain('class="hero-rail" aria-label="Main banners" hidden aria-hidden="true" style="display:none!important"');
     expect(staticHomeSource).not.toContain('id="manus-hero-controls-script"');

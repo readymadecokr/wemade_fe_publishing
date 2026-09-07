@@ -22,6 +22,7 @@ describe("reference Home live service header", () => {
     expect(headerStyles).toContain("width: 154px;");
     expect(headerStyles).toContain(".reference-header-discord:hover");
     expect(headerStyles).toContain(".reference-header-game-start:hover");
+    expect(headerStyles).toContain("transform: translateY(4px);");
     expect(headerStyles).toContain("transition: none;");
   });
 

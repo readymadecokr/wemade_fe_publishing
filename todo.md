@@ -816,3 +816,9 @@
 ## Discord CTA 실제 치수 정밀 일치
 - [x] Discord Join Official Discord의 실제 버튼 폭·높이·여백·심볼·서체를 Two Clicks Join Discord 기준과 일치
 - [x] 두 CTA의 렌더링 결과와 전체 회귀 테스트 검증
+
+## CTA 눌림 효과·Discord 채팅 가시성 보정
+- [x] 그림자가 있는 Home 버튼에 hover 시 그림자 높이만큼 아래로 내려가는 눌림 효과 적용
+- [x] Discord 섹션 CTA를 기준 Join Discord 표기·비율·구성으로 정리
+- [x] WidgetBot 하단 가림 영역을 축소해 최신 채팅이 잘리지 않도록 보정
+- [x] 버튼 상호작용·채팅 가시성·전체 회귀 테스트 검증
