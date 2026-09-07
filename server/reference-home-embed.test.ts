@@ -6,7 +6,7 @@ const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css
 
 describe("user-supplied final HTML Home", () => {
   it("uses the original final reference HTML without a React restyle layer", () => {
-    expect(homeSource).toContain('const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_82aba999.html"');
+    expect(homeSource).toContain('const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_0df295aa.html"');
     expect(homeSource).toContain("src={REFERENCE_HOME_URL}");
     expect(homeSource).toContain('title="Ragnarok Universe homepage"');
     expect(homeSource).not.toContain("reference-hero-panel");
@@ -23,10 +23,11 @@ describe("user-supplied final HTML Home", () => {
     expect(styleSource).toContain("border: 0");
   });
 
-  it("hides the reference document header so the live header is the only header above Hero", () => {
+  it("removes the reference document header so the live header is the only header above Hero", () => {
     const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll.html", "utf8");
     expect(staticHomeSource).toContain('id="manus-reference-inner-header-hide"');
     expect(staticHomeSource).toContain(".site-header { display:none !important; }");
+    expect(staticHomeSource).not.toContain('<header class="site-header">');
     expect(staticHomeSource).toContain(".page-panel { height:100svh !important; min-height:100svh !important; scroll-margin-top:0 !important; }");
   });
 });
