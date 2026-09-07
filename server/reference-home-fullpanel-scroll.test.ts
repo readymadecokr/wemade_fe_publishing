@@ -6,7 +6,7 @@ const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnaro
 
 describe("reference Home full-panel scroll restoration", () => {
   it("uses the full-panel document for Home", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_a083b743.html");
+    expect(homeSource).toContain("FINAL-fullpanel-scroll_32c2c7f3.html");
   });
 
   it("snaps desktop wheel input through the Discord, News, Game Info, Media, and footer panels", () => {

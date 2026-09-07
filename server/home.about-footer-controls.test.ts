@@ -18,4 +18,10 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("background-image:none !important");
     expect(staticHomeSource).toContain("opacity:0 !important");
   });
+
+  it("uses the light-mode blue GRAVITY logo in the footer", () => {
+    expect(staticHomeSource).toContain("gravity_logo_light_c14f48f8_5e3a7c41.png");
+    expect(staticHomeSource).toContain("replaceGravityLogo(document)");
+    expect(staticHomeSource).toContain("replaceGravityLogo(footerTemplate.content)");
+  });
 });
