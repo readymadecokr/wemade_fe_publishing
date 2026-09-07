@@ -5,7 +5,7 @@ import { ChevronDown, ExternalLink, Globe } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import "./reference-home.css";
 
-const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_7ef42017.html";
+const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_58131fde.html";
 const LOGO_URL = "/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png";
 const GAME_START_BUTTON_URL = "/manus-storage/Gamestart_Button2_6537c714.png";
 const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_68e7fbe1.png";

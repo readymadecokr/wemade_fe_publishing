@@ -56,6 +56,14 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("border:0 !important");
   });
 
+  it("matches the Discord read-only CTA to the Two Clicks Join Discord desktop dimensions and typography", () => {
+    expect(staticHomeSource).toContain(".widgetbot-readonly-bar { min-height:96px !important; display:flex; align-items:center; justify-content:center; }");
+    expect(staticHomeSource).toContain(".widgetbot-join { width:285px; min-width:285px; height:76px; min-height:76px; padding:0 24px");
+    expect(staticHomeSource).toContain(".widgetbot-join__symbol { display:block; width:42px; height:42px");
+    expect(staticHomeSource).toContain(".widgetbot-join__copy b { font:900 italic 16px/1 Arial,Helvetica,sans-serif; letter-spacing:normal; white-space:nowrap; }");
+    expect(staticHomeSource).toContain(".widgetbot-join__copy small { font:800 9px/1 Arial,Helvetica,sans-serif");
+  });
+
   it("removes the outer yellow Game Start treatment and hover brightening from Hero and closing CTAs", () => {
     expect(staticHomeSource).toContain(".hero-game-start,\n  .closing-game-start");
     expect(staticHomeSource).toContain("background:transparent !important");

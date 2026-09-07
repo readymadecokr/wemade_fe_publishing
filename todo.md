@@ -807,3 +807,8 @@
 - [x] 관련 CTA의 밝아지는 hover 효과 제거
 - [x] Hero 하단·Discord 섹션 Join Discord 버튼을 마무리 Join Discord의 #5865F2 스타일로 통일
 - [x] CTA 렌더링과 전체 회귀 테스트 검증
+
+## Discord Join Official Discord CTA 정밀 통일
+- [x] Discord 섹션 Join Official Discord의 폭·높이·심볼·타이포그래피·그림자를 Two Clicks Join Discord와 동일하게 보정
+- [x] Discord CTA 렌더링과 전체 회귀 테스트 검증
+- [x] Join Official Discord 제목이 줄바꿈 없이 한 줄로 표시되도록 글자 크기·여백 보정
