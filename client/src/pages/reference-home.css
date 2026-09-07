@@ -101,7 +101,7 @@
 
 @media (max-width: 640px) {
   .reference-home-embed {
-    --reference-live-header-height: 144px;
+    --reference-live-header-height: 124px;
   }
 
   .reference-header-cta {

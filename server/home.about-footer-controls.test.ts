@@ -73,4 +73,11 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain(".hero-discord:hover,\n  .closing-discord:hover { background:#5865f2 !important; box-shadow:0 0 0 #4049b8");
     expect(staticHomeSource).toContain("#discord .widgetbot-join:hover { background:#5865f2 !important; box-shadow:0 0 0 #4049b8");
   });
+
+  it("centers matching Hero CTA widths and removes mobile Hero letterboxing", () => {
+    expect(staticHomeSource).toContain(".hero-primary-actions { width:100% !important; justify-content:center !important; }");
+    expect(staticHomeSource).toContain(".hero-game-start,\n  .hero-discord { width:285px !important; min-width:285px !important; flex:0 0 285px; }");
+    expect(staticHomeSource).toContain("#home .hero-slide img { width:100% !important; height:100% !important; object-fit:cover !important; object-position:center !important; }");
+    expect(staticHomeSource).toContain("#home .hero-game-start,\n    #home .hero-discord { width:calc((100vw - 34px) / 2) !important; min-width:0 !important; flex:0 1 calc((100vw - 34px) / 2) !important; }");
+  });
 });
