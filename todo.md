@@ -844,3 +844,9 @@
 - [x] 모바일 About Ragnarok Universe·Media 이미지의 비율 보존 및 빈 좌우 영역 제거
 - [x] 모바일 Two Clicks Game Start·Join Discord CTA를 좌우 한 줄로 정렬
 - [x] 모바일·PC 렌더링과 전체 회귀 테스트 검증
+
+## 모바일 Home 실제 렌더링 재보정
+- [x] 모바일 News and Notice에서 2개 뉴스 카드가 실제로 보이도록 레이아웃 재구성
+- [x] 모바일 About Ragnarok Universe·Media 이미지의 잘림·좌우 빈 영역을 실제 화면 기준으로 제거
+- [x] 모바일 Two Clicks CTA를 실제 화면에서 좌우 한 줄로 표시하도록 재구성
+- [x] 실제 모바일 화면 비교와 전체 회귀 테스트 검증
