@@ -772,3 +772,9 @@
 ## 홈 푸터 GRAVITY 로고 교체
 - [x] 좌측 하단 로고를 라이트 모드 파란색 GRAVITY 이미지로 변경
 - [x] 푸터 로고 렌더링과 전체 회귀 테스트 검증
+
+## 홈 제목 스타일·푸터 로고 정정
+- [x] Discord·Latest from Midgard·Classic adventure / A new way to play·Media 제목을 대문자 Two Clicks 스타일로 통일
+- [x] Media의 Gameplay PV 문구 삭제
+- [x] 실제 렌더 푸터의 GRAVITY 로고를 라이트 모드 파란색 자산으로 교체
+- [x] 주요 제목·미디어·푸터 렌더링과 회귀 테스트 검증

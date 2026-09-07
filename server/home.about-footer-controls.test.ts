@@ -23,5 +23,18 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("gravity_logo_light_c14f48f8_5e3a7c41.png");
     expect(staticHomeSource).toContain("replaceGravityLogo(document)");
     expect(staticHomeSource).toContain("replaceGravityLogo(footerTemplate.content)");
+    expect(staticHomeSource).toContain('footer .footer-legal img[alt="GRAVITY"] { filter:none !important; }');
+  });
+
+  it("unifies requested Home titles with the Two Clicks uppercase italic style", () => {
+    expect(staticHomeSource).toContain('id="manus-section-heading-and-footer-logo-style"');
+    expect(staticHomeSource).toContain("#discord .widgetbot-community__title");
+    expect(staticHomeSource).toContain("#news h2");
+    expect(staticHomeSource).toContain("#game-info h2");
+    expect(staticHomeSource).toContain("#media h2");
+    expect(staticHomeSource).toContain("font-style:italic !important");
+    expect(staticHomeSource).toContain("font-weight:900 !important");
+    expect(staticHomeSource).toContain("text-transform:uppercase !important");
+    expect(staticHomeSource).toContain("#media .media-heading > p { display:none !important; }");
   });
 });
