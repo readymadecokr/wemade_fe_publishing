@@ -57,6 +57,10 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("home-game-start-art");
     expect(staticHomeSource).toContain("home-discord-logo");
     expect(staticHomeSource).toContain("width:100% !important; max-width:none !important; height:auto !important; max-height:none !important");
+    expect(staticHomeSource).toContain("const applyCtaArtwork = () =>");
+    expect(staticHomeSource).toContain("ctaArtworkObserver.observe(document.getElementById(\"home\"), { childList:true, subtree:true })");
+    expect(staticHomeSource).toContain('<a class="hero-discord" href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noreferrer"><img class="home-discord-logo" src="https://raguniverse-izcifhmz.manus.space/manus-storage/Discord-Logo-White_b3128ea2.png" alt="Discord"></a>');
+    expect(staticHomeSource).toContain('class="hero-game-start game-start-art" href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer"><img src="https://raguniverse-izcifhmz.manus.space/manus-storage/gamestart_BTN_1c6449da.png" alt="Game Start">');
     expect(staticHomeSource).toContain("background:#5865f2 !important");
     expect(staticHomeSource).toContain("border:0 !important");
   });

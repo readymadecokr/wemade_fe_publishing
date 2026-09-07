@@ -862,3 +862,8 @@
 - [x] 모든 Join Discord CTA를 Discord-Logo-White.png 이미지 기반 버튼으로 교체
 - [x] Hero·Discord·Two Clicks의 CTA 순서를 좌측 Game Start, 우측 Discord로 통일
 - [x] 데스크톱·모바일 CTA 이미지·순서와 전체 회귀 테스트 검증
+
+## 서비스 iframe CTA 이미지 표시 재검증
+- [x] 서비스 Home iframe 안에서 Hero·Discord·Two Clicks CTA 이미지가 실제로 로드되는지 점검
+- [x] 이미지 로드 실패 시 정적 문서 자산 경로·스타일 충돌 보정
+- [x] 수정 후 서비스 Home과 정적 문서 렌더링·전체 회귀 테스트 검증
