@@ -48,28 +48,26 @@ describe("user-supplied final Home closing panel", () => {
 
   it("uses the provided Game Start and Discord logo images for all homepage CTAs", () => {
     expect(staticHomeSource).toContain('id="manus-cta-unification-style"');
-    expect(staticHomeSource).toContain('const gameStartButtonImage = "https://raguniverse-izcifhmz.manus.space/manus-storage/gamestart_BTN_1c6449da.png"');
-    expect(staticHomeSource).toContain('const discordButtonLogo = "https://raguniverse-izcifhmz.manus.space/manus-storage/Discord-Logo-White_b3128ea2.png"');
+    expect(staticHomeSource).toContain('const gameStartButtonImage = "data:image/png;base64,');
+    expect(staticHomeSource).toContain('const discordButtonLogo = "data:image/png;base64,');
     expect(staticHomeSource).toContain('document.querySelectorAll(".hero-game-start, .closing-game-start")');
     expect(staticHomeSource).toContain('document.querySelectorAll(".hero-discord, .closing-discord")');
     expect(staticHomeSource).toContain('document.querySelectorAll(".widgetbot-join")');
-    expect(staticHomeSource).toContain("widgetbot-game-start");
     expect(staticHomeSource).toContain("home-game-start-art");
     expect(staticHomeSource).toContain("home-discord-logo");
     expect(staticHomeSource).toContain("width:100% !important; max-width:none !important; height:auto !important; max-height:none !important");
     expect(staticHomeSource).toContain("const applyCtaArtwork = () =>");
     expect(staticHomeSource).toContain("ctaArtworkObserver.observe(document.getElementById(\"home\"), { childList:true, subtree:true })");
-    expect(staticHomeSource).toContain('<a class="hero-discord" href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noreferrer"><img class="home-discord-logo" src="https://raguniverse-izcifhmz.manus.space/manus-storage/Discord-Logo-White_b3128ea2.png" alt="Discord"></a>');
-    expect(staticHomeSource).toContain('class="hero-game-start game-start-art" href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer"><img src="https://raguniverse-izcifhmz.manus.space/manus-storage/gamestart_BTN_1c6449da.png" alt="Game Start">');
+    expect(staticHomeSource).toContain('<a class="hero-discord" href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noreferrer"><img class="home-discord-logo" src="data:image/png;base64,');
+    expect(staticHomeSource).toContain('class="hero-game-start game-start-art" href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer"><img src="data:image/png;base64,');
     expect(staticHomeSource).toContain("background:#5865f2 !important");
     expect(staticHomeSource).toContain("border:0 !important");
   });
 
-  it("keeps Game Start left and Discord right in every homepage CTA pair", () => {
-    expect(staticHomeSource).toContain("#discord .widgetbot-readonly-bar { height:96px !important; min-height:96px !important; padding:0 !important; display:flex; align-items:center; justify-content:center; gap:16px !important; }");
-    expect(staticHomeSource).toContain("#discord .widgetbot-game-start,\n  #discord .widgetbot-join { width:285px !important; min-width:285px !important; height:76px !important");
-    expect(staticHomeSource).toContain("readonlyBar.insertBefore(gameStart, button);");
-    expect(staticHomeSource).toContain("#discord .widgetbot-game-start .home-game-start-art { display:block; width:auto !important; max-width:100% !important; height:76px !important; max-height:none !important; }");
+  it("keeps Game Start left and Discord right in Hero and closing pairs while centering Discord alone in its panel", () => {
+    expect(staticHomeSource).toContain("#discord .widgetbot-readonly-bar { height:72px !important; min-height:72px !important; padding:0 !important; display:flex; align-items:center; justify-content:center; gap:0 !important; }");
+    expect(staticHomeSource).toContain("#discord .widgetbot-join { width:285px !important; min-width:285px !important; height:64px !important");
+    expect(staticHomeSource).not.toContain("widgetbot-game-start");
   });
 
   it("removes the outer Game Start treatment while shadowed Discord buttons press down on hover", () => {
@@ -85,7 +83,8 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain(".hero-primary-actions { width:100% !important; justify-content:center !important; }");
     expect(staticHomeSource).toContain(".hero-game-start,\n  .hero-discord { width:285px !important; min-width:285px !important; flex:0 0 285px; }");
     expect(staticHomeSource).toContain("#home .hero-slide img { width:100% !important; height:100% !important; object-fit:cover !important; object-position:center !important; }");
-    expect(staticHomeSource).toContain("#home .hero-game-start,\n    #home .hero-discord { width:calc((100vw - 34px) / 2) !important; min-width:0 !important; flex:0 1 calc((100vw - 34px) / 2) !important; }");
+    expect(staticHomeSource).toContain("#home .hero-primary-actions { display:flex !important; width:calc(100% - 14px) !important; margin-right:14px !important;");
+    expect(staticHomeSource).toContain("#home .hero-game-start,\n    #home .hero-discord { width:calc((100% - 10px) / 2) !important; min-width:0 !important; flex:0 1 calc((100% - 10px) / 2) !important; }");
   });
 
   it("keeps a two-line Hero title, four vertical mobile News cards, proportional imagery, and side-by-side Two Clicks CTAs", () => {

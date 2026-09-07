@@ -24,11 +24,15 @@ describe("reference Home live service header", () => {
     expect(homeSource).toContain('const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_b3128ea2.png"');
     expect(homeSource.indexOf('className="reference-header-game-start"')).toBeLessThan(homeSource.indexOf('className="reference-header-discord"'));
     expect(headerStyles).toContain("width: 154px;");
+    expect(headerStyles).toContain("max-height: 22px;");
     expect(headerStyles).toContain(".reference-header-discord:hover");
     expect(headerStyles).toContain(".reference-header-game-start:hover");
     expect(headerStyles).toContain(".reference-header-game-start:hover");
     expect(headerStyles).toContain("transform: none;");
     expect(headerStyles).toContain("transition: none;");
+    expect(headerStyles).toContain("transform: translateX(-12px);");
+    expect(headerStyles).toContain("width: 88px;");
+    expect(headerStyles).toContain("max-height: 16px;");
   });
 
   it("uses the real OAuth session, balance query, and logout mutation instead of legacy local storage", () => {

@@ -46,7 +46,7 @@
   display: block;
   width: 118px;
   height: auto;
-  max-height: 19px;
+  max-height: 22px;
   object-fit: contain;
 }
 
@@ -114,6 +114,7 @@
 
   .reference-header-cta {
     gap: 6px;
+    transform: translateX(-12px);
   }
 
   .reference-header-discord,
@@ -122,17 +123,17 @@
     height: auto;
     padding: 0;
     border-radius: 0;
-    width: 96px;
-    min-width: 96px;
+    width: 88px;
+    min-width: 88px;
   }
 
   .reference-header-discord__image {
-    width: 74px;
-    max-height: 12px;
+    width: 76px;
+    max-height: 16px;
   }
 
   .reference-header-game-start__image {
-    width: 96px;
+    width: 88px;
     max-height: none;
   }
 }

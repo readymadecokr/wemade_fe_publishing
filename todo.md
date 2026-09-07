@@ -876,3 +876,13 @@
 
 ## Hero Join Discord 로고 표시 보정
 - [x] Hero Join Discord 버튼의 Discord-Logo-White.png가 실제 화면에서 비어 보이지 않도록 표시 보정
+
+## Discord CTA 단일화·모바일 헤더 보정
+- [x] Discord 섹션의 Game Start CTA를 제거하고 Discord CTA만 중앙 정렬
+- [x] Hero 모바일 Discord CTA를 스크롤바 폭을 고려해 중앙 정렬하고 Game Start와 같은 높이·상하 여백 적용
+- [x] 상단 헤더 Discord CTA의 로고 이미지 잘림 방지
+- [x] 모바일·PC CTA 렌더링과 전체 회귀 테스트 검증
+
+## 정적 iframe CTA 이미지 초기 표시 보강
+- [x] 외부 정적 자산 요청에 의존하지 않도록 Hero·Discord·마무리 CTA 로고를 문서 내부 이미지 데이터로 초기 표시
+- [x] 서비스 모바일 화면에서 Game Start·Discord CTA 로고가 실제 표시되는지 재검증

@@ -6,11 +6,12 @@ const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnaro
 
 describe("reference Home WidgetBot restoration", () => {
   it("uses the restored read-only WidgetBot Discord community document", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_75f9bf21.html");
+    expect(homeSource).toContain("FINAL-fullpanel-scroll_82aba999.html");
     expect(staticHomeSource).toContain("https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051");
     expect(staticHomeSource).toContain("widgetbot-readonly-bar");
-    expect(staticHomeSource).toContain("Discord-Logo-White_b3128ea2.png");
-    expect(staticHomeSource).toContain("widgetbot-game-start");
+    expect(staticHomeSource).toContain('const discordButtonLogo = "data:image/png;base64,');
+    expect(staticHomeSource).toContain("widgetbot-join");
+    expect(staticHomeSource).not.toContain("widgetbot-game-start");
   });
 
   it("shows the floating social links when the Discord section enters the viewport", () => {
