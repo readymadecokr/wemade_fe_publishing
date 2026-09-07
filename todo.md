@@ -757,3 +757,8 @@
 ## 홈 마무리 섹션 배경 정리
 - [x] Two Clicks to Midgard 영역에 희미하게 남은 메인 배너 배경 이미지 제거
 - [x] 마무리 섹션·푸터 구성과 전체 회귀 테스트 검증
+
+## 홈 CTA·소셜 공식 링크 정리
+- [x] Explore Game Info CTA를 Rune-Midgarts Library로 변경하고 Coming Soon 알림 연결
+- [x] 플로팅 배너와 푸터 Facebook·X 아이콘에 공식 URL 연결
+- [x] CTA·소셜 링크 동작과 전체 회귀 테스트 검증

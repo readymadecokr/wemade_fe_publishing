@@ -6,7 +6,7 @@ const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnaro
 
 describe("reference Home full-panel scroll restoration", () => {
   it("uses the full-panel document for Home", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_2ff170b1.html");
+    expect(homeSource).toContain("FINAL-fullpanel-scroll_ab0c5e2b.html");
   });
 
   it("snaps desktop wheel input through the Discord, News, Game Info, Media, and footer panels", () => {
@@ -20,5 +20,13 @@ describe("reference Home full-panel scroll restoration", () => {
     expect(staticHomeSource).toContain("window.scrollY < discord.offsetTop - 4");
     expect(staticHomeSource).toContain('floating.classList.toggle("hero-hidden", heroIsCurrentPanel)');
     expect(staticHomeSource).toContain('<nav class="floating-community hero-hidden"');
+  });
+
+  it("uses the requested library CTA and official Facebook and X destinations", () => {
+    expect(staticHomeSource).toContain('id="manus-cta-social-links"');
+    expect(staticHomeSource).toContain('libraryLink.innerHTML = "Rune-Midgarts Library <span>›</span>"');
+    expect(staticHomeSource).toContain('window.alert("Coming Soon")');
+    expect(staticHomeSource).toContain("https://facebook.com/RagnarokUniverseEN");
+    expect(staticHomeSource).toContain("https://x.com/RagUniOfficial");
   });
 });
