@@ -762,3 +762,9 @@
 - [x] Explore Game Info CTA를 Rune-Midgarts Library로 변경하고 Coming Soon 알림 연결
 - [x] 플로팅 배너와 푸터 Facebook·X 아이콘에 공식 URL 연결
 - [x] CTA·소셜 링크 동작과 전체 회귀 테스트 검증
+
+## Rune-Midgarts Library Coming Soon 모달
+- [x] Get TT Key 팝업의 마크업·스타일·닫기 동작 확인
+- [x] 페이지 이동 없이 동일 스타일의 Coming Soon 모달 구현
+- [x] 모달 열기·닫기·URL 유지와 회귀 테스트 검증
+- [x] 기존 Game Info 이동 이벤트를 캡처 단계에서 차단해 URL 유지 보정

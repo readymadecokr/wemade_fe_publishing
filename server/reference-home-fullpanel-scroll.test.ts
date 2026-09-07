@@ -6,7 +6,7 @@ const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnaro
 
 describe("reference Home full-panel scroll restoration", () => {
   it("uses the full-panel document for Home", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_ab0c5e2b.html");
+    expect(homeSource).toContain("FINAL-fullpanel-scroll_a083b743.html");
   });
 
   it("snaps desktop wheel input through the Discord, News, Game Info, Media, and footer panels", () => {
@@ -22,10 +22,17 @@ describe("reference Home full-panel scroll restoration", () => {
     expect(staticHomeSource).toContain('<nav class="floating-community hero-hidden"');
   });
 
-  it("uses the requested library CTA and official Facebook and X destinations", () => {
+  it("uses the requested Library CTA modal and official Facebook and X destinations", () => {
     expect(staticHomeSource).toContain('id="manus-cta-social-links"');
     expect(staticHomeSource).toContain('libraryLink.innerHTML = "Rune-Midgarts Library <span>›</span>"');
-    expect(staticHomeSource).toContain('window.alert("Coming Soon")');
+    expect(staticHomeSource).toContain('className = "library-coming-soon-modal"');
+    expect(staticHomeSource).toContain("Rune-Midgarts Library is coming soon.");
+    expect(staticHomeSource).toContain('libraryLink.href = "#"');
+    expect(staticHomeSource).toContain("event.preventDefault()");
+    expect(staticHomeSource).toContain("event.stopImmediatePropagation()");
+    expect(staticHomeSource).toContain('document.addEventListener("click", (event) =>');
+    expect(staticHomeSource).toContain("}, true);");
+    expect(staticHomeSource).not.toContain('window.alert("Coming Soon")');
     expect(staticHomeSource).toContain("https://facebook.com/RagnarokUniverseEN");
     expect(staticHomeSource).toContain("https://x.com/RagUniOfficial");
   });
