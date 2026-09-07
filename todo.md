@@ -850,3 +850,9 @@
 - [x] 모바일 About Ragnarok Universe·Media 이미지의 잘림·좌우 빈 영역을 실제 화면 기준으로 제거
 - [x] 모바일 Two Clicks CTA를 실제 화면에서 좌우 한 줄로 표시하도록 재구성
 - [x] 실제 모바일 화면 비교와 전체 회귀 테스트 검증
+
+## 모바일 Hero·News·Media 후속 보정
+- [x] Hero 긴 제목을 화면 폭과 무관하게 항상 2줄로 고정
+- [x] 모바일 Latest from Midgard에서 뉴스 카드 4개 노출
+- [x] 모바일 Media 영상 영역 하단의 빈 공간 제거
+- [x] 실제 모바일 화면과 전체 회귀 테스트 검증
