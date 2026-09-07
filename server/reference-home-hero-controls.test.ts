@@ -6,7 +6,7 @@ const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnaro
 
 describe("reference Home hero controls", () => {
   it("uses the dedicated hero-control document that replaces card controls", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_ce09961b.html");
+    expect(homeSource).toContain("FINAL-fullpanel-scroll_54b2c7c2.html");
     expect(homeSource).toContain("src={REFERENCE_HOME_URL}");
     expect(staticHomeSource).toContain(".hero-rail { display:none !important; }");
     expect(staticHomeSource).toContain("hero-minimal-controls");

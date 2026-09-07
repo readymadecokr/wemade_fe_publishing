@@ -778,3 +778,8 @@
 - [x] Media의 Gameplay PV 문구 삭제
 - [x] 실제 렌더 푸터의 GRAVITY 로고를 라이트 모드 파란색 자산으로 교체
 - [x] 주요 제목·미디어·푸터 렌더링과 회귀 테스트 검증
+
+## Home 주요 제목 축소·두 줄 정리
+- [x] Classic adventure / A new way to play의 마침표를 제거하고 축소된 두 줄 제목으로 정리
+- [x] Discord·Latest from Midgard·Game Info·Media의 제목을 같은 축소 규격으로 통일
+- [x] 데스크톱·모바일 제목 줄바꿈과 전체 회귀 테스트 검증

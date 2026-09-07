@@ -16,7 +16,7 @@ describe("final Home source integrity", () => {
     expect(widgetbotReference).toContain("hero-minimal-controls");
     expect(widgetbotReference).toContain("floating-community.hero-hidden");
     expect(widgetbotReference).toContain("widgetbot-community");
-    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_ce09961b.html");
+    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_54b2c7c2.html");
   });
 
   it("does not place a custom visual shell around the supplied document", () => {

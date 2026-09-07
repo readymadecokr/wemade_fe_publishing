@@ -37,4 +37,12 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("text-transform:uppercase !important");
     expect(staticHomeSource).toContain("#media .media-heading > p { display:none !important; }");
   });
+
+  it("uses a compact two-line Game Info title and matching Home heading scale", () => {
+    expect(staticHomeSource).toContain("<h2>Classic adventure<br>A new way to play</h2>");
+    expect(staticHomeSource).not.toContain("<h2>Classic adventure.<br>A new way to play.</h2>");
+    expect(staticHomeSource).toContain("font-size:clamp(30px,3.4vw,42px) !important");
+    expect(staticHomeSource).toContain("line-height:1.04 !important");
+    expect(staticHomeSource).toContain("font-size:clamp(28px,8vw,34px) !important");
+  });
 });
