@@ -55,8 +55,8 @@
 
 .reference-header-game-start {
   border: 0;
-  background: linear-gradient(180deg, #3c8ed1 0%, #1760a5 52%, #0d477e 100%);
-  box-shadow: 0 5px 0 #0b345f, 0 7px 13px rgba(11, 37, 72, .45), inset 0 1px 0 rgba(255, 255, 255, .7);
+  background: #2252a2;
+  box-shadow: 0 4px 0 #173978, 0 6px 12px rgba(13, 41, 91, .38), inset 0 1px 0 rgba(255, 255, 255, .24);
   transition: transform 160ms cubic-bezier(.23, 1, .32, 1), filter 160ms ease;
 }
 
@@ -69,7 +69,8 @@
 }
 
 .reference-header-game-start:hover {
-  filter: brightness(1.12);
+  background: #2d64bf;
+  box-shadow: 0 5px 13px rgba(13, 41, 91, .46), inset 0 1px 0 rgba(255, 255, 255, .34);
   transform: translateY(-1px);
 }
 

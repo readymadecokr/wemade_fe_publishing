@@ -8,7 +8,7 @@ const widgetbotReferenceSource = readFileSync("/home/ubuntu/webdev-static-assets
 
 describe("user-supplied final Home full-page navigation", () => {
   it("renders the supplied final document directly with targeted scrolling and no Hero control overlay", () => {
-    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_8e3ad00e.html");
+    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_7ffd35f3.html");
     expect(homeSource).toContain("reference-home-embed__frame");
     expect(homeSource).not.toContain("window.addEventListener(\"wheel\"");
     expect(widgetbotReferenceSource).not.toContain("hero-minimal-controls");

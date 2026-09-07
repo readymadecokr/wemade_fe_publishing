@@ -17,6 +17,8 @@ describe("reference Home live service header", () => {
     expect(homeSource).toContain("DISCORD_BUTTON_URL");
     expect(homeSource).toContain("reference-header-discord__image");
     expect(headerStyles).toContain("background: #5865f2;");
+    expect(headerStyles).toContain("background: #2252a2;");
+    expect(homeSource).toContain('const GAME_START_BUTTON_URL = "/manus-storage/Gamestart_Button2_6537c714.png"');
     expect(headerStyles).toContain("width: 154px;");
   });
 

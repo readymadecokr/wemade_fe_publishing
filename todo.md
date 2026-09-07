@@ -795,3 +795,9 @@
 - [x] 제공된 Discord-Logo-White.png 적용 및 Discord 배경색 #5865F2 설정
 - [x] 두 상단 버튼의 데스크톱·모바일 외형 크기 통일
 - [x] 상단 버튼 렌더링과 전체 회귀 테스트 검증
+
+## 상단 Game Start·마무리 Join Discord 버튼 보정
+- [x] 상단 Game Start를 Gamestart_Button2.png로 교체하고 #2252A2 배경의 Discord형 버튼으로 변경
+- [x] 상단 Game Start에 남은 노란색 테두리 제거
+- [x] 마무리 Join Discord 심볼을 Discord-Symbol-White.png로 변경하고 #5865F2 버튼 스타일 적용
+- [x] 상단·마무리 버튼 렌더링과 전체 회귀 테스트 검증

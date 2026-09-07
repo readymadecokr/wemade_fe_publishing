@@ -45,4 +45,12 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("line-height:1.04 !important");
     expect(staticHomeSource).toContain("font-size:clamp(28px,8vw,34px) !important");
   });
+
+  it("uses the provided white Discord symbol in the #5865F2-style closing Join Discord button", () => {
+    expect(staticHomeSource).toContain('id="manus-closing-discord-button-style"');
+    expect(staticHomeSource).toContain('const closingDiscordSymbol = "https://raguniverse-izcifhmz.manus.space/manus-storage/Discord-Symbol-White_5305126f.png"');
+    expect(staticHomeSource).toContain('button.querySelector(".closing-discord__symbol")');
+    expect(staticHomeSource).toContain("background:#5865f2 !important");
+    expect(staticHomeSource).toContain("border:0 !important");
+  });
 });
