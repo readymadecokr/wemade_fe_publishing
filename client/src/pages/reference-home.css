@@ -1,6 +1,9 @@
 .reference-home-embed {
+  --reference-live-header-height: 112px;
+  position: relative;
   width: 100%;
-  height: 100svh;
+  height: calc(100svh - var(--reference-live-header-height));
+  margin-top: var(--reference-live-header-height);
   overflow: hidden;
   background: #ffffff;
 }
@@ -97,6 +100,10 @@
 }
 
 @media (max-width: 640px) {
+  .reference-home-embed {
+    --reference-live-header-height: 144px;
+  }
+
   .reference-header-cta {
     gap: 6px;
   }
