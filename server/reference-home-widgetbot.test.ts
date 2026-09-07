@@ -6,7 +6,7 @@ const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnaro
 
 describe("reference Home WidgetBot restoration", () => {
   it("uses the restored read-only WidgetBot Discord community document", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_dc0b36b9.html");
+    expect(homeSource).toContain("FINAL-fullpanel-scroll_da4fe2a1.html");
     expect(staticHomeSource).toContain("https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051");
     expect(staticHomeSource).toContain("widgetbot-readonly-bar");
     expect(staticHomeSource).toContain("Join Official Discord");

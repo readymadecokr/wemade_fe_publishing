@@ -838,3 +838,9 @@
 - [x] 모바일 Hero 상하 빈 영역 축소
 - [x] Hero 하단 Game Start·Join Discord를 같은 폭으로 중앙 정렬
 - [x] 모바일·PC Hero 레이아웃과 전체 회귀 테스트 검증
+
+## 모바일 News·이미지·Two Clicks 레이아웃 보정
+- [x] 모바일 News and Notice에서 최소 뉴스 카드 2개 노출
+- [x] 모바일 About Ragnarok Universe·Media 이미지의 비율 보존 및 빈 좌우 영역 제거
+- [x] 모바일 Two Clicks Game Start·Join Discord CTA를 좌우 한 줄로 정렬
+- [x] 모바일·PC 렌더링과 전체 회귀 테스트 검증

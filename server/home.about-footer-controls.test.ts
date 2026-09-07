@@ -80,4 +80,12 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("#home .hero-slide img { width:100% !important; height:100% !important; object-fit:cover !important; object-position:center !important; }");
     expect(staticHomeSource).toContain("#home .hero-game-start,\n    #home .hero-discord { width:calc((100vw - 34px) / 2) !important; min-width:0 !important; flex:0 1 calc((100vw - 34px) / 2) !important; }");
   });
+
+  it("keeps two mobile News cards, proportional section imagery, and side-by-side Two Clicks CTAs", () => {
+    expect(staticHomeSource).toContain("#news .pinned-news-grid { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; overflow:visible !important; }");
+    expect(staticHomeSource).toContain("#news .pinned-news-card:nth-child(n+3) { display:none !important; }");
+    expect(staticHomeSource).toContain("#game-info .game-info-visual,\n    #media .media-video { width:100% !important; height:auto !important; min-height:0 !important; aspect-ratio:auto !important; overflow:visible !important; }");
+    expect(staticHomeSource).toContain("#game-info .game-info-visual img,\n    #media .media-video img { display:block !important; width:100% !important; height:auto !important; object-fit:contain !important; }");
+    expect(staticHomeSource).toContain(".closing-game-start,\n    .closing-discord { width:calc((100vw - 34px) / 2) !important; min-width:0 !important; flex:0 1 calc((100vw - 34px) / 2) !important; margin:0 !important; }");
+  });
 });
