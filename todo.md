@@ -783,3 +783,9 @@
 - [x] Classic adventure / A new way to play의 마침표를 제거하고 축소된 두 줄 제목으로 정리
 - [x] Discord·Latest from Midgard·Game Info·Media의 제목을 같은 축소 규격으로 통일
 - [x] 데스크톱·모바일 제목 줄바꿈과 전체 회귀 테스트 검증
+
+## Hero 제어 UI·상단 Game Start 버튼 정리
+- [x] Hero 배너 선택·재생 제어 UI를 초기 렌더부터 완전히 제거
+- [x] 상단 Game Start 버튼의 노란색 테두리 제거
+- [x] 상단 Game Start 텍스트를 제공된 Gamestart_Button.png 이미지로 교체
+- [x] Hero 초기 렌더·상단 버튼·전체 회귀 테스트 검증

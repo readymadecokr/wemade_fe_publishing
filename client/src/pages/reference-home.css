@@ -49,19 +49,19 @@
   min-width: 216px;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  border: 2px solid #e5bc55;
+  border: 0;
   border-radius: 11px;
   background: linear-gradient(180deg, #3c8ed1 0%, #1760a5 52%, #0d477e 100%);
   box-shadow: 0 5px 0 #0b345f, 0 7px 13px rgba(11, 37, 72, .45), inset 0 1px 0 rgba(255, 255, 255, .7);
-  color: #ffffff;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 17px;
-  font-style: italic;
-  font-weight: 900;
-  letter-spacing: .055em;
-  text-shadow: 0 2px 1px rgba(10, 34, 70, .72);
   transition: transform 160ms cubic-bezier(.23, 1, .32, 1), filter 160ms ease;
+}
+
+.reference-header-game-start__image {
+  display: block;
+  width: min(178px, 84%);
+  height: auto;
+  max-height: 32px;
+  object-fit: contain;
 }
 
 .reference-header-game-start:hover {
@@ -111,14 +111,11 @@
   .reference-header-game-start {
     min-height: 36px;
     min-width: 96px;
-    gap: 6px;
     border-radius: 8px;
-    font-size: 10px;
   }
 
-  .reference-header-game-start__coin {
-    width: 14px;
-    height: 14px;
-    font-size: 14px;
+  .reference-header-game-start__image {
+    width: min(84px, 80%);
+    max-height: 20px;
   }
 }
