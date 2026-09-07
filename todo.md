@@ -812,3 +812,7 @@
 - [x] Discord 섹션 Join Official Discord의 폭·높이·심볼·타이포그래피·그림자를 Two Clicks Join Discord와 동일하게 보정
 - [x] Discord CTA 렌더링과 전체 회귀 테스트 검증
 - [x] Join Official Discord 제목이 줄바꿈 없이 한 줄로 표시되도록 글자 크기·여백 보정
+
+## Discord CTA 실제 치수 정밀 일치
+- [x] Discord Join Official Discord의 실제 버튼 폭·높이·여백·심볼·서체를 Two Clicks Join Discord 기준과 일치
+- [x] 두 CTA의 렌더링 결과와 전체 회귀 테스트 검증
