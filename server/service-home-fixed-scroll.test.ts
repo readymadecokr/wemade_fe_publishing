@@ -11,6 +11,7 @@ describe("direct React full-page service Home", () => {
     expect(homeSource).toContain("react-home-news");
     expect(homeSource).toContain("react-home-game-info");
     expect(homeSource).toContain("react-home-media");
+    expect(homeSource).toContain("react-home-final-panel");
     expect(homeSource).toContain("react-home-closing");
     expect(homeSource).toContain("react-home-footer");
   });
@@ -27,9 +28,9 @@ describe("direct React full-page service Home", () => {
   it("keeps each homepage region in an explicit single-column grid row", () => {
     expect(homeSource).toContain('className="react-home-layout"');
     expect(homeSource).toContain('className="react-home-home-stage" data-snap-panel');
-    expect(styleSource).toContain('grid-template-areas: "home" "discord" "news" "game-info" "media" "closing" "footer"');
+    expect(styleSource).toContain('grid-template-areas: "home" "discord" "news" "game-info" "media" "final"');
     expect(styleSource).toContain(".react-home-home-stage { grid-area: home;");
-    expect(styleSource).toContain(".react-home-footer { grid-area: footer;");
+    expect(styleSource).toContain(".react-home-final-panel { grid-area: final;");
     expect(styleSource).toContain("grid-template-rows: minmax(0, 1fr) auto;");
   });
 
