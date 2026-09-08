@@ -13,6 +13,9 @@ describe("direct React service header", () => {
     expect(homeSource).toContain('className="reference-header-game-start"');
     expect(homeSource).toContain('className="reference-header-discord"');
     expect(homeSource).toContain("scrollIntoView({ behavior: \"smooth\", block: \"start\" })");
+    expect(homeSource).toContain('href="#discord"');
+    expect(homeSource).toContain('activeSection === "discord" ? "portal-nav-link--active"');
+    expect(homeSource).toContain('window.location.hash.slice(1)');
     expect(homeSource).not.toContain("ragnarok-reference-frame");
   });
 
@@ -23,5 +26,15 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
     expect(homeSource).toContain("xl:flex-nowrap");
     expect(homeSource).toContain("xl:order-none xl:flex xl:w-auto xl:flex-1 xl:justify-center");
+  });
+
+  it("places COMMUNITY after HOME and highlights the menu when Discord is the active panel", () => {
+    const homeIndex = homeSource.indexOf('href="#home"');
+    const communityIndex = homeSource.indexOf('href="#discord"');
+    const newsIndex = homeSource.indexOf('(["news", "game-info", "media"] as const)');
+    expect(homeIndex).toBeGreaterThan(-1);
+    expect(communityIndex).toBeGreaterThan(homeIndex);
+    expect(newsIndex).toBeGreaterThan(communityIndex);
+    expect(headerStyles).toContain(".portal-nav-link--active { border-color:");
   });
 });

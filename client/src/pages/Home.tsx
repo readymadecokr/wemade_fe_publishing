@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { ChevronDown, ChevronLeft, ChevronRight, ExternalLink, Globe, Play } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, ExternalLink, Facebook, Globe, MessageCircle, Play, Twitter, Youtube } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import "./reference-home.css";
@@ -12,6 +12,16 @@ const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_b3128ea2.png";
 const HERO_DESKTOP_URL = "/manus-storage/eb185c22e6e1_e39bfa40.png";
 const HERO_MOBILE_URL = "/manus-storage/00d5bacb2aa0_16f4a9c3.png";
 const DISCORD_URL = "https://discord.gg/yVWJkWdkAU";
+const FACEBOOK_URL = "https://facebook.com/RagnarokUniverseEN";
+const X_URL = "https://x.com/RagUniOfficial";
+const YOUTUBE_URL = "https://www.youtube.com/";
+
+const SOCIAL_LINKS = [
+  { label: "Discord", href: DISCORD_URL, icon: MessageCircle },
+  { label: "Facebook", href: FACEBOOK_URL, icon: Facebook },
+  { label: "YouTube", href: YOUTUBE_URL, icon: Youtube },
+  { label: "X", href: X_URL, icon: Twitter },
+] as const;
 
 const NEWS_ITEMS = [
   { title: "Ragnarok Universe Beta Roadmap", copy: "A look at the next testing phase, planned improvements, and the road ahead.", image: "/manus-storage/banners/news-img-1787281494281_bb3eae6d.webp", date: "AUG 21, 2026", tag: "NOTICE" },
@@ -89,10 +99,11 @@ function ReferenceHomeHeader({ activeSection, onNavigate }: { activeSection: str
         <div className="container flex min-h-[4.125rem] flex-wrap items-center justify-between gap-x-2 gap-y-1 py-1.5 xl:flex-nowrap xl:gap-x-5 xl:py-2">
           <a href="#home" onClick={(event) => navigateTo(event, "home")} className="group flex shrink-0 items-center gap-2" aria-label="Ragnarok Universe home"><img src={LOGO_URL} alt="Ragnarok Universe" className="h-7 w-auto brightness-[1.28] contrast-90 transition-opacity group-hover:opacity-80 sm:h-9" /></a>
           <nav className="portal-nav order-3 grid w-full grid-cols-6 items-center text-[8px] xl:order-none xl:flex xl:w-auto xl:flex-1 xl:justify-center xl:gap-4 xl:text-[11px]" aria-label="Primary navigation">
-            {(["home", "news", "game-info", "media"] as const).map((sectionId) => (
+            <a href="#home" onClick={(event) => navigateTo(event, "home")} className={`portal-nav-link ${activeSection === "home" ? "portal-nav-link--active" : ""}`}>HOME</a>
+            <a href="#discord" onClick={(event) => navigateTo(event, "discord")} className={`portal-nav-link inline-flex items-center gap-1 ${activeSection === "discord" ? "portal-nav-link--active" : ""}`}>COMMUNITY <ExternalLink size={11} aria-hidden="true" /></a>
+            {(["news", "game-info", "media"] as const).map((sectionId) => (
               <a key={sectionId} href={`#${sectionId}`} onClick={(event) => navigateTo(event, sectionId)} className={`portal-nav-link ${activeSection === sectionId ? "portal-nav-link--active" : ""}`}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</a>
             ))}
-            <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="portal-nav-link inline-flex items-center gap-1">COMMUNITY <ExternalLink size={11} aria-hidden="true" /></a>
             <Link href="/point-shop" className={`portal-nav-link inline-flex items-center gap-0.5 ${location === "/point-shop" ? "portal-nav-link--active" : ""}`}>SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
           </nav>
           <div className="reference-header-cta shrink-0" aria-label="Quick actions">
@@ -101,7 +112,7 @@ function ReferenceHomeHeader({ activeSection, onNavigate }: { activeSection: str
           </div>
         </div>
       </div>
-    </header>
+      </header>
   );
 }
 
@@ -127,6 +138,15 @@ export default function Home() {
     }, { threshold: [0.35, 0.55, 0.75] });
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const sectionId = window.location.hash.slice(1);
+    if (!new Set(["home", "discord", "news", "game-info", "media"]).has(sectionId)) return;
+    window.requestAnimationFrame(() => {
+      setActiveSection(sectionId);
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: "auto", block: "start" });
+    });
   }, []);
 
   useEffect(() => {
@@ -188,6 +208,9 @@ export default function Home() {
   return (
     <main className="react-home" aria-label="Ragnarok Universe homepage">
       <ReferenceHomeHeader activeSection={activeSection} onNavigate={navigateTo} />
+      <nav className={`react-home-floating-social ${activeSection === "home" ? "is-hidden" : ""}`} aria-label="Ragnarok Universe social links">
+        {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}><Icon aria-hidden="true" /></a>)}
+      </nav>
 
       <div className="react-home-layout" aria-label="Homepage content regions">
       <div className="react-home-home-stage" data-snap-panel>
@@ -248,7 +271,7 @@ export default function Home() {
       <section className="react-home-panel react-home-final-panel" data-home-section data-snap-panel aria-label="Ragnarok Universe closing and footer">
         <div className="react-home-closing"><div className="react-home-closing__content"><span>YOUR STORY BEGINS HERE</span><h2>TWO CLICKS TO<br />MIDGARD</h2><p>Start the game in your browser, then join the Discord to find a party, get patch news first and take part in founder events.</p><HomeCtaPair /></div></div>
         <footer className="react-home-footer">
-          <div className="react-home-footer__inner"><div><div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div><nav><a href="/">Terms of Service</a><a href="/">Privacy Policy</a><a href="/">Privacy Settings</a><a href="/">Customer Support</a></nav><img src="/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png" alt="GRAVITY" loading="lazy" /><p>Copyright © Gravity Co., LTD &amp; Lee Myoungjin(studio DTDS). All Rights Reserved. All trademarks used on this website are the property of their respective owners.</p></div><div className="react-home-footer__social"><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer">D</a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer">f</a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer">X</a></div></div>
+          <div className="react-home-footer__inner"><div><div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div><nav><a href="/">Terms of Service</a><a href="/">Privacy Policy</a><a href="/">Privacy Settings</a><a href="/">Customer Support</a></nav><img src="/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png" alt="GRAVITY" loading="lazy" /><p>Copyright © Gravity Co., LTD &amp; Lee Myoungjin(studio DTDS). All Rights Reserved. All trademarks used on this website are the property of their respective owners.</p></div><div className="react-home-footer__social">{SOCIAL_LINKS.map(({ label, href, icon: Icon }) => <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}><Icon aria-hidden="true" /></a>)}</div></div>
         </footer>
       </section>
       </div>

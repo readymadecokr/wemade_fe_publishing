@@ -26,6 +26,9 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).toContain("LATEST FROM MIDGARD");
     expect(homeSource).toContain("SEE THE WORLD IN MOTION");
     expect(homeSource).toContain("gravity_logo_light_c14f48f8_5e3a7c41.png");
+    expect(homeSource).toContain("https://www.youtube.com/");
+    expect(homeSource).toContain("react-home-floating-social");
+    expect(homeSource).toContain("Youtube");
   });
 
   it("provides the requested in-page Rune-Midgarts Library coming-soon modal", () => {

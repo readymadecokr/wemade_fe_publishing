@@ -984,3 +984,9 @@
 - [x] TWO CLICKS TO MIDGARD와 푸터의 현재 분리 패널·높이 점검
 - [x] 마무리 CTA·푸터를 하나의 전체 화면 패널로 통합
 - [x] 마지막 패널 한 화면 표시·스크롤 전환 및 전체 회귀 테스트 검증
+
+## 플로팅·소셜·Discord 메뉴 활성 복원
+- [x] 우측 플로팅 배너·푸터 소셜 아이콘·상단 메뉴의 현재 구성 점검
+- [x] 우측 플로팅 배너 4개와 푸터 YouTube 아이콘 복원
+- [x] HOME·COMMUNITY·NEWS·GAME INFO·MEDIA·SHOP 메뉴 순서 및 Discord 섹션 활성 효과 적용
+- [x] 소셜 링크·Discord 메뉴 활성·반응형 및 전체 회귀 테스트 검증
