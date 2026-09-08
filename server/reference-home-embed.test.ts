@@ -24,9 +24,9 @@ describe("user-supplied final HTML Home", () => {
     expect(styleSource).toContain("width: 100%");
     expect(styleSource).toContain("height: 100%");
     expect(styleSource).toContain("border: 0");
-    expect(styleSource).toContain(".reference-home-embed--loading::before");
-    expect(styleSource).toContain("ragnarok-universe-initial-hero_547a4c97.png");
     expect(styleSource).toContain(".reference-home-embed--loading .reference-home-embed__frame");
+    expect(styleSource).not.toContain("ragnarok-universe-initial-hero_547a4c97.png");
+    expect(styleSource).not.toContain(".reference-home-embed::before");
   });
 
   it("removes the reference document header so the live header is the only header above Hero", () => {
