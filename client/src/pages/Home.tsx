@@ -86,9 +86,9 @@ function ReferenceHomeHeader({ activeSection, onNavigate }: { activeSection: str
       </div>
 
       <div className="border-b border-[#c8d8e7]/30 bg-[#1c3147] shadow-[0_3px_18px_rgba(24,38,57,.28)] [background-image:linear-gradient(100deg,rgba(32,56,78,1),rgba(58,84,110,.9),rgba(24,45,66,1))]">
-        <div className="container flex min-h-[4.125rem] flex-wrap items-center justify-between gap-x-2 gap-y-1 py-1.5 lg:flex-nowrap lg:gap-x-5 lg:py-2">
+        <div className="container flex min-h-[4.125rem] flex-wrap items-center justify-between gap-x-2 gap-y-1 py-1.5 2xl:flex-nowrap 2xl:gap-x-5 2xl:py-2">
           <a href="#home" onClick={(event) => navigateTo(event, "home")} className="group flex shrink-0 items-center gap-2" aria-label="Ragnarok Universe home"><img src={LOGO_URL} alt="Ragnarok Universe" className="h-7 w-auto brightness-[1.28] contrast-90 transition-opacity group-hover:opacity-80 sm:h-9" /></a>
-          <nav className="portal-nav order-3 grid w-full grid-cols-6 items-center text-[8px] lg:order-none lg:flex lg:w-auto lg:justify-center lg:gap-4 lg:text-[11px] xl:gap-6" aria-label="Primary navigation">
+          <nav className="portal-nav order-3 grid w-full grid-cols-6 items-center text-[8px] 2xl:order-none 2xl:flex 2xl:w-auto 2xl:justify-center 2xl:gap-4 2xl:text-[11px]" aria-label="Primary navigation">
             {(["home", "news", "game-info", "media"] as const).map((sectionId) => (
               <a key={sectionId} href={`#${sectionId}`} onClick={(event) => navigateTo(event, sectionId)} className={`portal-nav-link ${activeSection === sectionId ? "portal-nav-link--active" : ""}`}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</a>
             ))}
@@ -129,6 +129,24 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const header = document.querySelector<HTMLElement>(".reference-home-live-header");
+    if (!header) return;
+
+    const syncHeaderHeight = () => {
+      document.documentElement.style.setProperty("--react-home-header-height", `${Math.ceil(header.getBoundingClientRect().height)}px`);
+    };
+
+    syncHeaderHeight();
+    const observer = new ResizeObserver(syncHeaderHeight);
+    observer.observe(header);
+    window.addEventListener("resize", syncHeaderHeight);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", syncHeaderHeight);
+    };
+  }, []);
+
   const selectHero = (direction: -1 | 1) => setHeroIndex((current) => (current + direction + 3) % 3);
 
   return (
@@ -150,8 +168,9 @@ export default function Home() {
         <button className="react-home-hero__arrow react-home-hero__arrow--left" type="button" aria-label="Previous banner" onClick={() => selectHero(-1)}><ChevronLeft /></button>
         <button className="react-home-hero__arrow react-home-hero__arrow--right" type="button" aria-label="Next banner" onClick={() => selectHero(1)}><ChevronRight /></button>
         <div className="react-home-hero__dots" aria-label="Hero banners">{[0, 1, 2].map((index) => <button type="button" key={index} aria-label={`Banner ${index + 1}`} aria-current={heroIndex === index} className={heroIndex === index ? "is-active" : ""} onClick={() => setHeroIndex(index)} />)}</div>
-        <div className="react-home-hero__cta"><HomeCtaPair /></div>
       </section>
+
+      <div className="react-home-hero-cta-row" aria-label="Hero quick actions"><HomeCtaPair /></div>
 
       <section id="discord" data-home-section className="react-home-panel react-home-discord">
         <div className="react-home-section-shell react-home-discord__shell">

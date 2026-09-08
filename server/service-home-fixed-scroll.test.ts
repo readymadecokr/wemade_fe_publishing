@@ -16,8 +16,9 @@ describe("direct React full-page service Home", () => {
   });
 
   it("offsets sections for the fixed live header without a nested website iframe", () => {
-    expect(styleSource).toContain("scroll-margin-top: 112px");
-    expect(styleSource).toContain("margin-top: 112px");
+    expect(styleSource).toContain("scroll-margin-top: var(--react-home-header-height)");
+    expect(styleSource).toContain("padding-top: var(--react-home-header-height)");
+    expect(homeSource).toContain("react-home-hero-cta-row");
     expect(homeSource).not.toContain("<iframe\n        name=");
   });
 });

@@ -21,6 +21,6 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain("width: 104px; min-width: 104px; height: 34px; min-height: 34px;");
     expect(headerStyles).toContain("border-radius: 16px;");
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
-    expect(homeSource).toContain("lg:flex-nowrap");
+    expect(homeSource).toContain("2xl:flex-nowrap");
   });
 });
