@@ -6,7 +6,7 @@ const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnaro
 
 describe("reference Home full-panel scroll restoration", () => {
   it("uses the full-panel document for Home", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_7c6ad40e.html");
+    expect(homeSource).toContain("FINAL-fullpanel-scroll_ebb630f7.html");
   });
 
   it("snaps desktop wheel input through the Discord, News, Game Info, Media, and footer panels", () => {
@@ -35,5 +35,11 @@ describe("reference Home full-panel scroll restoration", () => {
     expect(staticHomeSource).not.toContain('window.alert("Coming Soon")');
     expect(staticHomeSource).toContain("https://facebook.com/RagnarokUniverseEN");
     expect(staticHomeSource).toContain("https://x.com/RagUniOfficial");
+  });
+
+  it("receives parent navigation messages to move between loaded sections without reloading the document", () => {
+    expect(staticHomeSource).toContain('id="manus-parent-section-navigation"');
+    expect(staticHomeSource).toContain('payload.type !== "ragnarok-reference-scroll"');
+    expect(staticHomeSource).toContain('section.scrollIntoView({ behavior:"smooth", block:"start" })');
   });
 });

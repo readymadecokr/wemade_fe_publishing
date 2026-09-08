@@ -912,3 +912,8 @@
 - [x] 상단·Hero 아래·하단 CTA 쌍의 가로·세로 크기 차이 점검
 - [x] 위치와 무관하게 Game Start·Discord의 동일 외곽 크기 규칙 적용
 - [x] Game Start 이미지 비율·눌림 효과를 유지한 모바일 실화면 및 회귀 테스트 검증
+
+## CTA 시각 높이·상단 메뉴 즉시 이동 보정
+- [x] Game Start 아트의 투명 여백을 고려해 Discord와 실제 보이는 높이 일치
+- [x] 상단 News·Game Info·Media를 iframe 재로딩 없이 즉시 섹션 이동으로 변경
+- [x] 모바일 CTA 시각 비교와 메뉴 즉시 이동 동작·회귀 테스트 검증

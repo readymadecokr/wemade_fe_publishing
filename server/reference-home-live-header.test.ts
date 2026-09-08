@@ -34,11 +34,16 @@ describe("reference Home live service header", () => {
     expect(headerStyles).toContain("min-width: 104px;");
     expect(headerStyles).toContain("min-height: 34px;");
     expect(headerStyles).toContain("height: 34px;");
-    expect(headerStyles).toContain("filter: drop-shadow(0 3px 0 rgba(8, 39, 88, .72));");
+    expect(headerStyles).toContain("filter: drop-shadow(0 3px 0 rgba(8, 39, 88, .72)) drop-shadow(0 5px 9px rgba(28, 37, 119, .28));");
     expect(headerStyles).toContain(".reference-header-game-start {");
     expect(headerStyles).toContain("transform: translateY(3px);");
     expect(headerStyles).toContain("max-height: 18px;");
     expect(headerStyles).toContain("max-height: 34px;");
+    expect(homeSource).toContain('postMessage({ type: "ragnarok-reference-scroll", sectionId }, "*")');
+    expect(homeSource).toContain('handleReferenceNavigation(event, "news")');
+    expect(homeSource).toContain('handleReferenceNavigation(event, "game-info")');
+    expect(homeSource).toContain('handleReferenceNavigation(event, "media")');
+    expect(homeSource).not.toContain('href={sectionHref("news")}');
     expect(homeSource).toContain("lg:flex-nowrap");
     expect(homeSource).toContain("lg:order-none lg:flex");
   });

@@ -5,7 +5,7 @@ import { ChevronDown, ExternalLink, Globe } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import "./reference-home.css";
 
-const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_7c6ad40e.html";
+const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_ebb630f7.html";
 const LOGO_URL = "/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png";
 const GAME_START_BUTTON_URL = "/manus-storage/gamestart_BTN_1c6449da.png";
 const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_b3128ea2.png";
@@ -24,6 +24,14 @@ function ReferenceHomeHeader() {
   });
 
   const sectionHref = (sectionId: string) => `${REFERENCE_HOME_URL}#${sectionId}`;
+  const scrollReferenceSection = (sectionId: string) => {
+    const referenceFrame = document.querySelector<HTMLIFrameElement>('iframe[name="ragnarok-reference-frame"]');
+    referenceFrame?.contentWindow?.postMessage({ type: "ragnarok-reference-scroll", sectionId }, "*");
+  };
+  const handleReferenceNavigation = (event: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    event.preventDefault();
+    scrollReferenceSection(sectionId);
+  };
   const startLogin = () => {
     window.location.href = getLoginUrl();
   };
@@ -59,12 +67,12 @@ function ReferenceHomeHeader() {
 
       <div className="border-b border-[#c8d8e7]/30 bg-[#1c3147] shadow-[0_3px_18px_rgba(24,38,57,.28)] [background-image:linear-gradient(100deg,rgba(32,56,78,1),rgba(58,84,110,.9),rgba(24,45,66,1))]">
         <div className="container flex min-h-[4.125rem] flex-wrap items-center justify-between gap-x-2 gap-y-1 py-1.5 lg:flex-nowrap lg:gap-x-5 lg:py-2">
-          <a href={sectionHref("home")} target="ragnarok-reference-frame" className="group flex shrink-0 items-center gap-2" aria-label="Ragnarok Universe home"><img src={LOGO_URL} alt="Ragnarok Universe" className="h-7 w-auto brightness-[1.28] contrast-90 transition-opacity group-hover:opacity-80 sm:h-9" /></a>
+          <a href="#home" onClick={(event) => handleReferenceNavigation(event, "home")} className="group flex shrink-0 items-center gap-2" aria-label="Ragnarok Universe home"><img src={LOGO_URL} alt="Ragnarok Universe" className="h-7 w-auto brightness-[1.28] contrast-90 transition-opacity group-hover:opacity-80 sm:h-9" /></a>
           <nav className="portal-nav order-3 grid w-full grid-cols-6 items-center text-[8px] lg:order-none lg:flex lg:w-auto lg:justify-center lg:gap-4 lg:text-[11px] xl:gap-6" aria-label="Primary navigation">
-            <a href={sectionHref("home")} target="ragnarok-reference-frame" className="portal-nav-link portal-nav-link--active">HOME</a>
-            <a href={sectionHref("news")} target="ragnarok-reference-frame" className="portal-nav-link">NEWS</a>
-            <a href={sectionHref("game-info")} target="ragnarok-reference-frame" className="portal-nav-link">GAME INFO</a>
-            <a href={sectionHref("media")} target="ragnarok-reference-frame" className="portal-nav-link">MEDIA</a>
+            <a href="#home" onClick={(event) => handleReferenceNavigation(event, "home")} className="portal-nav-link portal-nav-link--active">HOME</a>
+            <a href="#news" onClick={(event) => handleReferenceNavigation(event, "news")} className="portal-nav-link">NEWS</a>
+            <a href="#game-info" onClick={(event) => handleReferenceNavigation(event, "game-info")} className="portal-nav-link">GAME INFO</a>
+            <a href="#media" onClick={(event) => handleReferenceNavigation(event, "media")} className="portal-nav-link">MEDIA</a>
             <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="portal-nav-link inline-flex items-center gap-1">COMMUNITY <ExternalLink size={11} aria-hidden="true" /></a>
             <Link href="/point-shop" className={`portal-nav-link inline-flex items-center gap-0.5 ${location === "/point-shop" ? "portal-nav-link--active" : ""}`}>SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
           </nav>
