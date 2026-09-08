@@ -107,5 +107,7 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain(".closing-game-start,\n    .closing-discord { width:calc((100% - 10px) / 2) !important; min-width:0 !important; flex:0 1 calc((100% - 10px) / 2) !important; margin:0 !important; height:var(--mobile-paired-cta-height) !important; min-height:var(--mobile-paired-cta-height) !important; aspect-ratio:auto !important; }");
     expect(staticHomeSource).toContain(".closing-game-start { position:relative !important; top:2px !important; padding:0 !important; display:flex !important; align-items:center !important; justify-content:center !important; }");
     expect(staticHomeSource).toContain(".closing-game-start .home-game-start-art { width:100% !important; height:calc(100% + 6px) !important;");
+    expect(staticHomeSource).toContain(".closing-discord { height:54px !important; min-height:54px !important; padding:0 10px !important; }");
+    expect(staticHomeSource).toContain(".closing-discord .home-discord-logo { width:110px !important; max-width:80% !important; }");
   });
 });

@@ -917,3 +917,8 @@
 - [x] Game Start 아트의 투명 여백을 고려해 Discord와 실제 보이는 높이 일치
 - [x] 상단 News·Game Info·Media를 iframe 재로딩 없이 즉시 섹션 이동으로 변경
 - [x] 모바일 CTA 시각 비교와 메뉴 즉시 이동 동작·회귀 테스트 검증
+
+## 모바일 하단 Discord CTA 미세 보정
+- [x] 하단 Discord CTA의 세로 높이 축소
+- [x] 하단 Discord 로고를 Game Start 글자와 같은 체감 크기로 확대
+- [x] 모바일 하단 CTA 시각 및 전체 회귀 테스트 검증
