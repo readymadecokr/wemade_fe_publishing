@@ -1,7 +1,8 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { ChevronDown, ChevronLeft, ChevronRight, ExternalLink, Facebook, Globe, MessageCircle, Play, Twitter, Youtube } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, ExternalLink, Globe, Play } from "lucide-react";
+import FloatingSocialLinks from "@/components/FloatingSocialLinks";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import "./reference-home.css";
@@ -12,16 +13,6 @@ const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_b3128ea2.png";
 const HERO_DESKTOP_URL = "/manus-storage/eb185c22e6e1_e39bfa40.png";
 const HERO_MOBILE_URL = "/manus-storage/00d5bacb2aa0_16f4a9c3.png";
 const DISCORD_URL = "https://discord.gg/yVWJkWdkAU";
-const FACEBOOK_URL = "https://facebook.com/RagnarokUniverseEN";
-const X_URL = "https://x.com/RagUniOfficial";
-const YOUTUBE_URL = "https://www.youtube.com/";
-
-const SOCIAL_LINKS = [
-  { label: "Discord", href: DISCORD_URL, icon: MessageCircle },
-  { label: "Facebook", href: FACEBOOK_URL, icon: Facebook },
-  { label: "YouTube", href: YOUTUBE_URL, icon: Youtube },
-  { label: "X", href: X_URL, icon: Twitter },
-] as const;
 
 const NEWS_ITEMS = [
   { title: "Ragnarok Universe Beta Roadmap", copy: "A look at the next testing phase, planned improvements, and the road ahead.", image: "/manus-storage/banners/news-img-1787281494281_bb3eae6d.webp", date: "AUG 21, 2026", tag: "NOTICE" },
@@ -208,9 +199,7 @@ export default function Home() {
   return (
     <main className="react-home" aria-label="Ragnarok Universe homepage">
       <ReferenceHomeHeader activeSection={activeSection} onNavigate={navigateTo} />
-      <nav className={`react-home-floating-social ${activeSection === "home" ? "is-hidden" : ""}`} aria-label="Ragnarok Universe social links">
-        {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}><Icon aria-hidden="true" /></a>)}
-      </nav>
+      <FloatingSocialLinks hidden={activeSection === "home"} />
 
       <div className="react-home-layout" aria-label="Homepage content regions">
       <div className="react-home-home-stage" data-snap-panel>
@@ -271,7 +260,7 @@ export default function Home() {
       <section className="react-home-panel react-home-final-panel" data-home-section data-snap-panel aria-label="Ragnarok Universe closing and footer">
         <div className="react-home-closing"><div className="react-home-closing__content"><span>YOUR STORY BEGINS HERE</span><h2>TWO CLICKS TO<br />MIDGARD</h2><p>Start the game in your browser, then join the Discord to find a party, get patch news first and take part in founder events.</p><HomeCtaPair /></div></div>
         <footer className="react-home-footer">
-          <div className="react-home-footer__inner"><div><div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div><nav><a href="/">Terms of Service</a><a href="/">Privacy Policy</a><a href="/">Privacy Settings</a><a href="/">Customer Support</a></nav><img src="/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png" alt="GRAVITY" loading="lazy" /><p>Copyright © Gravity Co., LTD &amp; Lee Myoungjin(studio DTDS). All Rights Reserved. All trademarks used on this website are the property of their respective owners.</p></div><div className="react-home-footer__social">{SOCIAL_LINKS.map(({ label, href, icon: Icon }) => <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}><Icon aria-hidden="true" /></a>)}</div></div>
+          <div className="react-home-footer__inner"><div><div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div><nav><a href="/">Terms of Service</a><a href="/">Privacy Policy</a><a href="/">Privacy Settings</a><a href="/">Customer Support</a></nav><img src="/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png" alt="GRAVITY" loading="lazy" /><p>Copyright © Gravity Co., LTD &amp; Lee Myoungjin(studio DTDS). All Rights Reserved. All trademarks used on this website are the property of their respective owners.</p></div><div className="react-home-footer__social"><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" aria-label="Discord">D</a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer" aria-label="Facebook">f</a><a href="https://www.youtube.com/@RagnarokUniverse" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer" aria-label="X">X</a></div></div>
         </footer>
       </section>
       </div>

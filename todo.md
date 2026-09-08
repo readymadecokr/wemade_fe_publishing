@@ -990,3 +990,8 @@
 - [x] 우측 플로팅 배너 4개와 푸터 YouTube 아이콘 복원
 - [x] HOME·COMMUNITY·NEWS·GAME INFO·MEDIA·SHOP 메뉴 순서 및 Discord 섹션 활성 효과 적용
 - [x] 소셜 링크·Discord 메뉴 활성·반응형 및 전체 회귀 테스트 검증
+
+## News 플로팅 배너 재사용
+- [x] News 페이지의 원형 플로팅 배너 마크업·스타일·자산 구성 확인
+- [x] Home 임시 플로팅 배너를 News 페이지와 동일한 원형 구성으로 교체
+- [x] Home·News 플로팅 배너 시각 일치·경량성 및 전체 회귀 테스트 검증
