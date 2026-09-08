@@ -45,6 +45,8 @@
 
 .reference-header-discord {
   border: 0;
+  padding: 0 8px;
+  border-radius: 16px;
   background: #5865f2;
   box-shadow: 0 4px 0 #4049b8, 0 6px 12px rgba(28, 37, 119, .34), inset 0 1px 0 rgba(255, 255, 255, .28);
   transition: none;
@@ -52,9 +54,9 @@
 
 .reference-header-discord__image {
   display: block;
-  width: 118px;
+  width: 134px;
   height: auto;
-  max-height: 22px;
+  max-height: 26px;
   object-fit: contain;
 }
 
@@ -155,14 +157,14 @@
   .reference-header-discord {
     min-height: 34px;
     height: 34px;
-    padding: 0 5px;
-    border-radius: 8px;
+    padding: 0 4px;
+    border-radius: 12px;
     box-shadow: 0 3px 0 #4049b8, 0 5px 9px rgba(28, 37, 119, .28), inset 0 1px 0 rgba(255, 255, 255, .28);
   }
 
   .reference-header-discord__image {
-    width: 68px;
-    max-height: 18px;
+    width: 84px;
+    max-height: 22px;
   }
 
   .reference-header-game-start__image {

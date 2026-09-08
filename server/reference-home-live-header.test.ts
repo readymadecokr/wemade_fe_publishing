@@ -24,7 +24,8 @@ describe("reference Home live service header", () => {
     expect(homeSource).toContain('const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_b3128ea2.png"');
     expect(homeSource.indexOf('className="reference-header-game-start"')).toBeLessThan(homeSource.indexOf('className="reference-header-discord"'));
     expect(headerStyles).toContain("width: 154px;");
-    expect(headerStyles).toContain("max-height: 22px;");
+    expect(headerStyles).toContain("max-height: 26px;");
+    expect(headerStyles).toContain("border-radius: 16px;");
     expect(headerStyles).toContain(".reference-header-discord:hover");
     expect(headerStyles).toContain(".reference-header-game-start:hover");
     expect(headerStyles).toContain("filter: drop-shadow(0 4px 0 rgba(8, 39, 88, .72));");
@@ -37,7 +38,7 @@ describe("reference Home live service header", () => {
     expect(headerStyles).toContain("filter: drop-shadow(0 3px 0 rgba(8, 39, 88, .72)) drop-shadow(0 5px 9px rgba(28, 37, 119, .28));");
     expect(headerStyles).toContain(".reference-header-game-start {");
     expect(headerStyles).toContain("transform: translateY(3px);");
-    expect(headerStyles).toContain("max-height: 18px;");
+    expect(headerStyles).toContain("max-height: 22px;");
     expect(headerStyles).toContain("max-height: 34px;");
     expect(homeSource).toContain('postMessage({ type: "ragnarok-reference-scroll", sectionId }, "*")');
     expect(homeSource).toContain('handleReferenceNavigation(event, "news")');

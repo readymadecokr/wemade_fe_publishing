@@ -67,6 +67,8 @@ describe("user-supplied final Home closing panel", () => {
   it("keeps Game Start left and Discord right in Hero and closing pairs while centering Discord alone in its panel", () => {
     expect(staticHomeSource).toContain("#discord .widgetbot-readonly-bar { height:72px !important; min-height:72px !important; padding:0 !important; display:flex; align-items:center; justify-content:center; gap:0 !important; }");
     expect(staticHomeSource).toContain("#discord .widgetbot-join { width:285px !important; min-width:285px !important; height:64px !important");
+    expect(staticHomeSource).toContain("border-radius:18px !important");
+    expect(staticHomeSource).toContain(".home-discord-logo { display:block; width:184px; max-width:82%; height:auto; object-fit:contain; }");
     expect(staticHomeSource).not.toContain("widgetbot-game-start");
   });
 
@@ -107,7 +109,7 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain(".closing-game-start,\n    .closing-discord { width:calc((100% - 10px) / 2) !important; min-width:0 !important; flex:0 1 calc((100% - 10px) / 2) !important; margin:0 !important; height:var(--mobile-paired-cta-height) !important; min-height:var(--mobile-paired-cta-height) !important; aspect-ratio:auto !important; }");
     expect(staticHomeSource).toContain(".closing-game-start { position:relative !important; top:2px !important; padding:0 !important; display:flex !important; align-items:center !important; justify-content:center !important; }");
     expect(staticHomeSource).toContain(".closing-game-start .home-game-start-art { width:100% !important; height:calc(100% + 6px) !important;");
-    expect(staticHomeSource).toContain(".closing-discord { height:54px !important; min-height:54px !important; padding:0 10px !important; }");
-    expect(staticHomeSource).toContain(".closing-discord .home-discord-logo { width:110px !important; max-width:80% !important; }");
+    expect(staticHomeSource).toContain(".closing-discord { height:54px !important; min-height:54px !important; padding:0 6px !important; border-radius:14px !important; }");
+    expect(staticHomeSource).toContain(".closing-discord .home-discord-logo { width:78% !important; max-width:78% !important; }");
   });
 });
