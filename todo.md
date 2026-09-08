@@ -896,3 +896,8 @@
 - [x] 좁은 화면에서 Game Start·Discord CTA가 모두 보이도록 반응형 폭 축소
 - [x] Discord CTA의 충분한 높이·상하 여백·이미지 비율 유지
 - [x] 좁은 화면·모바일·데스크톱 CTA 가시성과 전체 회귀 테스트 검증
+
+## 모바일 상단 Game Start 높이·눌림 효과
+- [x] 모바일 상단 Game Start의 세로 높이를 Discord와 동일하게 보정
+- [x] Game Start hover 시 그림자 높이만큼 내려가는 눌림 효과 적용
+- [x] 모바일 CTA 높이·hover 상호작용과 전체 회귀 테스트 검증
