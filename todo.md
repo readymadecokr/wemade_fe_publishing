@@ -984,8 +984,3 @@
 - [x] TWO CLICKS TO MIDGARD와 푸터의 현재 분리 패널·높이 점검
 - [x] 마무리 CTA·푸터를 하나의 전체 화면 패널로 통합
 - [x] 마지막 패널 한 화면 표시·스크롤 전환 및 전체 회귀 테스트 검증
-
-## Hero 아래 CTA 행 제거
-- [x] Hero 아래 Game Start·Discord CTA 행과 구분선의 현재 구조 점검
-- [x] CTA 행 및 해당 빈 영역 완전 제거
-- [x] Hero와 Discord 영역 연결·전체 회귀 테스트 검증

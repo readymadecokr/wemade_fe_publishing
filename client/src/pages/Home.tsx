@@ -208,6 +208,7 @@ export default function Home() {
         <div className="react-home-hero__dots" aria-label="Hero banners">{[0, 1, 2].map((index) => <button type="button" key={index} aria-label={`Banner ${index + 1}`} aria-current={heroIndex === index} className={heroIndex === index ? "is-active" : ""} onClick={() => setHeroIndex(index)} />)}</div>
       </section>
 
+      <div className="react-home-hero-cta-row" aria-label="Hero quick actions"><HomeCtaPair /></div>
       </div>
 
       <section id="discord" data-home-section data-snap-panel className="react-home-panel react-home-discord">
