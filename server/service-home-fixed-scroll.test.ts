@@ -21,7 +21,7 @@ describe("direct React full-page service Home", () => {
     expect(styleSource).toContain("scroll-padding-top: var(--react-home-header-height)");
     expect(styleSource).not.toContain("scroll-margin-top: var(--react-home-header-height)");
     expect(styleSource).toContain(":root { --react-home-header-height: 112px; }");
-    expect(homeSource).toContain("react-home-hero-cta-row");
+    expect(homeSource).not.toContain("react-home-hero-cta-row");
     expect(homeSource).not.toContain("<iframe\n        name=");
   });
 
@@ -31,7 +31,7 @@ describe("direct React full-page service Home", () => {
     expect(styleSource).toContain('grid-template-areas: "home" "discord" "news" "game-info" "media" "final"');
     expect(styleSource).toContain(".react-home-home-stage { grid-area: home;");
     expect(styleSource).toContain(".react-home-final-panel { grid-area: final;");
-    expect(styleSource).toContain("grid-template-rows: minmax(0, 1fr) auto;");
+    expect(styleSource).toContain(".react-home-home-stage { grid-area: home; display: block;");
   });
 
   it("moves one full-screen panel at a time on desktop wheel input", () => {
