@@ -9,6 +9,9 @@ describe("user-supplied final HTML Home", () => {
     expect(homeSource).toContain('const REFERENCE_HOME_URL = "/manus-storage/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_c2bdfcbf.html"');
     expect(homeSource).toContain("src={REFERENCE_HOME_URL}");
     expect(homeSource).toContain('title="Ragnarok Universe homepage"');
+    expect(homeSource).toContain("useState(false)");
+    expect(homeSource).toContain('reference-home-embed--loading');
+    expect(homeSource).toContain("onLoad={() => setIsReferenceFrameReady(true)}");
     expect(homeSource).not.toContain("reference-hero-panel");
     expect(homeSource).not.toContain("reference-community-card");
   });
@@ -21,6 +24,9 @@ describe("user-supplied final HTML Home", () => {
     expect(styleSource).toContain("width: 100%");
     expect(styleSource).toContain("height: 100%");
     expect(styleSource).toContain("border: 0");
+    expect(styleSource).toContain(".reference-home-embed--loading::before");
+    expect(styleSource).toContain("ragnarok-universe-initial-hero_547a4c97.png");
+    expect(styleSource).toContain(".reference-home-embed--loading .reference-home-embed__frame");
   });
 
   it("removes the reference document header so the live header is the only header above Hero", () => {

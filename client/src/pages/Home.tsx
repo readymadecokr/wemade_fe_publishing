@@ -2,6 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { ChevronDown, ExternalLink, Globe } from "lucide-react";
+import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import "./reference-home.css";
 
@@ -92,14 +93,17 @@ function ReferenceHomeHeader() {
 
 /** The supplied final document remains the complete Home canvas; this live overlay restores the working service header. */
 export default function Home() {
+  const [isReferenceFrameReady, setIsReferenceFrameReady] = useState(false);
+
   return (
-    <main className="reference-home-embed" aria-label="Ragnarok Universe homepage">
+    <main className={`reference-home-embed${isReferenceFrameReady ? " reference-home-embed--ready" : " reference-home-embed--loading"}`} aria-label="Ragnarok Universe homepage" aria-busy={!isReferenceFrameReady}>
       <ReferenceHomeHeader />
       <iframe
         name="ragnarok-reference-frame"
         title="Ragnarok Universe homepage"
         src={REFERENCE_HOME_URL}
         className="reference-home-embed__frame"
+        onLoad={() => setIsReferenceFrameReady(true)}
       />
     </main>
   );

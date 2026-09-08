@@ -5,15 +5,42 @@
   height: calc(100svh - var(--reference-live-header-height));
   margin-top: var(--reference-live-header-height);
   overflow: hidden;
-  background: #ffffff;
+  isolation: isolate;
+  background: #10273b;
+}
+
+.reference-home-embed::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(8, 24, 42, .62), rgba(8, 24, 42, .12) 58%, rgba(8, 24, 42, .22)),
+    url("/manus-storage/ragnarok-universe-initial-hero_547a4c97.png") center / cover no-repeat;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+
+.reference-home-embed--loading::before {
+  opacity: 1;
 }
 
 .reference-home-embed__frame {
+  position: relative;
+  z-index: 2;
   display: block;
   width: 100%;
   height: 100%;
   border: 0;
-  background: #ffffff;
+  background: transparent;
+  opacity: 1;
+  transition: opacity 120ms ease-out;
+}
+
+.reference-home-embed--loading .reference-home-embed__frame {
+  pointer-events: none;
+  opacity: 0;
 }
 
 .reference-header-cta {
