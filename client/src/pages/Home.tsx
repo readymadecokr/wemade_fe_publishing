@@ -147,6 +147,42 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-snap-panel]"));
+    let wheelLocked = false;
+
+    const isPanelViewport = () => window.matchMedia("(min-width: 769px)").matches;
+    const getCurrentPanelIndex = () => {
+      const headerHeight = Number.parseFloat(getComputedStyle(root).getPropertyValue("--react-home-header-height")) || 0;
+      return panels.reduce((nearestIndex, panel, index) => {
+        const nearestDistance = Math.abs(panels[nearestIndex].getBoundingClientRect().top - headerHeight);
+        const panelDistance = Math.abs(panel.getBoundingClientRect().top - headerHeight);
+        return panelDistance < nearestDistance ? index : nearestIndex;
+      }, 0);
+    };
+    const handleWheel = (event: WheelEvent) => {
+      if (!isPanelViewport() || wheelLocked || Math.abs(event.deltaY) < 8 || event.ctrlKey) return;
+      if (event.target instanceof Element && event.target.closest(".react-home-widget")) return;
+
+      const currentIndex = getCurrentPanelIndex();
+      const nextIndex = Math.max(0, Math.min(panels.length - 1, currentIndex + (event.deltaY > 0 ? 1 : -1)));
+      if (nextIndex === currentIndex) return;
+
+      event.preventDefault();
+      wheelLocked = true;
+      panels[nextIndex].scrollIntoView({ behavior: "smooth", block: "start" });
+      window.setTimeout(() => { wheelLocked = false; }, 680);
+    };
+
+    root.classList.add("react-home-snap");
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      root.classList.remove("react-home-snap");
+      window.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
+
   const selectHero = (direction: -1 | 1) => setHeroIndex((current) => (current + direction + 3) % 3);
 
   return (
@@ -154,6 +190,7 @@ export default function Home() {
       <ReferenceHomeHeader activeSection={activeSection} onNavigate={navigateTo} />
 
       <div className="react-home-layout" aria-label="Homepage content regions">
+      <div className="react-home-home-stage" data-snap-panel>
       <section id="home" data-home-section className="react-home-panel react-home-hero">
         <picture className="react-home-hero__visual" aria-hidden="true">
           <source media="(max-width: 760px)" srcSet={HERO_MOBILE_URL} />
@@ -172,8 +209,9 @@ export default function Home() {
       </section>
 
       <div className="react-home-hero-cta-row" aria-label="Hero quick actions"><HomeCtaPair /></div>
+      </div>
 
-      <section id="discord" data-home-section className="react-home-panel react-home-discord">
+      <section id="discord" data-home-section data-snap-panel className="react-home-panel react-home-discord">
         <div className="react-home-section-shell react-home-discord__shell">
           <div className="react-home-section-heading react-home-section-heading--light"><div><span>OFFICIAL COMMUNITY</span><h2>DISCORD</h2></div><p>Development news and community updates from the official Ragnarok Universe Discord.</p></div>
           <div className="react-home-widget">
@@ -183,7 +221,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="news" data-home-section className="react-home-panel react-home-news">
+      <section id="news" data-home-section data-snap-panel className="react-home-panel react-home-news">
         <div className="react-home-section-shell">
           <div className="react-home-section-heading"><div><span>NEWS &amp; NOTICE</span><h2>LATEST FROM MIDGARD</h2></div><button type="button" className="react-home-outline-cta" onClick={() => setLibraryOpen(true)}>VIEW MORE <b>›</b></button></div>
           <div className="react-home-news-grid">
@@ -192,14 +230,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="game-info" data-home-section className="react-home-panel react-home-game-info">
+      <section id="game-info" data-home-section data-snap-panel className="react-home-panel react-home-game-info">
         <div className="react-home-section-shell react-home-game-info__grid">
           <div className="react-home-game-info__copy"><span>EXPLORE MIDGARD</span><h2>CLASSIC ADVENTURE<br />A NEW WAY TO PLAY</h2><p>Experience the legendary fantasy MMORPG directly in your web browser. Explore a familiar world, meet a growing community, and help shape the next chapter.</p><button type="button" className="react-home-outline-cta" onClick={() => setLibraryOpen(true)}>RUNE-MIDGARTS LIBRARY <b>›</b></button></div>
           <img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="lazy" />
         </div>
       </section>
 
-      <section id="media" data-home-section className="react-home-panel react-home-media">
+      <section id="media" data-home-section data-snap-panel className="react-home-panel react-home-media">
         <div className="react-home-section-shell">
           <div className="react-home-section-heading react-home-section-heading--light"><div><span>SEE THE WORLD IN MOTION</span><h2>MEDIA</h2></div></div>
           <div className="react-home-media__feature"><img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="lazy" /><button type="button" aria-label="Play gameplay video"><Play fill="currentColor" /></button></div>
@@ -207,11 +245,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section data-home-section className="react-home-panel react-home-closing">
+      <section data-home-section data-snap-panel className="react-home-panel react-home-closing">
         <div className="react-home-closing__content"><span>YOUR STORY BEGINS HERE</span><h2>TWO CLICKS TO<br />MIDGARD</h2><p>Start the game in your browser, then join the Discord to find a party, get patch news first and take part in founder events.</p><HomeCtaPair /></div>
       </section>
 
-      <footer className="react-home-footer">
+      <footer className="react-home-footer" data-snap-panel>
         <div className="react-home-footer__inner"><div><div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div><nav><a href="/">Terms of Service</a><a href="/">Privacy Policy</a><a href="/">Privacy Settings</a><a href="/">Customer Support</a></nav><img src="/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png" alt="GRAVITY" loading="lazy" /><p>Copyright © Gravity Co., LTD &amp; Lee Myoungjin(studio DTDS). All Rights Reserved. All trademarks used on this website are the property of their respective owners.</p></div><div className="react-home-footer__social"><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer">D</a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer">f</a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer">X</a></div></div>
       </footer>
       </div>
