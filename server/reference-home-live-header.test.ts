@@ -30,9 +30,12 @@ describe("reference Home live service header", () => {
     expect(headerStyles).toContain(".reference-header-game-start:hover");
     expect(headerStyles).toContain("transform: none;");
     expect(headerStyles).toContain("transition: none;");
-    expect(headerStyles).toContain("transform: translateX(-12px);");
-    expect(headerStyles).toContain("width: 88px;");
-    expect(headerStyles).toContain("max-height: 16px;");
+    expect(headerStyles).toContain("transform: translateX(-8px);");
+    expect(headerStyles).toContain("width: 78px;");
+    expect(headerStyles).toContain("min-height: 34px;");
+    expect(headerStyles).toContain("max-height: 18px;");
+    expect(homeSource).toContain("lg:flex-nowrap");
+    expect(homeSource).toContain("lg:order-none lg:flex");
   });
 
   it("uses the real OAuth session, balance query, and logout mutation instead of legacy local storage", () => {

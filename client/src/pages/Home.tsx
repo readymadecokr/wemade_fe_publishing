@@ -58,9 +58,9 @@ function ReferenceHomeHeader() {
       </div>
 
       <div className="border-b border-[#c8d8e7]/30 bg-[#1c3147] shadow-[0_3px_18px_rgba(24,38,57,.28)] [background-image:linear-gradient(100deg,rgba(32,56,78,1),rgba(58,84,110,.9),rgba(24,45,66,1))]">
-        <div className="container flex min-h-[4.125rem] flex-wrap items-center justify-between gap-x-2 gap-y-1 py-1.5 sm:flex-nowrap sm:gap-x-5 sm:py-2">
+        <div className="container flex min-h-[4.125rem] flex-wrap items-center justify-between gap-x-2 gap-y-1 py-1.5 lg:flex-nowrap lg:gap-x-5 lg:py-2">
           <a href={sectionHref("home")} target="ragnarok-reference-frame" className="group flex shrink-0 items-center gap-2" aria-label="Ragnarok Universe home"><img src={LOGO_URL} alt="Ragnarok Universe" className="h-7 w-auto brightness-[1.28] contrast-90 transition-opacity group-hover:opacity-80 sm:h-9" /></a>
-          <nav className="portal-nav order-3 grid w-full grid-cols-6 items-center text-[8px] sm:order-none sm:flex sm:w-auto sm:justify-center sm:gap-4 sm:text-[11px] lg:gap-6" aria-label="Primary navigation">
+          <nav className="portal-nav order-3 grid w-full grid-cols-6 items-center text-[8px] lg:order-none lg:flex lg:w-auto lg:justify-center lg:gap-4 lg:text-[11px] xl:gap-6" aria-label="Primary navigation">
             <a href={sectionHref("home")} target="ragnarok-reference-frame" className="portal-nav-link portal-nav-link--active">HOME</a>
             <a href={sectionHref("news")} target="ragnarok-reference-frame" className="portal-nav-link">NEWS</a>
             <a href={sectionHref("game-info")} target="ragnarok-reference-frame" className="portal-nav-link">GAME INFO</a>
