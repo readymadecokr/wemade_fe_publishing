@@ -48,8 +48,8 @@ describe("user-supplied final Home closing panel", () => {
 
   it("uses the provided Game Start and Discord logo images for all homepage CTAs", () => {
     expect(staticHomeSource).toContain('id="manus-cta-unification-style"');
-    expect(staticHomeSource).toContain('const gameStartButtonImage = "data:image/png;base64,');
-    expect(staticHomeSource).toContain('const discordButtonLogo = "data:image/png;base64,');
+    expect(staticHomeSource).toContain('const gameStartButtonImage = "https://raguniverse-izcifhmz.manus.space/manus-storage/gamestart_BTN_1c6449da.png";');
+    expect(staticHomeSource).toContain('const discordButtonLogo = "https://raguniverse-izcifhmz.manus.space/manus-storage/Discord-Logo-White_b3128ea2.png";');
     expect(staticHomeSource).toContain('document.querySelectorAll(".hero-game-start, .closing-game-start")');
     expect(staticHomeSource).toContain('document.querySelectorAll(".hero-discord, .closing-discord")');
     expect(staticHomeSource).toContain('document.querySelectorAll(".widgetbot-join")');
@@ -58,8 +58,8 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("width:100% !important; max-width:none !important; height:100% !important; max-height:none !important; object-fit:fill !important");
     expect(staticHomeSource).toContain("const applyCtaArtwork = () =>");
     expect(staticHomeSource).toContain("ctaArtworkObserver.observe(document.getElementById(\"home\"), { childList:true, subtree:true })");
-    expect(staticHomeSource).toContain('<a class="hero-discord" href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noreferrer"><img class="home-discord-logo" src="data:image/png;base64,');
-    expect(staticHomeSource).toContain('class="hero-game-start game-start-art" href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer"><img src="data:image/png;base64,');
+    expect(staticHomeSource).toContain('<a class="hero-discord" href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noreferrer"><img class="home-discord-logo" src="data:image/webp;base64,');
+    expect(staticHomeSource).toContain('class="hero-game-start game-start-art" href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer"><img src="data:image/webp;base64,');
     expect(staticHomeSource).toContain("background:#5865f2 !important");
     expect(staticHomeSource).toContain("border:0 !important");
   });
