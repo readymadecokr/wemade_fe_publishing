@@ -20,7 +20,7 @@ describe("final Home source integrity", () => {
     expect(widgetbotReference).toContain('class="hero-rail" aria-label="Main banners" hidden aria-hidden="true" style="display:none!important"');
     expect(widgetbotReference).toContain("floating-community.hero-hidden");
     expect(widgetbotReference).toContain("widgetbot-community");
-    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_0df295aa.html");
+    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_3460eae2.html");
   });
 
   it("does not place a custom visual shell around the supplied document", () => {

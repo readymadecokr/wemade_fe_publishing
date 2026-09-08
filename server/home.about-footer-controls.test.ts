@@ -70,11 +70,12 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).not.toContain("widgetbot-game-start");
   });
 
-  it("removes the outer Game Start treatment while shadowed Discord buttons press down on hover", () => {
+  it("keeps Game Start image-only while every Game Start and Discord CTA presses down on hover", () => {
     expect(staticHomeSource).toContain(".hero-game-start,\n  .closing-game-start");
     expect(staticHomeSource).toContain("background:transparent !important");
     expect(staticHomeSource).toContain("box-shadow:none !important");
-    expect(staticHomeSource).toContain(".hero-game-start:hover,\n  .closing-game-start:hover { transform:none !important; filter:none !important; }");
+    expect(staticHomeSource).toContain("filter:drop-shadow(0 4px 0 rgba(8,39,88,.72)) !important");
+    expect(staticHomeSource).toContain(".hero-game-start:hover,\n  .closing-game-start:hover { transform:translateY(4px) !important; filter:drop-shadow(0 0 0 rgba(8,39,88,0)) !important; }");
     expect(staticHomeSource).toContain(".hero-discord:hover,\n  .closing-discord:hover { background:#5865f2 !important; box-shadow:0 0 0 #4049b8");
     expect(staticHomeSource).toContain("#discord .widgetbot-join:hover { background:#5865f2 !important; box-shadow:0 0 0 #4049b8");
   });
@@ -84,7 +85,8 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain(".hero-game-start,\n  .hero-discord { width:285px !important; min-width:285px !important; flex:0 0 285px; }");
     expect(staticHomeSource).toContain("#home .hero-slide img { width:100% !important; height:100% !important; object-fit:cover !important; object-position:center !important; }");
     expect(staticHomeSource).toContain("#home .hero-primary-actions { display:flex !important; width:calc(100% - 14px) !important; margin-right:14px !important;");
-    expect(staticHomeSource).toContain("#home .hero-game-start,\n    #home .hero-discord { width:calc((100% - 10px) / 2) !important; min-width:0 !important; flex:0 1 calc((100% - 10px) / 2) !important; }");
+    expect(staticHomeSource).toContain("#home .hero-game-start,\n    #home .hero-discord { width:calc((100% - 10px) / 2) !important; min-width:0 !important; flex:0 1 calc((100% - 10px) / 2) !important; aspect-ratio:571 / 186 !important; height:auto !important; min-height:0 !important; }");
+    expect(staticHomeSource).toContain("aspect-ratio:571 / 186 !important; height:auto !important; min-height:0 !important;");
   });
 
   it("keeps a two-line Hero title, four vertical mobile News cards, proportional imagery, and side-by-side Two Clicks CTAs", () => {
@@ -101,6 +103,7 @@ describe("user-supplied final Home closing panel", () => {
     expect(staticHomeSource).toContain("#media .media-video { flex:none !important; }");
     expect(staticHomeSource).toContain("#game-info .game-info-visual img,\n    #media .media-video img { display:block !important; width:100% !important; height:auto !important; object-fit:contain !important; }");
     expect(staticHomeSource).toContain(".closing-content > div { display:flex !important; width:100% !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; justify-content:center !important; gap:10px !important; }");
-    expect(staticHomeSource).toContain(".closing-game-start,\n    .closing-discord { width:calc((100% - 10px) / 2) !important; min-width:0 !important; flex:0 1 calc((100% - 10px) / 2) !important; margin:0 !important; }");
+    expect(staticHomeSource).toContain(".closing-game-start,\n    .closing-discord { width:calc((100% - 10px) / 2) !important; min-width:0 !important; flex:0 1 calc((100% - 10px) / 2) !important; margin:0 !important; aspect-ratio:571 / 186 !important; height:auto !important; min-height:0 !important; }");
+    expect(staticHomeSource).toContain(".closing-game-start { padding:0 !important; display:flex !important; align-items:center !important; justify-content:center !important; }");
   });
 });

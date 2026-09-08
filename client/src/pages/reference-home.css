@@ -122,12 +122,9 @@
 
   .reference-header-discord,
   .reference-header-game-start {
-    width: 78px;
-    min-width: 78px;
+    width: 104px;
+    min-width: 104px;
     padding: 0;
-  }
-
-  .reference-header-game-start {
     min-height: 34px;
     height: 34px;
     border-radius: 0;
@@ -158,7 +155,9 @@
   }
 
   .reference-header-game-start__image {
-    width: 78px;
-    max-height: 30px;
+    width: 104px;
+    height: 34px;
+    max-height: 34px;
+    object-fit: contain;
   }
 }

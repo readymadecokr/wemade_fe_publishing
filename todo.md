@@ -901,3 +901,9 @@
 - [x] 모바일 상단 Game Start의 세로 높이를 Discord와 동일하게 보정
 - [x] Game Start hover 시 그림자 높이만큼 내려가는 눌림 효과 적용
 - [x] 모바일 CTA 높이·hover 상호작용과 전체 회귀 테스트 검증
+
+## 모바일 전체 CTA 높이 일치 보정
+- [x] 상단·Hero 아래·하단 CTA 쌍의 실제 외곽 높이와 이미지 비율 점검
+- [x] 세 위치의 Game Start·Discord 높이를 첨부 기준과 동일하게 통일
+- [x] 모든 Game Start에 그림자 기반 눌림 hover·active 효과 적용
+- [x] 모바일 세 CTA 위치 실화면과 전체 회귀 테스트 검증
