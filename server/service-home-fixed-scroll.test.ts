@@ -21,4 +21,12 @@ describe("direct React full-page service Home", () => {
     expect(homeSource).toContain("react-home-hero-cta-row");
     expect(homeSource).not.toContain("<iframe\n        name=");
   });
+
+  it("keeps each homepage region in an explicit single-column grid row", () => {
+    expect(homeSource).toContain('className="react-home-layout"');
+    expect(styleSource).toContain('grid-template-areas: "hero" "hero-cta" "discord" "news" "game-info" "media" "closing" "footer"');
+    expect(styleSource).toContain(".react-home-hero { grid-area: hero;");
+    expect(styleSource).toContain(".react-home-footer { grid-area: footer;");
+    expect(styleSource).toContain(".react-home-hero-cta-row { grid-area: hero-cta;");
+  });
 });

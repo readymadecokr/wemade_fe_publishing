@@ -153,6 +153,7 @@ export default function Home() {
     <main className="react-home" aria-label="Ragnarok Universe homepage">
       <ReferenceHomeHeader activeSection={activeSection} onNavigate={navigateTo} />
 
+      <div className="react-home-layout" aria-label="Homepage content regions">
       <section id="home" data-home-section className="react-home-panel react-home-hero">
         <picture className="react-home-hero__visual" aria-hidden="true">
           <source media="(max-width: 760px)" srcSet={HERO_MOBILE_URL} />
@@ -213,6 +214,7 @@ export default function Home() {
       <footer className="react-home-footer">
         <div className="react-home-footer__inner"><div><div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div><nav><a href="/">Terms of Service</a><a href="/">Privacy Policy</a><a href="/">Privacy Settings</a><a href="/">Customer Support</a></nav><img src="/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png" alt="GRAVITY" loading="lazy" /><p>Copyright © Gravity Co., LTD &amp; Lee Myoungjin(studio DTDS). All Rights Reserved. All trademarks used on this website are the property of their respective owners.</p></div><div className="react-home-footer__social"><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer">D</a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer">f</a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer">X</a></div></div>
       </footer>
+      </div>
 
       {libraryOpen && <div className="react-home-modal" role="dialog" aria-modal="true" aria-labelledby="library-coming-soon-title"><button aria-label="Close" className="react-home-modal__backdrop" onClick={() => setLibraryOpen(false)} /><div className="react-home-modal__card"><button type="button" className="react-home-modal__close" onClick={() => setLibraryOpen(false)} aria-label="Close">×</button><p>RUNE-MIDGARTS LIBRARY</p><h2 id="library-coming-soon-title">WE&apos;RE GETTING READY!</h2><span>Rune-Midgarts Library is coming soon. Please check back for more information.</span><button type="button" onClick={() => setLibraryOpen(false)}>CONFIRM</button></div></div>}
     </main>

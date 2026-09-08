@@ -12,7 +12,8 @@ describe("direct React Home section navigation", () => {
   });
 
   it("retains full visual panels and avoids iframe-specific scroll styling", () => {
-    expect(styleSource).toContain(".react-home-panel { position: relative; min-height: 100svh;");
+    expect(styleSource).toContain(".react-home-layout { display: grid; grid-template-columns: minmax(0, 1fr);");
+    expect(styleSource).toContain(".react-home-panel { min-height: 100svh;");
     expect(styleSource).toContain(".react-home-hero { display: grid;");
     expect(styleSource).not.toContain("reference-home-embed__frame");
   });

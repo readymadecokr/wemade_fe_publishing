@@ -8,7 +8,18 @@
 }
 
 .react-home { --react-home-header-height: 112px; padding-top: var(--react-home-header-height); overflow-x: clip; }
-.react-home-panel { position: relative; min-height: 100svh; scroll-margin-top: var(--react-home-header-height); overflow: hidden; }
+.react-home-layout { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "hero" "hero-cta" "discord" "news" "game-info" "media" "closing" "footer"; align-items: start; isolation: isolate; }
+.react-home-layout > * { min-width: 0; margin: 0; }
+.react-home-layout > .react-home-panel, .react-home-layout > .react-home-footer { position: relative; width: 100%; z-index: 0; }
+.react-home-panel { min-height: 100svh; scroll-margin-top: var(--react-home-header-height); overflow: clip; isolation: isolate; }
+.react-home-hero { grid-area: hero; z-index: 1; }
+.react-home-hero-cta-row { grid-area: hero-cta; z-index: 2; }
+.react-home-discord { grid-area: discord; }
+.react-home-news { grid-area: news; }
+.react-home-game-info { grid-area: game-info; }
+.react-home-media { grid-area: media; }
+.react-home-closing { grid-area: closing; }
+.react-home-footer { grid-area: footer; }
 .react-home-section-shell { width: min(1180px, calc(100% - 64px)); margin: 0 auto; }
 
 .reference-header-cta { display: flex; align-items: center; gap: 8px; }
@@ -43,7 +54,7 @@
 .react-home-hero__arrow--left { left: 24px; }.react-home-hero__arrow--right { right: 24px; }
 .react-home-hero__dots { position: absolute; z-index: 2; bottom: 116px; left: 50%; display: flex; gap: 9px; transform: translateX(-50%); }
 .react-home-hero__dots button { width: 9px; height: 9px; border: 1px solid #f4dd93; border-radius: 50%; padding: 0; background: transparent; }.react-home-hero__dots button.is-active { background: #f4dd93; box-shadow: 0 0 0 3px rgba(244,221,147,.16); }
-.react-home-hero-cta-row { display: flex; min-height: 104px; align-items: center; justify-content: center; padding: 14px 24px; background: #f8f4eb; }
+.react-home-hero-cta-row { display: flex; min-height: 104px; align-items: center; justify-content: center; padding: 14px 24px; overflow: hidden; background: #f8f4eb; border-top: 1px solid rgba(25,52,77,.16); border-bottom: 1px solid rgba(25,52,77,.16); }
 .home-cta-pair { display: flex; gap: 14px; align-items: center; justify-content: center; }
 .home-game-start, .home-discord-button { display: inline-flex; width: 285px; height: 76px; align-items: center; justify-content: center; }
 .home-game-start { filter: drop-shadow(0 4px 0 rgba(8,39,88,.72)) drop-shadow(0 7px 14px rgba(28,37,119,.34)); transition: transform 160ms cubic-bezier(.23,1,.32,1), filter 160ms cubic-bezier(.23,1,.32,1); }.home-game-start img { display: block; width: auto; max-width: 100%; height: auto; max-height: 100%; object-fit: contain; }.home-game-start:hover { filter: none; transform: translateY(4px); }.home-game-start:active { filter: none; transform: translateY(4px) scale(.98); }
