@@ -128,6 +128,9 @@
     min-height: 34px;
     height: 34px;
     border-radius: 0;
+  }
+
+  .reference-header-game-start {
     filter: drop-shadow(0 3px 0 rgba(8, 39, 88, .72));
   }
 

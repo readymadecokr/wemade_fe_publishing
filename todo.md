@@ -907,3 +907,8 @@
 - [x] 세 위치의 Game Start·Discord 높이를 첨부 기준과 동일하게 통일
 - [x] 모든 Game Start에 그림자 기반 눌림 hover·active 효과 적용
 - [x] 모바일 세 CTA 위치 실화면과 전체 회귀 테스트 검증
+
+## 모바일 전체 CTA 동일 크기 통일
+- [x] 상단·Hero 아래·하단 CTA 쌍의 가로·세로 크기 차이 점검
+- [x] 위치와 무관하게 Game Start·Discord의 동일 외곽 크기 규칙 적용
+- [x] Game Start 이미지 비율·눌림 효과를 유지한 모바일 실화면 및 회귀 테스트 검증
