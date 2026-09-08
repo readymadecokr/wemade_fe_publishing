@@ -3,6 +3,7 @@ import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { ChevronDown, ChevronLeft, ChevronRight, ExternalLink, Globe, Play } from "lucide-react";
 import FloatingSocialLinks from "@/components/FloatingSocialLinks";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import "./reference-home.css";
@@ -18,6 +19,21 @@ const NEWS_ITEMS = [
   { title: "Ragnarok Universe Beta Roadmap", copy: "A look at the next testing phase, planned improvements, and the road ahead.", image: "/manus-storage/banners/news-img-1787281494281_bb3eae6d.webp", date: "AUG 21, 2026", tag: "NOTICE" },
   { title: "Discord Founders Event Now Open", copy: "Meet other adventurers and take part in the first founders missions.", image: "/manus-storage/banners/news-img-1787281479124_091e48a2.webp", date: "AUG 19, 2026", tag: "EVENT" },
   { title: "Welcome to a New Era of Midgard", copy: "Discover the vision behind a browser-based return to Ragnarok.", image: "/manus-storage/banners/news-img-1787281449016_eb9de628.jpg", date: "AUG 15, 2026", tag: "NEWS" },
+] as const;
+
+const MEDIA_SCREENSHOTS = [
+  { title: "Ragnarok Online: Patch Update June 17, 2026", image: "/manus-storage/RO1_pathupdate_17062026_f83f13b8_0ccbefaa.jpg" },
+  { title: "Ragnarok Online: Patch Update June 10, 2026", image: "/manus-storage/RO_PatchUpdate_10062026_219a465c_5903482d.jpg" },
+  { title: "Ragnarok Online: Patch Update June 4, 2026", image: "/manus-storage/RO_PatchUpdate_04062026-1_29153260_878bf95f.jpg" },
+  { title: "Ragnarok Online: Patch Update May 27, 2026", image: "/manus-storage/RO_PatchUpdate_27052026_953943aa_fa54354f.webp" },
+  { title: "Gravity Game Tech Launches LINE Official Account", image: "/manus-storage/PR-pack-Line-OA-Cover-700x36020052026_d4332f85_70996280.webp" },
+  { title: "Ragnarok Online: Music Contest Winners Announced", image: "/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_bc640d8a_0c8f7386.png" },
+  { title: "Ragnarok Online: Patch Update May 13, 2026", image: "/manus-storage/RO1_patchupdate_13052026_700e9d1f_01c2e74f.jpg" },
+  { title: "Ragnarok Online: Special Anniversary Event", image: "/manus-storage/RO1_04032026PatchUpdate_700X360_3345ccff_33b86c1a.webp" },
+  { title: "Ragnarok Monster Shop at Craft and Play 2026", image: "/manus-storage/GGT-RO-Shop-Craft-Play-3-1920x1080_46621aa6_4cf197fb.webp" },
+  { title: "Ragnarok Online: Patch Update May 6, 2026", image: "/manus-storage/RO1_06052026_47ecad62_ae242c6b.jpg" },
+  { title: "Ragnarok Online: Patch Update April 29, 2026", image: "/manus-storage/RO_PatchUpdate18032026_700x360_68e5480e_82a64304.webp" },
+  { title: "Ragnarok Online: Patch Update April 22, 2026", image: "/manus-storage/RO_PatchUpdate_22042026_337d2472_7c5c5406.webp" },
 ] as const;
 
 function formatRcoin(value: number): string {
@@ -115,6 +131,7 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState("home");
   const [heroIndex, setHeroIndex] = useState(0);
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [selectedScreenshot, setSelectedScreenshot] = useState<number | null>(null);
 
   const navigateTo = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -139,6 +156,19 @@ export default function Home() {
       document.getElementById(sectionId)?.scrollIntoView({ behavior: "auto", block: "start" });
     });
   }, []);
+
+  useEffect(() => {
+    if (selectedScreenshot === null) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelectedScreenshot(null);
+      if (event.key === "ArrowLeft") setSelectedScreenshot((current) => current === null ? current : (current + MEDIA_SCREENSHOTS.length - 1) % MEDIA_SCREENSHOTS.length);
+      if (event.key === "ArrowRight") setSelectedScreenshot((current) => current === null ? current : (current + 1) % MEDIA_SCREENSHOTS.length);
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [selectedScreenshot]);
 
   useEffect(() => {
     const header = document.querySelector<HTMLElement>(".reference-home-live-header");
@@ -253,7 +283,22 @@ export default function Home() {
         <div className="react-home-section-shell">
           <div className="react-home-section-heading react-home-section-heading--light"><div><span>SEE THE WORLD IN MOTION</span><h2>MEDIA</h2></div></div>
           <div className="react-home-media__feature"><img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="lazy" /><button type="button" aria-label="Play gameplay video"><Play fill="currentColor" /></button></div>
-          <div className="react-home-media__strip">{NEWS_ITEMS.map((item, index) => <img key={`${item.title}-${index}`} src={item.image} alt={`Ragnarok Universe screenshot ${index + 1}`} loading="lazy" />)}</div>
+          <div className="react-home-media__gallery" aria-label="Ragnarok Universe screenshots">
+            <Carousel opts={{ align: "start", slidesToScroll: 3, containScroll: "trimSnaps" }} className="react-home-media__carousel">
+              <CarouselContent className="react-home-media__carousel-track">
+                {MEDIA_SCREENSHOTS.map((screenshot, index) => (
+                  <CarouselItem key={screenshot.image} className="basis-1/3 react-home-media__carousel-item">
+                    <button type="button" className="react-home-media__thumbnail" onClick={() => setSelectedScreenshot(index)} aria-label={`View screenshot ${index + 1}: ${screenshot.title}`}>
+                      <img src={screenshot.image} alt={screenshot.title} loading="lazy" />
+                      <span>VIEW</span>
+                    </button>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="react-home-media__carousel-control react-home-media__carousel-control--previous" aria-label="Previous screenshots" />
+              <CarouselNext className="react-home-media__carousel-control react-home-media__carousel-control--next" aria-label="Next screenshots" />
+            </Carousel>
+          </div>
         </div>
       </section>
 
@@ -266,6 +311,7 @@ export default function Home() {
       </div>
 
       {libraryOpen && <div className="react-home-modal" role="dialog" aria-modal="true" aria-labelledby="library-coming-soon-title"><button aria-label="Close" className="react-home-modal__backdrop" onClick={() => setLibraryOpen(false)} /><div className="react-home-modal__card"><button type="button" className="react-home-modal__close" onClick={() => setLibraryOpen(false)} aria-label="Close">×</button><p>RUNE-MIDGARTS LIBRARY</p><h2 id="library-coming-soon-title">WE&apos;RE GETTING READY!</h2><span>Rune-Midgarts Library is coming soon. Please check back for more information.</span><button type="button" onClick={() => setLibraryOpen(false)}>CONFIRM</button></div></div>}
+      {selectedScreenshot !== null && <div className="react-home-gallery-modal" role="dialog" aria-modal="true" aria-label={`Screenshot ${selectedScreenshot + 1} of ${MEDIA_SCREENSHOTS.length}`}><button type="button" className="react-home-gallery-modal__backdrop" onClick={() => setSelectedScreenshot(null)} aria-label="Close screenshot" /><div className="react-home-gallery-modal__card"><button type="button" className="react-home-gallery-modal__close" onClick={() => setSelectedScreenshot(null)} aria-label="Close screenshot">×</button><button type="button" className="react-home-gallery-modal__nav react-home-gallery-modal__nav--previous" onClick={() => setSelectedScreenshot((selectedScreenshot + MEDIA_SCREENSHOTS.length - 1) % MEDIA_SCREENSHOTS.length)} aria-label="Previous screenshot"><ChevronLeft /></button><img src={MEDIA_SCREENSHOTS[selectedScreenshot].image} alt={MEDIA_SCREENSHOTS[selectedScreenshot].title} /><button type="button" className="react-home-gallery-modal__nav react-home-gallery-modal__nav--next" onClick={() => setSelectedScreenshot((selectedScreenshot + 1) % MEDIA_SCREENSHOTS.length)} aria-label="Next screenshot"><ChevronRight /></button><p>{selectedScreenshot + 1} / {MEDIA_SCREENSHOTS.length} · {MEDIA_SCREENSHOTS[selectedScreenshot].title}</p></div></div>}
     </main>
   );
 }
