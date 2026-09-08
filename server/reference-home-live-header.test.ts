@@ -17,10 +17,11 @@ describe("direct React service header", () => {
   });
 
   it("keeps header CTA sizing, rounded Discord styling, and pressed Game Start feedback on narrow screens", () => {
-    expect(headerStyles).toContain("width: 154px; min-width: 154px; height: 44px; min-height: 44px;");
+    expect(headerStyles).toContain("width: min(150px, 100%); min-width: 150px; height: 48px; min-height: 48px;");
     expect(headerStyles).toContain("width: 104px; min-width: 104px; height: 34px; min-height: 34px;");
-    expect(headerStyles).toContain("border-radius: 16px;");
+    expect(headerStyles).toContain("border-radius: 18px;");
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
-    expect(homeSource).toContain("2xl:flex-nowrap");
+    expect(homeSource).toContain("xl:flex-nowrap");
+    expect(homeSource).toContain("xl:order-none xl:flex xl:w-auto xl:flex-1 xl:justify-center");
   });
 });

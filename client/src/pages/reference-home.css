@@ -12,12 +12,12 @@
 .react-home-section-shell { width: min(1180px, calc(100% - 64px)); margin: 0 auto; }
 
 .reference-header-cta { display: flex; align-items: center; gap: 8px; }
-.reference-header-discord, .reference-header-game-start { display: inline-flex; width: 154px; min-width: 154px; height: 44px; min-height: 44px; align-items: center; justify-content: center; }
-.reference-header-discord { padding: 0 8px; border-radius: 16px; background: #5865f2; box-shadow: 0 4px 0 #4049b8, 0 6px 12px rgba(28,37,119,.34), inset 0 1px 0 rgba(255,255,255,.28); transition: transform 160ms cubic-bezier(.23,1,.32,1), box-shadow 160ms cubic-bezier(.23,1,.32,1); }
-.reference-header-discord__image, .reference-header-discord img { display: block; width: 134px; max-height: 26px; height: auto; object-fit: contain; }
+.reference-header-discord, .reference-header-game-start { display: inline-flex; width: min(150px, 100%); min-width: 150px; height: 48px; min-height: 48px; align-items: center; justify-content: center; }
+.reference-header-discord { padding: 0 8px; border-radius: 18px; background: #5865f2; box-shadow: 0 4px 0 #4049b8, 0 6px 12px rgba(28,37,119,.34), inset 0 1px 0 rgba(255,255,255,.28); transition: transform 160ms cubic-bezier(.23,1,.32,1), box-shadow 160ms cubic-bezier(.23,1,.32,1); }
+.reference-header-discord__image, .reference-header-discord img { display: block; width: 132px; max-height: 28px; height: auto; object-fit: contain; }
 .reference-header-discord:hover { box-shadow: 0 0 0 #4049b8, 0 2px 4px rgba(28,37,119,.22), inset 0 1px 0 rgba(255,255,255,.28); transform: translateY(4px); }
 .reference-header-game-start { padding: 0; border: 0; border-radius: 0; background: transparent; filter: drop-shadow(0 4px 0 rgba(8,39,88,.72)); transition: transform 160ms cubic-bezier(.23,1,.32,1), filter 160ms cubic-bezier(.23,1,.32,1); }
-.reference-header-game-start img { display: block; width: 154px; height: auto; object-fit: contain; }
+.reference-header-game-start img { display: block; width: 150px; max-height: 48px; height: auto; object-fit: contain; }
 .reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }
 .reference-header-discord:active, .reference-header-game-start:active { transform: translateY(4px) scale(.98); }
 
