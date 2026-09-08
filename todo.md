@@ -948,3 +948,8 @@
 - [x] 참조 자산을 재사용하는 직접 렌더링 Home 구조와 반응형 설계
 - [x] iframe 제거 및 React Hero·Discord·News·Game Info·Media·Footer 구현
 - [x] 직접 렌더링 메뉴 이동·CTA·모바일·성능 및 전체 회귀 테스트 검증
+
+## Game Start CTA 원본 비율 유지
+- [x] 상단·Hero 아래·하단 Game Start 이미지의 강제 늘림 규칙 점검
+- [x] 모든 Game Start 이미지를 원본 종횡비 유지형 크기 조절로 변경
+- [x] 모바일·데스크톱 CTA 비율 및 전체 회귀 테스트 검증

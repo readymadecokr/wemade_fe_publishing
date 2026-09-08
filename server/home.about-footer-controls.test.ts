@@ -15,6 +15,7 @@ describe("direct React Home CTA, headings, and footer", () => {
 
   it("keeps Game Start left, Discord right, and the requested press-down interaction", () => {
     expect(homeSource).toContain("<GameStartButton /><DiscordButton />");
+    expect(styleSource).toContain(".home-game-start img { display: block; width: auto; max-width: 100%; height: auto; max-height: 100%; object-fit: contain; }");
     expect(styleSource).toContain(".home-game-start:hover { filter: none; transform: translateY(4px); }");
     expect(styleSource).toContain(".home-discord-button { border-radius: 18px; background: #5865f2;");
     expect(styleSource).toContain(".home-discord-button img { display: block; width: 82%; max-height: 38px;");
