@@ -2,33 +2,18 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
-const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll.html", "utf8");
+const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
-describe("reference Home hero controls", () => {
-  it("keeps the Hero rail hidden but restores only the minimal arrows and page indicators", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_0b1e8c7e.html");
-    expect(homeSource).toContain("src={REFERENCE_HOME_URL}");
-    expect(staticHomeSource).toContain('class="hero-rail" aria-label="Main banners" hidden aria-hidden="true" style="display:none!important"');
-    expect(staticHomeSource).toContain('id="manus-hero-controls-script"');
-    expect(staticHomeSource).toContain("hero-minimal-controls");
-    expect(staticHomeSource).toContain("hero-minimal-arrow--prev");
-    expect(staticHomeSource).toContain("hero-minimal-arrow--next");
-    expect(staticHomeSource).toContain("hero-minimal-dots");
-    expect(staticHomeSource).toContain("hero-minimal-dot");
-    expect(staticHomeSource).toContain(".hero-minimal-arrow:hover,");
-    expect(staticHomeSource).toContain("transform:translateY(calc(-50% + 2px)) !important");
+describe("direct React Hero controls and community visibility", () => {
+  it("renders minimal arrow and dot controls directly in the Hero", () => {
+    expect(homeSource).toContain("react-home-hero__arrow--left");
+    expect(homeSource).toContain("react-home-hero__arrow--right");
+    expect(homeSource).toContain("react-home-hero__dots");
+    expect(styleSource).toContain(".react-home-hero__arrow:hover");
   });
 
-  it("keeps external community and Game Start actions available from the live header", () => {
-    expect(homeSource).toContain("https://discord.gg/yVWJkWdkAU");
-    expect(homeSource).toContain('sectionHref("game-start")');
-    expect(homeSource).toContain('const GAME_START_BUTTON_URL = "/manus-storage/gamestart_BTN_1c6449da.png"');
-    expect(homeSource).toContain('src={GAME_START_BUTTON_URL}');
-  });
-
-  it("hides the floating community links in Hero and reveals them from Discord onward", () => {
-    expect(staticHomeSource).toContain("floating-community.hero-hidden");
-    expect(staticHomeSource).toContain('document.getElementById("discord")');
-    expect(staticHomeSource).toContain('floating.classList.toggle("hero-hidden"');
+  it("uses actual official social links in the directly rendered footer", () => {
+    expect(homeSource).toContain("https://facebook.com/RagnarokUniverseEN");
+    expect(homeSource).toContain("https://x.com/RagUniOfficial");
   });
 });

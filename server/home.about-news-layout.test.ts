@@ -2,17 +2,19 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
-const referenceSource = readFileSync("/home/ubuntu/upload/ragnarok-universe-fullpage-responsive-260831_FINAL.html", "utf8");
+const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
-describe("user-supplied final Home news and game information", () => {
-  it("does not retain custom React copies of the News or About panels", () => {
-    expect(homeSource).not.toContain("reference-news-grid");
-    expect(homeSource).not.toContain("reference-game-info-panel");
+describe("direct React Home news and game information", () => {
+  it("renders the authored News and Game Info content directly in React", () => {
+    [/LATEST FROM MIDGARD/, /CLASSIC ADVENTURE/, /A NEW WAY TO PLAY/, /RUNE-MIDGARTS LIBRARY/].forEach((content) => {
+      expect(homeSource).toMatch(content);
+    });
+    expect(homeSource).toContain("const NEWS_ITEMS = [");
   });
 
-  it("preserves the final document’s authored News and Game Info copy", () => {
-    [/latest from midgard/i, /classic adventure/i, /new way to play/i, /explore game info/i].forEach((content) => {
-      expect(referenceSource).toMatch(content);
-    });
+  it("keeps responsive News and Game Info layout rules without an iframe", () => {
+    expect(styleSource).toContain(".react-home-news-grid { display: grid; grid-template-columns: repeat(3,1fr);");
+    expect(styleSource).toContain(".react-home-game-info__grid { display: grid; grid-template-columns: .94fr 1.06fr;");
+    expect(homeSource).not.toContain("REFERENCE_HOME_URL");
   });
 });

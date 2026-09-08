@@ -1,20 +1,19 @@
-import { readFileSync, statSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const staticHomePath = "/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll.html";
-const staticHomeSource = readFileSync(staticHomePath, "utf8");
+const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
 
-describe("reference Home initial-load performance", () => {
-  it("removes the large duplicated inline images while retaining only compressed first-screen assets", () => {
-    expect(statSync(staticHomePath).size).toBeLessThan(1_000_000);
-    expect(staticHomeSource).not.toContain("data:image/png;base64,");
-    expect(staticHomeSource).toContain("data:image/webp;base64,");
+describe("direct React Home initial-load performance", () => {
+  it("does not load the static reference document or its embedded resource graph", () => {
+    expect(homeSource).not.toContain("REFERENCE_HOME_URL");
+    expect(homeSource).not.toContain("fullpanel-scroll");
+    expect(homeSource).not.toContain("ragnarok-reference-frame");
   });
 
-  it("defers below-fold images and the Discord WidgetBot request until their sections approach the viewport", () => {
-    expect(staticHomeSource).toContain('loading="lazy" decoding="async"');
-    expect(staticHomeSource).toContain('data-widgetbot-src="\' + WIDGETBOT_URL + \'"');
-    expect(staticHomeSource).toContain('id="manus-widgetbot-deferred-load"');
-    expect(staticHomeSource).toContain('rootMargin:"300px 0px"');
+  it("prioritizes only the Hero and lazily loads lower images and the Discord widget", () => {
+    expect(homeSource).toContain('fetchPriority="high"');
+    expect(homeSource).toContain('loading="lazy"');
+    expect(homeSource).toContain("HERO_DESKTOP_URL");
+    expect(homeSource).toContain("HERO_MOBILE_URL");
   });
 });

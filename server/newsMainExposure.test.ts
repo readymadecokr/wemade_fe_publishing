@@ -22,8 +22,10 @@ describe("admin news automatic order and main exposure", () => {
     expect(adminSource).toContain(">활성</span>");
   });
 
-  it("uses the user-supplied final document as the Home News presentation source", () => {
-    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_0b1e8c7e.html");
-    expect(homeSource).not.toContain("trpc.publicNews.list.useQuery");
+  it("renders the reference News presentation directly in the React Home", () => {
+    expect(homeSource).toContain("const NEWS_ITEMS = [");
+    expect(homeSource).toContain("Ragnarok Universe Beta Roadmap");
+    expect(homeSource).toContain("react-home-news-grid");
+    expect(homeSource).not.toContain("REFERENCE_HOME_URL");
   });
 });

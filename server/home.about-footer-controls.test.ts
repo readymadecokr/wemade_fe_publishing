@@ -2,114 +2,35 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
-const referenceSource = readFileSync("/home/ubuntu/upload/ragnarok-universe-fullpage-responsive-260831_FINAL.html", "utf8");
-const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll.html", "utf8");
+const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
-describe("user-supplied final Home closing panel", () => {
-  it("removes the custom Home footer layer in favor of the supplied document", () => {
-    expect(homeSource).not.toContain("Two Clicks to Midgard");
-    expect(homeSource).not.toContain("View More");
-    expect(referenceSource).toMatch(/your story begins here/i);
+describe("direct React Home CTA, headings, and footer", () => {
+  it("uses the provided artwork for every shared Game Start and Discord CTA", () => {
+    expect(homeSource).toContain('const GAME_START_BUTTON_URL = "/manus-storage/gamestart_BTN_1c6449da.png"');
+    expect(homeSource).toContain('const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_b3128ea2.png"');
+    expect(homeSource).toContain("function GameStartButton");
+    expect(homeSource).toContain("function DiscordButton");
+    expect(homeSource).toContain("function HomeCtaPair");
   });
 
-  it("removes the faint Hero background from the Two Clicks to Midgard panel", () => {
-    expect(staticHomeSource).toContain('id="manus-closing-background-cleanup"');
-    expect(staticHomeSource).toContain(".closing-content::before");
-    expect(staticHomeSource).toContain("background-image:none !important");
-    expect(staticHomeSource).toContain("opacity:0 !important");
+  it("keeps Game Start left, Discord right, and the requested press-down interaction", () => {
+    expect(homeSource).toContain("<GameStartButton /><DiscordButton />");
+    expect(styleSource).toContain(".home-game-start:hover { filter: none; transform: translateY(4px); }");
+    expect(styleSource).toContain(".home-discord-button { border-radius: 18px; background: #5865f2;");
+    expect(styleSource).toContain(".home-discord-button img { display: block; width: 82%; max-height: 38px;");
   });
 
-  it("uses the light-mode blue GRAVITY logo in the footer", () => {
-    expect(staticHomeSource).toContain("gravity_logo_light_c14f48f8_5e3a7c41.png");
-    expect(staticHomeSource).toContain("replaceGravityLogo(document)");
-    expect(staticHomeSource).toContain("replaceGravityLogo(footerTemplate.content)");
-    expect(staticHomeSource).toContain('footer .footer-legal img[alt="GRAVITY"] { filter:none !important; }');
+  it("keeps the two-line Game Info heading, uppercase section titles, and blue Gravity footer asset", () => {
+    expect(homeSource).toContain("CLASSIC ADVENTURE<br />A NEW WAY TO PLAY");
+    expect(homeSource).toContain("LATEST FROM MIDGARD");
+    expect(homeSource).toContain("SEE THE WORLD IN MOTION");
+    expect(homeSource).toContain("gravity_logo_light_c14f48f8_5e3a7c41.png");
   });
 
-  it("unifies requested Home titles with the Two Clicks uppercase italic style", () => {
-    expect(staticHomeSource).toContain('id="manus-section-heading-and-footer-logo-style"');
-    expect(staticHomeSource).toContain("#discord .widgetbot-community__title");
-    expect(staticHomeSource).toContain("#news h2");
-    expect(staticHomeSource).toContain("#game-info h2");
-    expect(staticHomeSource).toContain("#media h2");
-    expect(staticHomeSource).toContain("font-style:italic !important");
-    expect(staticHomeSource).toContain("font-weight:900 !important");
-    expect(staticHomeSource).toContain("text-transform:uppercase !important");
-    expect(staticHomeSource).toContain("#media .media-heading > p { display:none !important; }");
-  });
-
-  it("uses a compact two-line Game Info title and matching Home heading scale", () => {
-    expect(staticHomeSource).toContain("<h2>Classic adventure<br>A new way to play</h2>");
-    expect(staticHomeSource).not.toContain("<h2>Classic adventure.<br>A new way to play.</h2>");
-    expect(staticHomeSource).toContain("font-size:clamp(30px,3.4vw,42px) !important");
-    expect(staticHomeSource).toContain("line-height:1.04 !important");
-    expect(staticHomeSource).toContain("font-size:clamp(28px,8vw,34px) !important");
-  });
-
-  it("uses the provided Game Start and Discord logo images for all homepage CTAs", () => {
-    expect(staticHomeSource).toContain('id="manus-cta-unification-style"');
-    expect(staticHomeSource).toContain('const gameStartButtonImage = "https://raguniverse-izcifhmz.manus.space/manus-storage/gamestart_BTN_1c6449da.png";');
-    expect(staticHomeSource).toContain('const discordButtonLogo = "https://raguniverse-izcifhmz.manus.space/manus-storage/Discord-Logo-White_b3128ea2.png";');
-    expect(staticHomeSource).toContain('document.querySelectorAll(".hero-game-start, .closing-game-start")');
-    expect(staticHomeSource).toContain('document.querySelectorAll(".hero-discord, .closing-discord")');
-    expect(staticHomeSource).toContain('document.querySelectorAll(".widgetbot-join")');
-    expect(staticHomeSource).toContain("home-game-start-art");
-    expect(staticHomeSource).toContain("home-discord-logo");
-    expect(staticHomeSource).toContain("width:100% !important; max-width:none !important; height:100% !important; max-height:none !important; object-fit:fill !important");
-    expect(staticHomeSource).toContain("const applyCtaArtwork = () =>");
-    expect(staticHomeSource).toContain("ctaArtworkObserver.observe(document.getElementById(\"home\"), { childList:true, subtree:true })");
-    expect(staticHomeSource).toContain('<a class="hero-discord" href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noreferrer"><img class="home-discord-logo" src="data:image/webp;base64,');
-    expect(staticHomeSource).toContain('class="hero-game-start game-start-art" href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer"><img src="data:image/webp;base64,');
-    expect(staticHomeSource).toContain("background:#5865f2 !important");
-    expect(staticHomeSource).toContain("border:0 !important");
-  });
-
-  it("keeps Game Start left and Discord right in Hero and closing pairs while centering Discord alone in its panel", () => {
-    expect(staticHomeSource).toContain("#discord .widgetbot-readonly-bar { height:72px !important; min-height:72px !important; padding:0 !important; display:flex; align-items:center; justify-content:center; gap:0 !important; }");
-    expect(staticHomeSource).toContain("#discord .widgetbot-join { width:285px !important; min-width:285px !important; height:64px !important");
-    expect(staticHomeSource).toContain("border-radius:18px !important");
-    expect(staticHomeSource).toContain(".home-discord-logo { display:block; width:184px; max-width:82%; height:auto; object-fit:contain; }");
-    expect(staticHomeSource).not.toContain("widgetbot-game-start");
-  });
-
-  it("keeps Game Start image-only while every Game Start and Discord CTA presses down on hover", () => {
-    expect(staticHomeSource).toContain(".hero-game-start,\n  .closing-game-start");
-    expect(staticHomeSource).toContain("background:transparent !important");
-    expect(staticHomeSource).toContain("box-shadow:none !important");
-    expect(staticHomeSource).toContain("filter:drop-shadow(0 4px 0 rgba(8,39,88,.72)) drop-shadow(0 7px 14px rgba(28,37,119,.34)) !important");
-    expect(staticHomeSource).toContain(".hero-game-start:hover,\n  .closing-game-start:hover { transform:translateY(4px) !important; filter:drop-shadow(0 0 0 rgba(8,39,88,0)) drop-shadow(0 0 0 rgba(28,37,119,0)) !important; }");
-    expect(staticHomeSource).toContain(".hero-discord:hover,\n  .closing-discord:hover { background:#5865f2 !important; box-shadow:0 0 0 #4049b8");
-    expect(staticHomeSource).toContain("#discord .widgetbot-join:hover { background:#5865f2 !important; box-shadow:0 0 0 #4049b8");
-  });
-
-  it("centers matching Hero CTA widths and removes mobile Hero letterboxing", () => {
-    expect(staticHomeSource).toContain(".hero-primary-actions { width:100% !important; justify-content:center !important; }");
-    expect(staticHomeSource).toContain(".hero-game-start,\n  .hero-discord,\n  .closing-game-start,\n  .closing-discord { width:285px !important; min-width:285px !important; height:76px !important; min-height:76px !important; flex:0 0 285px; }");
-    expect(staticHomeSource).toContain("#home .hero-slide img { width:100% !important; height:100% !important; object-fit:cover !important; object-position:center !important; }");
-    expect(staticHomeSource).toContain("#home .hero-primary-actions { display:flex !important; width:calc(100% - 14px) !important; margin-right:14px !important;");
-    expect(staticHomeSource).toContain(":root { --mobile-paired-cta-height:clamp(54px,12vw,60px); }");
-    expect(staticHomeSource).toContain("#home .hero-game-start,\n    #home .hero-discord { width:calc((100% - 10px) / 2) !important; min-width:0 !important; flex:0 1 calc((100% - 10px) / 2) !important; height:var(--mobile-paired-cta-height) !important; min-height:var(--mobile-paired-cta-height) !important; aspect-ratio:auto !important; }");
-    expect(staticHomeSource).toContain("#home .hero-game-start .home-game-start-art { width:100% !important; height:calc(100% + 6px) !important;");
-  });
-
-  it("keeps a two-line Hero title, four vertical mobile News cards, proportional imagery, and side-by-side Two Clicks CTAs", () => {
-    expect(staticHomeSource).toContain("#home #hero-title { font-size:clamp(34px,5.25vw,72px) !important; line-height:.96 !important; }");
-    expect(staticHomeSource).toContain("#home #hero-title span { display:block !important; white-space:nowrap !important; }");
-    expect(staticHomeSource).toContain("#news .pinned-news-grid { display:grid !important; grid-template-columns:1fr !important; gap:10px !important; overflow:visible !important; }");
-    expect(staticHomeSource).toContain("#news .pinned-news-card:nth-child(n+5) { display:none !important; }");
-    expect(staticHomeSource).toContain("#news .pinned-news-card.mobile-fourth-news { display:block !important; }");
-    expect(staticHomeSource).toContain('const newsGrid = document.querySelector("#news .pinned-news-grid");');
-    expect(staticHomeSource).toContain('fourthCard.classList.add("mobile-fourth-news");');
-    expect(staticHomeSource).toContain("#news .pinned-news-card > a { display:flex !important; flex-direction:column !important; min-height:0 !important; }");
-    expect(staticHomeSource).toContain("#news .pinned-news-card img { display:block !important; width:100% !important; height:auto !important; object-fit:contain !important; }");
-    expect(staticHomeSource).toContain("#game-info .game-info-visual,\n    #media .media-video { width:100% !important; height:auto !important; min-height:0 !important; aspect-ratio:auto !important; overflow:visible !important; }");
-    expect(staticHomeSource).toContain("#media .media-video { flex:none !important; }");
-    expect(staticHomeSource).toContain("#game-info .game-info-visual img,\n    #media .media-video img { display:block !important; width:100% !important; height:auto !important; object-fit:contain !important; }");
-    expect(staticHomeSource).toContain(".closing-content > div { display:flex !important; width:100% !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; justify-content:center !important; gap:10px !important; }");
-    expect(staticHomeSource).toContain(".closing-game-start,\n    .closing-discord { width:calc((100% - 10px) / 2) !important; min-width:0 !important; flex:0 1 calc((100% - 10px) / 2) !important; margin:0 !important; height:var(--mobile-paired-cta-height) !important; min-height:var(--mobile-paired-cta-height) !important; aspect-ratio:auto !important; }");
-    expect(staticHomeSource).toContain(".closing-game-start { position:relative !important; top:2px !important; padding:0 !important; display:flex !important; align-items:center !important; justify-content:center !important; }");
-    expect(staticHomeSource).toContain(".closing-game-start .home-game-start-art { width:100% !important; height:calc(100% + 6px) !important;");
-    expect(staticHomeSource).toContain(".closing-discord { height:54px !important; min-height:54px !important; padding:0 6px !important; border-radius:14px !important; }");
-    expect(staticHomeSource).toContain(".closing-discord .home-discord-logo { width:78% !important; max-width:78% !important; }");
+  it("provides the requested in-page Rune-Midgarts Library coming-soon modal", () => {
+    expect(homeSource).toContain("RUNE-MIDGARTS LIBRARY");
+    expect(homeSource).toContain("Rune-Midgarts Library is coming soon.");
+    expect(homeSource).toContain("setLibraryOpen(true)");
+    expect(homeSource).not.toContain('window.alert("Coming Soon")');
   });
 });

@@ -2,30 +2,24 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
-const uploadedReference = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-scrollfix.html", "utf8");
-const widgetbotReference = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll.html", "utf8");
-const originalReference = readFileSync("/home/ubuntu/upload/ragnarok-universe-fullpage-responsive-260831_FINAL.html", "utf8");
-const originalWheelSelection = "const current=Math.max(0,sectionIds.indexOf(activeSection));";
-const correctedWheelSelection = "const scrollAnchor=window.scrollY+window.innerHeight*.35;const current=sectionIds.reduce((closestIndex,sectionId,index)=>{const section=document.getElementById(sectionId);return section&&section.offsetTop<=scrollAnchor?index:closestIndex},0);";
 
-describe("final Home source integrity", () => {
-  it("uses the supplied HTML with targeted Latest scrolling and only the minimal Hero controls", () => {
-    expect(originalReference).toContain(originalWheelSelection);
-    expect(uploadedReference).toContain(correctedWheelSelection);
-    expect(uploadedReference.replace(correctedWheelSelection, originalWheelSelection)).toBe(originalReference);
-    expect(widgetbotReference).toContain("hero-minimal-controls");
-    expect(widgetbotReference).toContain("hero-minimal-arrow--prev");
-    expect(widgetbotReference).toContain("hero-minimal-arrow--next");
-    expect(widgetbotReference).toContain("hero-minimal-dots");
-    expect(widgetbotReference).toContain('class="hero-rail" aria-label="Main banners" hidden aria-hidden="true" style="display:none!important"');
-    expect(widgetbotReference).toContain("floating-community.hero-hidden");
-    expect(widgetbotReference).toContain("widgetbot-community");
-    expect(homeSource).toContain("ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll_0b1e8c7e.html");
+describe("direct React Home source integrity", () => {
+  it("renders the supplied design as direct React sections rather than loading the supplied document", () => {
+    expect(homeSource).toContain('className="react-home"');
+    expect(homeSource).toContain('id="home"');
+    expect(homeSource).toContain('id="discord"');
+    expect(homeSource).toContain('id="news"');
+    expect(homeSource).toContain('id="game-info"');
+    expect(homeSource).toContain('id="media"');
+    expect(homeSource).not.toContain("REFERENCE_HOME_URL");
+    expect(homeSource).not.toContain("ragnarok-reference-frame");
   });
 
-  it("does not place a custom visual shell around the supplied document", () => {
-    expect(homeSource).not.toContain("<Layout>");
-    expect(homeSource).not.toContain("reference-hero-panel");
-    expect(homeSource).not.toContain("reference-discord-panel");
+  it("keeps the lightweight Hero controls and floating community destinations", () => {
+    expect(homeSource).toContain("selectHero");
+    expect(homeSource).toContain('aria-label="Previous banner"');
+    expect(homeSource).toContain('aria-label="Next banner"');
+    expect(homeSource).toContain("https://facebook.com/RagnarokUniverseEN");
+    expect(homeSource).toContain("https://x.com/RagUniOfficial");
   });
 });

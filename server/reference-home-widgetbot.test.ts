@@ -2,22 +2,17 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
-const staticHomeSource = readFileSync("/home/ubuntu/webdev-static-assets/ragnarok-universe-fullpage-responsive-260831_FINAL-fullpanel-scroll.html", "utf8");
 
-describe("reference Home WidgetBot restoration", () => {
-  it("uses the restored read-only WidgetBot Discord community document", () => {
-    expect(homeSource).toContain("FINAL-fullpanel-scroll_0b1e8c7e.html");
-    expect(staticHomeSource).toContain("https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051");
-    expect(staticHomeSource).toContain("widgetbot-readonly-bar");
-    expect(staticHomeSource).toContain('const discordButtonLogo = "https://raguniverse-izcifhmz.manus.space/manus-storage/Discord-Logo-White_b3128ea2.png";');
-    expect(staticHomeSource).toContain("widgetbot-join");
-    expect(staticHomeSource).not.toContain("widgetbot-game-start");
-    expect(staticHomeSource).toContain('data-widgetbot-src="\' + WIDGETBOT_URL + \'"');
-    expect(staticHomeSource).toContain('id="manus-widgetbot-deferred-load"');
+describe("direct React read-only WidgetBot treatment", () => {
+  it("uses a lazy official Discord embed with a single join action", () => {
+    expect(homeSource).toContain("https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051");
+    expect(homeSource).toContain('loading="lazy"');
+    expect(homeSource).toContain("react-home-widget__bar");
+    expect(homeSource).toContain("<DiscordButton />");
   });
 
-  it("shows the floating social links when the Discord section enters the viewport", () => {
-    expect(staticHomeSource).toContain("const show = rect.top <= window.innerHeight * .65");
-    expect(staticHomeSource).toContain('floating.classList.toggle("hero-hidden", !show)');
+  it("does not use the old static-document WidgetBot mutation code", () => {
+    expect(homeSource).not.toContain("applyCtaArtwork");
+    expect(homeSource).not.toContain("ctaArtworkObserver");
   });
 });

@@ -942,3 +942,9 @@
 - [x] 상단·Hero·Discord 섹션·하단 Discord CTA의 현재 여백과 모서리 규칙 점검
 - [x] Discord 로고 확대 및 둥근 말풍선형 버튼 스타일 적용
 - [x] 모바일·데스크톱 전체 Discord CTA 시각 및 회귀 테스트 검증
+
+## iframe 없는 React 메인 화면 전환
+- [x] 기존 Home OAuth·잔액·로그아웃과 참조 메인 디자인 섹션·상호작용 분석
+- [x] 참조 자산을 재사용하는 직접 렌더링 Home 구조와 반응형 설계
+- [x] iframe 제거 및 React Hero·Discord·News·Game Info·Media·Footer 구현
+- [x] 직접 렌더링 메뉴 이동·CTA·모바일·성능 및 전체 회귀 테스트 검증
