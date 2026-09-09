@@ -122,8 +122,8 @@ function ReferenceHomeHeader({ activeSection, onNavigate }: { activeSection: str
             <Link href="/point-shop" className={`portal-nav-link inline-flex items-center gap-0.5 ${location === "/point-shop" ? "portal-nav-link--active" : ""}`}>SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
           </nav>
           <div className="reference-header-cta shrink-0" aria-label="Quick actions">
-            <GameStartButton className="reference-header-game-start" />
             <DiscordButton className="reference-header-discord" />
+            <GameStartButton className="reference-header-game-start" />
           </div>
         </div>
       </div>
@@ -132,7 +132,7 @@ function ReferenceHomeHeader({ activeSection, onNavigate }: { activeSection: str
 }
 
 function HomeCtaPair({ className = "" }: { className?: string }) {
-  return <div className={`home-cta-pair ${className}`.trim()}><GameStartButton /><DiscordButton /></div>;
+  return <div className={`home-cta-pair ${className}`.trim()}><DiscordButton /><GameStartButton /></div>;
 }
 
 export default function Home() {

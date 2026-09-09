@@ -1032,3 +1032,8 @@
 - [x] 관리자 등록 활성 영상을 Media 대표 영상에 직접 연동
 - [x] COMMUNITY를 DISCORD로 변경하고 좁은 화면 메뉴 박스·외부 링크 화살표 이탈 방지
 - [x] 다중 화면 폭·갤러리·영상 연동 및 전체 회귀 테스트 검증
+
+## CTA 순서·크기 통일
+- [x] 헤더·Hero 하단·마무리 CTA의 Discord와 Game Start 순서 교체
+- [x] Hero 하단 Discord를 마무리 CTA Discord와 동일한 크기로 통일
+- [x] 데스크톱·모바일 CTA 순서·크기 회귀 테스트 및 화면 검증

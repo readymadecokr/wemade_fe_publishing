@@ -30,6 +30,16 @@ describe("direct React service header", () => {
     expect(homeSource).toContain('className="reference-header-logo"');
   });
 
+  it("places Discord before Game Start in every CTA pair and matches the Hero Discord size to the closing CTA", () => {
+    const headerCta = homeSource.indexOf('className="reference-header-cta shrink-0"');
+    const headerDiscord = homeSource.indexOf('<DiscordButton className="reference-header-discord" />', headerCta);
+    const headerGameStart = homeSource.indexOf('<GameStartButton className="reference-header-game-start" />', headerCta);
+    expect(headerDiscord).toBeGreaterThan(headerCta);
+    expect(headerGameStart).toBeGreaterThan(headerDiscord);
+    expect(homeSource).toContain('<DiscordButton /><GameStartButton />');
+    expect(headerStyles).toContain('.home-cta-pair--hero .home-discord-button { width: min(285px, 49vw); height: 76px;');
+  });
+
   it("preserves the Hero artwork and separates the expanded quick-action row", () => {
     expect(headerStyles).toContain(".react-home-hero__visual { object-fit: contain;");
     expect(headerStyles).toContain(".react-home-hero-cta-row { display: flex; min-height: clamp(154px,16vh,190px);");
