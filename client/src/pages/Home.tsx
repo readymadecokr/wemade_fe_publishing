@@ -311,9 +311,8 @@ export default function Home() {
       <section id="discord" data-home-section data-snap-panel className="react-home-panel react-home-discord">
         <div className="react-home-section-shell react-home-discord__shell">
           <div className="react-home-section-heading react-home-section-heading--light"><div><span>OFFICIAL COMMUNITY</span><h2>DISCORD</h2></div><p>Development news and community updates from the official Ragnarok Universe Discord.</p></div>
-          <div className="react-home-widget">
-            <iframe src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051" title="Ragnarok Universe official Discord" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" />
-            <div className="react-home-widget__bar"><DiscordButton /></div>
+          <div className="react-home-widget" aria-label="Read-only official Discord messages">
+            <iframe className="react-home-widget__frame" src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051" title="Ragnarok Universe official Discord read-only messages" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" tabIndex={-1} />
           </div>
         </div>
       </section>
