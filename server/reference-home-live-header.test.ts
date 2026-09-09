@@ -21,10 +21,14 @@ describe("direct React service header", () => {
 
   it("keeps non-wrapping fluid header CTA sizing, rounded Discord styling, and pressed Game Start feedback", () => {
     expect(headerStyles).toContain(".reference-header-main-row { display: grid;");
+    expect(headerStyles).toContain("grid-template-columns: clamp(90px,9.4vw,138px) minmax(300px,1fr) auto; min-height: clamp(58px,4.6vw,68px);");
+    expect(headerStyles).toContain("width: clamp(80px,10.5vw,138px); height: auto; max-height: 64px;");
+    expect(homeSource).toContain('container flex h-9 items-center justify-end gap-2 py-0.5');
     expect(headerStyles).toContain("width: clamp(96px,9vw,110px); height: 30px; padding: 0; border-radius: 7px;");
     expect(headerStyles).toContain(".reference-header-game-start { width: clamp(92px,12vw,150px); height: clamp(32px,3.85vw,48px); }");
     expect(headerStyles).toContain(".reference-header-cta .reference-header-discord { width: clamp(96px, 9vw, 110px); height: 30px; }");
     expect(headerStyles).toContain("width: clamp(90px,26vw,118px);");
+    expect(headerStyles).toContain(".reference-header-logo img { width: clamp(60px,17vw,82px); max-height: 48px; }");
     expect(headerStyles).toContain("border-radius: 7px;");
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
     expect(homeSource).toContain('className="container reference-header-main-row"');

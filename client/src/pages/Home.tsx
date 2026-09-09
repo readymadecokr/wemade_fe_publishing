@@ -88,7 +88,7 @@ function ReferenceHomeHeader({ activeSection, onNavigate }: { activeSection: str
   return (
     <header className="reference-home-live-header fixed inset-x-0 top-0 z-50 w-full text-white" aria-label="Ragnarok Universe service navigation">
       <div className="border-b border-white/10 bg-[#1c3147] [background-image:linear-gradient(100deg,rgba(32,56,78,1),rgba(58,84,110,.96),rgba(24,45,66,1))]">
-        <div className="container flex h-11 items-center justify-end gap-2 py-1.5 sm:gap-3">
+        <div className="container flex h-9 items-center justify-end gap-2 py-0.5 sm:gap-3">
           {isAuthenticated ? (
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="flex items-center overflow-hidden rounded-lg border border-slate-200 bg-white text-[10px] font-semibold text-slate-700 shadow-sm sm:text-xs">
