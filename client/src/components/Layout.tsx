@@ -103,12 +103,12 @@ export default function Layout({ children, variant = "default" }: LayoutProps) {
         <div className="container news-home-main-row">
           <Link href="/" className="news-home-logo" aria-label="Ragnarok Universe home"><img src={`${ASSET_BASE_URL}/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png`} alt="Ragnarok Universe" /></Link>
           <nav className="news-home-nav" aria-label="Primary navigation">
-            <Link href="/" className="portal-nav-link">HOME</Link>
+            <Link href="/" className={`portal-nav-link ${location === "/" ? "portal-nav-link--active" : ""}`}>HOME</Link>
             <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="portal-nav-link portal-nav-link--external"><span>DISCORD</span><ExternalLink size={11} aria-hidden="true" /></a>
-            <Link href="/news" className="portal-nav-link portal-nav-link--active">NEWS</Link>
-            <Link href="/game-info" className="portal-nav-link">GAME INFO</Link>
+            <Link href="/news" className={`portal-nav-link ${location === "/news" ? "portal-nav-link--active" : ""}`}>NEWS</Link>
+            <Link href="/game-info" className={`portal-nav-link ${location === "/game-info" ? "portal-nav-link--active" : ""}`}>GAME INFO</Link>
             <a href="/#media" className="portal-nav-link">MEDIA</a>
-            <Link href="/point-shop" className="portal-nav-link inline-flex items-center gap-0.5">SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
+            <Link href="/point-shop" className={`portal-nav-link inline-flex items-center gap-0.5 ${location === "/point-shop" ? "portal-nav-link--active" : ""}`}>SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
           </nav>
           <div className="news-home-quick-actions" aria-label="Quick actions">
             <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="news-home-discord" aria-label="Join Ragnarok Universe on Discord"><img src={`${ASSET_BASE_URL}/manus-storage/Discord-Logo-White_b3128ea2.png`} alt="Discord" /></a>

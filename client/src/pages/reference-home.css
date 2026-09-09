@@ -9,7 +9,7 @@
 
 :root { --react-home-header-height: 112px; }
 .react-home { padding-top: var(--react-home-header-height); overflow-x: clip; }
-.react-home-layout { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "home" "discord" "news" "game-info" "media" "final" "footer"; align-items: start; isolation: isolate; }
+.react-home-layout { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "home" "discord" "news" "game-info" "media" "final"; align-items: start; isolation: isolate; }
 .react-home-layout > * { min-width: 0; margin: 0; }
 .react-home-layout > .react-home-panel, .react-home-layout > .react-home-footer { position: relative; width: 100%; z-index: 0; }
 .react-home-panel { min-height: 100svh; overflow: clip; isolation: isolate; }
@@ -20,7 +20,7 @@
 .react-home-news { grid-area: news; }
 .react-home-game-info { grid-area: game-info; }
 .react-home-media { grid-area: media; }
-.react-home-final-panel { grid-area: final; display: block; overflow: clip; background: #fbf8f1; }
+.react-home-final-panel { grid-area: final; display: flex; flex-direction: column; overflow: hidden; background: #fbf8f1; }
 .react-home-footer { grid-area: footer; min-height: 0; }
 html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scroll-snap-type: y mandatory; }
 @media (min-width: 769px) {
@@ -28,9 +28,9 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-layout > .react-home-panel { min-height: calc(100svh - var(--react-home-header-height)); }
   .react-home-home-stage { height: calc(100svh - var(--react-home-header-height)); }
   .react-home-discord, .react-home-news, .react-home-media { padding-block: clamp(54px, 7vh, 105px) clamp(42px, 5vh, 75px); }
-  .react-home-footer { display: flex; align-items: center; }
-  .react-home-final-panel { min-height: calc(100svh - var(--react-home-header-height)); }
-  .react-home-final-panel .react-home-closing { min-height: calc(100svh - var(--react-home-header-height)); padding: clamp(36px, 5vh, 58px) 0 clamp(24px, 3vh, 36px); }
+  .react-home-final-panel { height: calc(100svh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); }
+  .react-home-final-panel .react-home-closing { min-height: 0; flex: 1 1 auto; padding: clamp(20px, 3vh, 34px) 0 clamp(16px, 2.5vh, 28px); }
+  .react-home-final-panel .react-home-footer { flex: 0 0 auto; padding: clamp(20px, 2.6vh, 30px) 0 clamp(18px, 2.3vh, 26px); }
 }
 .react-home-section-shell { width: min(1180px, calc(100% - 64px)); margin: 0 auto; }
 

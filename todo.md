@@ -1103,3 +1103,8 @@
 - [x] Hero 카테고리·제목·부가 설명의 자동 줄바꿈과 안내 문구 제거
 - [x] 수정 저장 왼쪽에 Hero 실제 화면 미리보기 버튼과 모달 추가
 - [x] 직접 Enter 줄바꿈 저장·Home Hero 반영과 TypeScript·회귀 테스트 검증
+
+## 서비스 페이지 공통 헤더·마지막 패널 통일
+- [x] News·Game Info·Point Shop의 상단을 Home 계정 바·로고·메뉴·CTA 헤더로 통일
+- [x] Home의 TWO CLICKS TO MIDGARD와 푸터를 겹치지 않게 한 데스크톱 화면에 함께 구성
+- [x] 세 서비스 페이지·Home 마지막 패널의 데스크톱·모바일·회귀 테스트 검증

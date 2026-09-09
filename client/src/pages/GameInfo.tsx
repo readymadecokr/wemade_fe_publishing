@@ -167,7 +167,7 @@ function GameInfoPageContent() {
 
 export default function GameInfoPage() {
   return (
-    <Layout>
+    <Layout variant="homeChrome">
       <GameInfoPageContent />
     </Layout>
   );

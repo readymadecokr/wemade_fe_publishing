@@ -2,12 +2,16 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const newsSource = readFileSync(new URL("../client/src/pages/News.tsx", import.meta.url), "utf8");
+const gameInfoSource = readFileSync(new URL("../client/src/pages/GameInfo.tsx", import.meta.url), "utf8");
+const pointShopSource = readFileSync(new URL("../client/src/pages/PointShop.tsx", import.meta.url), "utf8");
 const layoutSource = readFileSync(new URL("../client/src/components/Layout.tsx", import.meta.url), "utf8");
 const layoutStyles = readFileSync(new URL("../client/src/components/news-layout.css", import.meta.url), "utf8");
 
 describe("News Home-style chrome", () => {
-  it("uses the Home chrome variant only for the News route", () => {
+  it("uses the Home chrome variant for News, Game Info, and Point Shop", () => {
     expect(newsSource).toContain('<Layout variant="homeChrome">');
+    expect(gameInfoSource).toContain('<Layout variant="homeChrome">');
+    expect(pointShopSource).toContain('<Layout variant="homeChrome">');
     expect(layoutSource).toContain('variant?: "default" | "homeChrome"');
     expect(layoutSource).toContain('variant === "homeChrome"');
   });
@@ -21,5 +25,11 @@ describe("News Home-style chrome", () => {
     expect(layoutStyles).toContain(".news-home-content { padding-top: 104px; }");
     expect(layoutStyles).toContain(".news-home-content { padding-top: 132px; }");
     expect(layoutStyles).toContain(".news-home-footer__bar { padding: 34px 0 28px; background: #263545;");
+  });
+
+  it("marks the current shared-header route as active", () => {
+    expect(layoutSource).toContain('location === "/news" ? "portal-nav-link--active" : ""');
+    expect(layoutSource).toContain('location === "/game-info" ? "portal-nav-link--active" : ""');
+    expect(layoutSource).toContain('location === "/point-shop" ? "portal-nav-link--active" : ""');
   });
 });

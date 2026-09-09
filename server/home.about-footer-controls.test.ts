@@ -21,6 +21,14 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".home-discord-button img { display: block; width: 82%; max-height: 38px;");
   });
 
+  it("keeps the closing CTA and footer as separate children in one desktop final panel", () => {
+    expect(homeSource).toContain('aria-label="Ragnarok Universe closing call to action and footer"');
+    expect(homeSource).toContain('<div className="react-home-closing">');
+    expect(homeSource).toContain('<footer className="react-home-footer"');
+    expect(styleSource).toContain('.react-home-final-panel { height: calc(100svh - var(--react-home-header-height));');
+    expect(styleSource).toContain('.react-home-final-panel .react-home-closing { min-height: 0; flex: 1 1 auto;');
+  });
+
   it("keeps the two-line Game Info heading, uppercase section titles, and blue Gravity footer asset", () => {
     expect(homeSource).toContain("CLASSIC ADVENTURE<br />A NEW WAY TO PLAY");
     expect(homeSource).toContain("LATEST FROM MIDGARD");
