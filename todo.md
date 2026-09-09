@@ -1076,3 +1076,8 @@
 ## Discord 위젯 전체 링크 연결
 - [x] 읽기 전용 WidgetBot 위젯 전체 영역을 공식 초대 링크로 감싸기
 - [x] 새 탭 열기·접근성 레이블·데스크톱·모바일 회귀 테스트 검증
+
+## Home 모바일 뉴스·View More 보정
+- [x] Home LATEST FROM MIDGARD의 View More를 News 페이지로 직접 연결
+- [x] 모바일 Home 뉴스 카드를 2열·최대 4개로 News 카드 구조에 맞춰 보정
+- [x] 데스크톱·모바일 News 이동·카드 표시와 회귀 테스트 검증

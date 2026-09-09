@@ -19,9 +19,10 @@ const DEFAULT_HERO_BANNERS = [
 ] as const;
 
 const NEWS_ITEMS = [
-  { title: "Ragnarok Universe Beta Roadmap", copy: "A look at the next testing phase, planned improvements, and the road ahead.", image: "/manus-storage/banners/news-img-1787281494281_bb3eae6d.webp", date: "AUG 21, 2026", tag: "NOTICE" },
-  { title: "Discord Founders Event Now Open", copy: "Meet other adventurers and take part in the first founders missions.", image: "/manus-storage/banners/news-img-1787281479124_091e48a2.webp", date: "AUG 19, 2026", tag: "EVENT" },
-  { title: "Welcome to a New Era of Midgard", copy: "Discover the vision behind a browser-based return to Ragnarok.", image: "/manus-storage/banners/news-img-1787281449016_eb9de628.jpg", date: "AUG 15, 2026", tag: "NEWS" },
+  { title: "Ragnarok Online: Patch Update June 17, 2026", copy: "The latest game updates and community announcements from Ragnarok Universe.", image: "/manus-storage/RO1_pathupdate_17062026_f83f13b8_0ccbefaa.jpg", date: "JUN 17, 2026", tag: "UPDATE" },
+  { title: "Ragnarok Online: Patch Update June 10, 2026", copy: "Discover the newest event information and content updates from Midgard.", image: "/manus-storage/RO_PatchUpdate_10062026_219a465c_5903482d.jpg", date: "JUN 17, 2026", tag: "EVENT" },
+  { title: "Ragnarok Online: Patch Update June 4, 2026", copy: "Keep up with the latest Ragnarok Universe news and event updates.", image: "/manus-storage/RO_PatchUpdate_04062026-1_29153260_878bf95f.jpg", date: "JUN 17, 2026", tag: "EVENT" },
+  { title: "Ragnarok Online: Patch Update May 27, 2026", copy: "Read the newest interviews, patch notes, and community announcements.", image: "/manus-storage/RO_PatchUpdate_27052026_953943aa_fa54354f.webp", date: "MAY 28, 2026", tag: "INTERVIEW" },
 ] as const;
 
 const MEDIA_SCREENSHOTS = [
@@ -321,9 +322,9 @@ export default function Home() {
 
       <section id="news" data-home-section data-snap-panel className="react-home-panel react-home-news">
         <div className="react-home-section-shell">
-          <div className="react-home-section-heading"><div><span>NEWS &amp; NOTICE</span><h2>LATEST FROM MIDGARD</h2></div><button type="button" className="react-home-outline-cta" onClick={() => setLibraryOpen(true)}>VIEW MORE <b>›</b></button></div>
+          <div className="react-home-section-heading"><div><span>NEWS &amp; NOTICE</span><h2>LATEST FROM MIDGARD</h2></div><Link href="/news" className="react-home-outline-cta">VIEW MORE <b>›</b></Link></div>
           <div className="react-home-news-grid">
-            {NEWS_ITEMS.map((item) => <article className="react-home-news-card" key={item.title}><img src={item.image} alt="" loading="lazy" /><div><div className="react-home-news-card__meta"><span>{item.tag}</span><time>{item.date}</time></div><h3>{item.title}</h3><p>{item.copy}</p><button type="button" onClick={() => setLibraryOpen(true)}>READ MORE <b>›</b></button></div></article>)}
+            {NEWS_ITEMS.map((item, index) => <article className={`react-home-news-card${index === 3 ? " react-home-news-card--mobile-extra" : ""}`} key={item.title}><img src={item.image} alt="" loading="lazy" /><div><div className="react-home-news-card__meta"><span>{item.tag}</span><time>{item.date}</time></div><h3>{item.title}</h3><p>{item.copy}</p><button type="button" onClick={() => setLibraryOpen(true)}>READ MORE <b>›</b></button></div></article>)}
           </div>
         </div>
       </section>

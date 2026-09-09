@@ -10,10 +10,14 @@ describe("direct React Home news and game information", () => {
       expect(homeSource).toMatch(content);
     });
     expect(homeSource).toContain("const NEWS_ITEMS = [");
+    expect(homeSource).toContain('<Link href="/news" className="react-home-outline-cta">VIEW MORE');
+    expect(homeSource).toContain('react-home-news-card--mobile-extra');
   });
 
   it("keeps responsive News and Game Info layout rules without an iframe", () => {
     expect(styleSource).toContain(".react-home-news-grid { display: grid; grid-template-columns: repeat(3,1fr);");
+    expect(styleSource).toContain(".react-home-news-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }");
+    expect(styleSource).toContain(".react-home-news-card--mobile-extra { display: block; }");
     expect(styleSource).toContain(".react-home-game-info__grid { display: grid; grid-template-columns: .94fr 1.06fr;");
     expect(homeSource).not.toContain("REFERENCE_HOME_URL");
   });

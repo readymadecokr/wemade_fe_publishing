@@ -24,8 +24,10 @@ describe("admin news automatic order and main exposure", () => {
 
   it("renders the reference News presentation directly in the React Home", () => {
     expect(homeSource).toContain("const NEWS_ITEMS = [");
-    expect(homeSource).toContain("Ragnarok Universe Beta Roadmap");
+    expect(homeSource).toContain("Ragnarok Online: Patch Update June 17, 2026");
+    expect(homeSource).toContain("Ragnarok Online: Patch Update May 27, 2026");
     expect(homeSource).toContain("react-home-news-grid");
+    expect(homeSource).toContain('<Link href="/news" className="react-home-outline-cta">VIEW MORE');
     expect(homeSource).not.toContain("REFERENCE_HOME_URL");
   });
 });
