@@ -12,8 +12,11 @@ const LOGO_URL = "/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png";
 const GAME_START_BUTTON_URL = "/manus-storage/gamestart_BTN_1c6449da.png";
 const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_b3128ea2.png";
 const HERO_DESKTOP_URL = "/manus-storage/eb185c22e6e1_e39bfa40.png";
-const HERO_MOBILE_URL = "/manus-storage/00d5bacb2aa0_16f4a9c3.png";
 const DISCORD_URL = "https://discord.gg/yVWJkWdkAU";
+
+const DEFAULT_HERO_BANNERS = [
+  { id: "default", title: "Midgard runs in your browser", imageUrl: HERO_DESKTOP_URL },
+] as const;
 
 const NEWS_ITEMS = [
   { title: "Ragnarok Universe Beta Roadmap", copy: "A look at the next testing phase, planned improvements, and the road ahead.", image: "/manus-storage/banners/news-img-1787281494281_bb3eae6d.webp", date: "AUG 21, 2026", tag: "NOTICE" },
@@ -134,6 +137,12 @@ export default function Home() {
   const [selectedScreenshot, setSelectedScreenshot] = useState<number | null>(null);
   const [screenshotScroll, setScreenshotScroll] = useState(0);
   const screenshotStripRef = useRef<HTMLDivElement | null>(null);
+  const { data: managedBanners } = trpc.banner.list.useQuery(undefined, {
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  });
+  const heroBanners = managedBanners?.length ? managedBanners : DEFAULT_HERO_BANNERS;
+  const currentHero = heroBanners[heroIndex % heroBanners.length];
 
   const navigateTo = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -226,7 +235,7 @@ export default function Home() {
     };
   }, []);
 
-  const selectHero = (direction: -1 | 1) => setHeroIndex((current) => (current + direction + 3) % 3);
+  const selectHero = (direction: -1 | 1) => setHeroIndex((current) => (current + direction + heroBanners.length) % heroBanners.length);
   const syncScreenshotScroll = () => {
     const strip = screenshotStripRef.current;
     if (!strip) return;
@@ -248,10 +257,7 @@ export default function Home() {
       <div className="react-home-layout" aria-label="Homepage content regions">
       <div className="react-home-home-stage" data-snap-panel>
       <section id="home" data-home-section className="react-home-panel react-home-hero">
-        <picture className="react-home-hero__visual" aria-hidden="true">
-          <source media="(max-width: 760px)" srcSet={HERO_MOBILE_URL} />
-          <img src={HERO_DESKTOP_URL} alt="" fetchPriority="high" />
-        </picture>
+        <img className="react-home-hero__visual" src={currentHero.imageUrl} alt="" fetchPriority="high" />
         <div className="react-home-hero__shade" />
         <div className="react-home-hero__content">
           <div className="react-home-hero__tags"><span>OPEN BETA</span><span>PLAY IN YOUR BROWSER</span></div>
@@ -259,12 +265,14 @@ export default function Home() {
           <p>No download, no install, no launcher. Open a tab on your phone or PC and begin your adventure.</p>
           <button type="button" className="react-home-white-cta" onClick={() => navigateTo("game-info")}>EXPLORE THE BETA <b>›</b></button>
         </div>
-        <button className="react-home-hero__arrow react-home-hero__arrow--left" type="button" aria-label="Previous banner" onClick={() => selectHero(-1)}><ChevronLeft /></button>
-        <button className="react-home-hero__arrow react-home-hero__arrow--right" type="button" aria-label="Next banner" onClick={() => selectHero(1)}><ChevronRight /></button>
-        <div className="react-home-hero__dots" aria-label="Hero banners">{[0, 1, 2].map((index) => <button type="button" key={index} aria-label={`Banner ${index + 1}`} aria-current={heroIndex === index} className={heroIndex === index ? "is-active" : ""} onClick={() => setHeroIndex(index)} />)}</div>
+        <div className="react-home-hero__controls" aria-label="Hero banners">
+          <button className="react-home-hero__arrow react-home-hero__arrow--left" type="button" aria-label="Previous banner" onClick={() => selectHero(-1)}><ChevronLeft /></button>
+          <div className="react-home-hero__dots">{heroBanners.map((banner, index) => <button type="button" key={banner.id} aria-label={`Banner ${index + 1}: ${banner.title}`} aria-current={heroIndex % heroBanners.length === index} className={heroIndex % heroBanners.length === index ? "is-active" : ""} onClick={() => setHeroIndex(index)} />)}</div>
+          <button className="react-home-hero__arrow react-home-hero__arrow--right" type="button" aria-label="Next banner" onClick={() => selectHero(1)}><ChevronRight /></button>
+        </div>
       </section>
 
-      <div className="react-home-hero-cta-row" aria-label="Hero quick actions"><HomeCtaPair /></div>
+      <div className="react-home-hero-cta-row" aria-label="Hero quick actions"><HomeCtaPair className="home-cta-pair--hero" /></div>
       </div>
 
       <section id="discord" data-home-section data-snap-panel className="react-home-panel react-home-discord">

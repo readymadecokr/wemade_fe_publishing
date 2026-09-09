@@ -1116,7 +1116,6 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
   const [page, setPage] = useState(1); const [pageSize, setPageSize] = useState(10);
   const [checkedBannerIds, setCheckedBannerIds] = useState<number[]>([]);
   const [isExposureMoving, setIsExposureMoving] = useState(false);
-  const visibleBannerLimit = 10;
 
   const { data, refetch } = useQuery({ queryKey: ["admin-banners"], queryFn: () => adminClient!.admin.listBanners.query(), enabled: !!adminClient });
   const createM = useMutation({ mutationFn: (input: any) => adminClient!.admin.createBanner.mutate(input), onSuccess: () => { toast.success("배너가 등록되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
@@ -1149,11 +1148,8 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
   };
 
   const allBanners = useMemo(() => [...(data ?? [])].sort((a, b) => a.sortOrder - b.sortOrder || a.id - b.id), [data]);
-  const selectedBanners = allBanners.filter(b => b.isActive === 1).slice(0, visibleBannerLimit);
-  const unselectedBanners = [
-    ...allBanners.filter(b => b.isActive === 1).slice(visibleBannerLimit),
-    ...allBanners.filter(b => b.isActive !== 1),
-  ];
+  const selectedBanners = allBanners.filter(b => b.isActive === 1);
+  const unselectedBanners = allBanners.filter(b => b.isActive !== 1);
   const matchSearch = (banner: BannerRow) => !search || banner.title.toLowerCase().includes(search.toLowerCase());
   const filteredSelected = selectedBanners.filter(matchSearch);
   const filteredUnselected = unselectedBanners.filter(matchSearch);
@@ -1169,10 +1165,6 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
     const source = direction === "show" ? unselectedBanners : selectedBanners;
     const moving = source.filter(banner => checkedBannerIds.includes(banner.id));
     if (!moving.length) { toast.error(direction === "show" ? "노출할 배너를 선택하세요." : "미노출할 배너를 선택하세요."); return; }
-    if (direction === "show" && selectedBanners.length + moving.length > visibleBannerLimit) {
-      toast.error(`노출 배너는 최대 ${visibleBannerLimit}개까지 선택할 수 있습니다.`);
-      return;
-    }
     const nextSelected = direction === "show"
       ? [...selectedBanners, ...moving]
       : selectedBanners.filter(banner => !checkedBannerIds.includes(banner.id));
@@ -1253,7 +1245,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
           <CardContent className="space-y-6 p-4">
             <section className="overflow-hidden rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20">
               <div className="flex flex-col gap-3 border-b border-blue-200 bg-white/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-blue-900 dark:bg-slate-900/50">
-                <div><h3 className="text-sm font-bold text-blue-900 dark:text-blue-200">선택된 노출 배너 <span className="ml-1 text-blue-600">{selectedBanners.length} / {visibleBannerLimit}</span></h3><p className="mt-0.5 text-xs text-muted-foreground">메인 화면에 노출되는 배너입니다. 최대 {visibleBannerLimit}개까지 선택할 수 있습니다.</p></div>
+                <div><h3 className="text-sm font-bold text-blue-900 dark:text-blue-200">선택된 노출 배너 <span className="ml-1 text-blue-600">{selectedBanners.length}</span></h3><p className="mt-0.5 text-xs text-muted-foreground">메인 화면에 노출되는 활성 배너입니다.</p></div>
                 <Button size="sm" variant="outline" className="border-blue-300 bg-white text-blue-700 hover:bg-blue-600 hover:text-white" disabled={isExposureMoving || !checkedBannerIds.some(id => selectedBanners.some(banner => banner.id === id))} onClick={() => moveCheckedBanners("hide")}><ChevronDown className="mr-1 h-4 w-4" />아래로 이동</Button>
               </div>
               <BannerTable rows={filteredSelected} exposure="visible" />

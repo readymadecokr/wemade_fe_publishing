@@ -96,8 +96,7 @@ export const appRouter = router({
         .select()
         .from(banners)
         .where(eq(banners.isActive, 1))
-        .orderBy(asc(banners.sortOrder), asc(banners.id))
-        .limit(10);
+        .orderBy(asc(banners.sortOrder), asc(banners.id));
       return result;
     }),
   }),

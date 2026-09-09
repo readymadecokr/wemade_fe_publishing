@@ -14,6 +14,7 @@ describe("direct React Home initial-load performance", () => {
     expect(homeSource).toContain('fetchPriority="high"');
     expect(homeSource).toContain('loading="lazy"');
     expect(homeSource).toContain("HERO_DESKTOP_URL");
-    expect(homeSource).toContain("HERO_MOBILE_URL");
+    expect(homeSource).toContain("DEFAULT_HERO_BANNERS");
+    expect(homeSource).toContain("currentHero.imageUrl");
   });
 });
