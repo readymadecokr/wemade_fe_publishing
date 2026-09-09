@@ -312,7 +312,9 @@ export default function Home() {
         <div className="react-home-section-shell react-home-discord__shell">
           <div className="react-home-section-heading react-home-section-heading--light"><div><span>OFFICIAL COMMUNITY</span><h2>DISCORD</h2></div><p>Development news and community updates from the official Ragnarok Universe Discord.</p></div>
           <div className="react-home-widget" aria-label="Read-only official Discord messages">
-            <iframe className="react-home-widget__frame" src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051" title="Ragnarok Universe official Discord read-only messages" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" tabIndex={-1} />
+            <a className="react-home-widget__link" href="https://discord.com/invite/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" aria-label="Open the official Ragnarok Universe Discord invite in a new tab">
+              <iframe className="react-home-widget__frame" src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051" title="Ragnarok Universe official Discord read-only messages" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" tabIndex={-1} />
+            </a>
           </div>
         </div>
       </section>
