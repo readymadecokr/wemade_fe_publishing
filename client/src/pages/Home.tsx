@@ -3,10 +3,10 @@ import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { ChevronDown, ChevronLeft, ChevronRight, ExternalLink, Globe, Play } from "lucide-react";
 import FloatingSocialLinks from "@/components/FloatingSocialLinks";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import "./reference-home.css";
+import "./media-strip.css";
 
 const LOGO_URL = "/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png";
 const GAME_START_BUTTON_URL = "/manus-storage/gamestart_BTN_1c6449da.png";
@@ -132,6 +132,8 @@ export default function Home() {
   const [heroIndex, setHeroIndex] = useState(0);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [selectedScreenshot, setSelectedScreenshot] = useState<number | null>(null);
+  const [screenshotScroll, setScreenshotScroll] = useState(0);
+  const screenshotStripRef = useRef<HTMLDivElement | null>(null);
 
   const navigateTo = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -225,6 +227,18 @@ export default function Home() {
   }, []);
 
   const selectHero = (direction: -1 | 1) => setHeroIndex((current) => (current + direction + 3) % 3);
+  const syncScreenshotScroll = () => {
+    const strip = screenshotStripRef.current;
+    if (!strip) return;
+    const maxScroll = Math.max(0, strip.scrollWidth - strip.clientWidth);
+    setScreenshotScroll(maxScroll === 0 ? 0 : (strip.scrollLeft / maxScroll) * 100);
+  };
+  const seekScreenshotStrip = (value: number) => {
+    const strip = screenshotStripRef.current;
+    if (!strip) return;
+    const maxScroll = Math.max(0, strip.scrollWidth - strip.clientWidth);
+    strip.scrollTo({ left: (value / 100) * maxScroll, behavior: "smooth" });
+  };
 
   return (
     <main className="react-home" aria-label="Ragnarok Universe homepage">
@@ -284,20 +298,18 @@ export default function Home() {
           <div className="react-home-section-heading react-home-section-heading--light"><div><span>SEE THE WORLD IN MOTION</span><h2>MEDIA</h2></div></div>
           <div className="react-home-media__feature"><img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="lazy" /><button type="button" aria-label="Play gameplay video"><Play fill="currentColor" /></button></div>
           <div className="react-home-media__gallery" aria-label="Ragnarok Universe screenshots">
-            <Carousel opts={{ align: "start", slidesToScroll: 3, containScroll: "trimSnaps" }} className="react-home-media__carousel">
-              <CarouselContent className="react-home-media__carousel-track">
-                {MEDIA_SCREENSHOTS.map((screenshot, index) => (
-                  <CarouselItem key={screenshot.image} className="basis-1/3 react-home-media__carousel-item">
-                    <button type="button" className="react-home-media__thumbnail" onClick={() => setSelectedScreenshot(index)} aria-label={`View screenshot ${index + 1}: ${screenshot.title}`}>
-                      <img src={screenshot.image} alt={screenshot.title} loading="lazy" />
-                      <span>VIEW</span>
-                    </button>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="react-home-media__carousel-control react-home-media__carousel-control--previous" aria-label="Previous screenshots" />
-              <CarouselNext className="react-home-media__carousel-control react-home-media__carousel-control--next" aria-label="Next screenshots" />
-            </Carousel>
+            <div className="react-home-media__gallery-label"><span>SCREENSHOTS</span><span>DRAG TO EXPLORE</span></div>
+            <div ref={screenshotStripRef} className="react-home-media__strip" onScroll={syncScreenshotScroll}>
+              {MEDIA_SCREENSHOTS.map((screenshot, index) => (
+                <button type="button" key={screenshot.image} className="react-home-media__thumbnail" onClick={() => setSelectedScreenshot(index)} aria-label={`View screenshot ${index + 1}: ${screenshot.title}`}>
+                  <img src={screenshot.image} alt={screenshot.title} loading="lazy" />
+                  <span>VIEW FULLSCREEN</span>
+                </button>
+              ))}
+            </div>
+            <div className="react-home-media__scrollbar" aria-label="Screenshot strip position">
+              <input type="range" min="0" max="100" step="1" value={screenshotScroll} onChange={(event) => seekScreenshotStrip(Number(event.target.value))} aria-label="Browse screenshots" />
+            </div>
           </div>
         </div>
       </section>
