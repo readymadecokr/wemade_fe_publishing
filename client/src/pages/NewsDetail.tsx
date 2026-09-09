@@ -2,7 +2,6 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
-import { useEffect } from "react";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -165,10 +164,6 @@ function NewsDetailContent() {
   const newsId = parseInt(params.id || "1");
 
   const news = newsData.find(n => n.id === newsId);
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [newsId]);
 
   const getCategoryColor = (category: string) => {
     switch (category) {

@@ -30,6 +30,10 @@ export default function Layout({ children, variant = "default" }: LayoutProps) {
   const [showComingSoonDialog, setShowComingSoonDialog] = useState(false);
   const { theme } = useTheme();
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [location]);
+
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
   const userNickname = localStorage.getItem("rou_nickname") || "Adventurer";
 
