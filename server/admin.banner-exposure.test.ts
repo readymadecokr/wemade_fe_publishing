@@ -27,4 +27,9 @@ describe("관리자 Main Banner 선택 노출 관리", () => {
     expect(routerSource).toContain(".orderBy(asc(banners.sortOrder), asc(banners.id));");
     expect(routerSource).not.toContain(".limit(10)");
   });
+
+  it("메인배너 등록 안내와 미리보기를 1000×600px, 5:3 기준으로 제공한다", () => {
+    expect(adminPageSource).toContain("권장: 1000×600px (5:3 비율)");
+    expect(adminPageSource).toContain('aspectRatio: "1000/600"');
+  });
 });

@@ -53,7 +53,7 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 .react-home-hero { position: relative; display: grid; min-height: calc(100svh - var(--react-home-header-height)); margin-top: 0; align-items: stretch; overflow: hidden; background: var(--home-navy); }
 .react-home-hero__visual, .react-home-hero__shade { position: absolute; inset: 0; width: 100%; height: 100%; }
-.react-home-hero__visual { object-fit: contain; object-position: center; }
+.react-home-hero__visual { aspect-ratio: 1000 / 600; object-fit: contain; object-position: center; }
 .react-home-hero__shade { background: linear-gradient(90deg, rgba(7,22,37,.8) 0%, rgba(7,22,37,.42) 45%, rgba(7,22,37,.08) 76%), linear-gradient(0deg, rgba(8,25,42,.25), transparent 42%); }
 .react-home-hero__content { position: relative; z-index: 1; display: flex; width: min(1180px, calc(100% - 64px)); margin: 0 auto; padding: clamp(56px,10vh,110px) 0 clamp(76px,9vh,120px); flex-direction: column; align-items: flex-start; justify-content: center; color: #fff; }
 .react-home-hero__tags { display: flex; gap: 9px; margin-bottom: 18px; }
@@ -71,7 +71,7 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 .react-home-hero__arrow--left { justify-self: start; }.react-home-hero__arrow--right { justify-self: end; }
 .react-home-hero__dots { display: flex; justify-content: center; gap: 10px; }
 .react-home-hero__dots button { width: 11px; height: 11px; border: 1px solid #f4dd93; border-radius: 50%; padding: 0; background: rgba(7,22,37,.48); box-shadow: 0 1px 4px rgba(0,0,0,.5); }.react-home-hero__dots button.is-active { background: #f4dd93; box-shadow: 0 0 0 4px rgba(244,221,147,.2); }
-.react-home-hero-cta-row { display: flex; min-height: clamp(184px,20vh,220px); align-items: center; justify-content: center; padding: 24px; overflow: hidden; background: #f8f4eb; border-top: 1px solid rgba(25,52,77,.16); border-bottom: 1px solid rgba(25,52,77,.16); }
+.react-home-hero-cta-row { display: flex; min-height: clamp(150px,17vh,196px); align-items: center; justify-content: center; padding: 20px 24px; overflow: hidden; background: #f8f4eb; border-top: 1px solid rgba(25,52,77,.16); border-bottom: 1px solid rgba(25,52,77,.16); }
 .home-cta-pair { display: flex; width: min(700px, calc(100% - 36px)); min-height: 102px; gap: clamp(20px,3vw,34px); align-items: center; justify-content: center; }
 .home-cta-pair--hero { display: flex; width: min(700px, calc(100% - 36px)); min-height: 102px; align-items: center; justify-content: center; gap: clamp(20px,3vw,34px); }
 .home-cta-pair--hero .home-discord-button, .home-discord-button { width: min(280px, 48vw); height: 70px; flex: 0 1 auto; }.home-cta-pair--hero .home-game-start, .home-game-start { width: min(350px, 55vw); height: 110px; flex: 0 1 auto; }

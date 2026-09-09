@@ -42,8 +42,8 @@ describe("direct React service header", () => {
   });
 
   it("preserves the Hero artwork and separates the expanded quick-action row", () => {
-    expect(headerStyles).toContain(".react-home-hero__visual { object-fit: contain;");
-    expect(headerStyles).toContain(".react-home-hero-cta-row { display: flex; min-height: clamp(184px,20vh,220px);");
+    expect(headerStyles).toContain(".react-home-hero__visual { aspect-ratio: 1000 / 600; object-fit: contain;");
+    expect(headerStyles).toContain(".react-home-hero-cta-row { display: flex; min-height: clamp(150px,17vh,196px);");
     expect(homeSource).toContain('className="react-home-hero-cta-row"');
   });
 

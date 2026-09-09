@@ -1210,7 +1210,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
             <tr key={banner.id} className="cursor-pointer border-b last:border-0 hover:bg-accent/30" onClick={() => openBannerForm(banner)}>
               <td className="px-3 py-3 text-center" onClick={event => event.stopPropagation()}><input aria-label={`${banner.title} 선택`} type="checkbox" checked={checkedBannerIds.includes(banner.id)} onChange={event => toggleBannerChecked(banner.id, event.target.checked)} /></td>
               <td className="px-3 py-3 text-center text-sm text-muted-foreground">{exposure === "visible" ? index + 1 : "-"}</td>
-              <td className="px-2 py-3"><div className="h-14 w-24 overflow-hidden rounded bg-slate-100"><img src={banner.imageUrl} alt={banner.title} className="h-full w-full object-cover" /></div></td>
+              <td className="px-2 py-3"><div className="h-[58px] w-24 overflow-hidden rounded bg-slate-100"><img src={banner.imageUrl} alt={banner.title} className="h-full w-full object-cover" /></div></td>
               <td className="px-3 py-3 text-sm font-medium">{banner.title}</td>
               <td className="px-3 py-3"><div className="rounded bg-slate-100 px-3 py-1.5 text-center dark:bg-slate-700"><p className="whitespace-nowrap font-mono text-xs leading-5 text-slate-600 dark:text-slate-300">{banner.startDate ? banner.startDate.replace("T", " ") : "-"}</p><p className="leading-4 text-slate-400">~</p><p className="whitespace-nowrap font-mono text-xs leading-5 text-slate-600 dark:text-slate-300">{banner.endDate ? banner.endDate.replace("T", " ") : "-"}</p></div></td>
               <td className="px-3 py-3 text-center"><StatusBadge active={exposure === "visible"} /></td>
@@ -1298,7 +1298,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                         <td className="px-3 py-3 w-14 text-sm text-muted-foreground text-center whitespace-nowrap">{b.sortOrder + 1}</td>
                         {/* 썸네일 */}
                         <td className="px-2 py-3 w-28">
-                          <div className="w-24 h-14 rounded overflow-hidden bg-slate-100">
+                          <div className="w-24 h-[58px] rounded overflow-hidden bg-slate-100">
                             <img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" />
                           </div>
                         </td>
@@ -1352,8 +1352,8 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
           <div className="space-y-1">
             <label className="text-sm font-medium">이미지 등록 *</label>
             <div className="flex gap-2"><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." className="flex-1" /><Button type="button" variant="outline" onClick={handleFileSelect} disabled={uploading}>{uploading ? "업로드 중..." : "PC에서 찾아보기"}</Button></div>
-            <p className="text-xs text-muted-foreground">권장: 1900×600px | 500KB 미만 | JPG, WebP, PNG</p>
-            {form.imageUrl && <div className="rounded overflow-hidden border bg-slate-100" style={{ aspectRatio: "1900/600" }}><img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" /></div>}
+            <p className="text-xs text-muted-foreground">권장: 1000×600px (5:3 비율) | 500KB 미만 | JPG, WebP, PNG</p>
+            {form.imageUrl && <div className="rounded overflow-hidden border bg-slate-100" style={{ aspectRatio: "1000/600" }}><img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" /></div>}
           </div>
           <div className="space-y-1">
             <label className="text-sm font-medium">클릭 시 동작</label>
@@ -1377,7 +1377,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
       <Dialog open={!!preview} onOpenChange={() => setPreview(null)}>
         <DialogContent className="max-w-4xl">
           <DialogHeader><DialogTitle>배너 미리보기: {preview?.title}</DialogTitle></DialogHeader>
-          {preview && <div className="rounded-lg overflow-hidden border"><img src={preview.imageUrl} alt={preview.title} className="w-full object-cover" style={{ aspectRatio: "1900/600" }} /></div>}
+          {preview && <div className="rounded-lg overflow-hidden border"><img src={preview.imageUrl} alt={preview.title} className="w-full object-cover" style={{ aspectRatio: "1000/600" }} /></div>}
           <DialogFooter><Button variant="outline" onClick={() => setPreview(null)}>닫기</Button></DialogFooter>
         </DialogContent>
       </Dialog>
