@@ -103,9 +103,9 @@ function ReferenceHomeHeader({ activeSection, onNavigate }: { activeSection: str
       </div>
 
       <div className="border-b border-[#c8d8e7]/30 bg-[#1c3147] shadow-[0_3px_18px_rgba(24,38,57,.28)] [background-image:linear-gradient(100deg,rgba(32,56,78,1),rgba(58,84,110,.9),rgba(24,45,66,1))]">
-        <div className="container flex min-h-[4.125rem] flex-wrap items-center justify-between gap-x-2 gap-y-1 py-1.5 xl:flex-nowrap xl:gap-x-5 xl:py-2">
-          <a href="#home" onClick={(event) => navigateTo(event, "home")} className="group flex shrink-0 items-center gap-2" aria-label="Ragnarok Universe home"><img src={LOGO_URL} alt="Ragnarok Universe" className="h-7 w-auto brightness-[1.28] contrast-90 transition-opacity group-hover:opacity-80 sm:h-9" /></a>
-          <nav className="portal-nav order-3 grid w-full grid-cols-6 items-center text-[8px] xl:order-none xl:flex xl:w-auto xl:flex-1 xl:justify-center xl:gap-4 xl:text-[11px]" aria-label="Primary navigation">
+        <div className="container reference-header-main-row">
+          <a href="#home" onClick={(event) => navigateTo(event, "home")} className="reference-header-logo" aria-label="Ragnarok Universe home"><img src={LOGO_URL} alt="Ragnarok Universe" /></a>
+          <nav className="portal-nav" aria-label="Primary navigation">
             <a href="#home" onClick={(event) => navigateTo(event, "home")} className={`portal-nav-link ${activeSection === "home" ? "portal-nav-link--active" : ""}`}>HOME</a>
             <a href="#discord" onClick={(event) => navigateTo(event, "discord")} className={`portal-nav-link inline-flex items-center gap-1 ${activeSection === "discord" ? "portal-nav-link--active" : ""}`}>COMMUNITY <ExternalLink size={11} aria-hidden="true" /></a>
             {(["news", "game-info", "media"] as const).map((sectionId) => (

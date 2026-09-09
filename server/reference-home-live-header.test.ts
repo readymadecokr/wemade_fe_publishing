@@ -19,13 +19,21 @@ describe("direct React service header", () => {
     expect(homeSource).not.toContain("ragnarok-reference-frame");
   });
 
-  it("keeps header CTA sizing, rounded Discord styling, and pressed Game Start feedback on narrow screens", () => {
-    expect(headerStyles).toContain("width: min(150px, 100%); min-width: 150px; height: 48px; min-height: 48px;");
-    expect(headerStyles).toContain("width: 104px; min-width: 104px; height: 34px; min-height: 34px;");
+  it("keeps non-wrapping fluid header CTA sizing, rounded Discord styling, and pressed Game Start feedback", () => {
+    expect(headerStyles).toContain(".reference-header-main-row { display: grid;");
+    expect(headerStyles).toContain("width: clamp(92px,12vw,150px);");
+    expect(headerStyles).toContain("height: clamp(32px,3.85vw,48px);");
+    expect(headerStyles).toContain("width: clamp(90px,26vw,118px);");
     expect(headerStyles).toContain("border-radius: 18px;");
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
-    expect(homeSource).toContain("xl:flex-nowrap");
-    expect(homeSource).toContain("xl:order-none xl:flex xl:w-auto xl:flex-1 xl:justify-center");
+    expect(homeSource).toContain('className="container reference-header-main-row"');
+    expect(homeSource).toContain('className="reference-header-logo"');
+  });
+
+  it("preserves the Hero artwork and separates the expanded quick-action row", () => {
+    expect(headerStyles).toContain(".react-home-hero__visual img { object-fit: contain;");
+    expect(headerStyles).toContain(".react-home-hero-cta-row { display: flex; min-height: clamp(128px,13vh,156px);");
+    expect(homeSource).toContain('className="react-home-hero-cta-row"');
   });
 
   it("places COMMUNITY after HOME and highlights the menu when Discord is the active panel", () => {
