@@ -21,11 +21,11 @@ describe("direct React service header", () => {
 
   it("keeps non-wrapping fluid header CTA sizing, rounded Discord styling, and pressed Game Start feedback", () => {
     expect(headerStyles).toContain(".reference-header-main-row { display: grid;");
-    expect(headerStyles).toContain("width: clamp(86px,8vw,96px); height: 30px; padding: 0; border-radius: 8px;");
+    expect(headerStyles).toContain("width: clamp(96px,9vw,110px); height: 30px; padding: 0; border-radius: 7px;");
     expect(headerStyles).toContain(".reference-header-game-start { width: clamp(92px,12vw,150px); height: clamp(32px,3.85vw,48px); }");
-    expect(headerStyles).toContain(".reference-header-cta .reference-header-discord { width: clamp(86px, 8vw, 96px); height: 30px; }");
+    expect(headerStyles).toContain(".reference-header-cta .reference-header-discord { width: clamp(96px, 9vw, 110px); height: 30px; }");
     expect(headerStyles).toContain("width: clamp(90px,26vw,118px);");
-    expect(headerStyles).toContain("border-radius: 8px;");
+    expect(headerStyles).toContain("border-radius: 7px;");
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
     expect(homeSource).toContain('className="container reference-header-main-row"');
     expect(homeSource).toContain('className="reference-header-logo"');

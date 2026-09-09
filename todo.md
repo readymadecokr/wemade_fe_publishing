@@ -1047,3 +1047,8 @@
 - [x] 공용 Discord 컴포넌트에 추가된 중복 인라인 스타일 영향 확인
 - [x] 헤더 전용 Discord 크기·모서리 규칙으로 정리하고 Hero·마무리 CTA 크기 보호
 - [x] 데스크톱·모바일 화면 및 TypeScript·회귀 테스트 검증
+
+## 헤더 Discord 폭·모서리 보정
+- [x] 공용 Discord 컴포넌트에 추가된 110px·7px 인라인 스타일 영향 확인
+- [x] 헤더 전용 Discord 폭 110px·모서리 7px 적용과 Hero·마무리 CTA 보호
+- [x] 데스크톱·모바일 화면 및 TypeScript·회귀 테스트 검증
