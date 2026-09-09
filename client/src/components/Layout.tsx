@@ -7,6 +7,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import PrivacySettingsDialog from "./PrivacySettingsDialog";
 import FloatingSocialLinks from "./FloatingSocialLinks";
 import { trpc } from "@/lib/trpc";
+import "./news-layout.css";
 
 function fmtRuc(n: number): string { return Math.min(n, 9999999).toLocaleString("en-US"); }
 
@@ -15,9 +16,10 @@ const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
 interface LayoutProps {
   children: React.ReactNode;
+  variant?: "default" | "homeChrome";
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, variant = "default" }: LayoutProps) {
   const [location] = useLocation();
   const [lang, setLang] = useState("EN");
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -82,7 +84,39 @@ export default function Layout({ children }: LayoutProps) {
       
 
 
-      {/* Two-tier Global Navigation — account information above, game information below */}
+      {variant === "homeChrome" ? (
+      <header className="news-home-header fixed inset-x-0 top-0 z-40 w-full text-white" aria-label="Ragnarok Universe service navigation">
+        <div className="news-home-account-row">
+          <div className="container flex h-9 items-center justify-end gap-2 py-0.5 sm:gap-3">
+            {isLoggedIn ? (
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex items-center overflow-hidden rounded-lg border border-slate-200 bg-white text-[10px] font-semibold text-slate-700 shadow-sm sm:text-xs">
+                  <Link href="/point-shop" className="flex items-center gap-1 px-3 py-2 transition-colors hover:bg-red-50 whitespace-nowrap"><span>rCoin: <strong className="font-black text-[#9b2020]">{fmtRuc(ruCash)}</strong></span><span className="mx-2 text-slate-300">|</span><span>Bonus rCoin: <strong className="font-black text-green-700">{fmtRuc(bonusCash)}</strong></span></Link>
+                  <Link href="/mypage" className="border-l border-slate-200 bg-slate-100 px-3 py-2 text-slate-700 transition-colors hover:bg-slate-200 whitespace-nowrap">My Page</Link>
+                </div>
+                <button type="button" onClick={handleLogout} className="rounded-md border border-[#d5bd7d]/70 bg-[#fffaf0] px-3 py-2 text-[10px] font-bold text-[#263b5b] shadow-sm transition-colors hover:bg-[#f8edce] sm:text-xs">Logout</button>
+              </div>
+            ) : <Link href="/login" className="news-home-signin">Sign In / Sign Up</Link>}
+            <button type="button" onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-100 transition-colors hover:text-[#f3d991] sm:text-xs" aria-label="Current language: English"><Globe size={14} /> {lang}</button>
+          </div>
+        </div>
+        <div className="container news-home-main-row">
+          <Link href="/" className="news-home-logo" aria-label="Ragnarok Universe home"><img src={`${ASSET_BASE_URL}/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png`} alt="Ragnarok Universe" /></Link>
+          <nav className="news-home-nav" aria-label="Primary navigation">
+            <Link href="/" className="portal-nav-link">HOME</Link>
+            <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="portal-nav-link portal-nav-link--external"><span>DISCORD</span><ExternalLink size={11} aria-hidden="true" /></a>
+            <Link href="/news" className="portal-nav-link portal-nav-link--active">NEWS</Link>
+            <Link href="/game-info" className="portal-nav-link">GAME INFO</Link>
+            <a href="/#media" className="portal-nav-link">MEDIA</a>
+            <Link href="/point-shop" className="portal-nav-link inline-flex items-center gap-0.5">SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
+          </nav>
+          <div className="news-home-quick-actions" aria-label="Quick actions">
+            <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="news-home-discord" aria-label="Join Ragnarok Universe on Discord"><img src={`${ASSET_BASE_URL}/manus-storage/Discord-Logo-White_b3128ea2.png`} alt="Discord" /></a>
+            <a href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer" className="news-home-game-start" aria-label="Game Start"><img src={`${ASSET_BASE_URL}/manus-storage/gamestart_BTN_1c6449da.png`} alt="Game Start" /></a>
+          </div>
+        </div>
+      </header>
+      ) : (
       <header className="fixed inset-x-0 top-0 z-40 w-full border-b border-[#c8d8e7]/30 bg-[#1c3147]/92 text-white shadow-[0_3px_18px_rgba(24,38,57,.28)] backdrop-blur-xl [background-image:linear-gradient(100deg,rgba(32,56,78,.94),rgba(58,84,110,.78),rgba(24,45,66,.92))]">
         <div className="border-b border-white/10 bg-[#102235]/35">
           <div className="container flex min-h-10 flex-wrap items-center justify-end gap-2 py-1.5 sm:gap-3">
@@ -120,16 +154,43 @@ export default function Layout({ children }: LayoutProps) {
           <a href="/#game-start" className="shrink-0 rounded-md border border-[#d5bd7d]/70 bg-[#476da9] px-2.5 py-1.5 text-[9px] font-bold text-white shadow-lg shadow-[#17283b]/30 transition-all hover:-translate-y-0.5 hover:border-[#fff0bd] hover:bg-[#6188c5] hover:shadow-[0_8px_20px_rgba(18,39,70,.42),inset_0_1px_rgba(255,255,255,.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fff0bd] active:scale-95 sm:px-3 sm:py-2 sm:text-[10px]">GAME START</a>
         </div>
       </header>
+      )}
 
       {/* Main Content */}
-      <main className="flex-1 w-full pt-[136px] sm:pt-[106px]">
+      <main className={`flex-1 w-full ${variant === "homeChrome" ? "news-home-content" : "pt-[136px] sm:pt-[106px]"}`}>
         {children}
       </main>
 
       {/* Cookie Consent Banner */}
 
 
-      {/* Footer */}
+      {variant === "homeChrome" ? (
+      <footer id="site-footer" className="news-home-footer mt-auto w-full">
+        <section className="news-home-closing" aria-label="Ragnarok Universe closing call to action">
+          <div className="news-home-closing__content">
+            <span>YOUR STORY BEGINS HERE</span>
+            <h2>TWO CLICKS TO<br />MIDGARD</h2>
+            <p>Start the game in your browser, then join the Discord to find a party, get patch news first and take part in founder events.</p>
+            <div className="news-home-closing__actions">
+              <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="news-home-closing__discord"><img src={`${ASSET_BASE_URL}/manus-storage/Discord-Logo-White_b3128ea2.png`} alt="Discord" /></a>
+              <a href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer" className="news-home-closing__game-start"><img src={`${ASSET_BASE_URL}/manus-storage/gamestart_BTN_1c6449da.png`} alt="Game Start" /></a>
+            </div>
+          </div>
+        </section>
+        <section className="news-home-footer__bar">
+          <div className="news-home-footer__inner">
+            <div>
+              <div className="news-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div>
+              <nav><Link href="/terms-of-service">Terms of Service</Link><Link href="/privacy-policy">Privacy Policy</Link><button type="button" onClick={() => setShowPrivacySettings(true)}>Privacy Settings</button><a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer">Customer Support</a></nav>
+              <img src={`${ASSET_BASE_URL}/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png`} alt="GRAVITY" />
+              <p>Copyright © Gravity Co., LTD &amp; Lee Myoungjin(studio DTDS). All Rights Reserved. All trademarks used on this website are the property of their respective owners.</p>
+            </div>
+            <div className="news-home-footer__social" aria-label="Official social links"><a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" aria-label="Discord">D</a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer" aria-label="Facebook">f</a><a href="https://www.youtube.com/@RagnarokUniverse" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer" aria-label="X">X</a></div>
+          </div>
+        </section>
+      </footer>
+      ) : (
+      /* Footer */
       <footer id="site-footer" className="fantasy-site-footer home-scroll-panel home-section-surface home-surface--closing home-panel-fill mt-auto w-full text-[#17120c]">
         <div className="container py-12" style={{paddingTop: '30px'}}>
           <div className="mx-auto mb-10 max-w-2xl text-center">
@@ -185,6 +246,7 @@ export default function Layout({ children }: LayoutProps) {
           </div>
         </div>
       </footer>
+      )}
 
       {/* Privacy Settings Dialog */}
       <PrivacySettingsDialog isOpen={showPrivacySettings} onClose={() => setShowPrivacySettings(false)} />

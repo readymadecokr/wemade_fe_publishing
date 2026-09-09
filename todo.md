@@ -1081,3 +1081,8 @@
 - [x] Home LATEST FROM MIDGARD의 View More를 News 페이지로 직접 연결
 - [x] 모바일 Home 뉴스 카드를 2열·최대 4개로 News 카드 구조에 맞춰 보정
 - [x] 데스크톱·모바일 News 이동·카드 표시와 회귀 테스트 검증
+
+## News 헤더·마무리·푸터 통일
+- [x] News 상단 헤더를 Home의 계정 바·로고·메뉴·CTA 구성으로 통일
+- [x] News 하단을 Home의 TWO CLICKS TO MIDGARD CTA와 어두운 푸터 구성으로 통일
+- [x] News 데스크톱·모바일 레이아웃과 TypeScript·회귀 테스트 검증

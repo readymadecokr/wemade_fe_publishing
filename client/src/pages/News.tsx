@@ -283,7 +283,7 @@ function NewsPageContent() {
 
 export default function NewsPage() {
   return (
-    <Layout>
+    <Layout variant="homeChrome">
       <NewsPageContent />
     </Layout>
   );
