@@ -1037,3 +1037,8 @@
 - [x] 헤더·Hero 하단·마무리 CTA의 Discord와 Game Start 순서 교체
 - [x] Hero 하단 Discord를 마무리 CTA Discord와 동일한 크기로 통일
 - [x] 데스크톱·모바일 CTA 순서·크기 회귀 테스트 및 화면 검증
+
+## CTA 시각 편집 정리·검증
+- [x] 자동 편집으로 추가된 중복 인라인 스타일과 잘못된 공통 CTA 호출 정리
+- [x] 헤더·Hero 하단·마무리 CTA의 요청 크기·순서 유지 확인
+- [x] 데스크톱·모바일 화면 및 TypeScript·회귀 테스트 검증

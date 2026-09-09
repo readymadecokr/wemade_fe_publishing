@@ -37,12 +37,12 @@ describe("direct React service header", () => {
     expect(headerDiscord).toBeGreaterThan(headerCta);
     expect(headerGameStart).toBeGreaterThan(headerDiscord);
     expect(homeSource).toContain('<DiscordButton /><GameStartButton />');
-    expect(headerStyles).toContain('.home-cta-pair--hero .home-discord-button { width: min(285px, 49vw); height: 76px;');
+    expect(headerStyles).toContain('.home-cta-pair--hero .home-discord-button, .home-discord-button { width: min(280px, 48vw); height: 70px;');
   });
 
   it("preserves the Hero artwork and separates the expanded quick-action row", () => {
     expect(headerStyles).toContain(".react-home-hero__visual { object-fit: contain;");
-    expect(headerStyles).toContain(".react-home-hero-cta-row { display: flex; min-height: clamp(154px,16vh,190px);");
+    expect(headerStyles).toContain(".react-home-hero-cta-row { display: flex; min-height: clamp(184px,20vh,220px);");
     expect(homeSource).toContain('className="react-home-hero-cta-row"');
   });
 
