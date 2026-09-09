@@ -114,7 +114,7 @@ export default function Layout({ children }: LayoutProps) {
             <Link href="/news" className={`portal-nav-link ${location === "/news" ? "portal-nav-link--active" : ""}`}>NEWS</Link>
             <Link href="/game-info" className={`portal-nav-link ${location === "/game-info" ? "portal-nav-link--active" : ""}`}>GAME INFO</Link>
             <a href="/#media" className="portal-nav-link">MEDIA</a>
-            <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="portal-nav-link inline-flex items-center gap-1">COMMUNITY <ExternalLink size={11} aria-hidden="true" /></a>
+            <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="portal-nav-link portal-nav-link--external"><span className="portal-nav-link__label">DISCORD</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></a>
             <Link href="/point-shop" className={`portal-nav-link inline-flex items-center gap-0.5 ${location === "/point-shop" ? "portal-nav-link--active" : ""}`}>SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
           </nav>
           <a href="/#game-start" className="shrink-0 rounded-md border border-[#d5bd7d]/70 bg-[#476da9] px-2.5 py-1.5 text-[9px] font-bold text-white shadow-lg shadow-[#17283b]/30 transition-all hover:-translate-y-0.5 hover:border-[#fff0bd] hover:bg-[#6188c5] hover:shadow-[0_8px_20px_rgba(18,39,70,.42),inset_0_1px_rgba(255,255,255,.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fff0bd] active:scale-95 sm:px-3 sm:py-2 sm:text-[10px]">GAME START</a>

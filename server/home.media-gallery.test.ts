@@ -13,6 +13,15 @@ describe("Home Media screenshot gallery", () => {
     expect(homeSource).toContain('className="react-home-media__strip"');
     expect(homeSource).toContain('className="react-home-media__scrollbar"');
     expect(homeSource).toContain('aria-label="Browse screenshots"');
+    expect(homeSource).toContain('aria-label="Previous screenshots"');
+    expect(homeSource).toContain('aria-label="Next screenshots"');
+  });
+
+  it("renders the first active admin video through the public Media procedure", () => {
+    expect(homeSource).toContain("trpc.publicMedia.list.useQuery");
+    expect(homeSource).toContain("const featuredVideo = managedVideos?.[0]");
+    expect(homeSource).toContain("getYoutubeEmbedUrl");
+    expect(homeSource).toContain("www.youtube-nocookie.com/embed/");
   });
 
   it("opens a keyboard-accessible enlarged screenshot dialog", () => {
@@ -22,11 +31,14 @@ describe("Home Media screenshot gallery", () => {
     expect(homeSource).toContain("react-home-gallery-modal");
   });
 
-  it("keeps Media content inside the panel with a compact feature and gallery height", () => {
+  it("keeps Media content inside the panel with compact video, non-cropping thumbnails, and a long position track", () => {
     expect(homeStyles).toContain(".react-home-media { display: flex; align-items: center; padding: clamp(28px,4vh,48px)");
     expect(homeStyles).toContain(".react-home-media__feature { position: relative; overflow: hidden; aspect-ratio: 3.15 / 1");
     expect(stripStyles).toContain(".react-home-media__strip {\n  display: flex;");
     expect(stripStyles).toContain("width: calc((100% - 24px) / 3);");
-    expect(stripStyles).toContain(".react-home-media__scrollbar input {\n  display: block;");
+    expect(stripStyles).toContain("object-fit: contain; object-position: center;");
+    expect(stripStyles).toContain(".react-home-media__position-track");
+    expect(stripStyles).toContain(".react-home-media__position-window");
+    expect(stripStyles).toContain(".react-home-media__scroll-arrow");
   });
 });

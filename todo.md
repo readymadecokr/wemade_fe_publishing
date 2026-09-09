@@ -1025,3 +1025,10 @@
 - [x] Game Start·Discord CTA 위치 조정 및 Hero Discord 크기 70% 적용
 - [x] 현재 배너 표시 점 복원과 좌우 전환 버튼 하단 배치
 - [x] 데스크톱·모바일 Hero 전환·관리자 연동 및 전체 회귀 테스트 검증
+
+## Hero·Media·영상 연동·헤더 메뉴 보정
+- [x] Hero 내부 Game Start·Discord CTA 위치 재배치 및 Discord 70% 크기 검증
+- [x] Media 스크린샷 잘림 제거와 좌우 화살표·긴 위치 표시 바 구성
+- [x] 관리자 등록 활성 영상을 Media 대표 영상에 직접 연동
+- [x] COMMUNITY를 DISCORD로 변경하고 좁은 화면 메뉴 박스·외부 링크 화살표 이탈 방지
+- [x] 다중 화면 폭·갤러리·영상 연동 및 전체 회귀 테스트 검증

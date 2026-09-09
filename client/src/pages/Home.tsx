@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { ChevronDown, ChevronLeft, ChevronRight, ExternalLink, Globe, Play } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, ExternalLink, Globe } from "lucide-react";
 import FloatingSocialLinks from "@/components/FloatingSocialLinks";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
@@ -38,6 +38,11 @@ const MEDIA_SCREENSHOTS = [
   { title: "Ragnarok Online: Patch Update April 29, 2026", image: "/manus-storage/RO_PatchUpdate18032026_700x360_68e5480e_82a64304.webp" },
   { title: "Ragnarok Online: Patch Update April 22, 2026", image: "/manus-storage/RO_PatchUpdate_22042026_337d2472_7c5c5406.webp" },
 ] as const;
+
+function getYoutubeEmbedUrl(youtubeUrl: string) {
+  const match = youtubeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^&?/\s]+)/);
+  return match?.[1] ? `https://www.youtube-nocookie.com/embed/${match[1]}?rel=0` : null;
+}
 
 function formatRcoin(value: number): string {
   return Math.min(value, 9_999_999).toLocaleString("en-US");
@@ -110,7 +115,7 @@ function ReferenceHomeHeader({ activeSection, onNavigate }: { activeSection: str
           <a href="#home" onClick={(event) => navigateTo(event, "home")} className="reference-header-logo" aria-label="Ragnarok Universe home"><img src={LOGO_URL} alt="Ragnarok Universe" /></a>
           <nav className="portal-nav" aria-label="Primary navigation">
             <a href="#home" onClick={(event) => navigateTo(event, "home")} className={`portal-nav-link ${activeSection === "home" ? "portal-nav-link--active" : ""}`}>HOME</a>
-            <a href="#discord" onClick={(event) => navigateTo(event, "discord")} className={`portal-nav-link inline-flex items-center gap-1 ${activeSection === "discord" ? "portal-nav-link--active" : ""}`}>COMMUNITY <ExternalLink size={11} aria-hidden="true" /></a>
+            <a href="#discord" onClick={(event) => navigateTo(event, "discord")} className={`portal-nav-link portal-nav-link--external ${activeSection === "discord" ? "portal-nav-link--active" : ""}`}><span className="portal-nav-link__label">DISCORD</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></a>
             {(["news", "game-info", "media"] as const).map((sectionId) => (
               <a key={sectionId} href={`#${sectionId}`} onClick={(event) => navigateTo(event, sectionId)} className={`portal-nav-link ${activeSection === sectionId ? "portal-nav-link--active" : ""}`}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</a>
             ))}
@@ -136,6 +141,7 @@ export default function Home() {
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [selectedScreenshot, setSelectedScreenshot] = useState<number | null>(null);
   const [screenshotScroll, setScreenshotScroll] = useState(0);
+  const [screenshotViewport, setScreenshotViewport] = useState(25);
   const screenshotStripRef = useRef<HTMLDivElement | null>(null);
   const { data: managedBanners } = trpc.banner.list.useQuery(undefined, {
     staleTime: 60_000,
@@ -143,6 +149,12 @@ export default function Home() {
   });
   const heroBanners = managedBanners?.length ? managedBanners : DEFAULT_HERO_BANNERS;
   const currentHero = heroBanners[heroIndex % heroBanners.length];
+  const { data: managedVideos } = trpc.publicMedia.list.useQuery(undefined, {
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  });
+  const featuredVideo = managedVideos?.[0];
+  const featuredVideoEmbedUrl = featuredVideo ? getYoutubeEmbedUrl(featuredVideo.youtubeUrl) : null;
 
   const navigateTo = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -241,6 +253,7 @@ export default function Home() {
     if (!strip) return;
     const maxScroll = Math.max(0, strip.scrollWidth - strip.clientWidth);
     setScreenshotScroll(maxScroll === 0 ? 0 : (strip.scrollLeft / maxScroll) * 100);
+    setScreenshotViewport(strip.scrollWidth === 0 ? 100 : Math.min(100, (strip.clientWidth / strip.scrollWidth) * 100));
   };
   const seekScreenshotStrip = (value: number) => {
     const strip = screenshotStripRef.current;
@@ -248,6 +261,26 @@ export default function Home() {
     const maxScroll = Math.max(0, strip.scrollWidth - strip.clientWidth);
     strip.scrollTo({ left: (value / 100) * maxScroll, behavior: "smooth" });
   };
+  const moveScreenshotStrip = (direction: -1 | 1) => {
+    const strip = screenshotStripRef.current;
+    if (!strip) return;
+    strip.scrollBy({ left: direction * Math.max(180, strip.clientWidth * 0.86), behavior: "smooth" });
+  };
+  const screenshotWindowLeft = screenshotScroll * (100 - screenshotViewport) / 100;
+
+  useEffect(() => {
+    const strip = screenshotStripRef.current;
+    if (!strip) return;
+    const updateViewport = () => {
+      const maxScroll = Math.max(0, strip.scrollWidth - strip.clientWidth);
+      setScreenshotScroll(maxScroll === 0 ? 0 : (strip.scrollLeft / maxScroll) * 100);
+      setScreenshotViewport(strip.scrollWidth === 0 ? 100 : Math.min(100, (strip.clientWidth / strip.scrollWidth) * 100));
+    };
+    updateViewport();
+    const observer = new ResizeObserver(updateViewport);
+    observer.observe(strip);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <main className="react-home" aria-label="Ragnarok Universe homepage">
@@ -304,7 +337,13 @@ export default function Home() {
       <section id="media" data-home-section data-snap-panel className="react-home-panel react-home-media">
         <div className="react-home-section-shell">
           <div className="react-home-section-heading react-home-section-heading--light"><div><span>SEE THE WORLD IN MOTION</span><h2>MEDIA</h2></div></div>
-          <div className="react-home-media__feature"><img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="lazy" /><button type="button" aria-label="Play gameplay video"><Play fill="currentColor" /></button></div>
+          <div className="react-home-media__feature">
+            {featuredVideoEmbedUrl ? (
+              <iframe src={featuredVideoEmbedUrl} title={featuredVideo?.title ?? "Ragnarok Universe video"} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
+            ) : (
+              <div className="react-home-media__feature-fallback"><img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="lazy" /><span>NO ACTIVE VIDEO REGISTERED</span></div>
+            )}
+          </div>
           <div className="react-home-media__gallery" aria-label="Ragnarok Universe screenshots">
             <div className="react-home-media__gallery-label"><span>SCREENSHOTS</span><span>DRAG TO EXPLORE</span></div>
             <div ref={screenshotStripRef} className="react-home-media__strip" onScroll={syncScreenshotScroll}>
@@ -316,7 +355,12 @@ export default function Home() {
               ))}
             </div>
             <div className="react-home-media__scrollbar" aria-label="Screenshot strip position">
-              <input type="range" min="0" max="100" step="1" value={screenshotScroll} onChange={(event) => seekScreenshotStrip(Number(event.target.value))} aria-label="Browse screenshots" />
+              <button type="button" className="react-home-media__scroll-arrow" onClick={() => moveScreenshotStrip(-1)} disabled={screenshotScroll <= 0.5} aria-label="Previous screenshots"><ChevronLeft /></button>
+              <div className="react-home-media__position-track">
+                <span className="react-home-media__position-window" style={{ width: `${screenshotViewport}%`, left: `${screenshotWindowLeft}%` }} aria-hidden="true" />
+                <input className="react-home-media__position-input" type="range" min="0" max="100" step="1" value={screenshotScroll} onChange={(event) => seekScreenshotStrip(Number(event.target.value))} aria-label="Browse screenshots" />
+              </div>
+              <button type="button" className="react-home-media__scroll-arrow" onClick={() => moveScreenshotStrip(1)} disabled={screenshotScroll >= 99.5} aria-label="Next screenshots"><ChevronRight /></button>
             </div>
           </div>
         </div>

@@ -33,52 +33,66 @@
   scroll-snap-align: start;
 }
 
-.react-home-media__strip .react-home-media__thumbnail img { object-fit: cover; }
+.react-home-media__strip .react-home-media__thumbnail img { object-fit: contain; object-position: center; }
 
 .react-home-media__scrollbar {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.react-home-media__scroll-arrow {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid rgba(231, 212, 147, .78);
+  border-radius: 50%;
+  background: rgba(7, 27, 47, .85);
+  color: #f6e8b6;
+  cursor: pointer;
+  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.react-home-media__scroll-arrow:hover:not(:disabled) { transform: translateY(2px); border-color: #fff3c5; background: #244766; }
+.react-home-media__scroll-arrow:disabled { cursor: default; opacity: .34; }
+.react-home-media__scroll-arrow svg { width: 17px; height: 17px; stroke-width: 2.7; }
+
+.react-home-media__position-track {
   position: relative;
-  height: 13px;
-  padding: 0 2px;
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(234, 217, 166, .54);
+  border-radius: 999px;
+  background: rgba(229, 214, 168, .28);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .34);
 }
 
-.react-home-media__scrollbar input {
-  display: block;
+.react-home-media__position-window {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  min-width: 54px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #d4ab4b, #f5dc8b 48%, #d4ab4b);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .36), inset 0 1px rgba(255,255,255,.52);
+  pointer-events: none;
+  transition: left 150ms ease-out, width 150ms ease-out;
+}
+
+.react-home-media__position-input {
+  position: absolute;
+  inset: -11px 0;
   width: 100%;
-  height: 13px;
+  height: calc(100% + 22px);
   margin: 0;
-  accent-color: #c69b39;
   cursor: ew-resize;
+  opacity: 0;
 }
 
-.react-home-media__scrollbar input::-webkit-slider-runnable-track {
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(229, 214, 168, .46);
-}
-
-.react-home-media__scrollbar input::-webkit-slider-thumb {
-  width: 42px;
-  height: 13px;
-  margin-top: -3px;
-  border: 0;
-  border-radius: 999px;
-  background: #c69b39;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, .24);
-}
-
-.react-home-media__scrollbar input::-moz-range-track {
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(229, 214, 168, .46);
-}
-
-.react-home-media__scrollbar input::-moz-range-thumb {
-  width: 42px;
-  height: 13px;
-  border: 0;
-  border-radius: 999px;
-  background: #c69b39;
-}
+.react-home-media__position-input:focus-visible { outline: 2px solid #fff0ae; outline-offset: 5px; }
 
 @media (max-width: 768px) {
   .react-home-media__gallery { margin-top: 12px; }
@@ -89,8 +103,8 @@
     min-width: calc((100% - 14px) / 3);
     height: clamp(62px, 18vw, 90px);
   }
-  .react-home-media__scrollbar { height: 11px; }
-  .react-home-media__scrollbar input { height: 11px; }
-  .react-home-media__scrollbar input::-webkit-slider-thumb { width: 34px; height: 11px; margin-top: -2px; }
-  .react-home-media__scrollbar input::-moz-range-thumb { width: 34px; height: 11px; }
+  .react-home-media__scrollbar { grid-template-columns: 28px minmax(0, 1fr) 28px; gap: 8px; }
+  .react-home-media__scroll-arrow { width: 28px; height: 28px; }
+  .react-home-media__scroll-arrow svg { width: 15px; height: 15px; }
+  .react-home-media__position-track { height: 9px; }
 }

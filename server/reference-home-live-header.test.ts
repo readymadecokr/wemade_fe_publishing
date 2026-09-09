@@ -36,13 +36,18 @@ describe("direct React service header", () => {
     expect(homeSource).toContain('className="react-home-hero-cta-row"');
   });
 
-  it("places COMMUNITY after HOME and highlights the menu when Discord is the active panel", () => {
+  it("places DISCORD after HOME and keeps its external-link indicator inside the responsive menu box", () => {
     const homeIndex = homeSource.indexOf('href="#home"');
     const communityIndex = homeSource.indexOf('href="#discord"');
     const newsIndex = homeSource.indexOf('(["news", "game-info", "media"] as const)');
     expect(homeIndex).toBeGreaterThan(-1);
     expect(communityIndex).toBeGreaterThan(homeIndex);
     expect(newsIndex).toBeGreaterThan(communityIndex);
+    expect(homeSource).toContain('portal-nav-link__label">DISCORD</span>');
+    expect(homeSource).toContain('className="portal-nav-link__icon"');
     expect(headerStyles).toContain(".portal-nav-link--active { border-color:");
+    expect(headerStyles).toContain(".portal-nav-link { display: inline-flex; width: 100%;");
+    expect(headerStyles).toContain(".portal-nav-link__icon { width:");
+    expect(headerStyles).toContain("flex: none;");
   });
 });
