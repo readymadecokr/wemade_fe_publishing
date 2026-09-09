@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import * as XLSX from "xlsx";
@@ -36,6 +37,29 @@ function createAdminClient(adminKey: string) {
 function fmt(d: Date | string | null | undefined) {
   if (!d) return "-";
   return new Date(d).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
+}
+
+function utf8ByteLength(value: string) {
+  return new TextEncoder().encode(value.replace(/\r?\n/g, "")).byteLength;
+}
+
+function wrapHeroText(value: string, bytesPerLine: number, maxBytes: number) {
+  let bytes = 0;
+  let lineBytes = 0;
+  let output = "";
+  for (const character of value.replace(/\r?\n/g, "")) {
+    const characterBytes = new TextEncoder().encode(character).byteLength;
+    if (bytes + characterBytes > maxBytes) break;
+    if (lineBytes + characterBytes > bytesPerLine) {
+      if (output.includes("\n")) break;
+      output += "\n";
+      lineBytes = 0;
+    }
+    output += character;
+    bytes += characterBytes;
+    lineBytes += characterBytes;
+  }
+  return output;
 }
 
 // 24시간 달력 + 시/분 드롭다운 콤포넌트
@@ -1105,8 +1129,8 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
 }
 
 // ─── BANNER SECTION ───────────────────────────────────────────────────────────
-type BannerRow = { id: number; title: string; imageUrl: string; imageKey: string | null; actionType: "url" | "content"; actionUrl: string | null; contentTitle: string | null; contentDate: string | null; contentBody: string | null; sortOrder: number; isActive: number; startDate: string | null; endDate: string | null; createdAt: Date; updatedAt: Date };
-type BannerForm = { id?: number; title: string; imageUrl: string; actionType: "url" | "content"; actionUrl: string; contentTitle: string; contentDate: string; contentBody: string; sortOrder: number; isActive: number; startDate: string; endDate: string };
+type BannerRow = { id: number; title: string; imageUrl: string; imageKey: string | null; heroCategory: "EVENT" | "PROMO" | "UPDATE" | "NOTE"; heroTitle: string | null; heroDescription: string | null; actionType: "url" | "content"; actionUrl: string | null; contentTitle: string | null; contentDate: string | null; contentBody: string | null; sortOrder: number; isActive: number; startDate: string | null; endDate: string | null; createdAt: Date; updatedAt: Date };
+type BannerForm = { id?: number; title: string; imageUrl: string; heroCategory: "EVENT" | "PROMO" | "UPDATE" | "NOTE"; heroTitle: string; heroDescription: string; actionType: "url" | "content"; actionUrl: string; contentTitle: string; contentDate: string; contentBody: string; sortOrder: number; isActive: number; startDate: string; endDate: string };
 
 function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [form, setForm] = useState<BannerForm | null>(null);
@@ -1122,10 +1146,10 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
   const updateM = useMutation({ mutationFn: (input: any) => adminClient!.admin.updateBanner.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
   const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.admin.deleteBanner.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
 
-  const empty: BannerForm = { title: "", imageUrl: "", actionType: "url", actionUrl: "", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (data?.length ?? 0), isActive: 1, startDate: "", endDate: "" };
+  const empty: BannerForm = { title: "", imageUrl: "", heroCategory: "UPDATE", heroTitle: "MIDGARD RUNS\nIN YOUR BROWSER", heroDescription: "No download, no install, no launcher. Open a tab on your phone or PC and begin your adventure.", actionType: "content", actionUrl: "/news", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (data?.length ?? 0), isActive: 1, startDate: "", endDate: "" };
   const submit = () => {
     if (!form?.title || !form?.imageUrl) { toast.error("제목과 이미지를 입력하세요."); return; }
-    const p = { title: form.title, imageUrl: form.imageUrl, actionType: form.actionType, actionUrl: form.actionUrl || undefined, contentTitle: form.contentTitle || undefined, contentDate: form.contentDate || undefined, contentBody: form.contentBody || undefined, sortOrder: form.sortOrder, isActive: form.isActive, startDate: form.startDate || null, endDate: form.endDate || null };
+    const p = { title: form.title, imageUrl: form.imageUrl, heroCategory: form.heroCategory, heroTitle: form.heroTitle || undefined, heroDescription: form.heroDescription || undefined, actionType: form.actionType, actionUrl: form.actionUrl || undefined, contentTitle: form.contentTitle || undefined, contentDate: form.contentDate || undefined, contentBody: form.contentBody || undefined, sortOrder: form.sortOrder, isActive: form.isActive, startDate: form.startDate || null, endDate: form.endDate || null };
     form.id ? updateM.mutate({ id: form.id, ...p }) : createM.mutate(p);
   };
 
@@ -1156,7 +1180,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
   const pagedUnselected = filteredUnselected.slice((page - 1) * pageSize, page * pageSize);
   const paged = pagedUnselected;
   const filtered = filteredUnselected;
-  const openBannerForm = (banner: BannerRow) => setForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive, startDate: banner.startDate ?? "", endDate: banner.endDate ?? "" });
+  const openBannerForm = (banner: BannerRow) => setForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, heroCategory: banner.heroCategory ?? "UPDATE", heroTitle: banner.heroTitle ?? "", heroDescription: banner.heroDescription ?? "", actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive, startDate: banner.startDate ?? "", endDate: banner.endDate ?? "" });
   const toggleBannerChecked = (id: number, checked: boolean) => setCheckedBannerIds(current => checked ? Array.from(new Set([...current, id])) : current.filter(item => item !== id));
   const toggleGroupChecked = (rows: BannerRow[], checked: boolean) => setCheckedBannerIds(current => checked ? Array.from(new Set([...current, ...rows.map(row => row.id)])) : current.filter(id => !rows.some(row => row.id === id)));
   const isGroupChecked = (rows: BannerRow[]) => rows.length > 0 && rows.every(row => checkedBannerIds.includes(row.id));
@@ -1292,7 +1316,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                       <tr
                         key={b.id}
                         className="border-b last:border-0 hover:bg-accent/30 cursor-pointer"
-                        onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}
+                        onClick={() => openBannerForm(b)}
                       >
                         {/* 번호 */}
                         <td className="px-3 py-3 w-14 text-sm text-muted-foreground text-center whitespace-nowrap">{b.sortOrder + 1}</td>
@@ -1324,7 +1348,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                         </td>
                         {/* 수정 */}
                         <td className="px-2 py-3 w-10 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
-                          <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}><Pencil className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="sm" onClick={() => openBannerForm(b)}><Pencil className="h-4 w-4" /></Button>
                         </td>
                         {/* 삭제 */}
                         <td className="px-2 py-3 w-10 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
@@ -1355,16 +1379,18 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
             <p className="text-xs text-muted-foreground">권장: 1000×600px (5:3 비율) | 500KB 미만 | JPG, WebP, PNG</p>
             {form.imageUrl && <div className="rounded overflow-hidden border bg-slate-100" style={{ aspectRatio: "1000/600" }}><img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" /></div>}
           </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-1"><label className="text-sm font-medium">Hero 카테고리 *</label><Select value={form.heroCategory} onValueChange={(value: BannerForm["heroCategory"]) => setForm(f => f && ({ ...f, heroCategory: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{(["EVENT", "PROMO", "UPDATE", "NOTE"] as const).map(category => <SelectItem key={category} value={category}>{category}</SelectItem>)}</SelectContent></Select></div>
+            <div className="space-y-1"><label className="text-sm font-medium">View More 연결 URL</label><Input value={form.actionUrl} onChange={e => setForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="/news 또는 https://..." /><p className="text-xs text-muted-foreground">새창 띄우기 또는 기존 페이지 전환 방식을 선택할 수 있습니다.</p></div>
+          </div>
+          <div className="space-y-1"><label className="text-sm font-medium">Hero 제목 *</label><Textarea rows={2} value={form.heroTitle} onChange={e => setForm(f => f && ({ ...f, heroTitle: wrapHeroText(e.target.value, 20, 40) }))} placeholder="최대 2줄, 영문 기준 20byte마다 자동 줄바꿈" /><p className="text-xs text-muted-foreground">{utf8ByteLength(form.heroTitle)} / 40 byte · 20byte를 넘으면 자동으로 다음 줄로 이동합니다.</p></div>
+          <div className="space-y-1"><label className="text-sm font-medium">Hero 부가 설명</label><Textarea rows={2} value={form.heroDescription} onChange={e => setForm(f => f && ({ ...f, heroDescription: wrapHeroText(e.target.value, 50, 100) }))} placeholder="최대 2줄, 영문 기준 50byte마다 자동 줄바꿈" /><p className="text-xs text-muted-foreground">{utf8ByteLength(form.heroDescription)} / 100 byte · 50byte를 넘으면 자동으로 다음 줄로 이동합니다.</p></div>
           <div className="space-y-1">
             <label className="text-sm font-medium">클릭 시 동작</label>
             <div className="flex gap-4">
               {(["url", "content"] as const).map(t => <label key={t} className="flex items-center gap-2 cursor-pointer"><input type="radio" checked={form.actionType === t} onChange={() => setForm(f => f && ({ ...f, actionType: t }))} /><span className="text-sm">{t === "url" ? "새창 띄우기" : "기존 페이지 전환"}</span></label>)}
             </div>
           </div>
-          {form.actionType === "url" && <div className="space-y-1"><label className="text-sm font-medium">이동 URL</label><Input value={form.actionUrl} onChange={e => setForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="https://..." /></div>}
-          {form.actionType === "content" && (
-            <div className="space-y-1"><label className="text-sm font-medium">이동 URL</label><Input value={form.actionUrl} onChange={e => setForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="https://..." /></div>
-          )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder + 1} onChange={e => setForm(f => f && ({ ...f, sortOrder: Math.max(0, parseInt(e.target.value) || 1) - 1 }))} min={1} /></div>
             <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>

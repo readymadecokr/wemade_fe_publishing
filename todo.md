@@ -1086,3 +1086,9 @@
 - [x] News 상단 헤더를 Home의 계정 바·로고·메뉴·CTA 구성으로 통일
 - [x] News 하단을 Home의 TWO CLICKS TO MIDGARD CTA와 어두운 푸터 구성으로 통일
 - [x] News 데스크톱·모바일 레이아웃과 TypeScript·회귀 테스트 검증
+
+## 관리자 메인배너 Hero 콘텐츠 연동
+- [x] 배너 카테고리·Hero 제목·부가 설명·View More URL 데이터 필드와 서버 입력 제한 추가
+- [x] 관리자 배너 등록·수정 화면에 카테고리 선택·40/100byte 2줄 입력·URL 연결 UI 추가
+- [x] Home Hero에 관리자 배너의 카테고리·제목·설명·View More URL 직접 연동
+- [x] 현재 활성 배너를 UPDATE로 설정하고 다중 화면·입력 제한·회귀 테스트 검증

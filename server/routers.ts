@@ -28,6 +28,13 @@ const couponSystemInput = z.object({
   issueQuantity: z.number().int().min(1).max(500000).default(1),
 });
 
+const heroTextInput = (maxBytes: number, maxLineBytes: number) => z.string().trim().max(255).refine((value) => {
+  const lines = value.split(/\r?\n/);
+  return Buffer.byteLength(value.replace(/\r?\n/g, ""), "utf8") <= maxBytes
+    && lines.length <= 2
+    && lines.every((line) => Buffer.byteLength(line, "utf8") <= maxLineBytes);
+}, { message: `Hero text must be at most ${maxBytes} bytes in two lines.` });
+
 function toCouponSystemValues(input: z.infer<typeof couponSystemInput>) {
   const validFrom = input.validFrom ? new Date(input.validFrom) : null;
   const expiresAt = input.expiresAt ? new Date(input.expiresAt) : null;
@@ -423,6 +430,9 @@ export const appRouter = router({
         title: z.string().min(1).max(255),
         imageUrl: z.string().min(1),
         imageKey: z.string().optional(),
+        heroCategory: z.enum(["EVENT", "PROMO", "UPDATE", "NOTE"]).default("UPDATE"),
+        heroTitle: heroTextInput(40, 20).optional(),
+        heroDescription: heroTextInput(100, 50).optional(),
         actionType: z.enum(["url", "content"]),
         actionUrl: z.string().optional(),
         contentTitle: z.string().optional(),
@@ -447,6 +457,9 @@ export const appRouter = router({
         title: z.string().min(1).max(255).optional(),
         imageUrl: z.string().optional(),
         imageKey: z.string().optional(),
+        heroCategory: z.enum(["EVENT", "PROMO", "UPDATE", "NOTE"]).optional(),
+        heroTitle: heroTextInput(40, 20).optional().nullable(),
+        heroDescription: heroTextInput(100, 50).optional().nullable(),
         actionType: z.enum(["url", "content"]).optional(),
         actionUrl: z.string().optional().nullable(),
         contentTitle: z.string().optional().nullable(),

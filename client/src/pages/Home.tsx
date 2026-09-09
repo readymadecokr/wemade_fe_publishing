@@ -15,7 +15,7 @@ const HERO_DESKTOP_URL = "/manus-storage/eb185c22e6e1_e39bfa40.png";
 const DISCORD_URL = "https://discord.gg/yVWJkWdkAU";
 
 const DEFAULT_HERO_BANNERS = [
-  { id: "default", title: "Midgard runs in your browser", imageUrl: HERO_DESKTOP_URL },
+  { id: "default", title: "Midgard runs in your browser", imageUrl: HERO_DESKTOP_URL, heroCategory: "UPDATE", heroTitle: "MIDGARD RUNS\nIN YOUR BROWSER", heroDescription: "No download, no install, no launcher. Open a tab on your phone or PC and begin your adventure.", actionType: "content", actionUrl: "/news" },
 ] as const;
 
 const NEWS_ITEMS = [
@@ -150,6 +150,11 @@ export default function Home() {
   });
   const heroBanners = managedBanners?.length ? managedBanners : DEFAULT_HERO_BANNERS;
   const currentHero = heroBanners[heroIndex % heroBanners.length];
+  const heroTitleLines = (currentHero.heroTitle || "MIDGARD RUNS\nIN YOUR BROWSER").split(/\r?\n/).filter(Boolean).slice(0, 2);
+  const heroDescription = currentHero.heroDescription || "No download, no install, no launcher. Open a tab on your phone or PC and begin your adventure.";
+  const heroCategory = currentHero.heroCategory || "UPDATE";
+  const heroActionUrl = currentHero.actionUrl || "/news";
+  const heroActionOpensNewTab = currentHero.actionType === "url" && /^https?:\/\//i.test(heroActionUrl);
   const { data: managedVideos } = trpc.publicMedia.list.useQuery(undefined, {
     staleTime: 60_000,
     refetchOnWindowFocus: false,
@@ -294,10 +299,10 @@ export default function Home() {
         <img className="react-home-hero__visual" src={currentHero.imageUrl} alt="" fetchPriority="high" />
         <div className="react-home-hero__shade" />
         <div className="react-home-hero__content">
-          <div className="react-home-hero__tags"><span>OPEN BETA</span><span>PLAY IN YOUR BROWSER</span></div>
-          <h1><span>MIDGARD RUNS</span><span>IN YOUR BROWSER</span></h1>
-          <p>No download, no install, no launcher. Open a tab on your phone or PC and begin your adventure.</p>
-          <button type="button" className="react-home-white-cta" onClick={() => navigateTo("game-info")}>EXPLORE THE BETA <b>›</b></button>
+          <div className="react-home-hero__tags"><span>{heroCategory}</span><span>PLAY IN YOUR BROWSER</span></div>
+          <h1>{heroTitleLines.map((line) => <span key={line}>{line}</span>)}</h1>
+          <p>{heroDescription}</p>
+          <a className="react-home-white-cta" href={heroActionUrl} target={heroActionOpensNewTab ? "_blank" : undefined} rel={heroActionOpensNewTab ? "noopener noreferrer" : undefined}>VIEW MORE <b>›</b></a>
         </div>
         <div className="react-home-hero__controls" aria-label="Hero banners">
           <button className="react-home-hero__arrow react-home-hero__arrow--left" type="button" aria-label="Previous banner" onClick={() => selectHero(-1)}><ChevronLeft /></button>

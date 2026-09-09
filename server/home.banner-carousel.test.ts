@@ -15,6 +15,11 @@ describe("direct React Home banner", () => {
     expect(homeSource).toContain("Previous banner");
     expect(homeSource).toContain("Next banner");
     expect(homeSource).toContain("react-home-hero__controls");
+    expect(homeSource).toContain("heroCategory");
+    expect(homeSource).toContain("heroTitleLines");
+    expect(homeSource).toContain("heroDescription");
+    expect(homeSource).toContain("heroActionUrl");
+    expect(homeSource).toContain("VIEW MORE");
     expect(homeSource).not.toContain("REFERENCE_HOME_URL");
   });
 
