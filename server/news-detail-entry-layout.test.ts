@@ -6,6 +6,7 @@ const newsDetailSource = readFileSync(new URL("../client/src/pages/NewsDetail.ts
 const gameInfoSource = readFileSync(new URL("../client/src/pages/GameInfo.tsx", import.meta.url), "utf8");
 const layoutSource = readFileSync(new URL("../client/src/components/Layout.tsx", import.meta.url), "utf8");
 const pointShopSource = readFileSync(new URL("../client/src/pages/PointShop.tsx", import.meta.url), "utf8");
+const globalStyles = readFileSync(new URL("../client/src/index.css", import.meta.url), "utf8");
 
 describe("News detail entry and service-page title banners", () => {
   it("resets every service route to the page top and uses the shared Home header", () => {
@@ -24,5 +25,11 @@ describe("News detail entry and service-page title banners", () => {
     expect(newsDetailSource).toContain('fantasy-page-shell pt-6 pb-8 md:pt-8');
     expect(gameInfoSource).toContain('fantasy-content-guide pt-6 pb-8 md:pt-8');
     expect(pointShopSource).toContain('fantasy-content-guide pt-6 pb-8 md:pt-8');
+  });
+
+  it("removes the shared long left-side guide line from News, Game Info, and Shop content", () => {
+    expect(globalStyles).toContain(".fantasy-content-guide {");
+    expect(globalStyles).not.toContain(".fantasy-content-guide::before");
+    expect(globalStyles).not.toContain("rgba(76,97,133,.38)");
   });
 });

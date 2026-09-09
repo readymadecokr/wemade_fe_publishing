@@ -414,16 +414,6 @@
     z-index: 1;
   }
 
-  .fantasy-content-guide::before {
-    content: "";
-    position: absolute;
-    left: 1.2rem;
-    top: .8rem;
-    bottom: 0;
-    width: 1px;
-    background: linear-gradient(180deg, transparent, rgba(76,97,133,.38) 4%, rgba(76,97,133,.28) 94%, transparent);
-  }
-
   .fantasy-section-decorated::after {
     content: "";
     pointer-events: none;
