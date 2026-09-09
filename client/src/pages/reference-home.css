@@ -9,7 +9,7 @@
 
 :root { --react-home-header-height: 112px; }
 .react-home { padding-top: var(--react-home-header-height); overflow-x: clip; }
-.react-home-layout { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "home" "discord" "news" "game-info" "media" "final"; align-items: start; isolation: isolate; }
+.react-home-layout { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "home" "discord" "news" "game-info" "media" "final" "footer"; align-items: start; isolation: isolate; }
 .react-home-layout > * { min-width: 0; margin: 0; }
 .react-home-layout > .react-home-panel, .react-home-layout > .react-home-footer { position: relative; width: 100%; z-index: 0; }
 .react-home-panel { min-height: 100svh; overflow: clip; isolation: isolate; }
@@ -20,17 +20,17 @@
 .react-home-news { grid-area: news; }
 .react-home-game-info { grid-area: game-info; }
 .react-home-media { grid-area: media; }
-.react-home-final-panel { grid-area: final; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: #fbf8f1; }
+.react-home-final-panel { grid-area: final; display: block; overflow: clip; background: #fbf8f1; }
+.react-home-footer { grid-area: footer; min-height: 0; }
 html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scroll-snap-type: y mandatory; }
 @media (min-width: 769px) {
   .react-home-layout > [data-snap-panel] { min-height: calc(100svh - var(--react-home-header-height)); scroll-snap-align: start; scroll-snap-stop: always; }
-  .react-home-layout > .react-home-panel, .react-home-layout > .react-home-footer { min-height: calc(100svh - var(--react-home-header-height)); }
+  .react-home-layout > .react-home-panel { min-height: calc(100svh - var(--react-home-header-height)); }
   .react-home-home-stage { height: calc(100svh - var(--react-home-header-height)); }
   .react-home-discord, .react-home-news, .react-home-media { padding-block: clamp(54px, 7vh, 105px) clamp(42px, 5vh, 75px); }
   .react-home-footer { display: flex; align-items: center; }
-  .react-home-final-panel { height: calc(100svh - var(--react-home-header-height)); }
-  .react-home-final-panel .react-home-closing { min-height: 0; padding: clamp(36px, 5vh, 58px) 0 clamp(24px, 3vh, 36px); }
-  .react-home-final-panel .react-home-footer { min-height: 0; padding-block: clamp(24px, 3.5vh, 36px) clamp(18px, 2.5vh, 28px); }
+  .react-home-final-panel { min-height: calc(100svh - var(--react-home-header-height)); }
+  .react-home-final-panel .react-home-closing { min-height: calc(100svh - var(--react-home-header-height)); padding: clamp(36px, 5vh, 58px) 0 clamp(24px, 3vh, 36px); }
 }
 .react-home-section-shell { width: min(1180px, calc(100% - 64px)); margin: 0 auto; }
 
@@ -83,7 +83,7 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 .react-home-discord { display: flex; align-items: center; padding: clamp(42px,5vh,64px) 0 clamp(28px,3.5vh,44px); background: radial-gradient(circle at 82% 18%, rgba(91,116,236,.24), transparent 30%), linear-gradient(120deg, #0c2038 0%, #142d4d 50%, #112642 100%); }
 .react-home-discord__shell { width: min(1180px, calc(100% - 48px)); }.react-home-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: 28px; }.react-home-section-heading > div > span, .react-home-game-info__copy > span, .react-home-closing > span { display: block; margin-bottom: 9px; border: 0; padding: 0; color: var(--home-gold); font-size: 11px; letter-spacing: .22em; }.react-home-section-heading h2 { font-size: clamp(40px,5vw,70px); }.react-home-section-heading p { max-width: 440px; margin: 0 0 4px; color: #64758a; font-size: 15px; line-height: 1.6; text-align: right; }.react-home-section-heading--light h2 { color: #fff; }.react-home-section-heading--light p { color: #d6e1ef; }
-.react-home-widget { position: relative; overflow: hidden; border: 1px solid rgba(219,231,255,.75); border-radius: 16px; background: #252938; box-shadow: 0 24px 64px rgba(0,7,20,.34); }.react-home-widget__link { display: block; border-radius: inherit; cursor: pointer; }.react-home-widget__link:focus-visible { outline: 3px solid #f3d991; outline-offset: -5px; }.react-home-widget__frame { display: block; width: 100%; height: min(64vh,660px); min-height: 520px; border: 0; background: #252938; pointer-events: none; }
+.react-home-widget { position: relative; overflow: hidden; border: 1px solid rgba(219,231,255,.75); border-radius: 16px; background: #252938; box-shadow: 0 24px 64px rgba(0,7,20,.34); }.react-home-widget__frame { display: block; width: 100%; height: min(64vh,660px); min-height: 520px; border: 0; background: #252938; }.react-home-widget__invite-overlay { position: absolute; z-index: 2; right: 0; bottom: 0; left: 0; display: block; height: 66px; cursor: pointer; }.react-home-widget__invite-overlay:focus-visible { outline: 3px solid #f3d991; outline-offset: -5px; }
 
 .react-home-news { display: flex; align-items: center; padding: 105px 0 75px; background: #f8f4eb; }.react-home-outline-cta { border: 1px solid #244a6e; background: transparent; color: #244a6e; box-shadow: none; }.react-home-news-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }.react-home-news-card { overflow: hidden; border-radius: 6px; background: #fff; box-shadow: 0 14px 32px rgba(14,40,65,.11); }.react-home-news-card--mobile-extra { display: none; }.react-home-news-card > img { display: block; width: 100%; aspect-ratio: 1.48; object-fit: cover; }.react-home-news-card > div { padding: 20px 21px 22px; }.react-home-news-card__meta { display: flex; justify-content: space-between; color: #758496; font-size: 10px; font-weight: 800; letter-spacing: .1em; }.react-home-news-card__meta span { color: #b48528; }.react-home-news-card h3 { margin: 12px 0 8px; color: #193a59; font-size: 20px; line-height: 1.15; }.react-home-news-card p { margin: 0; color: #68788a; font-size: 13px; line-height: 1.55; }.react-home-news-card button { margin-top: 16px; border: 0; padding: 0; background: transparent; color: #224e79; font-size: 10px; font-weight: 900; letter-spacing: .11em; }.react-home-news-card button b { font-size: 18px; vertical-align: -1px; }
 
@@ -126,4 +126,9 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .portal-nav { font-size: 6.5px; gap: 1px; }
   .portal-nav-link { letter-spacing: 0; }
   .portal-nav-link__icon { width: 7px; height: 7px; }
+}
+
+@media (max-width: 760px) {
+  .react-home-widget__invite-overlay { height: 62px; }
+  .react-home-footer { padding: 26px 0 22px; }
 }

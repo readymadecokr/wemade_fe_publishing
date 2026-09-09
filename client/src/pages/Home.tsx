@@ -299,7 +299,7 @@ export default function Home() {
         <img className="react-home-hero__visual" src={currentHero.imageUrl} alt="" fetchPriority="high" />
         <div className="react-home-hero__shade" />
         <div className="react-home-hero__content">
-          <div className="react-home-hero__tags"><span>{heroCategory}</span><span>PLAY IN YOUR BROWSER</span></div>
+          <div className="react-home-hero__tags"><span>{heroCategory}</span></div>
           <h1>{heroTitleLines.map((line) => <span key={line}>{line}</span>)}</h1>
           <p>{heroDescription}</p>
           <a className="react-home-white-cta" href={heroActionUrl} target={heroActionOpensNewTab ? "_blank" : undefined} rel={heroActionOpensNewTab ? "noopener noreferrer" : undefined}>VIEW MORE <b>›</b></a>
@@ -317,10 +317,9 @@ export default function Home() {
       <section id="discord" data-home-section data-snap-panel className="react-home-panel react-home-discord">
         <div className="react-home-section-shell react-home-discord__shell">
           <div className="react-home-section-heading react-home-section-heading--light"><div><span>OFFICIAL COMMUNITY</span><h2>DISCORD</h2></div><p>Development news and community updates from the official Ragnarok Universe Discord.</p></div>
-          <div className="react-home-widget" aria-label="Read-only official Discord messages">
-            <a className="react-home-widget__link" href="https://discord.com/invite/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" aria-label="Open the official Ragnarok Universe Discord invite in a new tab">
-              <iframe className="react-home-widget__frame" src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051" title="Ragnarok Universe official Discord read-only messages" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" tabIndex={-1} />
-            </a>
+          <div className="react-home-widget" aria-label="Official Ragnarok Universe Discord channel browser">
+            <iframe className="react-home-widget__frame" src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051" title="Ragnarok Universe official Discord channel browser" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" />
+            <a className="react-home-widget__invite-overlay" href="https://discord.com/invite/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" aria-label="Open the official Ragnarok Universe Discord invite to sign in or send a message"><span className="sr-only">Sign in or send a message in the official Ragnarok Universe Discord</span></a>
           </div>
         </div>
       </section>
@@ -373,12 +372,12 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="react-home-panel react-home-final-panel" data-home-section data-snap-panel aria-label="Ragnarok Universe closing and footer">
+      <section className="react-home-panel react-home-final-panel" data-home-section data-snap-panel aria-label="Ragnarok Universe closing call to action">
         <div className="react-home-closing"><div className="react-home-closing__content"><span>YOUR STORY BEGINS HERE</span><h2>TWO CLICKS TO<br />MIDGARD</h2><p>Start the game in your browser, then join the Discord to find a party, get patch news first and take part in founder events.</p><HomeCtaPair /></div></div>
-        <footer className="react-home-footer">
-          <div className="react-home-footer__inner"><div><div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div><nav><a href="/">Terms of Service</a><a href="/">Privacy Policy</a><a href="/">Privacy Settings</a><a href="/">Customer Support</a></nav><img src="/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png" alt="GRAVITY" loading="lazy" /><p>Copyright © Gravity Co., LTD &amp; Lee Myoungjin(studio DTDS). All Rights Reserved. All trademarks used on this website are the property of their respective owners.</p></div><div className="react-home-footer__social"><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" aria-label="Discord">D</a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer" aria-label="Facebook">f</a><a href="https://www.youtube.com/@RagnarokUniverse" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer" aria-label="X">X</a></div></div>
-        </footer>
       </section>
+      <footer className="react-home-footer" aria-label="Ragnarok Universe footer">
+        <div className="react-home-footer__inner"><div><div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div><nav><a href="/">Terms of Service</a><a href="/">Privacy Policy</a><a href="/">Privacy Settings</a><a href="/">Customer Support</a></nav><img src="/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png" alt="GRAVITY" loading="lazy" /><p>Copyright © Gravity Co., LTD &amp; Lee Myoungjin(studio DTDS). All Rights Reserved. All trademarks used on this website are the property of their respective owners.</p></div><div className="react-home-footer__social"><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" aria-label="Discord">D</a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer" aria-label="Facebook">f</a><a href="https://www.youtube.com/@RagnarokUniverse" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer" aria-label="X">X</a></div></div>
+      </footer>
       </div>
 
       {libraryOpen && <div className="react-home-modal" role="dialog" aria-modal="true" aria-labelledby="library-coming-soon-title"><button aria-label="Close" className="react-home-modal__backdrop" onClick={() => setLibraryOpen(false)} /><div className="react-home-modal__card"><button type="button" className="react-home-modal__close" onClick={() => setLibraryOpen(false)} aria-label="Close">×</button><p>RUNE-MIDGARTS LIBRARY</p><h2 id="library-coming-soon-title">WE&apos;RE GETTING READY!</h2><span>Rune-Midgarts Library is coming soon. Please check back for more information.</span><button type="button" onClick={() => setLibraryOpen(false)}>CONFIRM</button></div></div>}

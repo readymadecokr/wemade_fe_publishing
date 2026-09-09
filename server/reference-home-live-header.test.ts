@@ -49,6 +49,10 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".react-home-hero__visual { aspect-ratio: 1000 / 600; object-fit: cover;");
     expect(headerStyles).toContain(".react-home-hero-cta-row { display: flex; min-height: clamp(150px,17vh,196px);");
     expect(homeSource).toContain('className="react-home-hero-cta-row"');
+    expect(homeSource).not.toContain("PLAY IN YOUR BROWSER");
+    expect(homeSource).toContain('aria-label="Ragnarok Universe closing call to action"');
+    expect(homeSource).toContain('className="react-home-footer" aria-label="Ragnarok Universe footer"');
+    expect(headerStyles).toContain('grid-template-areas: "home" "discord" "news" "game-info" "media" "final" "footer";');
   });
 
   it("places DISCORD after HOME and keeps its external-link indicator inside the responsive menu box", () => {

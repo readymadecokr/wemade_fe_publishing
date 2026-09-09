@@ -1092,3 +1092,9 @@
 - [x] 관리자 배너 등록·수정 화면에 카테고리 선택·40/100byte 2줄 입력·URL 연결 UI 추가
 - [x] Home Hero에 관리자 배너의 카테고리·제목·설명·View More URL 직접 연동
 - [x] 현재 활성 배너를 UPDATE로 설정하고 다중 화면·입력 제한·회귀 테스트 검증
+
+## Home 영역 경계·Discord 위젯 상호작용 보정
+- [x] Hero의 PLAY IN YOUR BROWSER 보조 태그 제거
+- [x] 고정 헤더·Hero·Hero CTA·마무리 CTA·푸터의 독립 영역 경계 복구
+- [x] Discord 위젯에서 채널 탐색을 허용하고 로그인·채팅 입력만 공식 초대 링크 새 탭으로 연결
+- [x] 데스크톱·모바일 영역 분리·Discord 위젯 동작과 회귀 테스트 검증
