@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
+import { useEffect } from "react";
 
 const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
@@ -165,6 +166,10 @@ function NewsDetailContent() {
 
   const news = newsData.find(n => n.id === newsId);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [newsId]);
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "Update":
@@ -180,7 +185,7 @@ function NewsDetailContent() {
 
   if (!news) {
     return (
-      <Layout>
+      <Layout variant="homeChrome">
         <div className="container py-12 text-center">
           <h1 className="text-2xl font-bold text-slate-900 mb-4">News Not Found</h1>
           <Link href="/news">
@@ -195,18 +200,10 @@ function NewsDetailContent() {
   const nextNews = newsData.find(n => n.id === news.id + 1);
 
   return (
-    <Layout>
+    <Layout variant="homeChrome">
       <>
-        {/* Fixed Section Header — always shows '📰 News' */}
-        <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#526f8d_50%,#314b66)] py-11 text-white">
-          <div className="container">
-            <h1 className="mb-2 font-serif text-4xl font-bold">News</h1>
-            <p className="text-[#e9dfc8]">Latest news, interviews, and community highlights</p>
-          </div>
-        </div>
-
         {/* Article Title Block */}
-        <div className="fantasy-page-shell py-8">
+        <div className="fantasy-page-shell pt-6 pb-8 md:pt-8">
           <div className="container fantasy-content-guide max-w-3xl mx-auto">
             <Link href="/news" className="mb-4 flex w-fit items-center gap-1.5 text-sm text-[#4668a3] hover:text-[#2f4e82]">
               <ArrowLeft size={16} />

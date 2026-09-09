@@ -80,17 +80,8 @@ function GameInfoPageContent() {
 
   return (
     <>
-      {/* Page Header */}
-      <div className="relative overflow-hidden border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#526f8d_50%,#314b66)] py-11 text-white">
-        <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_18%_10%,white_0,transparent_28%),radial-gradient(circle_at_82%_80%,#efcf8b_0,transparent_30%)]" />
-        <div className="container">
-          <h1 className="relative font-serif text-4xl font-bold mb-2">Game Info</h1>
-          <p className="relative text-[#e9dfc8]">Learn everything about Ragnarok Universe</p>
-        </div>
-      </div>
-
       {/* Content */}
-      <main className="container fantasy-content-guide py-8">
+      <main className="container fantasy-content-guide pt-6 pb-8 md:pt-8">
         {/* Game Overview */}
         <section className="mb-8">
           <h2 className="fantasy-section-title mb-4 flex items-center gap-3 text-3xl"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb]">✦</span>About Ragnarok Universe</h2>

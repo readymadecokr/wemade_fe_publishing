@@ -86,7 +86,7 @@ export default function Layout({ children, variant = "default" }: LayoutProps) {
 
 
       {variant === "homeChrome" ? (
-      <HomeHeader activeSection={location === "/news" ? "news" : location === "/game-info" ? "game-info" : location === "/point-shop" ? "shop" : "home"} />
+      <HomeHeader activeSection={location.startsWith("/news") ? "news" : location === "/game-info" ? "game-info" : location === "/point-shop" ? "shop" : "home"} />
       ) : (
       <header className="fixed inset-x-0 top-0 z-40 w-full border-b border-[#c8d8e7]/30 bg-[#1c3147]/92 text-white shadow-[0_3px_18px_rgba(24,38,57,.28)] backdrop-blur-xl [background-image:linear-gradient(100deg,rgba(32,56,78,.94),rgba(58,84,110,.78),rgba(24,45,66,.92))]">
         <div className="border-b border-white/10 bg-[#102235]/35">

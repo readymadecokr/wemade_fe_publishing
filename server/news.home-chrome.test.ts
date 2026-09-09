@@ -33,7 +33,7 @@ describe("News Home-style chrome", () => {
   });
 
   it("marks the current shared-header route as active", () => {
-    expect(layoutSource).toContain('location === "/news" ? "news"');
+    expect(layoutSource).toContain('location.startsWith("/news") ? "news"');
     expect(layoutSource).toContain('location === "/game-info" ? "game-info"');
     expect(layoutSource).toContain('location === "/point-shop" ? "shop"');
   });

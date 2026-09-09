@@ -200,14 +200,6 @@ function NewsPageContent() {
 
   return (
     <>
-      {/* Page Header */}
-      <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#526f8d_50%,#314b66)] py-11 text-white">
-        <div className="container">
-          <h1 className="mb-2 font-serif text-4xl font-bold">News</h1>
-          <p className="text-[#e9dfc8]">Latest news, interviews, and community highlights</p>
-        </div>
-      </div>
-
       {/* Content - 2 columns grid on mobile, 3 columns on desktop */}
       <main className="container fantasy-content-guide px-2 py-6 md:px-4 md:py-12">
         {(() => {
