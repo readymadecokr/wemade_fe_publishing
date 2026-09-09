@@ -43,23 +43,20 @@ function utf8ByteLength(value: string) {
   return new TextEncoder().encode(value.replace(/\r?\n/g, "")).byteLength;
 }
 
-function wrapHeroText(value: string, bytesPerLine: number, maxBytes: number) {
+function limitHeroText(value: string, bytesPerLine: number, maxBytes: number) {
   let bytes = 0;
-  let lineBytes = 0;
-  let output = "";
-  for (const character of value.replace(/\r?\n/g, "")) {
-    const characterBytes = new TextEncoder().encode(character).byteLength;
-    if (bytes + characterBytes > maxBytes) break;
-    if (lineBytes + characterBytes > bytesPerLine) {
-      if (output.includes("\n")) break;
-      output += "\n";
-      lineBytes = 0;
+  return value.replace(/\r\n/g, "\n").split("\n").slice(0, 2).map((line) => {
+    let lineBytes = 0;
+    let output = "";
+    for (const character of line) {
+      const characterBytes = new TextEncoder().encode(character).byteLength;
+      if (lineBytes + characterBytes > bytesPerLine || bytes + characterBytes > maxBytes) break;
+      output += character;
+      lineBytes += characterBytes;
+      bytes += characterBytes;
     }
-    output += character;
-    bytes += characterBytes;
-    lineBytes += characterBytes;
-  }
-  return output;
+    return output;
+  }).join("\n");
 }
 
 // 24시간 달력 + 시/분 드롭다운 콤포넌트
@@ -1135,6 +1132,7 @@ type BannerForm = { id?: number; title: string; imageUrl: string; heroCategory: 
 function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [form, setForm] = useState<BannerForm | null>(null);
   const [preview, setPreview] = useState<BannerRow | null>(null);
+  const [formPreview, setFormPreview] = useState<BannerForm | null>(null);
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1); const [pageSize, setPageSize] = useState(10);
@@ -1383,8 +1381,8 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
             <div className="space-y-1"><label className="text-sm font-medium">Hero 카테고리 *</label><Select value={form.heroCategory} onValueChange={(value: BannerForm["heroCategory"]) => setForm(f => f && ({ ...f, heroCategory: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{(["EVENT", "PROMO", "UPDATE", "NOTE"] as const).map(category => <SelectItem key={category} value={category}>{category}</SelectItem>)}</SelectContent></Select></div>
             <div className="space-y-1"><label className="text-sm font-medium">View More 연결 URL</label><Input value={form.actionUrl} onChange={e => setForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="/news 또는 https://..." /><p className="text-xs text-muted-foreground">새창 띄우기 또는 기존 페이지 전환 방식을 선택할 수 있습니다.</p></div>
           </div>
-          <div className="space-y-1"><label className="text-sm font-medium">Hero 제목 *</label><Textarea rows={2} value={form.heroTitle} onChange={e => setForm(f => f && ({ ...f, heroTitle: wrapHeroText(e.target.value, 20, 40) }))} placeholder="최대 2줄, 영문 기준 20byte마다 자동 줄바꿈" /><p className="text-xs text-muted-foreground">{utf8ByteLength(form.heroTitle)} / 40 byte · 20byte를 넘으면 자동으로 다음 줄로 이동합니다.</p></div>
-          <div className="space-y-1"><label className="text-sm font-medium">Hero 부가 설명</label><Textarea rows={2} value={form.heroDescription} onChange={e => setForm(f => f && ({ ...f, heroDescription: wrapHeroText(e.target.value, 50, 100) }))} placeholder="최대 2줄, 영문 기준 50byte마다 자동 줄바꿈" /><p className="text-xs text-muted-foreground">{utf8ByteLength(form.heroDescription)} / 100 byte · 50byte를 넘으면 자동으로 다음 줄로 이동합니다.</p></div>
+          <div className="space-y-1"><label className="text-sm font-medium">Hero 제목 *</label><Textarea rows={2} value={form.heroTitle} onChange={e => setForm(f => f && ({ ...f, heroTitle: limitHeroText(e.target.value, 20, 40) }))} placeholder="직접 Enter로 줄바꿈 · 최대 2줄" /><p className="text-xs text-muted-foreground">{utf8ByteLength(form.heroTitle)} / 40 byte · 한 줄 최대 20 byte · 최대 2줄</p></div>
+          <div className="space-y-1"><label className="text-sm font-medium">Hero 부가 설명</label><Textarea rows={2} value={form.heroDescription} onChange={e => setForm(f => f && ({ ...f, heroDescription: limitHeroText(e.target.value, 50, 100) }))} placeholder="직접 Enter로 줄바꿈 · 최대 2줄" /><p className="text-xs text-muted-foreground">{utf8ByteLength(form.heroDescription)} / 100 byte · 한 줄 최대 50 byte · 최대 2줄</p></div>
           <div className="space-y-1">
             <label className="text-sm font-medium">클릭 시 동작</label>
             <div className="flex gap-4">
@@ -1395,7 +1393,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
             <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder + 1} onChange={e => setForm(f => f && ({ ...f, sortOrder: Math.max(0, parseInt(e.target.value) || 1) - 1 }))} min={1} /></div>
             <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
           </div>
-          <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "배너 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
+          <div className="flex gap-2 pt-2"><Button type="button" variant="outline" onClick={() => setFormPreview({ ...form })}><Eye className="mr-1 h-4 w-4" />미리보기</Button><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "배너 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
         </CardContent></Card>
       )}
 
@@ -1405,6 +1403,22 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
           <DialogHeader><DialogTitle>배너 미리보기: {preview?.title}</DialogTitle></DialogHeader>
           {preview && <div className="rounded-lg overflow-hidden border"><img src={preview.imageUrl} alt={preview.title} className="w-full object-cover" style={{ aspectRatio: "1000/600" }} /></div>}
           <DialogFooter><Button variant="outline" onClick={() => setPreview(null)}>닫기</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={!!formPreview} onOpenChange={() => setFormPreview(null)}>
+        <DialogContent className="max-w-5xl overflow-hidden p-0">
+          <DialogHeader className="border-b px-6 py-4"><DialogTitle>Hero 미리보기</DialogTitle><DialogDescription>현재 입력값이 홈페이지 Hero 영역에 표시되는 방식입니다.</DialogDescription></DialogHeader>
+          {formPreview && <div className="relative min-h-[390px] overflow-hidden bg-[#0e2841] text-white" style={{ aspectRatio: "1000/600" }}>
+            {formPreview.imageUrl && <img src={formPreview.imageUrl} alt={formPreview.title || "Hero preview"} className="absolute inset-0 h-full w-full object-cover" />}
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,22,37,.80)_0%,rgba(7,22,37,.42)_45%,rgba(7,22,37,.08)_76%),linear-gradient(0deg,rgba(8,25,42,.25),transparent_42%)]" />
+            <div className="relative z-10 flex h-full max-w-3xl flex-col items-start justify-center px-[7.5%] py-14">
+              <span className="mb-5 rounded-full border border-[#55d9bd] px-3 py-2 text-[10px] font-black tracking-[.13em] text-[#ddfff5]">{formPreview.heroCategory}</span>
+              <h3 className="m-0 whitespace-pre-line font-sans text-[clamp(38px,5.8vw,76px)] font-black italic leading-[.9] tracking-[-.055em] text-white">{formPreview.heroTitle || "HERO TITLE"}</h3>
+              <p className="my-6 max-w-[475px] whitespace-pre-line text-base leading-[1.7] text-[#e4edf5]">{formPreview.heroDescription || "Hero additional description"}</p>
+              <span className="inline-flex items-center gap-3 rounded-full bg-white px-5 py-3 text-[11px] font-black tracking-[.1em] text-[#123354] shadow-[0_4px_0_rgba(10,25,42,.28)]">VIEW MORE <b className="text-xl leading-[.5]">›</b></span>
+            </div>
+          </div>}
+          <DialogFooter className="px-6 py-4"><Button variant="outline" onClick={() => setFormPreview(null)}>닫기</Button></DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

@@ -12,11 +12,19 @@ describe("admin banner Hero content", () => {
     expect(schemaSource).toContain('heroDescription: varchar("heroDescription"');
   });
 
-  it("enforces title and description byte and line limits in the API and admin form", () => {
+  it("enforces title and description byte and line limits while preserving only direct Enter line breaks", () => {
     expect(routerSource).toContain("heroTextInput(40, 20)");
     expect(routerSource).toContain("heroTextInput(100, 50)");
-    expect(adminSource).toContain("wrapHeroText(e.target.value, 20, 40)");
-    expect(adminSource).toContain("wrapHeroText(e.target.value, 50, 100)");
+    expect(adminSource).toContain("limitHeroText(e.target.value, 20, 40)");
+    expect(adminSource).toContain("limitHeroText(e.target.value, 50, 100)");
+    expect(adminSource).not.toContain("자동으로 다음 줄로 이동합니다.");
     expect(adminSource).toContain("View More 연결 URL");
+  });
+
+  it("offers a form-driven Hero preview before saving the banner", () => {
+    expect(adminSource).toContain('setFormPreview({ ...form })');
+    expect(adminSource).toContain("Hero 미리보기");
+    expect(adminSource).toContain('style={{ aspectRatio: "1000/600" }}');
+    expect(adminSource).toContain("whitespace-pre-line");
   });
 });
