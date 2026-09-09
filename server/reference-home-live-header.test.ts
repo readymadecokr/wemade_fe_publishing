@@ -67,6 +67,8 @@ describe("direct React service header", () => {
     expect(homeHeaderSource).toContain('className="portal-nav-link__icon"');
     expect(headerStyles).toContain(".portal-nav-link--active { border-color:");
     expect(headerStyles).toContain(".portal-nav-link { display: inline-flex; width: 100%;");
+    expect(headerStyles).toContain("grid-template-columns: minmax(0,.83fr) minmax(56px,1.1fr)");
+    expect(headerStyles).toContain(".portal-nav-link--external { min-width: 56px;");
     expect(headerStyles).toContain(".portal-nav-link__icon { width:");
     expect(headerStyles).toContain("flex: none;");
   });
