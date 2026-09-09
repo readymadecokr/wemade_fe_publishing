@@ -2,14 +2,15 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
+const homeHeaderSource = readFileSync(new URL("../client/src/components/HomeHeader.tsx", import.meta.url), "utf8");
 const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
 describe("direct React Home CTA, headings, and footer", () => {
   it("uses the provided artwork for every shared Game Start and Discord CTA", () => {
-    expect(homeSource).toContain('const GAME_START_BUTTON_URL = "/manus-storage/gamestart_BTN_1c6449da.png"');
-    expect(homeSource).toContain('const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_b3128ea2.png"');
-    expect(homeSource).toContain("function GameStartButton");
-    expect(homeSource).toContain("function DiscordButton");
+    expect(homeHeaderSource).toContain('const GAME_START_BUTTON_URL = "/manus-storage/gamestart_BTN_1c6449da.png"');
+    expect(homeHeaderSource).toContain('const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_b3128ea2.png"');
+    expect(homeHeaderSource).toContain("function GameStartButton");
+    expect(homeHeaderSource).toContain("function DiscordButton");
     expect(homeSource).toContain("function HomeCtaPair");
   });
 

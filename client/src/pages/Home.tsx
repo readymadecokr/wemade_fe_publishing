@@ -1,16 +1,13 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { ChevronDown, ChevronLeft, ChevronRight, ExternalLink, Globe } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import FloatingSocialLinks from "@/components/FloatingSocialLinks";
+import HomeHeader, { DiscordButton, GameStartButton } from "@/components/HomeHeader";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import "./reference-home.css";
 import "./media-strip.css";
 
-const LOGO_URL = "/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png";
-const GAME_START_BUTTON_URL = "/manus-storage/gamestart_BTN_1c6449da.png";
-const DISCORD_BUTTON_URL = "/manus-storage/Discord-Logo-White_b3128ea2.png";
 const HERO_DESKTOP_URL = "/manus-storage/eb185c22e6e1_e39bfa40.png";
 const DISCORD_URL = "https://discord.gg/yVWJkWdkAU";
 
@@ -43,93 +40,6 @@ const MEDIA_SCREENSHOTS = [
 function getYoutubeEmbedUrl(youtubeUrl: string) {
   const match = youtubeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^&?/\s]+)/);
   return match?.[1] ? `https://www.youtube-nocookie.com/embed/${match[1]}?rel=0` : null;
-}
-
-function formatRcoin(value: number): string {
-  return Math.min(value, 9_999_999).toLocaleString("en-US");
-}
-
-function GameStartButton({ className = "" }: { className?: string }) {
-  return (
-    <a className={`home-game-start ${className}`.trim()} href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer" aria-label="Game Start">
-      <img src={GAME_START_BUTTON_URL} alt="Game Start" />
-    </a>
-  );
-}
-
-function DiscordButton({ className = "" }: { className?: string }) {
-  return (
-    <a className={`home-discord-button ${className}`.trim()} href={DISCORD_URL} target="_blank" rel="noopener noreferrer" aria-label="Join Ragnarok Universe on Discord">
-      <img src={DISCORD_BUTTON_URL} alt="Discord" />
-    </a>
-  );
-}
-
-function ReferenceHomeHeader({ activeSection, onNavigate }: { activeSection: string; onNavigate: (sectionId: string) => void }) {
-  const [location] = useLocation();
-  const { isAuthenticated, loading, logout } = useAuth();
-  const { data: balance } = trpc.shop.myBalance.useQuery(undefined, {
-    enabled: isAuthenticated,
-    refetchOnWindowFocus: true,
-    staleTime: 30_000,
-  });
-
-  const startLogin = () => {
-    window.location.href = getLoginUrl();
-  };
-  const handleLogout = async () => {
-    await logout();
-    window.location.assign("/");
-  };
-  const navigateTo = (event: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    event.preventDefault();
-    onNavigate(sectionId);
-  };
-
-  return (
-    <header className="reference-home-live-header fixed inset-x-0 top-0 z-50 w-full text-white" aria-label="Ragnarok Universe service navigation">
-      <div className="border-b border-white/10 bg-[#1c3147] [background-image:linear-gradient(100deg,rgba(32,56,78,1),rgba(58,84,110,.96),rgba(24,45,66,1))]">
-        <div className="container flex h-9 items-center justify-end gap-2 py-0.5 sm:gap-3">
-          {isAuthenticated ? (
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="flex items-center overflow-hidden rounded-lg border border-slate-200 bg-white text-[10px] font-semibold text-slate-700 shadow-sm sm:text-xs">
-                <Link href="/point-shop" className="flex items-center gap-1 px-3 py-2 transition-colors hover:bg-red-50 whitespace-nowrap">
-                  <span>rCoin: <strong className="font-black text-[#9b2020]">{formatRcoin(balance?.ruCash ?? 0)}</strong></span>
-                  <span className="mx-2 text-slate-300">|</span>
-                  <span>Bonus rCoin: <strong className="font-black text-green-700">{formatRcoin(balance?.bonusCash ?? 0)}</strong></span>
-                </Link>
-                <Link href="/mypage" className="border-l border-slate-200 bg-slate-100 px-3 py-2 text-slate-700 transition-colors hover:bg-slate-200 whitespace-nowrap">My Page</Link>
-              </div>
-              <button type="button" onClick={handleLogout} className="rounded-md border border-[#d5bd7d]/70 bg-[#fffaf0] px-3 py-2 text-[10px] font-bold text-[#263b5b] shadow-sm transition-colors hover:bg-[#f8edce] sm:text-xs">Logout</button>
-            </div>
-          ) : (
-            <button type="button" onClick={startLogin} disabled={loading} className="rounded-md border border-[#d5bd7d]/70 bg-[#476da9] px-3 py-2 text-[10px] font-semibold text-white shadow-lg shadow-[#17283b]/30 transition-all hover:-translate-y-0.5 hover:border-[#fff0bd] hover:bg-[#6188c5] focus-visible:ring-2 focus-visible:ring-[#fff0bd] active:scale-95 disabled:cursor-wait disabled:opacity-70 sm:px-4 sm:text-xs">
-              {loading ? "Checking account…" : "Sign In / Sign Up"}
-            </button>
-          )}
-          <button type="button" className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-100 transition-colors hover:text-[#f3d991] sm:text-xs" aria-label="Current language: English"><Globe size={14} /> EN</button>
-        </div>
-      </div>
-
-      <div className="border-b border-[#c8d8e7]/30 bg-[#1c3147] shadow-[0_3px_18px_rgba(24,38,57,.28)] [background-image:linear-gradient(100deg,rgba(32,56,78,1),rgba(58,84,110,.9),rgba(24,45,66,1))]">
-        <div className="container reference-header-main-row">
-          <a href="#home" onClick={(event) => navigateTo(event, "home")} className="reference-header-logo" aria-label="Ragnarok Universe home"><img src={LOGO_URL} alt="Ragnarok Universe" /></a>
-          <nav className="portal-nav" aria-label="Primary navigation">
-            <a href="#home" onClick={(event) => navigateTo(event, "home")} className={`portal-nav-link ${activeSection === "home" ? "portal-nav-link--active" : ""}`}>HOME</a>
-            <a href="#discord" onClick={(event) => navigateTo(event, "discord")} className={`portal-nav-link portal-nav-link--external ${activeSection === "discord" ? "portal-nav-link--active" : ""}`}><span className="portal-nav-link__label">DISCORD</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></a>
-            {(["news", "game-info", "media"] as const).map((sectionId) => (
-              <a key={sectionId} href={`#${sectionId}`} onClick={(event) => navigateTo(event, sectionId)} className={`portal-nav-link ${activeSection === sectionId ? "portal-nav-link--active" : ""}`}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</a>
-            ))}
-            <Link href="/point-shop" className={`portal-nav-link inline-flex items-center gap-0.5 ${location === "/point-shop" ? "portal-nav-link--active" : ""}`}>SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
-          </nav>
-          <div className="reference-header-cta shrink-0" aria-label="Quick actions">
-            <DiscordButton className="reference-header-discord" />
-            <GameStartButton className="reference-header-game-start" />
-          </div>
-        </div>
-      </div>
-      </header>
-  );
 }
 
 function HomeCtaPair({ className = "" }: { className?: string }) {
@@ -198,24 +108,6 @@ export default function Home() {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [selectedScreenshot]);
-
-  useEffect(() => {
-    const header = document.querySelector<HTMLElement>(".reference-home-live-header");
-    if (!header) return;
-
-    const syncHeaderHeight = () => {
-      document.documentElement.style.setProperty("--react-home-header-height", `${Math.ceil(header.getBoundingClientRect().height)}px`);
-    };
-
-    syncHeaderHeight();
-    const observer = new ResizeObserver(syncHeaderHeight);
-    observer.observe(header);
-    window.addEventListener("resize", syncHeaderHeight);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", syncHeaderHeight);
-    };
-  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -290,7 +182,7 @@ export default function Home() {
 
   return (
     <main className="react-home" aria-label="Ragnarok Universe homepage">
-      <ReferenceHomeHeader activeSection={activeSection} onNavigate={navigateTo} />
+      <HomeHeader activeSection={activeSection as "home" | "discord" | "news" | "game-info" | "media" | "shop"} onNavigate={navigateTo} />
       <FloatingSocialLinks hidden={activeSection === "home"} />
 
       <div className="react-home-layout" aria-label="Homepage content regions">

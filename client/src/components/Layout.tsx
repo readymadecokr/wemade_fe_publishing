@@ -7,6 +7,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import PrivacySettingsDialog from "./PrivacySettingsDialog";
 import FloatingSocialLinks from "./FloatingSocialLinks";
 import { trpc } from "@/lib/trpc";
+import HomeHeader from "./HomeHeader";
 import "./news-layout.css";
 
 function fmtRuc(n: number): string { return Math.min(n, 9999999).toLocaleString("en-US"); }
@@ -85,37 +86,7 @@ export default function Layout({ children, variant = "default" }: LayoutProps) {
 
 
       {variant === "homeChrome" ? (
-      <header className="news-home-header fixed inset-x-0 top-0 z-40 w-full text-white" aria-label="Ragnarok Universe service navigation">
-        <div className="news-home-account-row">
-          <div className="container flex h-9 items-center justify-end gap-2 py-0.5 sm:gap-3">
-            {isLoggedIn ? (
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="flex items-center overflow-hidden rounded-lg border border-slate-200 bg-white text-[10px] font-semibold text-slate-700 shadow-sm sm:text-xs">
-                  <Link href="/point-shop" className="flex items-center gap-1 px-3 py-2 transition-colors hover:bg-red-50 whitespace-nowrap"><span>rCoin: <strong className="font-black text-[#9b2020]">{fmtRuc(ruCash)}</strong></span><span className="mx-2 text-slate-300">|</span><span>Bonus rCoin: <strong className="font-black text-green-700">{fmtRuc(bonusCash)}</strong></span></Link>
-                  <Link href="/mypage" className="border-l border-slate-200 bg-slate-100 px-3 py-2 text-slate-700 transition-colors hover:bg-slate-200 whitespace-nowrap">My Page</Link>
-                </div>
-                <button type="button" onClick={handleLogout} className="rounded-md border border-[#d5bd7d]/70 bg-[#fffaf0] px-3 py-2 text-[10px] font-bold text-[#263b5b] shadow-sm transition-colors hover:bg-[#f8edce] sm:text-xs">Logout</button>
-              </div>
-            ) : <Link href="/login" className="news-home-signin">Sign In / Sign Up</Link>}
-            <button type="button" onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-100 transition-colors hover:text-[#f3d991] sm:text-xs" aria-label="Current language: English"><Globe size={14} /> {lang}</button>
-          </div>
-        </div>
-        <div className="container news-home-main-row">
-          <Link href="/" className="news-home-logo" aria-label="Ragnarok Universe home"><img src={`${ASSET_BASE_URL}/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png`} alt="Ragnarok Universe" /></Link>
-          <nav className="news-home-nav" aria-label="Primary navigation">
-            <Link href="/" className={`portal-nav-link ${location === "/" ? "portal-nav-link--active" : ""}`}>HOME</Link>
-            <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="portal-nav-link portal-nav-link--external"><span>DISCORD</span><ExternalLink size={11} aria-hidden="true" /></a>
-            <Link href="/news" className={`portal-nav-link ${location === "/news" ? "portal-nav-link--active" : ""}`}>NEWS</Link>
-            <Link href="/game-info" className={`portal-nav-link ${location === "/game-info" ? "portal-nav-link--active" : ""}`}>GAME INFO</Link>
-            <a href="/#media" className="portal-nav-link">MEDIA</a>
-            <Link href="/point-shop" className={`portal-nav-link inline-flex items-center gap-0.5 ${location === "/point-shop" ? "portal-nav-link--active" : ""}`}>SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
-          </nav>
-          <div className="news-home-quick-actions" aria-label="Quick actions">
-            <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="news-home-discord" aria-label="Join Ragnarok Universe on Discord"><img src={`${ASSET_BASE_URL}/manus-storage/Discord-Logo-White_b3128ea2.png`} alt="Discord" /></a>
-            <a href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer" className="news-home-game-start" aria-label="Game Start"><img src={`${ASSET_BASE_URL}/manus-storage/gamestart_BTN_1c6449da.png`} alt="Game Start" /></a>
-          </div>
-        </div>
-      </header>
+      <HomeHeader activeSection={location === "/news" ? "news" : location === "/game-info" ? "game-info" : location === "/point-shop" ? "shop" : "home"} />
       ) : (
       <header className="fixed inset-x-0 top-0 z-40 w-full border-b border-[#c8d8e7]/30 bg-[#1c3147]/92 text-white shadow-[0_3px_18px_rgba(24,38,57,.28)] backdrop-blur-xl [background-image:linear-gradient(100deg,rgba(32,56,78,.94),rgba(58,84,110,.78),rgba(24,45,66,.92))]">
         <div className="border-b border-white/10 bg-[#102235]/35">
@@ -157,7 +128,7 @@ export default function Layout({ children, variant = "default" }: LayoutProps) {
       )}
 
       {/* Main Content */}
-      <main className={`flex-1 w-full ${variant === "homeChrome" ? "news-home-content" : "pt-[136px] sm:pt-[106px]"}`}>
+      <main className={`flex-1 w-full ${variant === "homeChrome" ? "home-chrome-content" : "pt-[136px] sm:pt-[106px]"}`}>
         {children}
       </main>
 

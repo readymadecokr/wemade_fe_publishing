@@ -2,19 +2,20 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
+const homeHeaderSource = readFileSync(new URL("../client/src/components/HomeHeader.tsx", import.meta.url), "utf8");
 const headerStyles = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
 describe("direct React service header", () => {
   it("keeps the live OAuth header, direct in-page navigation, and supplied CTA artwork", () => {
-    expect(homeSource).toContain("useAuth()");
-    expect(homeSource).toContain("getLoginUrl()");
-    expect(homeSource).toContain("trpc.shop.myBalance.useQuery");
-    expect(homeSource).toContain("await logout()");
-    expect(homeSource).toContain('className="reference-header-game-start"');
-    expect(homeSource).toContain('className="reference-header-discord"');
+    expect(homeHeaderSource).toContain("useAuth()");
+    expect(homeHeaderSource).toContain("getLoginUrl()");
+    expect(homeHeaderSource).toContain("trpc.shop.myBalance.useQuery");
+    expect(homeHeaderSource).toContain("await logout()");
+    expect(homeHeaderSource).toContain('className="reference-header-game-start"');
+    expect(homeHeaderSource).toContain('className="reference-header-discord"');
     expect(homeSource).toContain("scrollIntoView({ behavior: \"smooth\", block: \"start\" })");
-    expect(homeSource).toContain('href="#discord"');
-    expect(homeSource).toContain('activeSection === "discord" ? "portal-nav-link--active"');
+    expect(homeHeaderSource).toContain('href="#discord"');
+    expect(homeHeaderSource).toContain('activeSection === sectionId ? "portal-nav-link--active" : ""');
     expect(homeSource).toContain('window.location.hash.slice(1)');
     expect(homeSource).not.toContain("ragnarok-reference-frame");
   });
@@ -23,7 +24,7 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-header-main-row { display: grid;");
     expect(headerStyles).toContain("grid-template-columns: clamp(90px,9.4vw,138px) minmax(300px,1fr) auto; min-height: clamp(58px,4.6vw,68px);");
     expect(headerStyles).toContain("width: clamp(80px,10.5vw,138px); height: auto; max-height: 64px;");
-    expect(homeSource).toContain('container flex h-9 items-center justify-end gap-2 py-0.5');
+    expect(homeHeaderSource).toContain('container flex h-9 items-center justify-end gap-2 py-0.5');
     expect(headerStyles).toContain("width: clamp(96px,9vw,110px); height: 30px; padding: 0; border-radius: 7px;");
     expect(headerStyles).toContain(".reference-header-game-start { width: clamp(92px,12vw,150px); height: clamp(32px,3.85vw,48px); }");
     expect(headerStyles).toContain(".reference-header-cta .reference-header-discord { width: clamp(96px, 9vw, 110px); height: 30px; }");
@@ -31,14 +32,14 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-header-logo img { width: clamp(60px,17vw,82px); max-height: 48px; }");
     expect(headerStyles).toContain("border-radius: 7px;");
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
-    expect(homeSource).toContain('className="container reference-header-main-row"');
-    expect(homeSource).toContain('className="reference-header-logo"');
+    expect(homeHeaderSource).toContain('className="container reference-header-main-row"');
+    expect(homeHeaderSource).toContain('className="reference-header-logo"');
   });
 
   it("places Discord before Game Start in every CTA pair and matches the Hero Discord size to the closing CTA", () => {
-    const headerCta = homeSource.indexOf('className="reference-header-cta shrink-0"');
-    const headerDiscord = homeSource.indexOf('<DiscordButton className="reference-header-discord" />', headerCta);
-    const headerGameStart = homeSource.indexOf('<GameStartButton className="reference-header-game-start" />', headerCta);
+    const headerCta = homeHeaderSource.indexOf('className="reference-header-cta shrink-0"');
+    const headerDiscord = homeHeaderSource.indexOf('<DiscordButton className="reference-header-discord" />', headerCta);
+    const headerGameStart = homeHeaderSource.indexOf('<GameStartButton className="reference-header-game-start" />', headerCta);
     expect(headerDiscord).toBeGreaterThan(headerCta);
     expect(headerGameStart).toBeGreaterThan(headerDiscord);
     expect(homeSource).toContain('<DiscordButton /><GameStartButton />');
@@ -56,14 +57,14 @@ describe("direct React service header", () => {
   });
 
   it("places DISCORD after HOME and keeps its external-link indicator inside the responsive menu box", () => {
-    const homeIndex = homeSource.indexOf('href="#home"');
-    const communityIndex = homeSource.indexOf('href="#discord"');
-    const newsIndex = homeSource.indexOf('(["news", "game-info", "media"] as const)');
+    const homeIndex = homeHeaderSource.indexOf('href="#home"');
+    const communityIndex = homeHeaderSource.indexOf('href="#discord"');
+    const newsIndex = homeHeaderSource.indexOf('(["news", "game-info", "media"] as const)');
     expect(homeIndex).toBeGreaterThan(-1);
     expect(communityIndex).toBeGreaterThan(homeIndex);
     expect(newsIndex).toBeGreaterThan(communityIndex);
-    expect(homeSource).toContain('portal-nav-link__label">DISCORD</span>');
-    expect(homeSource).toContain('className="portal-nav-link__icon"');
+    expect(homeHeaderSource).toContain('portal-nav-link__label">DISCORD</span>');
+    expect(homeHeaderSource).toContain('className="portal-nav-link__icon"');
     expect(headerStyles).toContain(".portal-nav-link--active { border-color:");
     expect(headerStyles).toContain(".portal-nav-link { display: inline-flex; width: 100%;");
     expect(headerStyles).toContain(".portal-nav-link__icon { width:");

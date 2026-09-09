@@ -1108,3 +1108,8 @@
 - [x] News·Game Info·Point Shop의 상단을 Home 계정 바·로고·메뉴·CTA 헤더로 통일
 - [x] Home의 TWO CLICKS TO MIDGARD와 푸터를 겹치지 않게 한 데스크톱 화면에 함께 구성
 - [x] 세 서비스 페이지·Home 마지막 패널의 데스크톱·모바일·회귀 테스트 검증
+
+## Home 실제 헤더 공통 재사용 보정
+- [x] Home과 News·Game Info·Point Shop 헤더의 DOM·CSS·측정 높이 차이 점검
+- [x] 세 서비스 페이지의 기존 상단을 Home 실제 헤더 컴포넌트·스타일로 교체
+- [x] 데스크톱·모바일에서 네 페이지 헤더 동일성 및 TypeScript·회귀 테스트 검증
