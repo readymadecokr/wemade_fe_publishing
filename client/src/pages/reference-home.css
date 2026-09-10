@@ -178,3 +178,15 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-game-info__art-corner { width: 10px; height: 10px; }
   .react-home-media__feature { aspect-ratio: 1.48 / 1; }
 }
+
+/* Generated adventure journal frame: a single transparent image layer replaces the prior HTML/CSS ornaments. */
+.react-home-game-info__art { position: relative; isolation: isolate; overflow: visible; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.react-home-game-info__art::before, .react-home-game-info__art::after { display: none; }
+.react-home-game-info__art-paper { position: relative; z-index: 1; padding: 0; border: 0; background: transparent; box-shadow: none; }
+.react-home-game-info__art-paper img { display: block; width: 100%; max-height: min(62vh,540px); border: 0; object-fit: contain; filter: saturate(1.08) contrast(1.03); }
+.react-home-game-info__art-frame { position: absolute; z-index: 2; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; object-fit: fill; }
+@media (max-width: 760px) {
+  .react-home-game-info__art, .react-home-game-info__art-paper { padding: 0; border: 0; box-shadow: none; }
+  .react-home-game-info__art-paper img { max-height: none; }
+  .react-home-game-info__art-frame { inset: 0; }
+}

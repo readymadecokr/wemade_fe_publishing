@@ -39,7 +39,9 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).toContain("No Download");
     expect(homeSource).toContain('className="react-home-game-info__art"');
     expect(homeSource).toContain('className="react-home-game-info__art-paper"');
-    expect(homeSource).toContain('className="react-home-game-info__art-tape"');
+    expect(homeSource).toContain('className="react-home-game-info__art-frame"');
+    expect(homeSource).toContain('/manus-storage/game-info-adventure-frame_fbed9714.png');
+    expect(homeSource).not.toContain('react-home-game-info__art-tape');
     expect(homeSource).toContain("LATEST FROM MIDGARD");
     expect(homeSource).toContain("SEE THE WORLD IN MOTION");
     expect(homeSource).toContain("gravity_logo_light_c14f48f8_5e3a7c41.png");
@@ -47,8 +49,8 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).toContain("https://www.youtube.com/@RagnarokUniverse");
     expect(styleSource).toContain(".react-home-section-heading h2 { font-size: clamp(28px,3.5vw,49px);");
     expect(styleSource).toContain(".react-home-game-info__copy h2 { color: #1a344d; font-size: clamp(31px,3.57vw,53px); line-height: .98; white-space: nowrap;");
-    expect(styleSource).toContain(".react-home-game-info__art { position: relative;");
-    expect(styleSource).toContain(".react-home-game-info__art-paper { position: relative;");
+    expect(styleSource).toContain(".react-home-game-info__art-frame { position: absolute;");
+    expect(styleSource).toContain("Generated adventure journal frame");
   });
 
   it("provides the requested in-page Rune-Midgarts Library coming-soon modal", () => {
