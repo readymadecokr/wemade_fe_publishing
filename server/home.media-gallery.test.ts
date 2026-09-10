@@ -35,8 +35,9 @@ describe("Home Media screenshot gallery", () => {
     expect(homeStyles).toContain(".react-home-media { display: flex; align-items: center; padding: clamp(28px,4vh,48px)");
     expect(homeStyles).toContain(".react-home-media__feature { position: relative; overflow: hidden; aspect-ratio: 3.15 / 1");
     expect(stripStyles).toContain(".react-home-media__strip {\n  display: flex;");
-    expect(stripStyles).toContain("gap: 6px;");
-    expect(stripStyles).toContain("width: calc((100% - 12px) / 3);");
+    expect(stripStyles).toContain("gap: 4px;");
+    expect(stripStyles).toContain("width: calc((100% - 8px) / 3);");
+    expect(stripStyles).toContain("aspect-ratio: 700 / 360;");
     expect(stripStyles).toContain("object-fit: contain; object-position: center;");
     expect(homeStyles).toContain("box-sizing: border-box; width: 100%; height: clamp(84px,15vh,142px); overflow: hidden; border: 1px solid rgba(224,237,252,.54); border-radius: 0; padding: 0; background: transparent;");
     expect(homeStyles).toContain(".react-home-media__thumbnail { border-radius: 0; }");
