@@ -131,4 +131,5 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 @media (max-width: 760px) {
   .react-home-widget__invite-overlay { height: 62px; }
   .react-home-footer { padding: 26px 0 22px; }
+  .react-home-news, .react-home-game-info, .react-home-media { box-sizing: border-box; min-height: calc(100svh - var(--react-home-header-height)); }
 }
