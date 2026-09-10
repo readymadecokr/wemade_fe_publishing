@@ -146,3 +146,32 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-game-info__art { padding: 9px; }
   .react-home-game-info__art img { max-height: none; }
 }
+
+/* Final mobile panel and media balance: each named content area consumes the visible viewport. */
+.react-home-media__feature { aspect-ratio: 2.5 / 1; }
+.react-home-game-info__art { padding: clamp(10px,1.15vw,14px); border-width: 1px; box-shadow: 0 14px 28px rgba(22,39,51,.25), inset 0 0 0 1px rgba(16,47,69,.72), inset 0 0 0 2px rgba(244,224,165,.78); }
+.react-home-game-info__art::before { inset: 5px; }
+.react-home-game-info__art::after { top: 8px; bottom: 8px; left: 6px; width: 5px; }
+.react-home-game-info__art-paper { padding: 3px; box-shadow: 0 2px 0 rgba(9,29,46,.45), 0 5px 10px rgba(27,35,31,.16); }
+.react-home-game-info__art-tape { top: 6px; width: 56px; height: 9px; }
+.react-home-game-info__art-binding { right: 8px; bottom: 7px; width: 26px; height: 4px; }
+.react-home-game-info__art-corner { width: 12px; height: 12px; border-width: 1px; }
+
+@media (max-width: 760px) {
+  .react-home-news, .react-home-game-info, .react-home-media { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); min-height: calc(100dvh - var(--react-home-header-height)); overflow: hidden; }
+  .react-home-news { padding: 46px 0 30px; }
+  .react-home-game-info { padding: 34px 0 22px; }
+  .react-home-media { padding: 38px 0 28px; }
+  .react-home-game-info__grid { gap: 13px; }
+  .react-home-game-info__copy p { margin: 12px 0 13px; line-height: 1.42; }
+  .react-home-game-info__facts { margin-bottom: 13px; }
+  .react-home-game-info__facts > div { min-height: 44px; padding: 6px 9px; }
+  .react-home-game-info__art { padding: 5px; }
+  .react-home-game-info__art::before { inset: 3px; }
+  .react-home-game-info__art::after { top: 6px; bottom: 6px; left: 4px; width: 4px; }
+  .react-home-game-info__art-paper { padding: 2px; }
+  .react-home-game-info__art-tape { top: 4px; width: 46px; height: 7px; }
+  .react-home-game-info__art-binding { right: 6px; bottom: 5px; width: 20px; height: 3px; }
+  .react-home-game-info__art-corner { width: 10px; height: 10px; }
+  .react-home-media__feature { aspect-ratio: 1.48 / 1; }
+}

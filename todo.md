@@ -1167,3 +1167,8 @@
 - [x] Media 스크린샷 카드 좌우 컨테이너 여백과 실제 이미지 간격 점검
 - [x] 스크린샷 카드 좌우 여백 제거와 모험형 여행 노트·양피지 프레임 구현
 - [x] 데스크톱·모바일 Media 스트립·Game Info 프레임과 TypeScript·회귀 테스트 검증
+
+## 모바일 섹션·Media 비율·Game Info 프레임 재보정
+- [x] News·Game Info·Media 모바일 높이와 다음 섹션 노출 원인 재점검
+- [x] 세 섹션 한 화면 구성·Media 영상 확대 및 스크린샷 50% 축소·얇은 여행 노트 프레임 적용
+- [x] 500px 모바일 섹션 경계·Media 비율·Game Info 프레임과 TypeScript·회귀 테스트 검증
