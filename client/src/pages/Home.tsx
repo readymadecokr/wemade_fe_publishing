@@ -227,8 +227,8 @@ export default function Home() {
 
       <section id="game-info" data-home-section data-snap-panel className="react-home-panel react-home-game-info">
         <div className="react-home-section-shell react-home-game-info__grid">
-          <div className="react-home-game-info__copy"><span>EXPLORE MIDGARD</span><h2>CLASSIC ADVENTURE<br />A NEW WAY TO PLAY</h2><p>Experience the legendary fantasy MMORPG directly in your web browser. Explore a familiar world, meet a growing community, and help shape the next chapter.</p><button type="button" className="react-home-outline-cta" onClick={() => setLibraryOpen(true)}>RUNE-MIDGARTS LIBRARY <b>›</b></button></div>
-          <img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="lazy" />
+          <div className="react-home-game-info__copy"><span>EXPLORE MIDGARD</span><h2>CLASSIC ADVENTURE<br />A NEW WAY TO PLAY</h2><p>Experience the legendary fantasy MMORPG directly in your web browser. Explore a familiar world, meet a growing community, and help shape the next chapter.</p><div className="react-home-game-info__facts" aria-label="Ragnarok Universe game information"><div><span>PLATFORM</span><strong>Web Browser</strong></div><div><span>GENRE</span><strong>Fantasy MMORPG</strong></div><div><span>STATUS</span><strong>Beta Testing</strong></div><div><span>ACCESS</span><strong>No Download</strong></div></div><button type="button" className="react-home-outline-cta" onClick={() => setLibraryOpen(true)}>RUNE-MIDGARTS LIBRARY <b>›</b></button></div>
+          <div className="react-home-game-info__art" aria-hidden="true"><span className="react-home-game-info__art-corner react-home-game-info__art-corner--tl" /><span className="react-home-game-info__art-corner react-home-game-info__art-corner--tr" /><span className="react-home-game-info__art-corner react-home-game-info__art-corner--bl" /><span className="react-home-game-info__art-corner react-home-game-info__art-corner--br" /><img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="lazy" /></div>
         </div>
       </section>
 
