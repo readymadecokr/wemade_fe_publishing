@@ -200,6 +200,9 @@ function NewsPageContent() {
 
   return (
     <>
+      <section className="news-page-marker" aria-label="News page">
+        <div className="container"><p>NEWS</p></div>
+      </section>
       {/* Content - 2 columns grid on mobile, 3 columns on desktop */}
       <main className="container fantasy-content-guide px-2 py-6 md:px-4 md:py-12">
         {(() => {
@@ -275,7 +278,7 @@ function NewsPageContent() {
 
 export default function NewsPage() {
   return (
-    <Layout variant="homeChrome">
+    <Layout variant="homeChrome" showClosingCta={false}>
       <NewsPageContent />
     </Layout>
   );

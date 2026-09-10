@@ -18,9 +18,10 @@ const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 interface LayoutProps {
   children: React.ReactNode;
   variant?: "default" | "homeChrome";
+  showClosingCta?: boolean;
 }
 
-export default function Layout({ children, variant = "default" }: LayoutProps) {
+export default function Layout({ children, variant = "default", showClosingCta = true }: LayoutProps) {
   const [location] = useLocation();
   const [lang, setLang] = useState("EN");
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -90,7 +91,7 @@ export default function Layout({ children, variant = "default" }: LayoutProps) {
 
 
       {variant === "homeChrome" ? (
-      <HomeHeader activeSection={location.startsWith("/news") ? "news" : location === "/game-info" ? "game-info" : location === "/point-shop" ? "shop" : "home"} />
+      <HomeHeader activeSection={location.startsWith("/news") ? "news" : location === "/point-shop" ? "shop" : "home"} />
       ) : (
       <header className="fixed inset-x-0 top-0 z-40 w-full border-b border-[#c8d8e7]/30 bg-[#1c3147]/92 text-white shadow-[0_3px_18px_rgba(24,38,57,.28)] backdrop-blur-xl [background-image:linear-gradient(100deg,rgba(32,56,78,.94),rgba(58,84,110,.78),rgba(24,45,66,.92))]">
         <div className="border-b border-white/10 bg-[#102235]/35">
@@ -141,7 +142,7 @@ export default function Layout({ children, variant = "default" }: LayoutProps) {
 
       {variant === "homeChrome" ? (
       <footer id="site-footer" className="news-home-footer mt-auto w-full">
-        <section className="news-home-closing" aria-label="Ragnarok Universe closing call to action">
+        {showClosingCta && <section className="news-home-closing" aria-label="Ragnarok Universe closing call to action">
           <div className="news-home-closing__content">
             <span>YOUR STORY BEGINS HERE</span>
             <h2>TWO CLICKS TO<br />MIDGARD</h2>
@@ -151,7 +152,7 @@ export default function Layout({ children, variant = "default" }: LayoutProps) {
               <a href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer" className="news-home-closing__game-start"><img src={`${ASSET_BASE_URL}/manus-storage/gamestart_BTN_1c6449da.png`} alt="Game Start" /></a>
             </div>
           </div>
-        </section>
+        </section>}
         <section className="news-home-footer__bar">
           <div className="news-home-footer__inner">
             <div>

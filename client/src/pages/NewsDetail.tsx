@@ -195,8 +195,11 @@ function NewsDetailContent() {
   const nextNews = newsData.find(n => n.id === news.id + 1);
 
   return (
-    <Layout variant="homeChrome">
+    <Layout variant="homeChrome" showClosingCta={false}>
       <>
+        <section className="news-page-marker" aria-label="News page">
+          <div className="container"><p>NEWS</p></div>
+        </section>
         {/* Article Title Block */}
         <div className="fantasy-page-shell pt-6 pb-8 md:pt-8">
           <div className="container fantasy-content-guide max-w-3xl mx-auto">

@@ -1187,3 +1187,9 @@
 - [x] 양피지·가죽 바인딩·금속 코너 프레임 이미지 요구사항과 기존 레이어 점검
 - [x] 투명 중앙을 가진 모험형 프레임 이미지 생성·저장
 - [x] 기존 HTML 장식 대체와 데스크톱·모바일 화면·회귀 테스트 검증
+
+## News 상단 표시·Game Info 독립 페이지 정리
+- [x] News 목록·상세의 상단 NEWS 표시 영역과 하단 CTA 구조 점검
+- [x] News 상단 NEWS 표시 추가와 하단 TWO CLICKS TO MIDGARD CTA 제거
+- [x] 독립 `/game-info` 페이지·네비게이션을 Home Game Info 섹션으로 정리
+- [x] News·Game Info 경로와 데스크톱·모바일 화면·회귀 테스트 검증

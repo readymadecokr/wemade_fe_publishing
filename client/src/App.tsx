@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Redirect, Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
@@ -11,7 +11,6 @@ import NoticePage from "./pages/Notice";
 import NewsPage from "./pages/News";
 import NoticeDetailPage from "./pages/NoticeDetail";
 import NewsDetailPage from "./pages/NewsDetail";
-import GameInfoPage from "./pages/GameInfo";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
@@ -28,7 +27,7 @@ function Router() {
       <Route path="/notice/:id" component={NoticeDetailPage} />
       <Route path="/news" component={NewsPage} />
       <Route path="/news/:id" component={NewsDetailPage} />
-      <Route path="/game-info" component={GameInfoPage} />
+      <Route path="/game-info"><Redirect to="/#game-info" /></Route>
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/terms-of-service" component={TermsOfService} />
       <Route path="/cookie-policy" component={CookiePolicy} />
