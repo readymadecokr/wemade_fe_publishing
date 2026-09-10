@@ -47,5 +47,8 @@ describe("News Home-style chrome", () => {
     expect(newsSource).toContain('className="news-page-marker"');
     expect(newsDetailSource).toContain('className="news-page-marker"');
     expect(layoutStyles).toContain('.news-page-marker {');
+    expect(layoutStyles).toContain('font-family: Arial, Helvetica, sans-serif');
+    expect(layoutStyles).toContain('font-style: italic');
+    expect(layoutStyles).toContain('letter-spacing: -.055em');
   });
 });

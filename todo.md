@@ -1193,3 +1193,8 @@
 - [x] News 상단 NEWS 표시 추가와 하단 TWO CLICKS TO MIDGARD CTA 제거
 - [x] 독립 `/game-info` 페이지·네비게이션을 Home Game Info 섹션으로 정리
 - [x] News·Game Info 경로와 데스크톱·모바일 화면·회귀 테스트 검증
+
+## News 상단 표시 Discord 제목 서체 통일
+- [x] Home Discord 섹션 제목과 News 상단 NEWS 표시의 글꼴·기울기·크기 규칙 점검
+- [x] News 상단 NEWS에 Discord와 동일한 기울어진 굵은 제목 서체 적용
+- [x] News 목록·상세 데스크톱·모바일 서체와 TypeScript·회귀 테스트 검증
