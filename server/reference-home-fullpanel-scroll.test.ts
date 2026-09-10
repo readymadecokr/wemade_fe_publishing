@@ -17,6 +17,7 @@ describe("direct React Home section navigation", () => {
     expect(styleSource).toContain(".react-home-news, .react-home-game-info, .react-home-media { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); min-height: calc(100dvh - var(--react-home-header-height)); overflow: hidden; }");
     expect(styleSource).toContain("html.react-home-snap { scroll-snap-type: y mandatory; }");
     expect(styleSource).toContain(".react-home-news, .react-home-game-info, .react-home-media { scroll-snap-align: start; scroll-snap-stop: always; }");
+    expect(styleSource).toContain(".react-home-final-panel { scroll-snap-align: start; scroll-snap-stop: always; }");
     expect(styleSource).toContain(".react-home-hero { position: relative; display: grid;");
     expect(styleSource).not.toContain("reference-home-embed__frame");
   });
