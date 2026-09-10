@@ -25,7 +25,7 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain("grid-template-columns: clamp(90px,9.4vw,138px) minmax(300px,1fr) auto; min-height: clamp(58px,4.6vw,68px);");
     expect(headerStyles).toContain("width: clamp(80px,10.5vw,138px); height: auto; max-height: 64px;");
     expect(homeHeaderSource).toContain('container flex h-9 items-center justify-end gap-2 py-0.5');
-    expect(headerStyles).toContain("width: clamp(96px,9vw,110px); height: 30px; padding: 0; border-radius: 7px;");
+    expect(headerStyles).toContain("width: clamp(96px,9vw,110px); height: 30px; padding: 0; border-radius: 8px;");
     expect(headerStyles).toContain(".reference-header-game-start { width: clamp(92px,12vw,150px); height: clamp(32px,3.85vw,48px); }");
     expect(headerStyles).toContain(".reference-header-cta .reference-header-discord { width: clamp(96px, 9vw, 110px); height: 30px; }");
     expect(headerStyles).toContain("width: clamp(90px,26vw,118px);");
