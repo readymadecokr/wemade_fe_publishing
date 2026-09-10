@@ -247,7 +247,7 @@ export default function Home() {
             <div ref={screenshotStripRef} className="react-home-media__strip" onScroll={syncScreenshotScroll}>
               {MEDIA_SCREENSHOTS.map((screenshot, index) => (
                 <button type="button" key={screenshot.image} className="react-home-media__thumbnail" onClick={() => setSelectedScreenshot(index)} aria-label={`View screenshot ${index + 1}: ${screenshot.title}`}>
-                  <img src={screenshot.image} alt={screenshot.title} loading="lazy" />
+                  <img src={screenshot.image} alt={screenshot.title} loading={index < 6 ? "eager" : "lazy"} />
                   <span>VIEW FULLSCREEN</span>
                 </button>
               ))}

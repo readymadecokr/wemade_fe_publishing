@@ -159,6 +159,8 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 @media (max-width: 760px) {
   .react-home-news, .react-home-game-info, .react-home-media { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); min-height: calc(100dvh - var(--react-home-header-height)); overflow: hidden; }
+  html.react-home-snap { scroll-snap-type: y mandatory; }
+  .react-home-news, .react-home-game-info, .react-home-media { scroll-snap-align: start; scroll-snap-stop: always; }
   .react-home-news { padding: 46px 0 30px; }
   .react-home-game-info { padding: 34px 0 22px; }
   .react-home-media { padding: 38px 0 28px; }

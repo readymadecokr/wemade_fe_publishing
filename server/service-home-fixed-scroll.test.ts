@@ -19,7 +19,7 @@ describe("direct React full-page service Home", () => {
   it("offsets sections for the fixed live header without a nested website iframe", () => {
     expect(styleSource).toContain("padding-top: var(--react-home-header-height)");
     expect(styleSource).toContain("scroll-padding-top: var(--react-home-header-height)");
-    expect(styleSource).not.toContain("scroll-margin-top: var(--react-home-header-height)");
+    expect(styleSource).toContain(".react-home-news, .react-home-game-info, .react-home-media { scroll-snap-align: start; scroll-snap-stop: always; }");
     expect(styleSource).toContain(":root { --react-home-header-height: 112px; }");
     expect(homeSource).toContain("react-home-hero-cta-row");
     expect(homeSource).not.toContain("<iframe\n        name=");
