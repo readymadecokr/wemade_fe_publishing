@@ -180,11 +180,11 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 }
 
 /* Game Info artwork uses one rounded outline so the gameplay image remains the focus. */
-.react-home-game-info__art { position: relative; overflow: hidden; border: 1px solid rgba(26,52,77,.52); border-radius: 14px; background: transparent; box-shadow: none; }
+.react-home-game-info__art { position: relative; overflow: hidden; border: 1px solid rgba(26,52,77,.52); border-radius: 14px; background: transparent; box-shadow: none; line-height: 0; }
 .react-home-game-info__art-paper { overflow: hidden; padding: 0; border: 0; border-radius: inherit; background: transparent; box-shadow: none; }
-.react-home-game-info__art-paper img { display: block; width: 100%; max-height: min(62vh,540px); border: 0; object-fit: contain; filter: saturate(1.08) contrast(1.03); }
+.react-home-game-info__art-paper img { display: block; width: 100%; max-height: min(62vh,540px); border: 0; object-fit: contain; filter: saturate(1.08) contrast(1.03); transform: scale(1.075); transform-origin: center; }
 @media (max-width: 760px) {
   .react-home-game-info__art { padding: 0; border-width: 1px; box-shadow: none; }
   .react-home-game-info__art-paper { padding: 0; border: 0; box-shadow: none; }
-  .react-home-game-info__art-paper img { max-height: none; }
+  .react-home-game-info__art-paper img { max-height: none; transform: scale(1.055); }
 }
