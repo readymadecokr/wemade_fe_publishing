@@ -136,7 +136,6 @@ export default function Home() {
     };
     const handleWheel = (event: WheelEvent) => {
       if (wheelLocked || Math.abs(event.deltaY) < 8 || event.ctrlKey) return;
-      if (event.target instanceof Element && event.target.closest(".react-home-widget")) return;
 
       if (!movePanel(event.deltaY > 0 ? 1 : -1)) return;
 
@@ -145,7 +144,7 @@ export default function Home() {
       window.setTimeout(() => { wheelLocked = false; }, 680);
     };
     const handleTouchStart = (event: TouchEvent) => {
-      if (!isMobilePanelViewport() || (event.target instanceof Element && event.target.closest(".react-home-widget"))) return;
+      if (!isMobilePanelViewport()) return;
       const touch = event.touches[0];
       touchStartX = touch?.clientX ?? null;
       touchStartY = touch?.clientY ?? null;

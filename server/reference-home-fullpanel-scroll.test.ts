@@ -16,6 +16,7 @@ describe("direct React Home section navigation", () => {
     expect(homeSource).toContain("movePanel(verticalTravel > 0 ? -1 : 1, startingPanelIndex ?? getCurrentPanelIndex())");
     expect(homeSource).toContain("if (wheelLocked || Math.abs(event.deltaY) < 8 || event.ctrlKey) return;");
     expect(homeSource).not.toContain("!isPanelViewport()");
+    expect(homeSource).not.toContain('event.target.closest(".react-home-widget")');
     expect(homeSource).not.toContain("postMessage({ type: \"ragnarok-reference-scroll\"");
   });
 
