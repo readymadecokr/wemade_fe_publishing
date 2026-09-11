@@ -21,7 +21,7 @@ describe("direct React full-page service Home", () => {
     expect(styleSource).toContain("scroll-padding-top: var(--react-home-header-height)");
     expect(styleSource).toContain(".react-home-news, .react-home-game-info, .react-home-media { scroll-snap-align: start; scroll-snap-stop: always; }");
     expect(styleSource).toContain(".react-home-home-stage, .react-home-discord { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height));");
-    expect(styleSource).toContain(".react-home-final-panel { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); min-height: calc(100dvh - var(--react-home-header-height)); scroll-snap-align: start; scroll-snap-stop: always; }");
+    expect(styleSource).toContain(".react-home-final-panel { box-sizing: border-box; height: 100svh; height: 100dvh; min-height: 100svh; min-height: 100dvh; margin-top: calc(-1 * var(--react-home-header-height)); padding-top: var(--react-home-header-height); scroll-snap-align: start; scroll-snap-stop: always; }");
     expect(styleSource).toContain(".react-home-final-panel .react-home-closing { min-height: 0; flex: 1 1 auto; }");
     expect(styleSource).toContain(":root { --react-home-header-height: 112px; }");
     expect(homeSource).toContain("react-home-hero-cta-row");
