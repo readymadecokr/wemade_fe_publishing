@@ -201,7 +201,7 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 @media (max-width: 760px) {
   .react-home-home-stage, .react-home-discord { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); min-height: calc(100dvh - var(--react-home-header-height)); overflow: hidden; scroll-snap-align: start; scroll-snap-stop: always; }
   .react-home-discord { display: flex; align-items: stretch; }
-  .react-home-discord__shell { display: flex; min-height: 0; flex: 1 1 auto; flex-direction: column; }
+  .react-home-discord__shell { display: flex; width: calc(100% - 28px); min-height: 0; margin-inline: auto; flex: 0 1 auto; flex-direction: column; }
   .react-home-discord .react-home-widget { min-height: 0; flex: 1 1 auto; }
   .react-home-discord .react-home-widget__frame { display: block; width: 100%; height: 100%; min-height: 0; }
 }

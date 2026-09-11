@@ -1260,3 +1260,8 @@
 - [x] 모바일 Discord 패널 높이와 News 노출·Hero 전환 되돌림 현상 재현·점검
 - [x] Discord 패널을 헤더 제외 화면 높이로 확장하고 상향 스크롤 Hero 전환 규칙 보완
 - [x] 모바일 Discord 전체 화면·Hero 상향 전환과 TypeScript·회귀 테스트 검증
+
+## 모바일 Discord 콘텐츠 가로 여백 통일
+- [x] 모바일 Discord·News·Media의 콘텐츠 폭과 좌측 여백 규칙 점검
+- [x] Discord 제목·설명·위젯을 News·Media와 동일한 가로 여백으로 정렬
+- [x] 모바일 Discord·News·Media 좌측 여백과 TypeScript·회귀 테스트 검증
