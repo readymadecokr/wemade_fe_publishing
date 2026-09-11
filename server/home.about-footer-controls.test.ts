@@ -52,8 +52,8 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".react-home-game-info__facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); margin: 0 0 26px; border-top: 1px solid rgba(30,55,77,.22); border-left: 1px solid rgba(30,55,77,.22); font-family: inherit;");
     expect(styleSource).toContain(".react-home-game-info__facts strong { display: block; color: #1a344d; font-family: inherit;");
     expect(styleSource).toContain("Game Info artwork uses one rounded outline");
-    expect(styleSource).toContain(".react-home-game-info__art { position: relative; overflow: hidden; border: 1px solid rgba(26,52,77,.52); border-radius: 14px; background: transparent; box-shadow: none; line-height: 0;");
-    expect(styleSource).toContain(".react-home-game-info__art-paper img { display: block; width: 100%; max-height: min(62vh,540px); border: 0; object-fit: contain; filter: saturate(1.08) contrast(1.03); transform: scale(1.075);");
+    expect(styleSource).toContain(".react-home-game-info__art { position: relative; overflow: hidden; box-sizing: border-box; padding: 0; border: 1px solid rgba(26,52,77,.52); border-radius: 14px;");
+    expect(styleSource).toContain(".react-home-game-info__art-paper img { display: block; width: 100%; height: auto; max-height: none; border: 0; object-fit: initial; filter: saturate(1.08) contrast(1.03); transform: none;");
   });
 
   it("provides the requested in-page Rune-Midgarts Library coming-soon modal", () => {
