@@ -116,8 +116,8 @@ export default function Home() {
     let touchLocked = false;
     let touchStartX: number | null = null;
     let touchStartY: number | null = null;
+    let touchStartPanelIndex: number | null = null;
 
-    const isPanelViewport = () => window.matchMedia("(min-width: 769px)").matches;
     const isMobilePanelViewport = () => window.matchMedia("(max-width: 760px)").matches;
     const getCurrentPanelIndex = () => {
       const headerHeight = Number.parseFloat(getComputedStyle(root).getPropertyValue("--react-home-header-height")) || 0;
@@ -127,15 +127,15 @@ export default function Home() {
         return panelDistance < nearestDistance ? index : nearestIndex;
       }, 0);
     };
-    const movePanel = (direction: -1 | 1) => {
-      const currentIndex = getCurrentPanelIndex();
+    const movePanel = (direction: -1 | 1, startingIndex = getCurrentPanelIndex()) => {
+      const currentIndex = startingIndex;
       const nextIndex = Math.max(0, Math.min(panels.length - 1, currentIndex + direction));
       if (nextIndex === currentIndex) return false;
       panels[nextIndex].scrollIntoView({ behavior: "smooth", block: "start" });
       return true;
     };
     const handleWheel = (event: WheelEvent) => {
-      if (!isPanelViewport() || wheelLocked || Math.abs(event.deltaY) < 8 || event.ctrlKey) return;
+      if (wheelLocked || Math.abs(event.deltaY) < 8 || event.ctrlKey) return;
       if (event.target instanceof Element && event.target.closest(".react-home-widget")) return;
 
       if (!movePanel(event.deltaY > 0 ? 1 : -1)) return;
@@ -149,6 +149,7 @@ export default function Home() {
       const touch = event.touches[0];
       touchStartX = touch?.clientX ?? null;
       touchStartY = touch?.clientY ?? null;
+      touchStartPanelIndex = getCurrentPanelIndex();
     };
     const handleTouchEnd = (event: TouchEvent) => {
       if (!isMobilePanelViewport() || touchLocked || touchStartX === null || touchStartY === null) return;
@@ -157,8 +158,10 @@ export default function Home() {
       const verticalTravel = (touch?.clientY ?? touchStartY) - touchStartY;
       touchStartX = null;
       touchStartY = null;
+      const startingPanelIndex = touchStartPanelIndex;
+      touchStartPanelIndex = null;
       if (Math.abs(verticalTravel) < 36 || Math.abs(verticalTravel) <= horizontalTravel) return;
-      if (!movePanel(verticalTravel > 0 ? -1 : 1)) return;
+      if (!movePanel(verticalTravel > 0 ? -1 : 1, startingPanelIndex ?? getCurrentPanelIndex())) return;
       touchLocked = true;
       window.setTimeout(() => { touchLocked = false; }, 680);
     };

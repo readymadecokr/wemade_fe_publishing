@@ -8,10 +8,14 @@ describe("direct React Home section navigation", () => {
   it("smoothly scrolls the mounted React sections without changing or reloading a document URL", () => {
     expect(homeSource).toContain('scrollIntoView({ behavior: "smooth", block: "start" })');
     expect(homeSource).toContain("new IntersectionObserver");
-    expect(homeSource).toContain("const movePanel = (direction: -1 | 1) =>");
+    expect(homeSource).toContain("let touchStartPanelIndex: number | null = null;");
+    expect(homeSource).toContain("const movePanel = (direction: -1 | 1, startingIndex = getCurrentPanelIndex()) =>");
     expect(homeSource).toContain('window.addEventListener("touchstart", handleTouchStart, { passive: true })');
     expect(homeSource).toContain('window.addEventListener("touchend", handleTouchEnd, { passive: true })');
-    expect(homeSource).toContain("movePanel(verticalTravel > 0 ? -1 : 1)");
+    expect(homeSource).toContain("touchStartPanelIndex = getCurrentPanelIndex();");
+    expect(homeSource).toContain("movePanel(verticalTravel > 0 ? -1 : 1, startingPanelIndex ?? getCurrentPanelIndex())");
+    expect(homeSource).toContain("if (wheelLocked || Math.abs(event.deltaY) < 8 || event.ctrlKey) return;");
+    expect(homeSource).not.toContain("!isPanelViewport()");
     expect(homeSource).not.toContain("postMessage({ type: \"ragnarok-reference-scroll\"");
   });
 
