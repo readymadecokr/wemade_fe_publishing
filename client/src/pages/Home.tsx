@@ -113,8 +113,12 @@ export default function Home() {
     const root = document.documentElement;
     const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-snap-panel]"));
     let wheelLocked = false;
+    let touchLocked = false;
+    let touchStartX: number | null = null;
+    let touchStartY: number | null = null;
 
     const isPanelViewport = () => window.matchMedia("(min-width: 769px)").matches;
+    const isMobilePanelViewport = () => window.matchMedia("(max-width: 760px)").matches;
     const getCurrentPanelIndex = () => {
       const headerHeight = Number.parseFloat(getComputedStyle(root).getPropertyValue("--react-home-header-height")) || 0;
       return panels.reduce((nearestIndex, panel, index) => {
@@ -123,25 +127,51 @@ export default function Home() {
         return panelDistance < nearestDistance ? index : nearestIndex;
       }, 0);
     };
+    const movePanel = (direction: -1 | 1) => {
+      const currentIndex = getCurrentPanelIndex();
+      const nextIndex = Math.max(0, Math.min(panels.length - 1, currentIndex + direction));
+      if (nextIndex === currentIndex) return false;
+      panels[nextIndex].scrollIntoView({ behavior: "smooth", block: "start" });
+      return true;
+    };
     const handleWheel = (event: WheelEvent) => {
       if (!isPanelViewport() || wheelLocked || Math.abs(event.deltaY) < 8 || event.ctrlKey) return;
       if (event.target instanceof Element && event.target.closest(".react-home-widget")) return;
 
-      const currentIndex = getCurrentPanelIndex();
-      const nextIndex = Math.max(0, Math.min(panels.length - 1, currentIndex + (event.deltaY > 0 ? 1 : -1)));
-      if (nextIndex === currentIndex) return;
+      if (!movePanel(event.deltaY > 0 ? 1 : -1)) return;
 
       event.preventDefault();
       wheelLocked = true;
-      panels[nextIndex].scrollIntoView({ behavior: "smooth", block: "start" });
       window.setTimeout(() => { wheelLocked = false; }, 680);
+    };
+    const handleTouchStart = (event: TouchEvent) => {
+      if (!isMobilePanelViewport() || (event.target instanceof Element && event.target.closest(".react-home-widget"))) return;
+      const touch = event.touches[0];
+      touchStartX = touch?.clientX ?? null;
+      touchStartY = touch?.clientY ?? null;
+    };
+    const handleTouchEnd = (event: TouchEvent) => {
+      if (!isMobilePanelViewport() || touchLocked || touchStartX === null || touchStartY === null) return;
+      const touch = event.changedTouches[0];
+      const horizontalTravel = Math.abs((touch?.clientX ?? touchStartX) - touchStartX);
+      const verticalTravel = (touch?.clientY ?? touchStartY) - touchStartY;
+      touchStartX = null;
+      touchStartY = null;
+      if (Math.abs(verticalTravel) < 36 || Math.abs(verticalTravel) <= horizontalTravel) return;
+      if (!movePanel(verticalTravel > 0 ? -1 : 1)) return;
+      touchLocked = true;
+      window.setTimeout(() => { touchLocked = false; }, 680);
     };
 
     root.classList.add("react-home-snap");
     window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
     return () => {
       root.classList.remove("react-home-snap");
       window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
   }, []);
 
