@@ -1265,3 +1265,8 @@
 - [x] 모바일 Discord·News·Media의 콘텐츠 폭과 좌측 여백 규칙 점검
 - [x] Discord 제목·설명·위젯을 News·Media와 동일한 가로 여백으로 정렬
 - [x] 모바일 Discord·News·Media 좌측 여백과 TypeScript·회귀 테스트 검증
+
+## 모바일 마지막 CTA 패널 시작점 정렬
+- [x] 모바일 Media·마지막 CTA 패널의 현재 높이와 스냅 시작점 점검
+- [x] 마지막 CTA·푸터 패널의 모바일 스냅 시작점과 높이 규칙 보정
+- [x] 모바일 CTA 진입 시 Media 비노출과 CTA·푸터 구성 검증
