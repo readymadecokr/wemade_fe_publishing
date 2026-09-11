@@ -1250,3 +1250,8 @@
 - [x] Discord 위젯 내부 입력이 상위 페이지 제스처로 전달되는 경로 재현·점검
 - [x] Discord 위젯 영역의 상향 이동을 Hero 전환으로 연결하는 별도 처리 구현
 - [x] 모바일 Discord 위젯 영역 Hero 전환과 TypeScript·회귀 테스트 검증
+
+## 모바일 Discord 상향 스크롤 Hero 전환 재보정
+- [x] 요청하지 않은 모바일 Hero 복귀 제어를 제거하고 현재 스크롤 전환 규칙 점검
+- [x] 모바일 Discord에서 위로 스크롤 시 Hero로 이동하도록 패널 스크롤 처리 보완
+- [x] 모바일 Discord 상향 스크롤 Hero 전환과 TypeScript·회귀 테스트 검증

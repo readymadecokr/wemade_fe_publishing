@@ -240,7 +240,7 @@ export default function Home() {
 
       <section id="discord" data-home-section data-snap-panel className="react-home-panel react-home-discord">
         <div className="react-home-section-shell react-home-discord__shell">
-          <div className="react-home-section-heading react-home-section-heading--light"><div><span>OFFICIAL COMMUNITY</span><h2>DISCORD</h2><button type="button" className="react-home-mobile-panel-return" onClick={() => navigateTo("home")}>↑ BANNER</button></div><p>Development news and community updates from the official Ragnarok Universe Discord.</p></div>
+          <div className="react-home-section-heading react-home-section-heading--light"><div><span>OFFICIAL COMMUNITY</span><h2>DISCORD</h2></div><p>Development news and community updates from the official Ragnarok Universe Discord.</p></div>
           <div className="react-home-widget" aria-label="Official Ragnarok Universe Discord channel browser">
             <iframe className="react-home-widget__frame" src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051" title="Ragnarok Universe official Discord channel browser" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" />
             <a className="react-home-widget__invite-overlay" href="https://discord.com/invite/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" aria-label="Open the official Ragnarok Universe Discord invite to sign in or send a message"><span className="sr-only">Sign in or send a message in the official Ragnarok Universe Discord</span></a>

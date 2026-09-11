@@ -17,8 +17,8 @@ describe("direct React Home section navigation", () => {
     expect(homeSource).toContain("if (wheelLocked || Math.abs(event.deltaY) < 8 || event.ctrlKey) return;");
     expect(homeSource).not.toContain("!isPanelViewport()");
     expect(homeSource).not.toContain('event.target.closest(".react-home-widget")');
-    expect(homeSource).toContain('className="react-home-mobile-panel-return" onClick={() => navigateTo("home")}');
-    expect(styleSource).toContain(".react-home-mobile-panel-return");
+    expect(homeSource).not.toContain("react-home-mobile-panel-return");
+    expect(styleSource).toContain(".react-home-widget__frame { pointer-events: none; }");
     expect(homeSource).not.toContain("postMessage({ type: \"ragnarok-reference-scroll\"");
   });
 
