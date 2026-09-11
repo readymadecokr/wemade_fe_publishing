@@ -196,3 +196,12 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .reference-header-logo img { top: 50%; left: 0; width: 82px; height: auto; max-width: none; max-height: none; transform: translateY(-63%); }
   .react-home-widget__frame { pointer-events: none; }
 }
+
+/* Mobile Discord is a complete panel; the Hero wrapper is an equally valid previous snap target. */
+@media (max-width: 760px) {
+  .react-home-home-stage, .react-home-discord { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); min-height: calc(100dvh - var(--react-home-header-height)); overflow: hidden; scroll-snap-align: start; scroll-snap-stop: always; }
+  .react-home-discord { display: flex; align-items: stretch; }
+  .react-home-discord__shell { display: flex; min-height: 0; flex: 1 1 auto; flex-direction: column; }
+  .react-home-discord .react-home-widget { min-height: 0; flex: 1 1 auto; }
+  .react-home-discord .react-home-widget__frame { display: block; width: 100%; height: 100%; min-height: 0; }
+}

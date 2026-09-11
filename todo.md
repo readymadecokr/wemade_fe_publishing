@@ -1255,3 +1255,8 @@
 - [x] 요청하지 않은 모바일 Hero 복귀 제어를 제거하고 현재 스크롤 전환 규칙 점검
 - [x] 모바일 Discord에서 위로 스크롤 시 Hero로 이동하도록 패널 스크롤 처리 보완
 - [x] 모바일 Discord 상향 스크롤 Hero 전환과 TypeScript·회귀 테스트 검증
+
+## 모바일 Discord 전체 화면·Hero 상향 전환 보정
+- [x] 모바일 Discord 패널 높이와 News 노출·Hero 전환 되돌림 현상 재현·점검
+- [x] Discord 패널을 헤더 제외 화면 높이로 확장하고 상향 스크롤 Hero 전환 규칙 보완
+- [x] 모바일 Discord 전체 화면·Hero 상향 전환과 TypeScript·회귀 테스트 검증
