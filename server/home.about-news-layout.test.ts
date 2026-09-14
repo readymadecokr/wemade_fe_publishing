@@ -10,7 +10,7 @@ describe("direct React Home news and game information", () => {
       expect(homeSource).toMatch(content);
     });
     expect(homeSource).toContain("const NEWS_ITEMS = [");
-    expect(homeSource).toContain('<Link href="/news" className="react-home-outline-cta">VIEW MORE');
+    expect(homeSource).toContain('className="react-home-outline-cta react-home-news-more" aria-label="View more news">+</Link>');
     expect(homeSource).toContain('react-home-news-card--mobile-extra');
   });
 

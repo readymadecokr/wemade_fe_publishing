@@ -1281,3 +1281,9 @@
 - [x] News 상세 상단 탭 복원·Shop 상세 동일 탭 추가·상세 배경 이미지 제거
 - [x] 공통 메인 메뉴 DISCORD를 COMMUNITY로 변경
 - [x] News·Shop 상세 및 공통 헤더의 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## 참조형 News 탭·Home News 버튼·푸터·섹션 시작 정렬
+- [x] 참조 사이트 News 상세 상단 탭과 Home News·푸터·섹션 시작점 현재 구조 점검
+- [x] 참조형 News 상세 상단 탭과 Home News 더하기 버튼 구현
+- [x] 푸터 흰색·검은 텍스트·지정 카피라이트 줄바꿈 및 Home 섹션 상단 정렬 구현
+- [x] Home·News 상세 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증

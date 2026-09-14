@@ -197,8 +197,8 @@ function NewsDetailContent() {
   return (
     <Layout variant="homeChrome" showClosingCta={false}>
       <>
-        <section className="news-page-marker" aria-label="News page">
-          <div className="container"><p>NEWS</p></div>
+        <section className="news-detail-page-banner" aria-labelledby="news-detail-page-title">
+          <div className="container"><h1 id="news-detail-page-title">News</h1><p>Latest news, interviews, and community highlights</p></div>
         </section>
         {/* Article Title Block */}
         <div className="fantasy-page-shell pt-6 pb-8 md:pt-8">

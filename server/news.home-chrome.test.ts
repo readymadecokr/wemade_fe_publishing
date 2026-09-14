@@ -33,7 +33,7 @@ describe("News Home-style chrome", () => {
     expect(layoutSource).toContain("news-home-closing");
     expect(layoutSource).toContain("news-home-footer__bar");
     expect(layoutSource).toContain("TWO CLICKS TO");
-    expect(layoutStyles).toContain(".news-home-footer__bar { padding: 34px 0 28px; background: #263545;");
+    expect(layoutStyles).toContain(".news-home-footer__bar { padding: 34px 0 28px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c;");
   });
 
   it("marks the current shared-header route as active", () => {
@@ -43,12 +43,12 @@ describe("News Home-style chrome", () => {
     expect(appSource).toContain('<Redirect to="/#game-info" />');
   });
 
-  it("renders a clear NEWS identifier above the News list and article detail", () => {
+  it("renders the compact NEWS list marker and the reference-style News detail banner", () => {
     expect(newsSource).toContain('className="news-page-marker"');
-    expect(newsDetailSource).toContain('className="news-page-marker"');
+    expect(newsDetailSource).toContain('className="news-detail-page-banner"');
+    expect(newsDetailSource).toContain('Latest news, interviews, and community highlights');
     expect(layoutStyles).toContain('.news-page-marker {');
-    expect(layoutStyles).toContain('font-family: Arial, Helvetica, sans-serif');
-    expect(layoutStyles).toContain('font-style: italic');
-    expect(layoutStyles).toContain('letter-spacing: -.055em');
+    expect(layoutStyles).toContain('.news-detail-page-banner { border-bottom: 1px solid rgba(180, 202, 222, .26);');
+    expect(layoutStyles).toContain('font-family: Georgia, "Times New Roman", serif');
   });
 });

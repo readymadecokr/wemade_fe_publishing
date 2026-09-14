@@ -27,7 +27,7 @@ describe("admin news automatic order and main exposure", () => {
     expect(homeSource).toContain("Ragnarok Online: Patch Update June 17, 2026");
     expect(homeSource).toContain("Ragnarok Online: Patch Update May 27, 2026");
     expect(homeSource).toContain("react-home-news-grid");
-    expect(homeSource).toContain('<Link href="/news" className="react-home-outline-cta">VIEW MORE');
+    expect(homeSource).toContain('className="react-home-outline-cta react-home-news-more" aria-label="View more news">+</Link>');
     expect(homeSource).not.toContain("REFERENCE_HOME_URL");
   });
 });

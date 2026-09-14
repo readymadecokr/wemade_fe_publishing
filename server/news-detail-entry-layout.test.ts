@@ -16,13 +16,13 @@ describe("News detail entry and service-page title banners", () => {
     expect(layoutSource).toContain('location.startsWith("/news") ? "news"');
   });
 
-  it("uses existing-size NEWS and SHOP identifiers on detail-style service pages", () => {
+  it("uses the reference-style News detail banner and the matching Shop service banner", () => {
     expect(newsListSource).not.toContain("Latest news, interviews, and community highlights");
-    expect(newsDetailSource).not.toContain("Latest news, interviews, and community highlights");
+    expect(newsDetailSource).toContain("Latest news, interviews, and community highlights");
     expect(pointShopSource).not.toContain('<p className="text-[#e9dfc8]">Purchase rCoin</p>');
     expect(newsListSource).toContain('className="news-page-marker"');
-    expect(newsDetailSource).toContain('className="news-page-marker"');
-    expect(pointShopSource).toContain('className="news-page-marker shop-page-marker"');
+    expect(newsDetailSource).toContain('className="news-detail-page-banner"');
+    expect(pointShopSource).toContain('className="news-detail-page-banner shop-detail-page-banner"');
     expect(appSource).toContain('<Redirect to="/#game-info" />');
     expect(newsListSource).toContain('fantasy-content-guide px-2 py-6');
     expect(newsDetailSource).toContain('fantasy-page-shell pt-6 pb-8 md:pt-8');

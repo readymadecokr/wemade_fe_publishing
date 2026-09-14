@@ -28,6 +28,8 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).toContain('<footer className="react-home-footer"');
     expect(styleSource).toContain('.react-home-final-panel { height: calc(100svh - var(--react-home-header-height));');
     expect(styleSource).toContain('.react-home-final-panel .react-home-closing { min-height: 0; flex: 1 1 auto;');
+    expect(styleSource).toContain('.react-home-footer { padding: 38px 0 30px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c; }');
+    expect(homeSource).toContain('Copyright © Gravity Co., LTD &amp; Lee MyoungJin(studio DTDS). All Rights Reserved.<br />All trademarks used on this website are the property of their respective owners.');
   });
 
   it("keeps the two-line Game Info heading, unified fact typography, simple artwork border, and blue Gravity footer asset", () => {
@@ -54,6 +56,11 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain("Game Info artwork uses one rounded outline");
     expect(styleSource).toContain(".react-home-game-info__art { position: relative; overflow: hidden; box-sizing: border-box; padding: 0; border: 1px solid rgba(26,52,77,.52); border-radius: 14px;");
     expect(styleSource).toContain(".react-home-game-info__art-paper img { display: block; width: 100%; height: auto; max-height: none; border: 0; object-fit: initial; filter: saturate(1.08) contrast(1.03); transform: none;");
+  });
+
+  it("starts desktop content sections at the shared top line instead of vertically centering them", () => {
+    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; }');
+    expect(styleSource).toContain('.react-home-game-info { padding-block: clamp(54px, 7vh, 105px) clamp(42px, 5vh, 75px); }');
   });
 
   it("provides the requested in-page Rune-Midgarts Library coming-soon modal", () => {
