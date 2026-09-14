@@ -47,6 +47,8 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).not.toContain('/manus-storage/game-info-adventure-frame_fbed9714.png');
     expect(homeSource).not.toContain('react-home-game-info__art-tape');
     expect(homeSource).toContain("LATEST FROM MIDGARD");
+    expect(homeSource).toContain("ABOUT RAGNAROK UNIVERSE");
+    expect(homeSource).not.toContain("EXPLORE MIDGARD");
     expect(homeSource).toContain("SEE THE WORLD IN MOTION");
     expect(homeSource).toContain("gravity_logo_light_c14f48f8_5e3a7c41.png");
     expect(homeSource).toContain("FloatingSocialLinks");
@@ -56,6 +58,8 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".react-home-game-info__facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); margin: 0 0 26px; border-top: 1px solid rgba(30,55,77,.22); border-left: 1px solid rgba(30,55,77,.22); font-family: inherit;");
     expect(styleSource).toContain(".react-home-game-info__facts strong { display: block; color: #1a344d; font-family: inherit;");
     expect(styleSource).toContain("Game Info artwork uses one rounded outline");
+    expect(styleSource).toContain(".react-home-footer__inner { position: relative; justify-content: center; }");
+    expect(styleSource).toContain(".react-home-footer p { text-align: center; }");
     expect(styleSource).toContain(".react-home-game-info__grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: center; gap: clamp(26px,3.2vw,48px);");
     expect(styleSource).toContain(".react-home-game-info__art { position: relative; z-index: 1; width: 100%; justify-self: stretch; overflow: hidden; box-sizing: border-box; padding: 0; border: 1px solid rgba(26,52,77,.52); border-radius: 14px;");
     expect(styleSource).toContain(".react-home-game-info__art { position: relative; z-index: 1; width: 100%; justify-self: stretch;");

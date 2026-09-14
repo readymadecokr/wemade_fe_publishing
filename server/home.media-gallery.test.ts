@@ -30,6 +30,7 @@ describe("Home Media screenshot gallery", () => {
     expect(homeSource).toContain('event.key === "Escape"');
     expect(homeSource).toContain("react-home-gallery-modal");
     expect(homeSource).toContain('loading={index < 6 ? "eager" : "lazy"}');
+    expect(homeSource).not.toContain('<p>{selectedScreenshot + 1} / {MEDIA_SCREENSHOTS.length}');
   });
 
   it("keeps Media content inside the panel with compact video, non-cropping thumbnails, and a long position track", () => {

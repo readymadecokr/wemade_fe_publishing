@@ -1373,3 +1373,9 @@
 - [x] Home Game Info 제목 서체와 서비스 페이지 제목·핵심 라벨 적용 범위 점검
 - [x] My Page·닉네임·Coupon·Coupon Use History 등 서비스 페이지에 비기울임 기준 서체 적용
 - [x] 기존 글자 크기 유지 및 My Page·주요 서비스 화면 렌더링·회귀 테스트 검증
+
+## Home Discord·Game Info·팝업·푸터 문구 및 정렬 보정
+- [x] Discord 설명문 단일 줄 표시와 Game Info 섹션 문구 변경
+- [x] 스크린샷 팝업 하단 캡션 제거
+- [x] 푸터 브랜드·이용약관·저작권 가로 중앙 정렬
+- [x] 데스크톱·모바일 렌더링 및 TypeScript·회귀 테스트 검증

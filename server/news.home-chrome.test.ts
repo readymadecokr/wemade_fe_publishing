@@ -35,6 +35,8 @@ describe("News Home-style chrome", () => {
     expect(layoutSource).toContain("news-home-footer__bar");
     expect(layoutSource).toContain("TWO CLICKS TO");
     expect(layoutStyles).toContain(".news-home-footer__bar { padding: 34px 0 28px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c;");
+    expect(layoutStyles).toContain(".news-home-footer__inner { position: relative; justify-content: center; }");
+    expect(layoutStyles).toContain(".news-home-footer__bar p { text-align: center; }");
   });
 
   it("marks the current shared-header route as active", () => {

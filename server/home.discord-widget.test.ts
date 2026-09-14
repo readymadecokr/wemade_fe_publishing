@@ -12,6 +12,9 @@ describe("direct React Home community panel", () => {
     expect(homeSource).not.toContain("react-home-widget__bar");
     expect(homeSource).toContain('href="https://discord.com/invite/yVWJkWdkAU"');
     expect(homeSource).toContain('target="_blank"');
+    expect(homeSource).toContain('className="react-home-discord__description"');
+    expect(homeSource).toContain('Development news and community updates from the official Ragnarok Universe Discord.');
+    expect(homeStyles).toContain('.react-home-discord__description { max-width: none !important; white-space: nowrap;');
     expect(homeStyles).toContain("height: min(64vh,660px); min-height: 520px;");
     expect(homeStyles).toContain(".react-home-widget__invite-overlay { position: absolute;");
     expect(homeStyles).toContain("height: 66px;");
