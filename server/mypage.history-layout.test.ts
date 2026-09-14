@@ -34,5 +34,7 @@ describe("My Page history layout", () => {
     expect(myPage).not.toContain("Coupon Use History");
     expect(myPage).toContain("coupon.myHistory.useQuery({ page: historyPage, pageSize: 20 }");
     expect(myPage).toContain('aria-label="Coupon history"');
+    expect(myPage).toContain("COUPON HISTORY");
+    expect(myPage).toContain('className="mt-6 flex justify-center"');
   });
 });

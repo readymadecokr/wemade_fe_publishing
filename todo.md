@@ -1394,3 +1394,8 @@
 - [x] Coupon 등록 버튼의 현재 문구와 회귀 테스트 위치 점검
 - [x] Coupon 등록 실행 버튼을 COUPON REGISTRATION으로 변경
 - [x] 버튼 렌더링 및 TypeScript·회귀 테스트 검증
+
+## My Page Coupon History 라벨·등록 버튼 정렬 보정
+- [x] Coupon History 라벨과 등록 버튼 정렬의 현재 구현·테스트 위치 점검
+- [x] COUPON HISTORY 라벨 복구 및 COUPON REGISTRATION 버튼 중앙 정렬
+- [x] 쿠폰 등록·이력 영역 DOM 렌더링과 TypeScript·회귀 테스트 검증

@@ -87,6 +87,7 @@ describe("My Page history screens", () => {
     expect(screen.queryByRole("heading", { name: "Coupon" })).toBeNull();
     expect(screen.queryByText("Coupon Use History")).toBeNull();
     expect(screen.getByLabelText("Coupon history")).toBeTruthy();
+    expect(screen.getByText("COUPON HISTORY")).toBeTruthy();
     expect(screen.getByText("Welcome Celebration")).toBeTruthy();
     expect(screen.getByRole("combobox", { name: "Coupon server" })).toBeTruthy();
     expect(screen.getByRole("combobox", { name: "Coupon character" })).toBeTruthy();
