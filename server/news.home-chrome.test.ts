@@ -43,12 +43,13 @@ describe("News Home-style chrome", () => {
     expect(appSource).toContain('<Redirect to="/#game-info" />');
   });
 
-  it("renders the compact NEWS list marker and the reference-style News detail banner", () => {
-    expect(newsSource).toContain('className="news-page-marker"');
-    expect(newsDetailSource).toContain('className="news-detail-page-banner"');
+  it("renders the reference-style News banner on both the referenced list URL and News detail", () => {
+    expect(newsSource).toContain('className="news-detail-page-banner news-detail-page-banner--list"');
+    expect(newsSource).toContain('Latest news, interviews, and community highlights');
+    expect(newsDetailSource).toContain('className="news-detail-page-banner news-detail-page-banner--detail"');
     expect(newsDetailSource).toContain('Latest news, interviews, and community highlights');
-    expect(layoutStyles).toContain('.news-page-marker {');
-    expect(layoutStyles).toContain('.news-detail-page-banner { border-bottom: 1px solid rgba(180, 202, 222, .26);');
+    expect(layoutStyles).toContain('.news-detail-page-banner { display: flex; min-height: 152px;');
+    expect(layoutStyles).toContain('.news-detail-page-banner--list,.news-detail-page-banner--detail { min-height: 152px; }');
     expect(layoutStyles).toContain('font-family: Georgia, "Times New Roman", serif');
   });
 });

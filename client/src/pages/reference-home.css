@@ -210,12 +210,16 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 /* Keep desktop Home section content aligned to a shared top starting line. */
 @media (min-width: 769px) {
-  .react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; }
-  .react-home-game-info { padding-block: clamp(54px, 7vh, 105px) clamp(42px, 5vh, 75px); }
+  .react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; padding-top: 42px; }
+  .react-home-discord { padding-bottom: 42px; }
+  .react-home-news { padding-bottom: 48px; }
+  .react-home-game-info { padding-bottom: 48px; }
+  .react-home-game-info__grid { align-items: flex-start; }
+  .react-home-media { padding-bottom: 42px; }
 }
 
 .react-home-news-more { width: 48px; height: 48px; justify-content: center; border-radius: 50%; padding: 0; font-size: 32px; font-weight: 400; line-height: 1; letter-spacing: 0; }
 
 .react-home-footer { padding: 38px 0 30px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c; }
-.react-home-footer__brands { color: #1b344c; }.react-home-footer__brands i { background: #9ca8b4; }.react-home-footer nav a { color: #17120c; }.react-home-footer p { color: #24384b; }.react-home-footer__social a { border-color: #9ca8b4; color: #1b344c; }.react-home-footer__social a:hover { border-color: #5865f2; background: #5865f2; color: #fff; }
+.react-home-footer__brands { color: #1b344c; }.react-home-footer__brands i { background: #9ca8b4; }.react-home-footer nav a { color: #17120c; }.react-home-footer p { color: #24384b; }.react-home-footer p span { display: block; }.react-home-footer__social a { border-color: #9ca8b4; color: #1b344c; }.react-home-footer__social a:hover { border-color: #5865f2; background: #5865f2; color: #fff; }
 .react-home-footer__social a { overflow: hidden; }.react-home-footer__social a img { display: block; width: 72%; height: 72%; object-fit: contain; }.react-home-footer__social a:nth-child(2) img { width: 100%; height: 100%; }.react-home-footer__social a svg { width: 58%; height: 58%; color: #e62429; }.react-home-footer__social-x { background: #fff; }

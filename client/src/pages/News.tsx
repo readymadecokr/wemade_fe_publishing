@@ -200,8 +200,8 @@ function NewsPageContent() {
 
   return (
     <>
-      <section className="news-page-marker" aria-label="News page">
-        <div className="container"><p>NEWS</p></div>
+      <section className="news-detail-page-banner news-detail-page-banner--list" aria-labelledby="news-page-title">
+        <div className="container"><h1 id="news-page-title">News</h1><p>Latest news, interviews, and community highlights</p></div>
       </section>
       {/* Content - 2 columns grid on mobile, 3 columns on desktop */}
       <main className="container fantasy-content-guide px-2 py-6 md:px-4 md:py-12">

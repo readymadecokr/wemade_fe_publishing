@@ -29,7 +29,8 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-final-panel { height: calc(100svh - var(--react-home-header-height));');
     expect(styleSource).toContain('.react-home-final-panel .react-home-closing { min-height: 0; flex: 1 1 auto;');
     expect(styleSource).toContain('.react-home-footer { padding: 38px 0 30px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c; }');
-    expect(homeSource).toContain('Copyright © Gravity Co., LTD &amp; Lee MyoungJin(studio DTDS). All Rights Reserved.<br />All trademarks used on this website are the property of their respective owners.');
+    expect(homeSource).toContain('<span>Copyright © Gravity Co., LTD &amp; Lee MyoungJin(studio DTDS). All Rights Reserved.</span><span>All trademarks used on this website are the property of their respective owners.</span>');
+    expect(styleSource).toContain('.react-home-footer p span { display: block; }');
   });
 
   it("keeps the two-line Game Info heading, unified fact typography, simple artwork border, and blue Gravity footer asset", () => {
@@ -59,8 +60,8 @@ describe("direct React Home CTA, headings, and footer", () => {
   });
 
   it("starts desktop content sections at the shared top line instead of vertically centering them", () => {
-    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; }');
-    expect(styleSource).toContain('.react-home-game-info { padding-block: clamp(54px, 7vh, 105px) clamp(42px, 5vh, 75px); }');
+    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; padding-top: 42px; }');
+    expect(styleSource).toContain('.react-home-game-info__grid { align-items: flex-start; }');
   });
 
   it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {
