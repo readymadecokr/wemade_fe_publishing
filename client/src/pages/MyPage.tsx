@@ -287,7 +287,7 @@ export default function MyPage() {
 
   if (!isLoggedIn) {
     return (
-      <Layout>
+      <Layout showClosingCta={false}>
         <div className="fantasy-page-shell flex min-h-screen items-center justify-center px-4">
           <div className="fantasy-card w-full max-w-md rounded-2xl p-9 text-center">
             <LogIn size={48} className="mx-auto mb-4 text-[#5871a0]" />
@@ -349,7 +349,7 @@ export default function MyPage() {
   };
 
   return (
-    <Layout>
+    <Layout showClosingCta={false}>
       <div className="fantasy-page-shell fantasy-account min-h-screen py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="fantasy-section-title mb-8 flex items-center gap-3 text-3xl"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb]">✦</span>My Page</h1>

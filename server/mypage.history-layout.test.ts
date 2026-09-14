@@ -23,4 +23,8 @@ describe("My Page history layout", () => {
     expect(pointShop).not.toContain('"charge-history"');
     expect(pointShop).not.toContain('"use-history"');
   });
+
+  it("removes the closing Two Clicks to Midgard CTA from both My Page states", () => {
+    expect(myPage.match(/<Layout showClosingCta=\{false\}>/g)).toHaveLength(2);
+  });
 });

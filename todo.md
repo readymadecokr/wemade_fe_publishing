@@ -1341,3 +1341,8 @@
 - [x] 공통 서비스 레이아웃과 로그인·가입·My Page·정책·상세 페이지의 배경·디자인 잔존 범위 점검
 - [x] 이전 판타지 지도·장식 배경 레이어를 제거하고 서비스 기본 표면을 `#fbf8f1`로 통일
 - [x] 서비스 주요 페이지의 데스크톱·모바일 렌더링에서 이전 배경·디자인 잔존 여부와 회귀 테스트 검증
+
+## Verify & Accept 체크박스·My Page 마무리 CTA 정리
+- [x] Verify & Accept 체크박스의 현재 표시·대비·크기 규칙 점검
+- [x] 체크박스 가시성 복구와 My Page 하단 TWO CLICKS TO MIDGARD 제거
+- [x] Verify & Accept·My Page 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
