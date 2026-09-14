@@ -1346,3 +1346,8 @@
 - [x] Verify & Accept 체크박스의 현재 표시·대비·크기 규칙 점검
 - [x] 체크박스 가시성 복구와 My Page 하단 TWO CLICKS TO MIDGARD 제거
 - [x] Verify & Accept·My Page 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## Game Info 비겹침 2열·낮은 화면 높이 제목 안전 영역 재보정
+- [x] 넓은·좁은 폭에서 Game Info 이미지·표 겹침과 낮은 화면 높이 제목 가림 재현·좌표 점검
+- [x] 이미지가 표와 겹치지 않는 반응형 2열 그리드와 낮은 높이 안전 상단 정렬 구현
+- [x] 넓은·좁은 폭 및 낮은 높이에서 Game Info·Discord·News·Media·CTA 제목 렌더링 검증
