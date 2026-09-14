@@ -37,6 +37,9 @@ describe("News Home-style chrome", () => {
     expect(layoutStyles).toContain(".news-home-footer__bar { padding: 34px 0 28px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c;");
     expect(layoutStyles).toContain(".news-home-footer__inner { position: relative; justify-content: center; }");
     expect(layoutStyles).toContain(".news-home-footer__bar p { text-align: center; }");
+    expect(layoutStyles).toContain(".news-home-footer__inner > div:first-child { display: grid; grid-template-columns: auto auto; align-items: center; justify-content: center; column-gap: 10px; }");
+    expect(layoutStyles).toContain(".news-home-footer__inner > div:first-child > img { width: clamp(112px,11vw,142px); }");
+    expect(layoutStyles).toContain(".news-home-footer__inner > div:first-child > p span { font-size: clamp(9px,.85vw,11px); line-height: 1.35; }");
   });
 
   it("marks the current shared-header route as active", () => {

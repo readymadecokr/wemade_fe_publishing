@@ -31,6 +31,11 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-footer { padding: 38px 0 30px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c; }');
     expect(homeSource).toContain('<span>Copyright © Gravity Co., LTD &amp; Lee MyoungJin(studio DTDS). All Rights Reserved.</span><span>All trademarks used on this website are the property of their respective owners.</span>');
     expect(styleSource).toContain('.react-home-footer p span { display: block; }');
+    expect(styleSource).toContain('.react-home-footer__inner > div:first-child { display: grid; grid-template-columns: auto auto; align-items: center; justify-content: center; column-gap: 10px; }');
+    expect(styleSource).toContain('.react-home-footer__inner > div:first-child > p span:first-child { grid-column: 2; grid-row: 3; margin: 0; white-space: nowrap; }');
+    expect(styleSource).toContain('.react-home-footer__inner > div:first-child > p span:last-child { grid-column: 1 / -1; grid-row: 4; margin-top: 8px; }');
+    expect(styleSource).toContain('.react-home-footer__inner > div:first-child > img { width: clamp(112px,11vw,142px); }');
+    expect(styleSource).toContain('.react-home-footer__inner > div:first-child > p span { font-size: clamp(9px,.85vw,11px); line-height: 1.35; }');
   });
 
   it("keeps the two-line Game Info heading, unified fact typography, simple artwork border, and blue Gravity footer asset", () => {

@@ -24,7 +24,19 @@
 .news-home-footer__bar p { text-align: center; }
 .news-home-footer__social { position: absolute; top: 0; right: 0; }
 
+/* Mirror the reference copyright treatment: logo + first line, then centered trademark line. */
+.news-home-footer__inner > div:first-child { display: grid; grid-template-columns: auto auto; align-items: center; justify-content: center; column-gap: 10px; }
+.news-home-footer__brands, .news-home-footer__bar nav { grid-column: 1 / -1; }
+.news-home-footer__inner > div:first-child > img { grid-column: 1; grid-row: 3; align-self: center; }
+.news-home-footer__inner > div:first-child > p { display: contents; }
+.news-home-footer__inner > div:first-child > p span:first-child { grid-column: 2; grid-row: 3; margin: 0; white-space: nowrap; }
+.news-home-footer__inner > div:first-child > p span:last-child { grid-column: 1 / -1; grid-row: 4; margin-top: 8px; }
+.news-home-footer__inner > div:first-child > img { width: clamp(112px,11vw,142px); }
+.news-home-footer__inner > div:first-child > p span { font-size: clamp(9px,.85vw,11px); line-height: 1.35; }
+.news-home-footer__inner > div:first-child > p span:last-child { margin-top: 10px; }
+
 @media (max-width: 760px) {
   .news-home-footer__inner { align-items: center; }
   .news-home-footer__social { position: static; }
+  .news-home-footer__inner > div:first-child > p span:first-child { white-space: normal; }
 }

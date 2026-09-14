@@ -110,9 +110,21 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 .react-home-footer p { text-align: center; }
 .react-home-footer__social { position: absolute; top: 0; right: 0; }
 
+/* Mirror the reference copyright treatment: logo + first line, then centered trademark line. */
+.react-home-footer__inner > div:first-child { display: grid; grid-template-columns: auto auto; align-items: center; justify-content: center; column-gap: 10px; }
+.react-home-footer__brands, .react-home-footer nav { grid-column: 1 / -1; }
+.react-home-footer__inner > div:first-child > img { grid-column: 1; grid-row: 3; align-self: center; }
+.react-home-footer__inner > div:first-child > p { display: contents; }
+.react-home-footer__inner > div:first-child > p span:first-child { grid-column: 2; grid-row: 3; margin: 0; white-space: nowrap; }
+.react-home-footer__inner > div:first-child > p span:last-child { grid-column: 1 / -1; grid-row: 4; margin-top: 8px; }
+.react-home-footer__inner > div:first-child > img { width: clamp(112px,11vw,142px); }
+.react-home-footer__inner > div:first-child > p span { font-size: clamp(9px,.85vw,11px); line-height: 1.35; }
+.react-home-footer__inner > div:first-child > p span:last-child { margin-top: 10px; }
+
 @media (max-width: 760px) {
   .react-home-footer__inner { align-items: center; }
   .react-home-footer__social { position: static; }
+  .react-home-footer__inner > div:first-child > p span:first-child { white-space: normal; }
 }
 
 @media (max-width: 760px) {
