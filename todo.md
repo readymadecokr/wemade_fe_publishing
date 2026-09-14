@@ -1384,3 +1384,13 @@
 - [x] 쿠폰 등록 화면의 Coupon 제목·Coupon Use History 영역 적용 위치 점검
 - [x] Coupon 제목·이력 영역 제거 및 COUPON REGISTRATION 라벨 적용
 - [x] My Page 렌더링 및 TypeScript·회귀 테스트 검증
+
+## My Page Coupon Use History 복구 보정
+- [x] Coupon Use History 목록·페이지네이션 복구 범위 점검
+- [x] 목록 영역 복구 및 Coupon Use History 제목 텍스트만 제거
+- [x] 쿠폰 등록·이력 목록 DOM 렌더링과 TypeScript·회귀 테스트 검증
+
+## My Page 쿠폰 등록 버튼 문구 통일
+- [x] Coupon 등록 버튼의 현재 문구와 회귀 테스트 위치 점검
+- [x] Coupon 등록 실행 버튼을 COUPON REGISTRATION으로 변경
+- [x] 버튼 렌더링 및 TypeScript·회귀 테스트 검증

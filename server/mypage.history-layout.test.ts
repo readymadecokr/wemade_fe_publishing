@@ -28,10 +28,11 @@ describe("My Page history layout", () => {
     expect(myPage.match(/<Layout showClosingCta=\{false\}>/g)).toHaveLength(2);
   });
 
-  it("keeps Coupon as a registration-only screen without a separate title or history area", () => {
+  it("keeps Coupon registration and restores the history list without a visible history title", () => {
     expect(myPage).toContain("COUPON REGISTRATION");
     expect(myPage).not.toContain("MY PAGE · COUPON USE");
     expect(myPage).not.toContain("Coupon Use History");
-    expect(myPage).not.toContain("COUPON HISTORY");
+    expect(myPage).toContain("coupon.myHistory.useQuery({ page: historyPage, pageSize: 20 }");
+    expect(myPage).toContain('aria-label="Coupon history"');
   });
 });
