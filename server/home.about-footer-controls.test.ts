@@ -56,7 +56,7 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".react-home-game-info__facts strong { display: block; color: #1a344d; font-family: inherit;");
     expect(styleSource).toContain("Game Info artwork uses one rounded outline");
     expect(styleSource).toContain(".react-home-game-info__art { position: relative; z-index: 1; overflow: hidden; box-sizing: border-box; padding: 0; border: 1px solid rgba(26,52,77,.52); border-radius: 14px;");
-    expect(styleSource).toContain("transform: scale(1.3); transform-origin: right center;");
+    expect(styleSource).toContain("transform: translateY(clamp(62px, 8vw, 112px)) scale(1.3); transform-origin: right center;");
     expect(styleSource).toContain(".react-home-game-info__art-paper img { display: block; width: 100%; height: auto; max-height: none; border: 0; object-fit: initial; filter: saturate(1.08) contrast(1.03); transform: none;");
   });
 
@@ -66,6 +66,12 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-game-info { display: flex; align-items: center;');
     expect(styleSource).toContain('.react-home-media { display: flex; align-items: center;');
     expect(styleSource).not.toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; padding-top: 42px; }');
+  });
+
+  it("keeps every short desktop section title within a safe top area below the fixed header", () => {
+    expect(styleSource).toContain('@media (min-width: 761px) and (max-height: 760px) {');
+    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; padding-top: clamp(34px, 7vh, 54px); }');
+    expect(styleSource).toContain('.react-home-final-panel .react-home-closing { justify-content: flex-start; padding-top: clamp(34px, 7vh, 54px); }');
   });
 
   it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {
