@@ -10,6 +10,7 @@ describe("Verify & Accept checkbox visibility", () => {
     expect(loginSource).toContain('id="guestSelectAll"');
     expect(loginSource).toContain('id="isCalifornia"');
     expect(loginSource).toContain('id="isCaliforniaGuest"');
+    expect(loginSource).toContain('<Layout showClosingCta={step !== "register_social" && step !== "register_guest"}>');
   });
 
   it("uses a visible unchecked border and a distinct selected state on the light service card", () => {

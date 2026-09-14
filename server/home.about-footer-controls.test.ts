@@ -42,6 +42,7 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).toContain("No Download");
     expect(homeSource).toContain('className="react-home-game-info__art"');
     expect(homeSource).toContain('className="react-home-game-info__art-paper"');
+    expect(homeSource).toContain('alt="Ragnarok Universe gameplay" loading="eager"');
     expect(homeSource).not.toContain('className="react-home-game-info__art-frame"');
     expect(homeSource).not.toContain('/manus-storage/game-info-adventure-frame_fbed9714.png');
     expect(homeSource).not.toContain('react-home-game-info__art-tape');
@@ -55,9 +56,11 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".react-home-game-info__facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); margin: 0 0 26px; border-top: 1px solid rgba(30,55,77,.22); border-left: 1px solid rgba(30,55,77,.22); font-family: inherit;");
     expect(styleSource).toContain(".react-home-game-info__facts strong { display: block; color: #1a344d; font-family: inherit;");
     expect(styleSource).toContain("Game Info artwork uses one rounded outline");
-    expect(styleSource).toContain(".react-home-game-info__art { position: relative; z-index: 1; width: min(100%, clamp(360px,37vw,560px)); justify-self: end; overflow: hidden; box-sizing: border-box; padding: 0; border: 1px solid rgba(26,52,77,.52); border-radius: 14px;");
-    expect(styleSource).toContain(".react-home-game-info__art { position: relative; z-index: 1; width: min(100%, clamp(360px,37vw,560px)); justify-self: end;");
+    expect(styleSource).toContain(".react-home-game-info__grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: center; gap: clamp(26px,3.2vw,48px);");
+    expect(styleSource).toContain(".react-home-game-info__art { position: relative; z-index: 1; width: 100%; justify-self: stretch; overflow: hidden; box-sizing: border-box; padding: 0; border: 1px solid rgba(26,52,77,.52); border-radius: 14px;");
+    expect(styleSource).toContain(".react-home-game-info__art { position: relative; z-index: 1; width: 100%; justify-self: stretch;");
     expect(styleSource).toContain("transform: none;");
+    expect(styleSource).toContain(".react-home-game-info__art { width: min(100%,220px); justify-self: center;");
     expect(styleSource).toContain(".react-home-game-info__art-paper img { display: block; width: 100%; height: auto; max-height: none; border: 0; object-fit: initial; filter: saturate(1.08) contrast(1.03); transform: none;");
   });
 

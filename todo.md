@@ -1351,3 +1351,14 @@
 - [x] 넓은·좁은 폭에서 Game Info 이미지·표 겹침과 낮은 화면 높이 제목 가림 재현·좌표 점검
 - [x] 이미지가 표와 겹치지 않는 반응형 2열 그리드와 낮은 높이 안전 상단 정렬 구현
 - [x] 넓은·좁은 폭 및 낮은 높이에서 Game Info·Discord·News·Media·CTA 제목 렌더링 검증
+
+## Verify & Accept CTA 제거·Game Info 이미지 표시 영역 확대
+- [x] Verify & Accept 하단 마무리 CTA와 Game Info 이미지 내부 여백·크기 규칙 점검
+- [x] Verify & Accept 하단 TWO CLICKS TO MIDGARD 제거
+- [x] Game Info 이미지를 비겹침 2열 우측 표시 영역 전체로 확대
+- [x] Verify & Accept·Game Info 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## 모바일 Game Info 이미지 가시성 보정
+- [x] 고정 높이 모바일 Game Info 패널에서 이미지가 잘리는 원인 점검
+- [x] 이미지·표·제목이 모두 보이는 모바일 반응형 배치 적용
+- [x] 모바일 Game Info 이미지 가시성·비겹침 렌더링과 회귀 테스트 검증

@@ -18,7 +18,7 @@ describe("direct React Home news and game information", () => {
     expect(styleSource).toContain(".react-home-news-grid { display: grid; grid-template-columns: repeat(3,1fr);");
     expect(styleSource).toContain(".react-home-news-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }");
     expect(styleSource).toContain(".react-home-news-card--mobile-extra { display: block; }");
-    expect(styleSource).toContain(".react-home-game-info__grid { display: grid; grid-template-columns: minmax(0,1.14fr) minmax(0,.86fr);");
+    expect(styleSource).toContain(".react-home-game-info__grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: center; gap: clamp(26px,3.2vw,48px);");
     expect(homeSource).not.toContain("REFERENCE_HOME_URL");
   });
 });
