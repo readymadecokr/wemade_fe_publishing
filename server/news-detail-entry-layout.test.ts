@@ -16,16 +16,25 @@ describe("News detail entry and service-page title banners", () => {
     expect(layoutSource).toContain('location.startsWith("/news") ? "news"');
   });
 
-  it("uses a concise NEWS identifier and removes retired page introduction banners", () => {
+  it("uses existing-size NEWS and SHOP identifiers on detail-style service pages", () => {
     expect(newsListSource).not.toContain("Latest news, interviews, and community highlights");
     expect(newsDetailSource).not.toContain("Latest news, interviews, and community highlights");
     expect(pointShopSource).not.toContain('<p className="text-[#e9dfc8]">Purchase rCoin</p>');
     expect(newsListSource).toContain('className="news-page-marker"');
     expect(newsDetailSource).toContain('className="news-page-marker"');
+    expect(pointShopSource).toContain('className="news-page-marker shop-page-marker"');
     expect(appSource).toContain('<Redirect to="/#game-info" />');
     expect(newsListSource).toContain('fantasy-content-guide px-2 py-6');
     expect(newsDetailSource).toContain('fantasy-page-shell pt-6 pb-8 md:pt-8');
     expect(pointShopSource).toContain('fantasy-content-guide pt-6 pb-8 md:pt-8');
+  });
+
+  it("removes the atlas image only from News and Shop detail surfaces", () => {
+    expect(layoutSource).toContain('location.startsWith("/news/") || location === "/point-shop"');
+    expect(layoutSource).toContain('fantasy-site-atlas--detail-plain');
+    expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain {');
+    expect(globalStyles).toContain('background-image: none;');
+    expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain .fantasy-page-shell::before');
   });
 
   it("removes the shared long left-side guide line from News and Shop content", () => {

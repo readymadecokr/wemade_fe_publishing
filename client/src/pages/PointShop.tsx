@@ -148,6 +148,6 @@ export default function PointShop() {
   const { data: balance } = trpc.shop.myBalance.useQuery(undefined, { enabled: !!user });
   const [paymentProvider, setPaymentProvider] = useState<ShopEntryProvider>("xsolla");
   return <Layout variant="homeChrome">
-    <div className="fantasy-page-shell"><div className="container fantasy-content-guide pt-6 pb-8 md:pt-8"><main className="min-w-0 w-full"><ChargeTab rCoin={balance?.ruCash ?? 0} bonusCoin={balance?.bonusCash ?? 0} paymentProvider={paymentProvider} onPaymentProviderChange={setPaymentProvider} /></main></div></div>
+    <><section className="news-page-marker shop-page-marker" aria-label="Shop page"><div className="container"><p>SHOP</p></div></section><div className="fantasy-page-shell"><div className="container fantasy-content-guide pt-6 pb-8 md:pt-8"><main className="min-w-0 w-full"><ChargeTab rCoin={balance?.ruCash ?? 0} bonusCoin={balance?.bonusCash ?? 0} paymentProvider={paymentProvider} onPaymentProviderChange={setPaymentProvider} /></main></div></div></>
   </Layout>;
 }

@@ -401,6 +401,16 @@
     mix-blend-mode: multiply;
   }
 
+  .fantasy-site-atlas--detail-plain {
+    background-color: #f8f4eb;
+    background-image: none;
+  }
+
+  .fantasy-site-atlas--detail-plain::before,
+  .fantasy-site-atlas--detail-plain .fantasy-page-shell::before {
+    display: none;
+  }
+
   .fantasy-site-atlas > header,
   .fantasy-site-atlas > main,
   .fantasy-site-atlas > footer {

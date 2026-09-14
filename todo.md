@@ -1275,3 +1275,9 @@
 - [x] 마지막 CTA 진입 시 위쪽에 남는 Media 배경 레이어와 실제 시작 위치 점검
 - [x] CTA 패널 배경을 헤더 직하단까지 확장해 Media 잔상 제거
 - [x] 609×906 모바일 CTA 시작 화면과 TypeScript·회귀 테스트 재검증
+
+## News·Shop 상세 상단 탭·배경 및 COMMUNITY 메뉴 정리
+- [x] News 상세 상단 탭의 기존 디자인 색상·크기와 Shop 상세 구조 점검
+- [x] News 상세 상단 탭 복원·Shop 상세 동일 탭 추가·상세 배경 이미지 제거
+- [x] 공통 메인 메뉴 DISCORD를 COMMUNITY로 변경
+- [x] News·Shop 상세 및 공통 헤더의 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증

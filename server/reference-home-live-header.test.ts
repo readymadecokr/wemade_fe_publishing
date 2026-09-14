@@ -59,14 +59,14 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain('grid-template-areas: "home" "discord" "news" "game-info" "media" "final";');
   });
 
-  it("places DISCORD after HOME and keeps its external-link indicator inside the responsive menu box", () => {
+  it("places COMMUNITY after HOME and keeps its external-link indicator inside the responsive menu box", () => {
     const homeIndex = homeHeaderSource.indexOf('href="#home"');
     const communityIndex = homeHeaderSource.indexOf('href="#discord"');
     const newsIndex = homeHeaderSource.indexOf('(["news", "game-info", "media"] as const)');
     expect(homeIndex).toBeGreaterThan(-1);
     expect(communityIndex).toBeGreaterThan(homeIndex);
     expect(newsIndex).toBeGreaterThan(communityIndex);
-    expect(homeHeaderSource).toContain('portal-nav-link__label">DISCORD</span>');
+    expect(homeHeaderSource).toContain('portal-nav-link__label">COMMUNITY</span>');
     expect(homeHeaderSource).toContain('className="portal-nav-link__icon"');
     expect(headerStyles).toContain(".portal-nav-link--active { border-color:");
     expect(headerStyles).toContain(".portal-nav-link { display: inline-flex; width: 100%;");
