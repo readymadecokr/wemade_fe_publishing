@@ -78,13 +78,14 @@ describe("My Page history screens", () => {
     expect(screen.getAllByText("Kafra Card")).toHaveLength(10);
   });
 
-  it("opens the Coupon screen with server, character, confirmation, and history controls", async () => {
+  it("opens the simplified coupon registration screen with server, character, and confirmation controls", async () => {
     const user = userEvent.setup();
     render(<MyPage />);
     await user.click(screen.getByRole("button", { name: "Coupon" }));
     expect(screen.getByTestId("coupon-entry")).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "Coupon" })).toBeTruthy();
-    expect(screen.getByText("Coupon Use History")).toBeTruthy();
+    expect(screen.getByText("COUPON REGISTRATION")).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: "Coupon" })).toBeNull();
+    expect(screen.queryByText("Coupon Use History")).toBeNull();
     expect(screen.getByRole("combobox", { name: "Coupon server" })).toBeTruthy();
     expect(screen.getByRole("combobox", { name: "Coupon character" })).toBeTruthy();
     expect(screen.getByRole("textbox", { name: "Coupon code" })).toBeTruthy();

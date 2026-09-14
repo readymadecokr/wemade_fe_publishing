@@ -112,23 +112,19 @@ function MyPageCouponEntry() {
   const [couponCode, setCouponCode] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [notice, setNotice] = useState<{ type: "success" | "error"; message: string } | null>(null);
-  const [historyPage, setHistoryPage] = useState(1);
   const couponBalance = trpc.shop.myBalance.useQuery();
-  const couponHistory = trpc.coupon.myHistory.useQuery({ page: historyPage, pageSize: 20 });
   const redeemCoupon = trpc.coupon.redeem.useMutation({
     onSuccess: () => {
       setNotice({ type: "success", message: "Your coupon has been registered. Please check your mailbox." });
       setCouponCode("");
       setConfirmOpen(false);
       couponBalance.refetch();
-      couponHistory.refetch();
     },
     onError: (error) => {
       setNotice({ type: "error", message: error.message || "This coupon code is invalid." });
       setConfirmOpen(false);
     },
   });
-  const totalPages = Math.max(1, Math.ceil((couponHistory.data?.total ?? 0) / 20));
   const requestConfirmation = () => {
     setNotice(null);
     if (!serverCode || !characterName || !couponCode) {
@@ -140,7 +136,7 @@ function MyPageCouponEntry() {
 
   return <div data-testid="coupon-entry" className="space-y-5">
     <section className="rounded-2xl border border-[#decfc0] bg-[#fffdf9]/95 p-6 shadow-[0_8px_24px_rgba(93,73,43,.1)]">
-      <div className="mb-6 border-b border-[#e7d9c8] pb-4"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">MY PAGE · COUPON USE</p><h2 className="mt-1 font-serif text-2xl font-bold text-[#302419]">Coupon</h2><p className="mt-2 text-sm text-[#776952]">Select the server and character that will receive your coupon reward.</p></div>
+      <div className="mb-6 border-b border-[#e7d9c8] pb-4"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">COUPON REGISTRATION</p><p className="mt-2 text-sm text-[#776952]">Select the server and character that will receive your coupon reward.</p></div>
       <div className="mb-5 grid gap-3 sm:grid-cols-2"><div className="rounded-lg border border-[#eadfce] bg-white px-4 py-3"><p className="text-xs font-bold uppercase tracking-wide text-[#786850]">rCoin</p><p className="mt-1 text-xl font-black text-[#a51f24]">{Number(couponBalance.data?.ruCash ?? 0).toLocaleString()}</p></div><div className="rounded-lg border border-[#eadfce] bg-white px-4 py-3"><p className="text-xs font-bold uppercase tracking-wide text-[#786850]">Bonus rCoin</p><p className="mt-1 text-xl font-black text-emerald-700">{Number(couponBalance.data?.bonusCash ?? 0).toLocaleString()}</p></div></div>
       {notice && <div role="status" className={`mb-5 flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-semibold ${notice.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-red-200 bg-red-50 text-red-700"}`}>{notice.type === "success" ? <CheckCircle2 className="h-5 w-5 shrink-0" /> : <AlertCircle className="h-5 w-5 shrink-0" />}{notice.message}</div>}
       <div className="grid gap-4 md:grid-cols-2">
@@ -150,8 +146,6 @@ function MyPageCouponEntry() {
       <label className="mt-4 block space-y-2 text-sm font-semibold text-[#4e402f]"><span>Coupon Code</span><Input aria-label="Coupon code" value={couponCode} onChange={event => setCouponCode(event.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ""))} placeholder="NNNN-NNNN-NNNN" maxLength={64} className="border-[#cbb797] bg-white font-mono tracking-[.08em] focus-visible:ring-[#a51f24]" /></label>
       <div className="mt-6 flex justify-end"><Button onClick={requestConfirmation} className="min-w-36 bg-[#a51f24] font-bold text-white hover:bg-[#86191d]"><Ticket className="mr-2 h-4 w-4" />Redeem Coupon</Button></div>
     </section>
-
-    <section className="overflow-hidden rounded-2xl border border-[#decfc0] bg-[#fffdf9]/95 shadow-[0_8px_24px_rgba(93,73,43,.1)]"><div className="border-b border-[#e7d9c8] px-6 py-4"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">COUPON HISTORY</p><h2 className="mt-1 font-serif text-xl font-bold text-[#302419]">Coupon Use History</h2></div>{couponHistory.isLoading ? <p className="px-6 py-10 text-center text-sm text-[#776952]">Loading coupon history...</p> : !couponHistory.data?.items.length ? <p className="px-6 py-10 text-center text-sm text-[#776952]">No coupon history available.</p> : <><div className="overflow-x-auto"><table className="w-full min-w-[680px] text-sm"><thead className="bg-[#a51f24] text-white"><tr><th className="px-4 py-3 text-left">Event Name</th><th className="px-4 py-3 text-left">Coupon Code</th><th className="px-4 py-3 text-left">Character Name</th><th className="px-4 py-3 text-left">Registered Date</th><th className="px-4 py-3 text-center">Status</th></tr></thead><tbody>{couponHistory.data.items.map(item => <tr key={item.id} className="border-t border-[#eadfce]"><td className="px-4 py-3 font-medium text-[#302419]">{item.eventName}</td><td className="px-4 py-3 font-mono text-xs text-[#4e402f]">{item.couponCode}</td><td className="px-4 py-3 text-[#4e402f]">{item.characterName}</td><td className="px-4 py-3 text-[#776952]">{new Date(item.registeredAt).toLocaleDateString("en-CA")}</td><td className="px-4 py-3 text-center font-semibold text-emerald-700">{item.status}</td></tr>)}</tbody></table></div>{totalPages > 1 && <div className="flex justify-center gap-1 border-t border-[#e7d9c8] p-3">{Array.from({ length: totalPages }, (_, index) => index + 1).map(page => <Button key={page} size="sm" variant={historyPage === page ? "default" : "outline"} onClick={() => setHistoryPage(page)}>{page}</Button>)}</div>}</>}</section>
 
     {confirmOpen && <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4"><div className="w-full max-w-md rounded-2xl border border-[#decfc0] bg-[#fffdf9] p-6 shadow-2xl"><p className="text-xs font-bold tracking-[.14em] text-[#a51f24]">CONFIRM COUPON USE</p><h3 className="mt-2 font-serif text-xl font-bold text-[#302419]">Redeem this coupon?</h3><p className="mt-3 text-sm leading-6 text-[#675843]">Coupon rewards will be registered to <strong>{characterName}</strong> on <strong>{`Server ${serverCode}`}</strong>.</p><div className="mt-6 flex justify-end gap-2"><Button variant="outline" onClick={() => setConfirmOpen(false)}>Cancel</Button><Button disabled={redeemCoupon.isPending} onClick={() => redeemCoupon.mutate({ code: couponCode, serverCode, characterName })} className="bg-[#a51f24] text-white hover:bg-[#86191d]">{redeemCoupon.isPending ? "Registering..." : "Confirm"}</Button></div></div></div>}
   </div>;

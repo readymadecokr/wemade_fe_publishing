@@ -1379,3 +1379,8 @@
 - [x] 스크린샷 팝업 하단 캡션 제거
 - [x] 푸터 브랜드·이용약관·저작권 가로 중앙 정렬
 - [x] 데스크톱·모바일 렌더링 및 TypeScript·회귀 테스트 검증
+
+## My Page 쿠폰 등록 단순화
+- [x] 쿠폰 등록 화면의 Coupon 제목·Coupon Use History 영역 적용 위치 점검
+- [x] Coupon 제목·이력 영역 제거 및 COUPON REGISTRATION 라벨 적용
+- [x] My Page 렌더링 및 TypeScript·회귀 테스트 검증
