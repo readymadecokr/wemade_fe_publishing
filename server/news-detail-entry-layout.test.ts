@@ -25,7 +25,8 @@ describe("News detail entry and service-page title banners", () => {
     expect(pointShopSource).toContain('className="news-detail-page-banner shop-detail-page-banner"');
     expect(appSource).toContain('<Redirect to="/#game-info" />');
     expect(newsListSource).toContain('fantasy-content-guide px-2 py-6');
-    expect(newsDetailSource).toContain('fantasy-page-shell pt-6 pb-8 md:pt-8');
+    expect(newsDetailSource).toContain('fantasy-page-shell news-detail-surface pt-6 pb-8 md:pt-8');
+    expect(newsDetailSource).toContain('className="fantasy-page-shell news-detail-surface"');
     expect(pointShopSource).toContain('fantasy-content-guide pt-6 pb-8 md:pt-8');
   });
 
@@ -39,6 +40,7 @@ describe("News detail entry and service-page title banners", () => {
     expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain .fantasy-page-shell::before');
     expect(globalStyles).toContain('.fantasy-site-atlas--shop-surface,');
     expect(globalStyles).toContain('background: #fbf8f1 !important;');
+    expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain .news-detail-surface {');
   });
 
   it("removes the shared long left-side guide line from News and Shop content", () => {

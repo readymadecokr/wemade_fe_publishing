@@ -201,7 +201,7 @@ function NewsDetailContent() {
           <div className="container"><h1 id="news-detail-page-title">News</h1><p>Latest news, interviews, and community highlights</p></div>
         </section>
         {/* Article Title Block */}
-        <div className="fantasy-page-shell pt-6 pb-8 md:pt-8">
+        <div className="fantasy-page-shell news-detail-surface pt-6 pb-8 md:pt-8">
           <div className="container fantasy-content-guide max-w-3xl mx-auto">
             <Link href="/news" className="mb-4 flex w-fit items-center gap-1.5 text-sm text-[#4668a3] hover:text-[#2f4e82]">
               <ArrowLeft size={16} />
@@ -218,7 +218,7 @@ function NewsDetailContent() {
         </div>
 
         {/* Article Content */}
-        <main className="fantasy-page-shell">
+        <main className="fantasy-page-shell news-detail-surface">
           <div className="container fantasy-content-guide py-10 max-w-3xl mx-auto">
             {/* Featured Image — only shown when image exists */}
             {news.image && (

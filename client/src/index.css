@@ -417,6 +417,11 @@
     display: none;
   }
 
+  .fantasy-site-atlas--detail-plain .news-detail-surface {
+    background: #fbf8f1 !important;
+    background-image: none !important;
+  }
+
   .fantasy-site-atlas--shop-surface,
   .fantasy-site-atlas--shop-surface > main,
   .fantasy-site-atlas--shop-surface .fantasy-page-shell,

@@ -69,6 +69,10 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).toContain('/manus-storage/facebook-logo-primary_2867583f.webp');
     expect(homeSource).toContain('aria-label="YouTube"><svg');
     expect(homeSource).toContain('/manus-storage/x-logo-black_193d8b29.webp');
+    expect(styleSource).toContain('.react-home-footer__social a { box-sizing: border-box; width: 52px; height: 52px;');
+    expect(styleSource).toContain('.react-home-footer__social a:nth-child(1) img { width: 40px; height: 40px; }');
+    expect(styleSource).toContain('.react-home-footer__social a:nth-child(4) { border-color: rgba(22,22,22,.35); padding: 12px; background: #fff; }');
+    expect(styleSource).toContain('@media (max-width: 760px) { .react-home-footer__social a { width: 40px; height: 40px; }');
   });
 
   it("provides the requested in-page Rune-Midgarts Library coming-soon modal", () => {
