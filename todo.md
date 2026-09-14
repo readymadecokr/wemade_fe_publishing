@@ -1414,3 +1414,8 @@
 - [x] 넓은 화면 헤더 우측 구분선의 CSS 원인과 테스트 위치 점검
 - [x] 헤더 우측 세로 구분선 제거
 - [x] 넓은 화면 렌더링과 TypeScript·회귀 테스트 검증
+
+## Shop 헤더 공통 UI 통일
+- [x] Shop·News 상세·Media 헤더 구현과 기존 UI 잔존 규칙 차이 점검
+- [x] Shop·News 상세 기존 헤더 UI 제거 및 공통 글꼴·버튼·구분선 규칙 통일
+- [x] Shop·News 상세·Media 헤더 렌더링 비교와 TypeScript·회귀 테스트 검증

@@ -92,47 +92,7 @@ export default function Layout({ children, variant = "homeChrome", showClosingCt
       
 
 
-      {variant === "homeChrome" ? (
       <HomeHeader activeSection={location.startsWith("/news") ? "news" : location === "/point-shop" ? "shop" : "home"} />
-      ) : (
-      <header className="fixed inset-x-0 top-0 z-40 w-full border-b border-[#c8d8e7]/30 bg-[#1c3147]/92 text-white shadow-[0_3px_18px_rgba(24,38,57,.28)] backdrop-blur-xl [background-image:linear-gradient(100deg,rgba(32,56,78,.94),rgba(58,84,110,.78),rgba(24,45,66,.92))]">
-        <div className="border-b border-white/10 bg-[#102235]/35">
-          <div className="container flex min-h-10 flex-wrap items-center justify-end gap-2 py-1.5 sm:gap-3">
-            {isLoggedIn ? (
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="flex items-center gap-0 overflow-hidden rounded-lg border border-slate-200 bg-white text-xs font-semibold shadow-sm">
-                  <Link href="/point-shop" className="flex cursor-pointer items-center gap-1 px-3 py-2 text-slate-700 transition-colors hover:bg-red-50 whitespace-nowrap">
-                    <span>rCoin: <span className="font-black text-[#9b2020]">{fmtRuc(ruCash)}</span></span><span className="mx-2 text-slate-300">|</span><span>Bonus rCoin: <span className="font-black text-green-700">{fmtRuc(bonusCash)}</span></span>
-                  </Link>
-                  <Link href="/mypage" className="flex cursor-pointer items-center border-l border-slate-200 bg-slate-100 px-3 py-2 text-slate-700 transition-colors hover:bg-slate-200 whitespace-nowrap">My Page</Link>
-                </div>
-                <Button variant="outline" size="sm" onClick={handleLogout} className="border-[#e6c972] bg-[#fffaf0] text-xs font-bold text-[#263b5b] shadow-sm hover:bg-[#f8edce] hover:text-[#1d3150]">Logout</Button>
-              </div>
-            ) : (
-              <Link href="/login"><Button size="sm" className="border border-[#d5bd7d]/70 bg-[#476da9] px-3 py-2 text-[10px] font-semibold text-white shadow-lg shadow-[#17283b]/30 transition-all hover:-translate-y-0.5 hover:border-[#fff0bd] hover:bg-[#6188c5] hover:shadow-[0_8px_20px_rgba(18,39,70,.42),inset_0_1px_rgba(255,255,255,.45)] focus-visible:ring-2 focus-visible:ring-[#fff0bd] active:scale-95 sm:px-4 sm:text-xs">Sign In / Sign Up</Button></Link>
-            )}
-            <div className="relative">
-              <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="flex cursor-pointer items-center gap-1 text-[10px] font-bold text-slate-100 transition-colors hover:text-[#f3d991] sm:text-xs"><Globe size={14} /> {lang}</button>
-              {langDropdownOpen && <div className="absolute right-0 mt-2 w-40 rounded-lg border border-blue-200 bg-white shadow-lg z-50">
-                {languages.map((l) => <button key={l.code} onClick={() => handleLangSelect(l.code)} className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm transition-colors hover:bg-blue-50 ${lang === l.code ? "bg-blue-50 font-bold text-blue-600" : "text-slate-900"}`}><span>{l.flag}</span><span>{l.label}</span></button>)}
-              </div>}
-            </div>
-          </div>
-        </div>
-        <div className="container flex min-h-[5.75rem] flex-wrap items-center justify-between gap-x-2 gap-y-1 py-1.5 sm:min-h-16 sm:flex-nowrap sm:gap-x-5 sm:gap-y-2 sm:py-2 lg:justify-between">
-          <Link href="/" className="group flex cursor-pointer items-center gap-2"><img src={`${ASSET_BASE_URL}/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png`} alt="Ragnarok" className="h-7 w-auto brightness-[1.28] contrast-90 transition-opacity group-hover:opacity-80 sm:h-9" /></Link>
-          <nav className="portal-nav order-3 grid w-full grid-cols-6 items-center text-[8px] sm:order-none sm:flex sm:w-auto sm:justify-center sm:gap-4 sm:text-[11px] lg:gap-6" aria-label="Primary navigation">
-            <Link href="/" className={`portal-nav-link ${location === "/" ? "portal-nav-link--active" : ""}`}>HOME</Link>
-            <Link href="/news" className={`portal-nav-link ${location === "/news" ? "portal-nav-link--active" : ""}`}>NEWS</Link>
-            <Link href="/game-info" className={`portal-nav-link ${location === "/game-info" ? "portal-nav-link--active" : ""}`}>GAME INFO</Link>
-            <a href="/#media" className="portal-nav-link">MEDIA</a>
-            <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="portal-nav-link portal-nav-link--external"><span className="portal-nav-link__label">DISCORD</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></a>
-            <Link href="/point-shop" className={`portal-nav-link inline-flex items-center gap-0.5 ${location === "/point-shop" ? "portal-nav-link--active" : ""}`}>SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
-          </nav>
-          <a href="/#game-start" className="shrink-0 rounded-md border border-[#d5bd7d]/70 bg-[#476da9] px-2.5 py-1.5 text-[9px] font-bold text-white shadow-lg shadow-[#17283b]/30 transition-all hover:-translate-y-0.5 hover:border-[#fff0bd] hover:bg-[#6188c5] hover:shadow-[0_8px_20px_rgba(18,39,70,.42),inset_0_1px_rgba(255,255,255,.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fff0bd] active:scale-95 sm:px-3 sm:py-2 sm:text-[10px]">GAME START</a>
-        </div>
-      </header>
-      )}
 
       {/* Main Content */}
       <main className={`flex-1 w-full ${variant === "homeChrome" ? "home-chrome-content" : "pt-[136px] sm:pt-[106px]"}`}>

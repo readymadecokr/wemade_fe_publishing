@@ -8,6 +8,8 @@ describe("public service surface unification", () => {
   it("uses the current Home Chrome by default for every public service route", () => {
     expect(layoutSource).toContain('variant = "homeChrome"');
     expect(layoutSource).toContain('<HomeHeader activeSection=');
+    expect(layoutSource).not.toContain('<header className="fixed inset-x-0 top-0 z-40 w-full border-b');
+    expect(layoutSource).not.toContain('href="/#game-start" className="shrink-0 rounded-md');
     expect(layoutSource).toContain('home-chrome-content');
   });
 
