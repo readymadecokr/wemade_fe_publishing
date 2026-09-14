@@ -75,7 +75,10 @@ describe("direct React Home CTA, headings, and footer", () => {
   it("keeps every short desktop section title within a safe top area below the fixed header", () => {
     expect(styleSource).toContain('@media (min-width: 761px) and (max-height: 760px) {');
     expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; padding-top: clamp(72px,12vh,96px); padding-bottom: clamp(30px,5vh,48px); scroll-margin-top: var(--react-home-header-height); }');
-    expect(styleSource).toContain('.react-home-final-panel .react-home-closing { justify-content: flex-start; padding-top: clamp(72px,12vh,96px); }');
+    expect(styleSource).toContain('.react-home-final-panel { height: auto; min-height: calc(100svh - var(--react-home-header-height)); overflow: visible; }');
+    expect(styleSource).toContain('.react-home-final-panel .react-home-closing { min-height: 0; flex: 0 0 auto; align-items: flex-start; justify-content: center;');
+    expect(styleSource).toContain('.react-home-final-panel .react-home-closing__content { margin: 0 auto; }');
+    expect(styleSource).toContain('.react-home-final-panel .react-home-closing .home-discord-button, .react-home-final-panel .react-home-closing .home-game-start { height: 64px; align-self: center; }');
   });
 
   it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {

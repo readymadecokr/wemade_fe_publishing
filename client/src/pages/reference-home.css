@@ -217,8 +217,16 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 @media (max-width: 760px) { .react-home-footer__social a { width: 24px; height: 24px; }.react-home-footer__social a:nth-child(1) img { width: 18px; height: 18px; }.react-home-footer__social a:nth-child(3) svg { width: 13px; height: 13px; }.react-home-footer__social a:nth-child(4) { padding: 6px; } }
 
-/* Normal desktops remain visually centered. On short desktops, fixed-header clearance takes priority over centering. */
+/* Normal desktops remain visually centered. Short desktops preserve centered CTA content while compacting it above the footer. */
 @media (min-width: 761px) and (max-height: 760px) {
   .react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; padding-top: clamp(72px,12vh,96px); padding-bottom: clamp(30px,5vh,48px); scroll-margin-top: var(--react-home-header-height); }
-  .react-home-final-panel .react-home-closing { justify-content: flex-start; padding-top: clamp(72px,12vh,96px); }
+  .react-home-final-panel { height: auto; min-height: calc(100svh - var(--react-home-header-height)); overflow: visible; }
+  .react-home-final-panel .react-home-closing { min-height: 0; flex: 0 0 auto; align-items: flex-start; justify-content: center; padding: clamp(12px,2.5vh,22px) 0 10px; }
+  .react-home-final-panel .react-home-closing__content { margin: 0 auto; }
+  .react-home-final-panel .react-home-closing h2 { font-size: clamp(42px,5.1vw,64px); }
+  .react-home-final-panel .react-home-closing p { margin: 12px 0 14px; line-height: 1.45; }
+  .react-home-final-panel .react-home-closing .home-cta-pair { min-height: 64px; margin-top: 0; }
+  .react-home-final-panel .react-home-closing .home-discord-button, .react-home-final-panel .react-home-closing .home-game-start { height: 64px; align-self: center; }
+  .react-home-final-panel .react-home-footer { padding: clamp(14px,2.5vh,20px) 0 clamp(12px,2vh,16px); }
+  .react-home-final-panel .react-home-footer nav { margin: 12px 0 10px; }
 }
