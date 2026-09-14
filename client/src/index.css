@@ -434,6 +434,23 @@
     background-image: none !important;
   }
 
+  /* All public service routes use the current Home Chrome on a single neutral surface.
+     Decorative atlas/map layers belong to the retired service-page skin and must never
+     bleed through login, account, policy, notice, news, or shop screens. */
+  .fantasy-site-atlas,
+  .fantasy-site-atlas > main,
+  .fantasy-site-atlas .fantasy-page-shell,
+  .fantasy-site-atlas .fantasy-content-guide {
+    background: #fbf8f1 !important;
+    background-image: none !important;
+  }
+
+  .fantasy-site-atlas::before,
+  .fantasy-site-atlas .fantasy-page-shell::before,
+  .fantasy-site-atlas .fantasy-section-decorated::after {
+    display: none !important;
+  }
+
   .fantasy-site-atlas > header,
   .fantasy-site-atlas > main,
   .fantasy-site-atlas > footer {

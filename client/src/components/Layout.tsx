@@ -21,7 +21,7 @@ interface LayoutProps {
   showClosingCta?: boolean;
 }
 
-export default function Layout({ children, variant = "default", showClosingCta = true }: LayoutProps) {
+export default function Layout({ children, variant = "homeChrome", showClosingCta = true }: LayoutProps) {
   const [location] = useLocation();
   const usePlainDetailSurface = variant === "homeChrome" && (location.startsWith("/news") || location === "/point-shop");
   const useShopSurface = variant === "homeChrome" && location === "/point-shop";
