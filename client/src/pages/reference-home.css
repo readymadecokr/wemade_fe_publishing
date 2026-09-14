@@ -208,19 +208,9 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-discord .react-home-widget__frame { display: block; width: 100%; height: 100%; min-height: 0; }
 }
 
-/* Keep desktop Home section content aligned to a shared top starting line. */
-@media (min-width: 769px) {
-  .react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; padding-top: 42px; }
-  .react-home-discord { padding-bottom: 42px; }
-  .react-home-news { padding-bottom: 48px; }
-  .react-home-game-info { padding-bottom: 48px; }
-  .react-home-game-info__grid { align-items: flex-start; }
-  .react-home-media { padding-bottom: 42px; }
-}
-
 .react-home-news-more { width: 48px; height: 48px; justify-content: center; border-radius: 50%; padding: 0; font-size: 32px; font-weight: 400; line-height: 1; letter-spacing: 0; }
 
 .react-home-footer { padding: 38px 0 30px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c; }
-.react-home-footer__brands { color: #1b344c; }.react-home-footer__brands i { background: #9ca8b4; }.react-home-footer nav a { color: #17120c; }.react-home-footer p { color: #24384b; }.react-home-footer p span { display: block; }.react-home-footer__social { gap: 8px; }.react-home-footer__social a { box-sizing: border-box; width: 52px; height: 52px; overflow: hidden; border-color: rgba(255,255,255,.7); border-radius: 50%; box-shadow: none; }.react-home-footer__social a:nth-child(1) { background: #5865f2; }.react-home-footer__social a:nth-child(2) { background: #1877f2; }.react-home-footer__social a:nth-child(3) { background: #fff; color: #ff0033; }.react-home-footer__social a:nth-child(4) { border-color: rgba(22,22,22,.35); padding: 12px; background: #fff; }.react-home-footer__social a img { display: block; object-fit: contain; }.react-home-footer__social a:nth-child(1) img { width: 40px; height: 40px; }.react-home-footer__social a:nth-child(2) img { width: 100%; height: 100%; }.react-home-footer__social a:nth-child(3) svg { width: 28px; height: 28px; color: #ff0033; }.react-home-footer__social a:nth-child(4) img { width: 100%; height: 100%; }.react-home-footer__social a:hover { box-shadow: none; }.react-home-footer__social-x { background: #fff; }
+.react-home-footer__brands { color: #1b344c; }.react-home-footer__brands i { background: #9ca8b4; }.react-home-footer nav a { color: #17120c; }.react-home-footer p { color: #24384b; }.react-home-footer p span { display: block; }.react-home-footer__social { gap: 5px; }.react-home-footer__social a { box-sizing: border-box; width: 31px; height: 31px; overflow: hidden; border-color: rgba(255,255,255,.7); border-radius: 50%; box-shadow: none; }.react-home-footer__social a:nth-child(1) { background: #5865f2; }.react-home-footer__social a:nth-child(2) { background: #1877f2; }.react-home-footer__social a:nth-child(3) { background: #fff; color: #ff0033; }.react-home-footer__social a:nth-child(4) { border-color: rgba(22,22,22,.35); padding: 7px; background: #fff; }.react-home-footer__social a img { display: block; object-fit: contain; }.react-home-footer__social a:nth-child(1) img { width: 24px; height: 24px; }.react-home-footer__social a:nth-child(2) img { width: 100%; height: 100%; }.react-home-footer__social a:nth-child(3) svg { width: 17px; height: 17px; color: #ff0033; }.react-home-footer__social a:nth-child(4) img { width: 100%; height: 100%; }.react-home-footer__social a:hover { box-shadow: none; }.react-home-footer__social-x { background: #fff; }
 
-@media (max-width: 760px) { .react-home-footer__social a { width: 40px; height: 40px; }.react-home-footer__social a:nth-child(1) img { width: 30px; height: 30px; }.react-home-footer__social a:nth-child(3) svg { width: 22px; height: 22px; }.react-home-footer__social a:nth-child(4) { padding: 10px; } }
+@media (max-width: 760px) { .react-home-footer__social a { width: 24px; height: 24px; }.react-home-footer__social a:nth-child(1) img { width: 18px; height: 18px; }.react-home-footer__social a:nth-child(3) svg { width: 13px; height: 13px; }.react-home-footer__social a:nth-child(4) { padding: 6px; } }

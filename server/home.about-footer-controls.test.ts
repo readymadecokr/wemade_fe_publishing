@@ -59,9 +59,12 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".react-home-game-info__art-paper img { display: block; width: 100%; height: auto; max-height: none; border: 0; object-fit: initial; filter: saturate(1.08) contrast(1.03); transform: none;");
   });
 
-  it("starts desktop content sections at the shared top line instead of vertically centering them", () => {
-    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; padding-top: 42px; }');
-    expect(styleSource).toContain('.react-home-game-info__grid { align-items: flex-start; }');
+  it("keeps desktop content sections vertically centered like the original Home layout", () => {
+    expect(styleSource).toContain('.react-home-discord { display: flex; align-items: center;');
+    expect(styleSource).toContain('.react-home-news { display: flex; align-items: center;');
+    expect(styleSource).toContain('.react-home-game-info { display: flex; align-items: center;');
+    expect(styleSource).toContain('.react-home-media { display: flex; align-items: center;');
+    expect(styleSource).not.toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; padding-top: 42px; }');
   });
 
   it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {
@@ -69,10 +72,10 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).toContain('/manus-storage/facebook-logo-primary_2867583f.webp');
     expect(homeSource).toContain('aria-label="YouTube"><svg');
     expect(homeSource).toContain('/manus-storage/x-logo-black_193d8b29.webp');
-    expect(styleSource).toContain('.react-home-footer__social a { box-sizing: border-box; width: 52px; height: 52px;');
-    expect(styleSource).toContain('.react-home-footer__social a:nth-child(1) img { width: 40px; height: 40px; }');
-    expect(styleSource).toContain('.react-home-footer__social a:nth-child(4) { border-color: rgba(22,22,22,.35); padding: 12px; background: #fff; }');
-    expect(styleSource).toContain('@media (max-width: 760px) { .react-home-footer__social a { width: 40px; height: 40px; }');
+    expect(styleSource).toContain('.react-home-footer__social a { box-sizing: border-box; width: 31px; height: 31px;');
+    expect(styleSource).toContain('.react-home-footer__social a:nth-child(1) img { width: 24px; height: 24px; }');
+    expect(styleSource).toContain('.react-home-footer__social a:nth-child(4) { border-color: rgba(22,22,22,.35); padding: 7px; background: #fff; }');
+    expect(styleSource).toContain('@media (max-width: 760px) { .react-home-footer__social a { width: 24px; height: 24px; }');
   });
 
   it("provides the requested in-page Rune-Midgarts Library coming-soon modal", () => {

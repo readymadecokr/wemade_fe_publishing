@@ -41,6 +41,7 @@ describe("News detail entry and service-page title banners", () => {
     expect(globalStyles).toContain('.fantasy-site-atlas--shop-surface,');
     expect(globalStyles).toContain('background: #fbf8f1 !important;');
     expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain .news-detail-surface {');
+    expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain .news-detail-surface .fantasy-card {');
   });
 
   it("removes the shared long left-side guide line from News and Shop content", () => {

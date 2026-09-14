@@ -422,6 +422,10 @@
     background-image: none !important;
   }
 
+  .fantasy-site-atlas--detail-plain .news-detail-surface .fantasy-card {
+    background: #fbf8f1 !important;
+  }
+
   .fantasy-site-atlas--shop-surface,
   .fantasy-site-atlas--shop-surface > main,
   .fantasy-site-atlas--shop-surface .fantasy-page-shell,
