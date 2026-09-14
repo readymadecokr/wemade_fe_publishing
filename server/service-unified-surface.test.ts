@@ -18,4 +18,10 @@ describe("public service surface unification", () => {
     expect(globalStyles).toContain('background-image: none !important;');
     expect(globalStyles).toContain('.fantasy-site-atlas::before,\n  .fantasy-site-atlas .fantasy-page-shell::before,\n  .fantasy-site-atlas .fantasy-section-decorated::after');
   });
+
+  it("uses the Home Game Info display family without italics across every service page", () => {
+    expect(globalStyles).toContain('.fantasy-site-atlas,\n.fantasy-site-atlas :where(*) {');
+    expect(globalStyles).toContain('font-family: Arial, Helvetica, sans-serif !important;');
+    expect(globalStyles).toContain('font-style: normal !important;');
+  });
 });

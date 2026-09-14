@@ -702,3 +702,11 @@
 input[type="datetime-local"].datetime-24h {
   /* hour12 강제 비활성화는 CSS만으로 불가하므로 ampm 필드만 숨김 */
 }
+
+/* Service pages share the same display family as the Home Game Info title.
+   Keep existing font sizes and weights; only replace the family and remove italics. */
+.fantasy-site-atlas,
+.fantasy-site-atlas :where(*) {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-style: normal !important;
+}
