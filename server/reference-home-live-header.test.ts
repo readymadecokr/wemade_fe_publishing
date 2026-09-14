@@ -37,6 +37,8 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
     expect(homeHeaderSource).toContain('className="container reference-header-main-row"');
     expect(homeHeaderSource).toContain('className="reference-header-logo"');
+    expect(homeHeaderSource).not.toContain('className="border-b border-white/10 bg-[#1c3147]');
+    expect(homeHeaderSource).toContain('className="bg-[#1c3147] [background-image:linear-gradient(100deg,rgba(32,56,78,1),rgba(58,84,110,.96),rgba(24,45,66,1))]"');
   });
 
   it("places Discord before Game Start in every CTA pair and matches the Hero Discord size to the closing CTA", () => {
