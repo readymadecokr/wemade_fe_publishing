@@ -218,3 +218,4 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 .react-home-footer { padding: 38px 0 30px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c; }
 .react-home-footer__brands { color: #1b344c; }.react-home-footer__brands i { background: #9ca8b4; }.react-home-footer nav a { color: #17120c; }.react-home-footer p { color: #24384b; }.react-home-footer__social a { border-color: #9ca8b4; color: #1b344c; }.react-home-footer__social a:hover { border-color: #5865f2; background: #5865f2; color: #fff; }
+.react-home-footer__social a { overflow: hidden; }.react-home-footer__social a img { display: block; width: 72%; height: 72%; object-fit: contain; }.react-home-footer__social a:nth-child(2) img { width: 100%; height: 100%; }.react-home-footer__social a svg { width: 58%; height: 58%; color: #e62429; }.react-home-footer__social-x { background: #fff; }

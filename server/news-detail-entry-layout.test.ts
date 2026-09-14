@@ -33,7 +33,8 @@ describe("News detail entry and service-page title banners", () => {
     expect(layoutSource).toContain('location.startsWith("/news/") || location === "/point-shop"');
     expect(layoutSource).toContain('fantasy-site-atlas--detail-plain');
     expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain {');
-    expect(globalStyles).toContain('background-image: none;');
+    expect(globalStyles).toContain('background-image: none !important;');
+    expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain > main,');
     expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain .fantasy-page-shell::before');
   });
 

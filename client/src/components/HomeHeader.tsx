@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { MouseEvent } from "react";
 import { Link, useLocation } from "wouter";
-import { ChevronDown, ExternalLink, Globe } from "lucide-react";
+import { ExternalLink, Globe } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
@@ -72,7 +72,7 @@ export default function HomeHeader({ activeSection, onNavigate }: HomeHeaderProp
           {isHomeHeader ? <a href="#home" onClick={(event) => handleHomeNavigate(event, "home")} className={navigationClass("home")}>HOME</a> : <Link href="/" className={navigationClass("home")}>HOME</Link>}
           {isHomeHeader ? <a href="#discord" onClick={(event) => handleHomeNavigate(event, "discord")} className={`${navigationClass("discord")} portal-nav-link--external`}><span className="portal-nav-link__label">COMMUNITY</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></a> : <Link href={pathFor("discord")} className={`${navigationClass("discord")} portal-nav-link--external`}><span className="portal-nav-link__label">COMMUNITY</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></Link>}
           {(["news", "game-info", "media"] as const).map((sectionId) => isHomeHeader ? <a key={sectionId} href={`#${sectionId}`} onClick={(event) => handleHomeNavigate(event, sectionId)} className={navigationClass(sectionId)}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</a> : <Link key={sectionId} href={sectionId === "news" ? "/news" : pathFor(sectionId)} className={navigationClass(sectionId)}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</Link>)}
-          <Link href="/point-shop" className={`${navigationClass("shop")} inline-flex items-center gap-0.5`}>SHOP <ChevronDown size={12} aria-hidden="true" /></Link>
+          <Link href="/point-shop" className={navigationClass("shop")}>SHOP</Link>
         </nav>
         <div className="reference-header-cta shrink-0" aria-label="Quick actions"><DiscordButton className="reference-header-discord" /><GameStartButton className="reference-header-game-start" /></div>
       </div>

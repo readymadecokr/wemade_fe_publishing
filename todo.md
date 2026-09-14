@@ -1287,3 +1287,8 @@
 - [x] 참조형 News 상세 상단 탭과 Home News 더하기 버튼 구현
 - [x] 푸터 흰색·검은 텍스트·지정 카피라이트 줄바꿈 및 Home 섹션 상단 정렬 구현
 - [x] Home·News 상세 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## News·Shop 상세 배경·SHOP 기호·정식 SNS 로고 정리
+- [x] News·Shop 상세에 남은 배경 이미지 레이어와 SHOP 기호·SNS 아이콘 현재 구조 점검
+- [x] News·Shop 상세 단색 배경 적용, SHOP 기호 제거, 플로팅·푸터 정식 SNS 로고 교체
+- [x] 데스크톱·모바일 상세 배경·메뉴·SNS 아이콘 렌더링과 TypeScript·회귀 테스트 검증

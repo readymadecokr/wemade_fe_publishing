@@ -63,6 +63,13 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-game-info { padding-block: clamp(54px, 7vh, 105px) clamp(42px, 5vh, 75px); }');
   });
 
+  it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {
+    expect(homeSource).toContain('/manus-storage/Discord_icon_230fdb89_6026051e.png');
+    expect(homeSource).toContain('/manus-storage/facebook-logo-primary_2867583f.webp');
+    expect(homeSource).toContain('aria-label="YouTube"><svg');
+    expect(homeSource).toContain('/manus-storage/x-logo-black_193d8b29.webp');
+  });
+
   it("provides the requested in-page Rune-Midgarts Library coming-soon modal", () => {
     expect(homeSource).toContain("RUNE-MIDGARTS LIBRARY");
     expect(homeSource).toContain("Rune-Midgarts Library is coming soon.");

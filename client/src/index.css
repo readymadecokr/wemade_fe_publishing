@@ -402,8 +402,14 @@
   }
 
   .fantasy-site-atlas--detail-plain {
-    background-color: #f8f4eb;
-    background-image: none;
+    background: #fff !important;
+    background-image: none !important;
+  }
+
+  .fantasy-site-atlas--detail-plain > main,
+  .fantasy-site-atlas--detail-plain .fantasy-page-shell {
+    background: #fff !important;
+    background-image: none !important;
   }
 
   .fantasy-site-atlas--detail-plain::before,

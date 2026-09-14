@@ -68,6 +68,8 @@ describe("direct React service header", () => {
     expect(newsIndex).toBeGreaterThan(communityIndex);
     expect(homeHeaderSource).toContain('portal-nav-link__label">COMMUNITY</span>');
     expect(homeHeaderSource).toContain('className="portal-nav-link__icon"');
+    expect(homeHeaderSource).toContain('<Link href="/point-shop" className={navigationClass("shop")}>SHOP</Link>');
+    expect(homeHeaderSource).not.toContain('SHOP <ChevronDown');
     expect(headerStyles).toContain(".portal-nav-link--active { border-color:");
     expect(headerStyles).toContain(".portal-nav-link { display: inline-flex; width: 100%;");
     expect(headerStyles).toContain("grid-template-columns: minmax(0,.83fr) minmax(56px,1.1fr)");
