@@ -11,5 +11,7 @@ describe("Shop page top spacing", () => {
     expect(source).toContain('fantasy-content-guide pt-6 pb-8 md:pt-8');
     expect(source).toContain('className="news-detail-page-banner shop-detail-page-banner"');
     expect(source).toContain('Purchase rCoin and continue your adventure.');
+    expect(source).toContain('<Layout variant="homeChrome" showClosingCta={false}>');
+    expect(source).toContain('className="fantasy-page-shell shop-detail-page-shell"');
   });
 });

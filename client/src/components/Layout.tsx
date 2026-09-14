@@ -23,7 +23,8 @@ interface LayoutProps {
 
 export default function Layout({ children, variant = "default", showClosingCta = true }: LayoutProps) {
   const [location] = useLocation();
-  const usePlainDetailSurface = variant === "homeChrome" && (location.startsWith("/news/") || location === "/point-shop");
+  const usePlainDetailSurface = variant === "homeChrome" && (location.startsWith("/news") || location === "/point-shop");
+  const useShopSurface = variant === "homeChrome" && location === "/point-shop";
   const [lang, setLang] = useState("EN");
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [showCookieConsent, setShowCookieConsent] = useState(false);
@@ -87,7 +88,7 @@ export default function Layout({ children, variant = "default", showClosingCta =
   };
 
   return (
-    <div className={`fantasy-site-atlas min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/40 selection:text-white overflow-x-hidden${usePlainDetailSurface ? " fantasy-site-atlas--detail-plain" : ""}`}>
+    <div className={`fantasy-site-atlas min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/40 selection:text-white overflow-x-hidden${usePlainDetailSurface ? " fantasy-site-atlas--detail-plain" : ""}${useShopSurface ? " fantasy-site-atlas--shop-surface" : ""}`}>
       
 
 

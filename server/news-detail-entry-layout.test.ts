@@ -29,13 +29,16 @@ describe("News detail entry and service-page title banners", () => {
     expect(pointShopSource).toContain('fantasy-content-guide pt-6 pb-8 md:pt-8');
   });
 
-  it("removes the atlas image only from News and Shop detail surfaces", () => {
-    expect(layoutSource).toContain('location.startsWith("/news/") || location === "/point-shop"');
+  it("removes the atlas image from all News and Shop service surfaces", () => {
+    expect(layoutSource).toContain('location.startsWith("/news") || location === "/point-shop"');
     expect(layoutSource).toContain('fantasy-site-atlas--detail-plain');
+    expect(layoutSource).toContain('fantasy-site-atlas--shop-surface');
     expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain {');
     expect(globalStyles).toContain('background-image: none !important;');
     expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain > main,');
     expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain .fantasy-page-shell::before');
+    expect(globalStyles).toContain('.fantasy-site-atlas--shop-surface,');
+    expect(globalStyles).toContain('background: #fbf8f1 !important;');
   });
 
   it("removes the shared long left-side guide line from News and Shop content", () => {

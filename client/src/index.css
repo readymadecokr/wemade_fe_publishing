@@ -417,6 +417,14 @@
     display: none;
   }
 
+  .fantasy-site-atlas--shop-surface,
+  .fantasy-site-atlas--shop-surface > main,
+  .fantasy-site-atlas--shop-surface .fantasy-page-shell,
+  .fantasy-site-atlas--shop-surface .shop-detail-page-shell {
+    background: #fbf8f1 !important;
+    background-image: none !important;
+  }
+
   .fantasy-site-atlas > header,
   .fantasy-site-atlas > main,
   .fantasy-site-atlas > footer {

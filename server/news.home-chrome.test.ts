@@ -13,7 +13,7 @@ describe("News Home-style chrome", () => {
   it("uses the Home chrome variant for News and Point Shop", () => {
     expect(newsSource).toContain('<Layout variant="homeChrome" showClosingCta={false}>');
     expect(newsDetailSource).toContain('<Layout variant="homeChrome" showClosingCta={false}>');
-    expect(pointShopSource).toContain('<Layout variant="homeChrome">');
+    expect(pointShopSource).toContain('<Layout variant="homeChrome" showClosingCta={false}>');
     expect(layoutSource).toContain('showClosingCta?: boolean;');
     expect(layoutSource).toContain('variant === "homeChrome"');
   });
@@ -26,9 +26,10 @@ describe("News Home-style chrome", () => {
     expect(layoutStyles).toContain(".home-chrome-content { padding-top: var(--react-home-header-height, 104px); }");
   });
 
-  it("removes the closing CTA from News while keeping the footer bar", () => {
+  it("removes the closing CTA from News and Shop while keeping the footer bar", () => {
     expect(newsSource).toContain('<Layout variant="homeChrome" showClosingCta={false}>');
     expect(newsDetailSource).toContain('<Layout variant="homeChrome" showClosingCta={false}>');
+    expect(pointShopSource).toContain('<Layout variant="homeChrome" showClosingCta={false}>');
     expect(layoutSource).toContain('{showClosingCta && <section className="news-home-closing"');
     expect(layoutSource).toContain("news-home-closing");
     expect(layoutSource).toContain("news-home-footer__bar");
@@ -50,6 +51,7 @@ describe("News Home-style chrome", () => {
     expect(newsDetailSource).toContain('Latest news, interviews, and community highlights');
     expect(layoutStyles).toContain('.news-detail-page-banner { display: flex; min-height: 152px;');
     expect(layoutStyles).toContain('.news-detail-page-banner--list,.news-detail-page-banner--detail { min-height: 152px; }');
-    expect(layoutStyles).toContain('font-family: Georgia, "Times New Roman", serif');
+    expect(layoutStyles).toContain('font-family: Arial, Helvetica, sans-serif;');
+    expect(layoutStyles).toContain('font-style: italic; font-weight: 900; letter-spacing: -.055em;');
   });
 });
