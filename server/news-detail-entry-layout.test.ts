@@ -36,6 +36,8 @@ describe("News detail entry and service-page title banners", () => {
     expect(layoutSource).toContain('fantasy-site-atlas--shop-surface');
     expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain {');
     expect(globalStyles).toContain('background-image: none !important;');
+    expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain {\n    background: #fbf8f1 !important;');
+    expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain > main,\n  .fantasy-site-atlas--detail-plain .fantasy-page-shell {\n    background: #fbf8f1 !important;');
     expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain > main,');
     expect(globalStyles).toContain('.fantasy-site-atlas--detail-plain .fantasy-page-shell::before');
     expect(globalStyles).toContain('.fantasy-site-atlas--shop-surface,');
