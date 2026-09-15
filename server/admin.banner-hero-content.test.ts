@@ -14,9 +14,10 @@ describe("admin banner Hero content", () => {
 
   it("enforces title and description byte and line limits while preserving only direct Enter line breaks", () => {
     expect(routerSource).toContain("heroTextInput(40, 20)");
-    expect(routerSource).toContain("heroTextInput(100, 50)");
+    expect(routerSource).toContain("heroTextInput(100, 100)");
     expect(adminSource).toContain("limitHeroText(e.target.value, 20, 40)");
-    expect(adminSource).toContain("limitHeroText(e.target.value, 50, 100)");
+    expect(adminSource).toContain("limitHeroText(e.target.value, 100, 100)");
+    expect(adminSource).toContain("/ 100 byte · 최대 2줄");
     expect(adminSource).not.toContain("자동으로 다음 줄로 이동합니다.");
     expect(adminSource).toContain("View More 연결 URL");
   });

@@ -1520,3 +1520,8 @@
 - [x] GNB Discord·Game Start의 현재 hover·그림자·변환 규칙과 테스트 위치 점검
 - [x] GNB Discord·Game Start의 그림자 상승 없는 눌림형 hover 효과 적용
 - [x] 데스크톱·모바일 헤더 렌더링과 TypeScript·회귀 테스트 검증
+
+## 관리자 Hero 카테고리 저장 검증 보정
+- [x] Hero 편집 저장 흐름과 클라이언트·서버 바이트·줄 수 검증 불일치 원인 점검
+- [x] Hero 카테고리 단독 변경이 저장되도록 검증 규칙과 바이트 계산 보정
+- [x] 관리자 Hero 저장 흐름 렌더링과 TypeScript·회귀 테스트 검증
