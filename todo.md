@@ -1490,3 +1490,8 @@
 - [x] 모바일 메뉴·헤더 버튼·마지막 CTA 버튼의 현재 레이아웃과 반응형 규칙 점검
 - [x] 세로 한 줄 햄버거 메뉴, 마지막 CTA 세로 버튼, 고정 높이·동일 폭의 Discord·Game Start 규칙 적용
 - [x] 다중 화면 폭 헤더·마지막 CTA 렌더링과 TypeScript·회귀 테스트 검증
+
+## 마지막 CTA Game Start 확대
+- [x] 마지막 CTA Game Start의 현재 크기·세로 배치와 테스트 위치 점검
+- [x] 마지막 CTA 전용 Game Start 버튼을 약 20% 확대
+- [x] 데스크톱·모바일 마지막 CTA 렌더링과 TypeScript·회귀 테스트 검증
