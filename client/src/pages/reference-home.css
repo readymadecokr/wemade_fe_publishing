@@ -349,4 +349,4 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 .reference-header-cta .reference-header-game-start img { width: 100%; height: 100%; max-width: none; max-height: none; object-fit: contain; }
 .react-home-closing .home-cta-pair { width: min(230px,calc(100% - 44px)); min-height: auto; flex-direction: column; gap: 16px; }
 .react-home-closing .home-cta-pair .home-discord-button, .react-home-closing .home-cta-pair .home-game-start { box-sizing: border-box; flex: 0 0 64px; width: 100%; height: 64px; }
-.react-home-closing .home-cta-pair .home-game-start { top: 0; flex-basis: 77px; height: 77px; }
+.react-home-closing .home-cta-pair .home-game-start { top: 0; flex-basis: 85px; height: 85px; }

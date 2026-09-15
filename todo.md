@@ -1495,3 +1495,8 @@
 - [x] 마지막 CTA Game Start의 현재 크기·세로 배치와 테스트 위치 점검
 - [x] 마지막 CTA 전용 Game Start 버튼을 약 20% 확대
 - [x] 데스크톱·모바일 마지막 CTA 렌더링과 TypeScript·회귀 테스트 검증
+
+## 마지막 CTA Game Start 추가 확대
+- [x] 마지막 CTA Game Start의 현재 확대 크기와 회귀 테스트 위치 점검
+- [x] 마지막 CTA 전용 Game Start 버튼을 약 10% 추가 확대
+- [x] 모바일·데스크톱 마지막 CTA 렌더링과 TypeScript·회귀 테스트 검증
