@@ -235,7 +235,7 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="react-home-hero-cta-row" aria-label="Hero quick actions"><HomeCtaPair className="home-cta-pair--hero" /></div>
+      <div className="react-home-hero-cta-row" aria-label="Hero Game Start"><GameStartButton className="home-game-start--hero-solo" /></div>
       </div>
 
       <section id="discord" data-home-section data-snap-panel className="react-home-panel react-home-discord">

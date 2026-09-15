@@ -82,6 +82,19 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 .reference-header-cta .reference-header-discord { width: clamp(96px, 9vw, 110px); height: 30px; border-radius: 8px; }
 .reference-header-cta .reference-header-game-start { width: clamp(92px, 12vw, 150px); height: clamp(32px, 3.85vw, 48px); }
 
+/* Enlarged global navigation and BI keep the desktop header proportional at wider viewports. */
+.reference-header-main-row { grid-template-columns: clamp(108px,11.28vw,166px) minmax(300px,1fr) auto; }
+.reference-header-logo img { height: clamp(77px,6.96vw,96px); max-width: 166px; }
+.portal-nav { font-size: clamp(12px,1.29vw,16.5px); }
+
+/* Hero meta controls are deliberately more prominent, while the Game Start sits on the image boundary. */
+.react-home-hero__tags span { padding: 11px 20px; font-size: 20px; }
+.react-home-white-cta { padding: 20px 30px; font-size: 22px; }
+.react-home-hero__controls { bottom: clamp(80px,6vw,102px); }
+.react-home-hero-cta-row { position: relative; z-index: 4; display: flex; height: 0; min-height: 0; align-items: center; justify-content: center; padding: 0; overflow: visible; border: 0; background: transparent; }
+.home-game-start--hero-solo { position: absolute; top: 0; left: 50%; width: min(350px,55vw); height: 110px; transform: translate(-50%,-50%); transform-origin: center; }
+.home-game-start--hero-solo:hover { transform: translate(-50%,calc(-50% + 4px)); }
+
 .react-home-discord { display: flex; align-items: center; padding: clamp(42px,5vh,64px) 0 clamp(28px,3.5vh,44px); background: radial-gradient(circle at 82% 18%, rgba(91,116,236,.24), transparent 30%), linear-gradient(120deg, #0c2038 0%, #142d4d 50%, #112642 100%); }
 .react-home-discord__shell { width: min(1180px, calc(100% - 48px)); }.react-home-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: 28px; }.react-home-section-heading > div > span, .react-home-game-info__copy > span, .react-home-closing > span { display: block; margin-bottom: 9px; border: 0; padding: 0; color: var(--home-gold); font-size: 11px; font-weight: 400; letter-spacing: .22em; }.react-home-section-heading h2 { font-size: clamp(28px,3.5vw,49px); }.react-home-section-heading p { max-width: 440px; margin: 0 0 4px; color: #64758a; font-size: 15px; line-height: 1.6; text-align: right; }.react-home-section-heading--light h2 { color: #fff; }.react-home-section-heading--light p { color: #d6e1ef; }
 .react-home-widget { position: relative; overflow: hidden; border: 1px solid rgba(219,231,255,.75); border-radius: 16px; background: #252938; box-shadow: 0 24px 64px rgba(0,7,20,.34); }.react-home-widget__frame { display: block; width: 100%; height: min(64vh,660px); min-height: 520px; border: 0; background: #252938; }.react-home-widget__invite-overlay { position: absolute; z-index: 2; right: 0; bottom: 0; left: 0; display: block; height: 66px; cursor: pointer; }.react-home-widget__invite-overlay:focus-visible { outline: 3px solid #f3d991; outline-offset: -5px; }
@@ -279,4 +292,17 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .home-cta-pair--hero .home-discord-button { width: 45%; }
   .home-cta-pair--hero .home-game-start { width: 38%; margin-right: 16px; transform: translateY(-3px) scale(1.254); transform-origin: center; }
   .home-cta-pair--hero .home-game-start:hover { transform: translateY(0) scale(1.254); }
+}
+
+/* Mobile-specific proportions retain a clear header and position the solo Hero Game Start on the banner edge. */
+@media (max-width: 760px) {
+  .reference-header-logo { width: 98px; height: 48px; }
+  .reference-header-logo img { width: 98px; }
+  .reference-mobile-menu .portal-nav-link { font-size: 15px; }
+  .react-home-hero__tags span { padding: 10px 16px; font-size: 16px; }
+  .react-home-white-cta { padding: 16px 23px; font-size: 18px; }
+  .react-home-hero__controls { bottom: 58px; }
+  .react-home-hero-cta-row { height: 0; min-height: 0; padding: 0; overflow: visible; border: 0; background: transparent; }
+  .home-game-start--hero-solo { width: min(220px,55vw); height: 72px; transform: translate(-50%,calc(-50% - 3px)); }
+  .home-game-start--hero-solo:hover { transform: translate(-50%,calc(-50% + 1px)); }
 }

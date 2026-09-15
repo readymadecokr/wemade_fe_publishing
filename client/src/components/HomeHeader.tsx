@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useState, type MouseEvent } from "react";
 import { Link, useLocation } from "wouter";
-import { ExternalLink, Globe, Menu, X } from "lucide-react";
+import { Globe, Menu, X } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
@@ -75,7 +75,7 @@ export default function HomeHeader({ activeSection, onNavigate }: HomeHeaderProp
         {isHomeHeader ? <a href="#home" onClick={(event) => handleHomeNavigate(event, "home")} className="reference-header-logo" aria-label="Ragnarok Universe home"><img src={LOGO_URL} alt="Ragnarok Universe" /></a> : <Link href="/" className="reference-header-logo" aria-label="Ragnarok Universe home"><img src={LOGO_URL} alt="Ragnarok Universe" /></Link>}
         <nav className="portal-nav" aria-label="Primary navigation">
           {isHomeHeader ? <a href="#home" onClick={(event) => handleHomeNavigate(event, "home")} className={navigationClass("home")}>HOME</a> : <Link href="/" className={navigationClass("home")}>HOME</Link>}
-          {isHomeHeader ? <a href="#discord" onClick={(event) => handleHomeNavigate(event, "discord")} className={`${navigationClass("discord")} portal-nav-link--external`}><span className="portal-nav-link__label">COMMUNITY</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></a> : <Link href={pathFor("discord")} className={`${navigationClass("discord")} portal-nav-link--external`}><span className="portal-nav-link__label">COMMUNITY</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></Link>}
+          {isHomeHeader ? <a href="#discord" onClick={(event) => handleHomeNavigate(event, "discord")} className={navigationClass("discord")}>COMMUNITY</a> : <Link href={pathFor("discord")} className={navigationClass("discord")}>COMMUNITY</Link>}
           {(["news", "game-info", "media"] as const).map((sectionId) => isHomeHeader ? <a key={sectionId} href={`#${sectionId}`} onClick={(event) => handleHomeNavigate(event, sectionId)} className={navigationClass(sectionId)}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</a> : <Link key={sectionId} href={sectionId === "news" ? "/news" : pathFor(sectionId)} className={navigationClass(sectionId)}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</Link>)}
           <Link href="/point-shop" className={navigationClass("shop")}>SHOP</Link>
         </nav>
@@ -83,7 +83,7 @@ export default function HomeHeader({ activeSection, onNavigate }: HomeHeaderProp
         <button type="button" className="reference-mobile-menu-toggle" aria-label={mobileMenuOpen ? "Close primary navigation" : "Open primary navigation"} aria-expanded={mobileMenuOpen} aria-controls="reference-mobile-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>{mobileMenuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}</button>
         <nav id="reference-mobile-navigation" className={`reference-mobile-menu${mobileMenuOpen ? " is-open" : ""}`} aria-label="Mobile primary navigation">
           {isHomeHeader ? <a href="#home" onClick={(event) => handleMobileHomeNavigate(event, "home")} className={navigationClass("home")}>HOME</a> : <Link href="/" onClick={() => setMobileMenuOpen(false)} className={navigationClass("home")}>HOME</Link>}
-          {isHomeHeader ? <a href="#discord" onClick={(event) => handleMobileHomeNavigate(event, "discord")} className={`${navigationClass("discord")} portal-nav-link--external`}><span className="portal-nav-link__label">COMMUNITY</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></a> : <Link href={pathFor("discord")} onClick={() => setMobileMenuOpen(false)} className={`${navigationClass("discord")} portal-nav-link--external`}><span className="portal-nav-link__label">COMMUNITY</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></Link>}
+          {isHomeHeader ? <a href="#discord" onClick={(event) => handleMobileHomeNavigate(event, "discord")} className={navigationClass("discord")}>COMMUNITY</a> : <Link href={pathFor("discord")} onClick={() => setMobileMenuOpen(false)} className={navigationClass("discord")}>COMMUNITY</Link>}
           {(["news", "game-info", "media"] as const).map((sectionId) => isHomeHeader ? <a key={sectionId} href={`#${sectionId}`} onClick={(event) => handleMobileHomeNavigate(event, sectionId)} className={navigationClass(sectionId)}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</a> : <Link key={sectionId} href={sectionId === "news" ? "/news" : pathFor(sectionId)} onClick={() => setMobileMenuOpen(false)} className={navigationClass(sectionId)}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</Link>)}
           <Link href="/point-shop" onClick={() => setMobileMenuOpen(false)} className={navigationClass("shop")}>SHOP</Link>
         </nav>

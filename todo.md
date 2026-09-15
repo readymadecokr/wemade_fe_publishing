@@ -1450,3 +1450,8 @@
 - [x] 모바일 갤러리 라벨·슬라이드 폭·캐러셀 규칙과 테스트 위치 점검
 - [x] SCREENSHOTS·DRAG TO EXPLORE 굵기 제거 및 한 화면 3개 노출 갤러리 확대
 - [x] 모바일 Media 갤러리·데스크톱 렌더링과 TypeScript·회귀 테스트 검증
+
+## Home GNB·Hero 하단 CTA 보정
+- [x] GNB·BI·Hero 문구·Hero 하단 CTA의 현재 구조와 반응형·테스트 위치 점검
+- [x] GNB 메뉴·BI·Hero UPDATE·VIEW MORE 확대, Community 외부 아이콘 삭제 및 Hero 하단 단독 Game Start 배치
+- [x] 데스크톱·모바일 Hero와 GNB 렌더링 및 TypeScript·회귀 테스트 검증

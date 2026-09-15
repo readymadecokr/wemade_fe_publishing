@@ -94,12 +94,14 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-final-panel .react-home-closing .home-discord-button, .react-home-final-panel .react-home-closing .home-game-start { height: 64px; align-self: center; }');
   });
 
-  it("centers mobile Media and keeps the requested Game Start controls separated from Discord without constraining the Game Info artwork", () => {
+  it("centers mobile Media and keeps the header Game Start separated while the Hero uses its own centered solo action", () => {
     expect(styleSource).toContain('.react-home-media { align-items: center; padding-top: 0; padding-bottom: 0; }');
     expect(styleSource).toContain('.reference-mobile-menu-toggle { margin-right: -6px; border: 0; }');
     expect(styleSource).toContain('.reference-header-cta { gap: 22px; }');
     expect(styleSource).toContain('.reference-header-game-start { transform: translateY(-3px) scale(1.254); transform-origin: center; }');
-    expect(styleSource).toContain('.home-cta-pair--hero .home-game-start { width: 38%; margin-right: 16px; transform: translateY(-3px) scale(1.254); transform-origin: center; }');
+    expect(styleSource).toContain('.home-game-start--hero-solo { width: min(220px,55vw); height: 72px; transform: translate(-50%,calc(-50% - 3px)); }');
+    expect(styleSource).toContain('.react-home-hero__tags span { padding: 10px 16px; font-size: 16px; }');
+    expect(styleSource).toContain('.react-home-white-cta { padding: 16px 23px; font-size: 18px; }');
   });
 
   it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {
