@@ -38,6 +38,8 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-home-live-header { --bi-logo-width: clamp(60px,11vw,166px); }");
     expect(headerStyles).toContain(".reference-header-logo { width: var(--bi-logo-width); }");
     expect(headerStyles).toContain(".reference-header-logo img { width: var(--bi-logo-width); height: auto; max-width: none; }");
+    expect(headerStyles).toContain(".reference-header-logo { width: var(--bi-logo-width); height: clamp(34px,6.8vw,48px); }");
+    expect(headerStyles).toContain(".reference-header-logo img { top: 50%; left: 0; width: var(--bi-logo-width); height: auto; max-width: none; transform: translateY(-50%); }");
     expect(headerStyles).toContain("border-radius: 7px;");
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
     expect(homeHeaderSource).toContain('className="container reference-header-main-row"');

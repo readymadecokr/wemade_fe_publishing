@@ -333,6 +333,6 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .reference-header-logo img { height: auto; max-width: none; }
 }
 @media (max-width: 760px) {
-  .reference-header-logo { width: var(--bi-logo-width); }
-  .reference-header-logo img { width: var(--bi-logo-width); height: auto; max-width: none; }
+  .reference-header-logo { width: var(--bi-logo-width); height: clamp(34px,6.8vw,48px); }
+  .reference-header-logo img { top: 50%; left: 0; width: var(--bi-logo-width); height: auto; max-width: none; transform: translateY(-50%); }
 }
