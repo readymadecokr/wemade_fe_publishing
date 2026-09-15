@@ -1429,3 +1429,9 @@
 - [x] Media·마지막 CTA 보조 문구 실제 스타일과 메뉴 레이아웃 원인 점검
 - [x] YOUR STORY BEGINS HERE 스타일 동기화 및 비이동형 메뉴 오버레이 적용
 - [x] 현재 섹션 유지 상태의 모바일 메뉴·데스크톱 렌더링과 TypeScript·회귀 테스트 검증
+
+## 모바일 Media·Game Info·Game Start 보정
+- [x] 모바일 Media 콘텐츠 시작 위치와 패널 여백 점검
+- [x] Game Info 이미지 좌우 폭 확대 및 Media 위치 보정
+- [x] 모바일 배너·헤더 Game Start 버튼 약 10% 확대
+- [x] 모바일·데스크톱 렌더링과 TypeScript·회귀 테스트 검증

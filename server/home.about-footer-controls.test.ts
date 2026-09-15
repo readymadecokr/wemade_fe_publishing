@@ -73,6 +73,7 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".react-home-game-info__art { position: relative; z-index: 1; width: 100%; justify-self: stretch;");
     expect(styleSource).toContain("transform: none;");
     expect(styleSource).toContain(".react-home-game-info__art { width: min(100%,220px); justify-self: center;");
+    expect(styleSource).toContain(".react-home-game-info__art { width: 100%; max-width: none; justify-self: stretch; }");
     expect(styleSource).toContain(".react-home-game-info__art-paper img { display: block; width: 100%; height: auto; max-height: none; border: 0; object-fit: initial; filter: saturate(1.08) contrast(1.03); transform: none;");
   });
 
@@ -91,6 +92,12 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-final-panel .react-home-closing { min-height: 0; flex: 0 0 auto; align-items: flex-start; justify-content: center;');
     expect(styleSource).toContain('.react-home-final-panel .react-home-closing__content { margin: 0 auto; }');
     expect(styleSource).toContain('.react-home-final-panel .react-home-closing .home-discord-button, .react-home-final-panel .react-home-closing .home-game-start { height: 64px; align-self: center; }');
+  });
+
+  it("brings mobile Media content upward and enlarges the requested Game Start controls without constraining the Game Info artwork", () => {
+    expect(styleSource).toContain('.react-home-media { align-items: flex-start; padding-top: 24px; }');
+    expect(styleSource).toContain('.reference-header-game-start { transform: scale(1.1); transform-origin: center; }');
+    expect(styleSource).toContain('.home-cta-pair--hero .home-game-start { transform: scale(1.1); transform-origin: center; }');
   });
 
   it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {

@@ -266,3 +266,13 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 @media (max-width: 760px) {
   .reference-mobile-menu { position: absolute; z-index: 6; top: 100%; right: 0; left: 0; display: none; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; border-top: 1px solid rgba(200,216,231,.32); border-bottom: 1px solid rgba(200,216,231,.32); padding: 8px 10px 10px; background: linear-gradient(100deg,rgba(25,52,77,.98),rgba(44,72,99,.98),rgba(20,44,67,.98)); box-shadow: 0 12px 22px rgba(5,16,28,.3); }
 }
+
+/* Mobile balance: start Media content near the top, let Game Info art use the content width, and enlarge Game Start by about 10%. */
+@media (max-width: 760px) {
+  .react-home-media { align-items: flex-start; padding-top: 24px; }
+  .react-home-game-info__art { width: 100%; max-width: none; justify-self: stretch; }
+  .reference-header-game-start { transform: scale(1.1); transform-origin: center; }
+  .reference-header-game-start:hover { transform: translateY(3px) scale(1.1); }
+  .home-cta-pair--hero .home-game-start { transform: scale(1.1); transform-origin: center; }
+  .home-cta-pair--hero .home-game-start:hover { transform: translateY(3px) scale(1.1); }
+}
