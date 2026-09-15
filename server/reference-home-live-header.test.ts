@@ -110,5 +110,6 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-mobile-menu .portal-nav-link { font-size: 15px; }");
     expect(headerStyles).toContain('.reference-header-cta { width: clamp(184px,20vw,256px); height: 40px; gap: 8px; }');
     expect(headerStyles).toContain('.reference-header-cta .reference-header-discord, .reference-header-cta .reference-header-game-start { box-sizing: border-box; flex: 1 1 0; width: auto; min-height: 40px; height: 40px; transform: none; }');
+    expect(headerStyles).toContain('.reference-header-cta .reference-header-discord { min-height: 30px; height: 30px; align-self: center; }');
   });
 });
