@@ -1510,3 +1510,8 @@
 - [x] GNB·마지막 CTA Game Start의 현재 크기와 인접 요소 여유·테스트 위치 점검
 - [x] GNB·마지막 CTA 전용 Game Start 약 20% 확대 및 간격 보정
 - [x] 모바일·중간 폭·데스크톱 헤더와 마지막 CTA 렌더링 및 TypeScript·회귀 테스트 검증
+
+## 마지막 CTA Game Start 10% 축소
+- [x] 마지막 CTA Game Start의 현재 113px 규격과 회귀 테스트 위치 점검
+- [x] 마지막 CTA 전용 Game Start 버튼을 약 10% 축소
+- [x] 모바일·데스크톱 마지막 CTA 렌더링과 TypeScript·회귀 테스트 검증
