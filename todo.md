@@ -1419,3 +1419,8 @@
 - [x] Shop·News 상세·Media 헤더 구현과 기존 UI 잔존 규칙 차이 점검
 - [x] Shop·News 상세 기존 헤더 UI 제거 및 공통 글꼴·버튼·구분선 규칙 통일
 - [x] Shop·News 상세·Media 헤더 렌더링 비교와 TypeScript·회귀 테스트 검증
+
+## 메인 CTA 서체·모바일 메뉴 보정
+- [x] 마지막 CTA·About·Media 기준 서체와 모바일 헤더 구조·테스트 위치 점검
+- [x] 마지막 CTA 제목·보조 문구·About 굵기 보정 및 모바일 햄버거 메뉴 구현
+- [x] 데스크톱·모바일 CTA·메뉴 렌더링과 TypeScript·회귀 테스트 검증

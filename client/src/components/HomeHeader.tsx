@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import type { MouseEvent } from "react";
+import { useState, type MouseEvent } from "react";
 import { Link, useLocation } from "wouter";
-import { ExternalLink, Globe } from "lucide-react";
+import { ExternalLink, Globe, Menu, X } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
@@ -34,6 +34,7 @@ export default function HomeHeader({ activeSection, onNavigate }: HomeHeaderProp
   const [location] = useLocation();
   const { isAuthenticated, loading, logout } = useAuth();
   const { data: balance } = trpc.shop.myBalance.useQuery(undefined, { enabled: isAuthenticated, refetchOnWindowFocus: true, staleTime: 30_000 });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const header = headerRef.current;
@@ -52,6 +53,10 @@ export default function HomeHeader({ activeSection, onNavigate }: HomeHeaderProp
     if (!onNavigate) return;
     event.preventDefault();
     onNavigate(sectionId);
+  };
+  const handleMobileHomeNavigate = (event: MouseEvent<HTMLAnchorElement>, sectionId: "home" | "discord" | "news" | "game-info" | "media") => {
+    setMobileMenuOpen(false);
+    handleHomeNavigate(event, sectionId);
   };
   const isHomeHeader = Boolean(onNavigate);
   const pathFor = (sectionId: "home" | "discord" | "news" | "game-info" | "media") => sectionId === "home" ? "/" : `/#${sectionId}`;
@@ -75,6 +80,13 @@ export default function HomeHeader({ activeSection, onNavigate }: HomeHeaderProp
           <Link href="/point-shop" className={navigationClass("shop")}>SHOP</Link>
         </nav>
         <div className="reference-header-cta shrink-0" aria-label="Quick actions"><DiscordButton className="reference-header-discord" /><GameStartButton className="reference-header-game-start" /></div>
+        <button type="button" className="reference-mobile-menu-toggle" aria-label={mobileMenuOpen ? "Close primary navigation" : "Open primary navigation"} aria-expanded={mobileMenuOpen} aria-controls="reference-mobile-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>{mobileMenuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}</button>
+        <nav id="reference-mobile-navigation" className={`reference-mobile-menu${mobileMenuOpen ? " is-open" : ""}`} aria-label="Mobile primary navigation">
+          {isHomeHeader ? <a href="#home" onClick={(event) => handleMobileHomeNavigate(event, "home")} className={navigationClass("home")}>HOME</a> : <Link href="/" onClick={() => setMobileMenuOpen(false)} className={navigationClass("home")}>HOME</Link>}
+          {isHomeHeader ? <a href="#discord" onClick={(event) => handleMobileHomeNavigate(event, "discord")} className={`${navigationClass("discord")} portal-nav-link--external`}><span className="portal-nav-link__label">COMMUNITY</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></a> : <Link href={pathFor("discord")} onClick={() => setMobileMenuOpen(false)} className={`${navigationClass("discord")} portal-nav-link--external`}><span className="portal-nav-link__label">COMMUNITY</span><ExternalLink className="portal-nav-link__icon" aria-hidden="true" /></Link>}
+          {(["news", "game-info", "media"] as const).map((sectionId) => isHomeHeader ? <a key={sectionId} href={`#${sectionId}`} onClick={(event) => handleMobileHomeNavigate(event, sectionId)} className={navigationClass(sectionId)}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</a> : <Link key={sectionId} href={sectionId === "news" ? "/news" : pathFor(sectionId)} onClick={() => setMobileMenuOpen(false)} className={navigationClass(sectionId)}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</Link>)}
+          <Link href="/point-shop" onClick={() => setMobileMenuOpen(false)} className={navigationClass("shop")}>SHOP</Link>
+        </nav>
       </div>
     </div>
   </header>;

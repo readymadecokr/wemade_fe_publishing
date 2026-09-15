@@ -41,6 +41,16 @@ describe("direct React service header", () => {
     expect(homeHeaderSource).toContain('className="bg-[#1c3147] [background-image:linear-gradient(100deg,rgba(32,56,78,1),rgba(58,84,110,.96),rgba(24,45,66,1))]"');
   });
 
+  it("uses a compact hamburger menu for the primary navigation on mobile widths", () => {
+    expect(homeHeaderSource).toContain('const [mobileMenuOpen, setMobileMenuOpen] = useState(false);');
+    expect(homeHeaderSource).toContain('className="reference-mobile-menu-toggle"');
+    expect(homeHeaderSource).toContain('id="reference-mobile-navigation"');
+    expect(homeHeaderSource).toContain('className={`reference-mobile-menu${mobileMenuOpen ? " is-open" : ""}`}');
+    expect(headerStyles).toContain('.reference-mobile-menu-toggle, .reference-mobile-menu { display: none; }');
+    expect(headerStyles).toContain('.portal-nav { display: none; }.reference-mobile-menu-toggle { display: grid;');
+    expect(headerStyles).toContain('.reference-mobile-menu.is-open { display: grid; }');
+  });
+
   it("places Discord before Game Start in every CTA pair and matches the Hero Discord size to the closing CTA", () => {
     const headerCta = homeHeaderSource.indexOf('className="reference-header-cta shrink-0"');
     const headerDiscord = homeHeaderSource.indexOf('<DiscordButton className="reference-header-discord" />', headerCta);
