@@ -96,8 +96,8 @@ describe("direct React Home CTA, headings, and footer", () => {
 
   it("brings mobile Media content upward and enlarges the requested Game Start controls without constraining the Game Info artwork", () => {
     expect(styleSource).toContain('.react-home-media { align-items: flex-start; padding-top: 24px; }');
-    expect(styleSource).toContain('.reference-header-game-start { transform: scale(1.1); transform-origin: center; }');
-    expect(styleSource).toContain('.home-cta-pair--hero .home-game-start { transform: scale(1.1); transform-origin: center; }');
+    expect(styleSource).toContain('.reference-header-game-start { transform: scale(1.32); transform-origin: center; }');
+    expect(styleSource).toContain('.home-cta-pair--hero .home-game-start { transform: scale(1.32); transform-origin: center; }');
   });
 
   it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {

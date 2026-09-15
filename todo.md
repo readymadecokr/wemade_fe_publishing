@@ -1435,3 +1435,8 @@
 - [x] Game Info 이미지 좌우 폭 확대 및 Media 위치 보정
 - [x] 모바일 배너·헤더 Game Start 버튼 약 10% 확대
 - [x] 모바일·데스크톱 렌더링과 TypeScript·회귀 테스트 검증
+
+## 모바일 Game Start 추가 확대
+- [x] 현재 모바일 헤더·Hero 하단 Game Start 크기와 정렬 규칙 점검
+- [x] PC 영향 없이 모바일 Game Start 버튼 약 20% 추가 확대
+- [x] 모바일·데스크톱 렌더링과 TypeScript·회귀 테스트 검증
