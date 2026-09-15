@@ -115,6 +115,11 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-hero__dots { position: absolute; z-index: 3; top: clamp(16px,2vw,30px); left: 50%; transform: translateX(-50%); }');
   });
 
+  it("stacks the final Discord and Game Start buttons with a shared fixed action size", () => {
+    expect(styleSource).toContain('.react-home-closing .home-cta-pair { width: min(230px,calc(100% - 44px)); min-height: auto; flex-direction: column; gap: 16px; }');
+    expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-discord-button, .react-home-closing .home-cta-pair .home-game-start { box-sizing: border-box; flex: 0 0 64px; width: 100%; height: 64px; }');
+  });
+
   it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {
     expect(homeSource).toContain('/manus-storage/Discord_icon_230fdb89_6026051e.png');
     expect(homeSource).toContain('/manus-storage/facebook-logo-primary_2867583f.webp');

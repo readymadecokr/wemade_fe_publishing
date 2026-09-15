@@ -57,6 +57,7 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain('.portal-nav { display: none; }.reference-mobile-menu-toggle { display: grid;');
     expect(headerStyles).toContain('.reference-mobile-menu { position: absolute; z-index: 6; top: 100%; right: 0; left: 0; display: none;');
     expect(headerStyles).toContain('.reference-mobile-menu.is-open { display: grid; }');
+    expect(headerStyles).toContain('.reference-mobile-menu { grid-template-columns: 1fr; }');
     expect(homeHeaderSource).toContain('const renderUtilityControls = (mobile = false)');
     expect(homeHeaderSource).toContain('className="reference-header-utility container flex h-9 items-center justify-end gap-2 py-0.5 sm:gap-3"');
     expect(homeHeaderSource).toContain('className="reference-mobile-menu__utility">{renderUtilityControls(true)}');
@@ -107,5 +108,7 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-home-live-header .reference-header-main-row { grid-template-columns: var(--bi-logo-width) minmax(0,1fr) clamp(158px,22vw,192px); }");
     expect(headerStyles).toContain(".portal-nav { grid-template-columns: minmax(40px,.65fr) minmax(82px,1.4fr) minmax(40px,.65fr) minmax(76px,1.25fr) minmax(42px,.72fr) minmax(40px,.65fr); gap: 1px; font-size: clamp(8px,1.25vw,11px); }");
     expect(headerStyles).toContain(".reference-mobile-menu .portal-nav-link { font-size: 15px; }");
+    expect(headerStyles).toContain('.reference-header-cta { width: clamp(184px,20vw,256px); height: 40px; gap: 8px; }');
+    expect(headerStyles).toContain('.reference-header-cta .reference-header-discord, .reference-header-cta .reference-header-game-start { box-sizing: border-box; flex: 1 1 0; width: auto; min-height: 40px; height: 40px; transform: none; }');
   });
 });
