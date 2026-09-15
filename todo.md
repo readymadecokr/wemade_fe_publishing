@@ -1505,3 +1505,8 @@
 - [x] GNB Discord와 마지막 CTA Game Start의 현재 크기·테스트 위치 점검
 - [x] GNB Discord 높이 복원 및 마지막 CTA Game Start 약 10% 추가 확대
 - [x] 모바일·데스크톱 헤더와 마지막 CTA 렌더링 및 TypeScript·회귀 테스트 검증
+
+## GNB·마지막 CTA Game Start 20% 확대
+- [x] GNB·마지막 CTA Game Start의 현재 크기와 인접 요소 여유·테스트 위치 점검
+- [x] GNB·마지막 CTA 전용 Game Start 약 20% 확대 및 간격 보정
+- [x] 모바일·중간 폭·데스크톱 헤더와 마지막 CTA 렌더링 및 TypeScript·회귀 테스트 검증

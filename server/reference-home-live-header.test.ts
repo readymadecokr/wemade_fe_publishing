@@ -108,8 +108,11 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-home-live-header .reference-header-main-row { grid-template-columns: var(--bi-logo-width) minmax(0,1fr) clamp(158px,22vw,192px); }");
     expect(headerStyles).toContain(".portal-nav { grid-template-columns: minmax(40px,.65fr) minmax(82px,1.4fr) minmax(40px,.65fr) minmax(76px,1.25fr) minmax(42px,.72fr) minmax(40px,.65fr); gap: 1px; font-size: clamp(8px,1.25vw,11px); }");
     expect(headerStyles).toContain(".reference-mobile-menu .portal-nav-link { font-size: 15px; }");
-    expect(headerStyles).toContain('.reference-header-cta { width: clamp(184px,20vw,256px); height: 40px; gap: 8px; }');
+    expect(headerStyles).toContain('.reference-header-cta { width: clamp(202px,22vw,282px); height: 48px; gap: 8px; }');
     expect(headerStyles).toContain('.reference-header-cta .reference-header-discord, .reference-header-cta .reference-header-game-start { box-sizing: border-box; flex: 1 1 0; width: auto; min-height: 40px; height: 40px; transform: none; }');
     expect(headerStyles).toContain('.reference-header-cta .reference-header-discord { min-height: 30px; height: 30px; align-self: center; }');
+    expect(headerStyles).toContain('.reference-header-cta .reference-header-game-start { flex: 1.2 1.2 0; min-height: 48px; height: 48px; }');
+    expect(headerStyles).toContain('.reference-home-live-header .reference-header-main-row { grid-template-columns: var(--bi-logo-width) minmax(0,1fr) clamp(176px,23vw,212px); }');
+    expect(headerStyles).toContain('@media (max-width: 760px) {\n  .reference-header-cta { width: 184px; }');
   });
 });
