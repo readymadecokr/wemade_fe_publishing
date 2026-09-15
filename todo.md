@@ -1515,3 +1515,8 @@
 - [x] 마지막 CTA Game Start의 현재 113px 규격과 회귀 테스트 위치 점검
 - [x] 마지막 CTA 전용 Game Start 버튼을 약 10% 축소
 - [x] 모바일·데스크톱 마지막 CTA 렌더링과 TypeScript·회귀 테스트 검증
+
+## GNB 액션 버튼 눌림 효과 복원
+- [x] GNB Discord·Game Start의 현재 hover·그림자·변환 규칙과 테스트 위치 점검
+- [x] GNB Discord·Game Start의 그림자 상승 없는 눌림형 hover 효과 적용
+- [x] 데스크톱·모바일 헤더 렌더링과 TypeScript·회귀 테스트 검증

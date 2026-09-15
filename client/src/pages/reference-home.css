@@ -359,3 +359,20 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 @media (max-width: 760px) {
   .reference-header-cta { width: 184px; }
 }
+.reference-header-cta .reference-header-discord,
+.reference-header-cta .reference-header-game-start {
+  transition: transform 140ms cubic-bezier(.23,1,.32,1), box-shadow 140ms cubic-bezier(.23,1,.32,1), filter 140ms cubic-bezier(.23,1,.32,1);
+  will-change: transform;
+}
+.reference-header-cta .reference-header-discord:hover {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #4049b8, 0 2px 4px rgba(28,37,119,.22), inset 0 1px 0 rgba(255,255,255,.28);
+}
+.reference-header-cta .reference-header-game-start:hover {
+  transform: translateY(3px);
+  filter: drop-shadow(0 1px 0 rgba(8,39,88,.72)) drop-shadow(0 2px 4px rgba(28,37,119,.22));
+}
+.reference-header-cta .reference-header-discord:active,
+.reference-header-cta .reference-header-game-start:active {
+  transform: translateY(4px) scale(.98);
+}

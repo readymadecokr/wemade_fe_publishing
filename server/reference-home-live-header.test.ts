@@ -41,7 +41,9 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-header-logo { width: var(--bi-logo-width); height: clamp(34px,6.8vw,48px); }");
     expect(headerStyles).toContain(".reference-header-logo img { top: 50%; left: 0; width: var(--bi-logo-width); height: auto; max-width: none; transform: translateY(-50%); }");
     expect(headerStyles).toContain("border-radius: 7px;");
-    expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
+    expect(headerStyles).toContain('.reference-header-cta .reference-header-discord:hover {\n  transform: translateY(3px);\n  box-shadow: 0 1px 0 #4049b8, 0 2px 4px rgba(28,37,119,.22), inset 0 1px 0 rgba(255,255,255,.28);\n}');
+    expect(headerStyles).toContain('.reference-header-cta .reference-header-game-start:hover {\n  transform: translateY(3px);\n  filter: drop-shadow(0 1px 0 rgba(8,39,88,.72)) drop-shadow(0 2px 4px rgba(28,37,119,.22));\n}');
+    expect(headerStyles).toContain('.reference-header-cta .reference-header-discord:active,\n.reference-header-cta .reference-header-game-start:active {\n  transform: translateY(4px) scale(.98);\n}');
     expect(homeHeaderSource).toContain('className="container reference-header-main-row"');
     expect(homeHeaderSource).toContain('className="reference-header-logo"');
     expect(homeHeaderSource).not.toContain('className="border-b border-white/10 bg-[#1c3147]');
