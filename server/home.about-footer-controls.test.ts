@@ -60,6 +60,8 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).toContain("SEE THE WORLD IN MOTION");
     expect(homeSource).toContain("gravity_logo_light_c14f48f8_5e3a7c41.png");
     expect(homeSource).toContain("FloatingSocialLinks");
+    expect(homeSource).toContain("<FloatingSocialLinks />");
+    expect(homeSource).not.toContain('hidden={activeSection === "home"}');
     expect(homeSource).toContain("https://www.youtube.com/@RagnarokUniverse");
     expect(styleSource).toContain(".react-home-section-heading h2 { font-size: clamp(28px,3.5vw,49px);");
     expect(styleSource).toContain(".react-home-game-info__copy h2 { color: #1a344d; font-size: clamp(31px,3.57vw,53px); line-height: .98; white-space: nowrap;");
@@ -101,13 +103,16 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.reference-header-game-start { transform: translateY(-3px) scale(1.254); transform-origin: center; }');
     expect(styleSource).toContain('.home-game-start--hero-solo { width: min(220px,55vw); height: 72px; transform: translateY(calc(-50% - 3px)); }');
     expect(styleSource).toContain('.react-home-hero__tags span { padding: 7px 11px; font-size: 16px; }');
-    expect(styleSource).toContain('.react-home-white-cta { padding: 11px 16px; font-size: 18px; }');
+    expect(styleSource).toContain('.react-home-white-cta { gap: 5px; padding: 6px 8px; font-size: 9px; }');
+    expect(styleSource).toContain('.react-home-white-cta b { font-size: 8px; }');
     expect(styleSource).toContain('.react-home-home-stage { grid-template-rows: minmax(0,1fr) 72px; }');
   });
 
   it("keeps the enlarged Hero text while reducing the UPDATE and VIEW MORE outline footprint", () => {
     expect(styleSource).toContain('.react-home-hero__tags span { padding: 8px 14px; font-size: 20px; }');
-    expect(styleSource).toContain('.react-home-white-cta { padding: 14px 21px; font-size: 22px; }');
+    expect(styleSource).toContain('.react-home-white-cta { gap: 7px; padding: 7px 11px; font-size: 11px; }');
+    expect(styleSource).toContain('.react-home-white-cta b { font-size: 10px; }');
+    expect(styleSource).toContain('.react-home-hero__dots { position: absolute; z-index: 3; top: clamp(16px,2vw,30px); left: 50%; transform: translateX(-50%); }');
   });
 
   it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {

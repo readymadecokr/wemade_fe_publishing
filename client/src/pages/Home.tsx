@@ -215,7 +215,7 @@ export default function Home() {
   return (
     <main className="react-home" aria-label="Ragnarok Universe homepage">
       <HomeHeader activeSection={activeSection as "home" | "discord" | "news" | "game-info" | "media" | "shop"} onNavigate={navigateTo} />
-      <FloatingSocialLinks hidden={activeSection === "home"} />
+      <FloatingSocialLinks />
 
       <div className="react-home-layout" aria-label="Homepage content regions">
       <div className="react-home-home-stage" data-snap-panel>
@@ -228,9 +228,9 @@ export default function Home() {
           <p>{heroDescription}</p>
           <a className="react-home-white-cta" href={heroActionUrl} target={heroActionOpensNewTab ? "_blank" : undefined} rel={heroActionOpensNewTab ? "noopener noreferrer" : undefined}>VIEW MORE <b>›</b></a>
         </div>
+        <div className="react-home-hero__dots" aria-label="Hero banner position">{heroBanners.map((banner, index) => <button type="button" key={banner.id} aria-label={`Banner ${index + 1}: ${banner.title}`} aria-current={heroIndex % heroBanners.length === index} className={heroIndex % heroBanners.length === index ? "is-active" : ""} onClick={() => setHeroIndex(index)} />)}</div>
         <div className="react-home-hero__controls" aria-label="Hero banners">
           <button className="react-home-hero__arrow react-home-hero__arrow--left" type="button" aria-label="Previous banner" onClick={() => selectHero(-1)}><ChevronLeft /></button>
-          <div className="react-home-hero__dots">{heroBanners.map((banner, index) => <button type="button" key={banner.id} aria-label={`Banner ${index + 1}: ${banner.title}`} aria-current={heroIndex % heroBanners.length === index} className={heroIndex % heroBanners.length === index ? "is-active" : ""} onClick={() => setHeroIndex(index)} />)}</div>
           <button className="react-home-hero__arrow react-home-hero__arrow--right" type="button" aria-label="Next banner" onClick={() => selectHero(1)}><ChevronRight /></button>
         </div>
       </section>

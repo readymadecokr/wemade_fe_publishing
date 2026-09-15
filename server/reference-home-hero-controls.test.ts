@@ -9,6 +9,8 @@ describe("direct React Hero controls and community visibility", () => {
     expect(homeSource).toContain("react-home-hero__arrow--left");
     expect(homeSource).toContain("react-home-hero__arrow--right");
     expect(homeSource).toContain("react-home-hero__dots");
+    expect(homeSource).toContain('<div className="react-home-hero__dots" aria-label="Hero banner position">');
+    expect(homeSource).not.toContain('<div className="react-home-hero__controls" aria-label="Hero banners">\n          <button className="react-home-hero__arrow react-home-hero__arrow--left" type="button" aria-label="Previous banner" onClick={() => selectHero(-1)}><ChevronLeft /></button>\n          <div className="react-home-hero__dots">');
     expect(styleSource).toContain(".react-home-hero__arrow:hover");
   });
 

@@ -90,8 +90,10 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 /* Hero meta controls are deliberately more prominent, while the Game Start sits on the image boundary. */
 .react-home-hero__tags span { padding: 8px 14px; font-size: 20px; }
-.react-home-white-cta { padding: 14px 21px; font-size: 22px; }
-.react-home-hero__controls { bottom: clamp(80px,6vw,102px); }
+.react-home-white-cta { gap: 7px; padding: 7px 11px; font-size: 11px; }
+.react-home-white-cta b { font-size: 10px; }
+.react-home-hero__dots { position: absolute; z-index: 3; top: clamp(16px,2vw,30px); left: 50%; transform: translateX(-50%); }
+.react-home-hero__controls { bottom: clamp(16px,2.2vw,30px); display: flex; justify-content: space-between; }
 .react-home-hero-cta-row { position: relative; z-index: 4; display: flex; min-height: clamp(66px,7.7vw,110px); align-items: flex-start; justify-content: center; padding: 0; overflow: visible; border: 0; background: transparent; }
 .home-game-start--hero-solo { position: relative; top: 0; left: auto; width: min(350px,55vw); height: 110px; transform: translateY(-50%); transform-origin: center; }
 .home-game-start--hero-solo:hover { transform: translateY(calc(-50% + 4px)); }
@@ -317,7 +319,8 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .reference-mobile-menu__utility .reference-mobile-account { min-width: 0; justify-content: center; }
   .reference-mobile-menu__utility .reference-header-language { min-height: 32px; padding: 0 8px; border-radius: 6px; background: rgba(9,31,51,.52); }
   .react-home-hero__tags span { padding: 7px 11px; font-size: 16px; }
-  .react-home-white-cta { padding: 11px 16px; font-size: 18px; }
+  .react-home-white-cta { gap: 5px; padding: 6px 8px; font-size: 9px; }
+  .react-home-white-cta b { font-size: 8px; }
   .react-home-hero__controls { bottom: 58px; }
   .react-home-hero-cta-row { min-height: 72px; padding: 0; overflow: visible; border: 0; background: transparent; }
   .home-game-start--hero-solo { width: min(220px,55vw); height: 72px; transform: translateY(calc(-50% - 3px)); }
