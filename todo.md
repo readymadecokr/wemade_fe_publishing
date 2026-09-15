@@ -1440,3 +1440,8 @@
 - [x] 현재 모바일 헤더·Hero 하단 Game Start 크기와 정렬 규칙 점검
 - [x] PC 영향 없이 모바일 Game Start 버튼 약 20% 추가 확대
 - [x] 모바일·데스크톱 렌더링과 TypeScript·회귀 테스트 검증
+
+## 모바일 헤더·Media·Game Start 충돌 보정
+- [x] 햄버거 버튼·Media 수직 위치·헤더와 Hero 하단 버튼 충돌 원인 점검
+- [x] 햄버거 테두리 제거·우측 정렬, Media 중앙 배치, Game Start 5% 축소·상향·간격 보정
+- [x] 모바일 Media·헤더·Hero 하단과 데스크톱 렌더링·TypeScript·회귀 테스트 검증
