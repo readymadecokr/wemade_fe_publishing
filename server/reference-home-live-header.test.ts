@@ -22,9 +22,9 @@ describe("direct React service header", () => {
 
   it("keeps the compact header while the logo artwork bridges both stacked header bars", () => {
     expect(headerStyles).toContain(".reference-header-main-row { position: relative; display: grid;");
-    expect(headerStyles).toContain("grid-template-columns: clamp(108px,11.28vw,166px) minmax(300px,1fr) auto;");
+    expect(headerStyles).toContain("grid-template-columns: clamp(92px,10.3vw,166px) minmax(300px,1fr) auto;");
     expect(headerStyles).toContain("position: absolute; top: 50%; left: 0;");
-    expect(headerStyles).toContain("height: clamp(77px,6.96vw,96px); max-width: 166px;");
+    expect(headerStyles).toContain("height: clamp(60px,6.55vw,96px); max-width: 166px;");
     expect(headerStyles).toContain("transform: translateY(-74%);");
     expect(homeHeaderSource).toContain('container flex h-9 items-center justify-end gap-2 py-0.5');
     expect(headerStyles).toContain("width: clamp(96px,9vw,110px); height: 30px; padding: 0; border-radius: 8px;");
@@ -32,8 +32,8 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-header-cta .reference-header-discord { width: clamp(96px, 9vw, 110px); height: 30px; border-radius: 8px; }");
     expect(headerStyles).toContain("width: clamp(90px,26vw,118px);");
     expect(headerStyles).toContain(".reference-header-logo { z-index: 3; width: 82px; height: 40px; overflow: visible; }");
-    expect(headerStyles).toContain(".reference-header-logo { width: 98px; height: 48px; }");
-    expect(headerStyles).toContain(".reference-header-logo img { width: 98px; }");
+    expect(headerStyles).toContain(".reference-header-logo { width: clamp(64px,14vw,98px); height: clamp(34px,6.8vw,48px); }");
+    expect(headerStyles).toContain(".reference-header-logo img { width: clamp(64px,14vw,98px); }");
     expect(headerStyles).toContain("border-radius: 7px;");
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
     expect(homeHeaderSource).toContain('className="container reference-header-main-row"');
@@ -61,17 +61,19 @@ describe("direct React service header", () => {
     expect(headerGameStart).toBeGreaterThan(headerDiscord);
     expect(homeSource).toContain('<div className="react-home-hero-cta-row" aria-label="Hero Game Start"><GameStartButton className="home-game-start--hero-solo" /></div>');
     expect(homeSource).toContain('<DiscordButton /><GameStartButton />');
-    expect(headerStyles).toContain('.home-game-start--hero-solo { position: absolute; top: 0; left: 50%; width: min(350px,55vw); height: 110px; transform: translate(-50%,-50%); transform-origin: center; }');
+    expect(headerStyles).toContain('.home-game-start--hero-solo { position: relative; top: 0; left: auto; width: min(350px,55vw); height: 110px; transform: translateY(-50%); transform-origin: center; }');
   });
 
   it("preserves the Hero artwork and separates the expanded quick-action row", () => {
+    expect(headerStyles).toContain(".react-home-home-stage { grid-area: home; display: grid; grid-template-rows: minmax(0, 1fr) clamp(66px,7.7vw,110px);");
     expect(headerStyles).toContain(".react-home-hero__visual { aspect-ratio: 1000 / 600; object-fit: cover;");
-    expect(headerStyles).toContain(".react-home-hero-cta-row { position: relative; z-index: 4; display: flex; height: 0; min-height: 0;");
+    expect(headerStyles).toContain(".react-home-hero-cta-row { position: relative; z-index: 4; display: flex; min-height: clamp(66px,7.7vw,110px);");
     expect(homeSource).toContain('className="react-home-hero-cta-row"');
     expect(homeSource).not.toContain("PLAY IN YOUR BROWSER");
     expect(homeSource).toContain('aria-label="Ragnarok Universe closing call to action and footer"');
     expect(homeSource).toContain('className="react-home-footer" aria-label="Ragnarok Universe footer"');
     expect(headerStyles).toContain('grid-template-areas: "home" "discord" "news" "game-info" "media" "final";');
+    expect(headerStyles).toContain(".react-home-home-stage { grid-template-rows: minmax(0,1fr) 72px; }");
   });
 
   it("places COMMUNITY after HOME without an external-link indicator", () => {

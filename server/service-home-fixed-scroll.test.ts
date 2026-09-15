@@ -34,7 +34,7 @@ describe("direct React full-page service Home", () => {
     expect(styleSource).toContain('grid-template-areas: "home" "discord" "news" "game-info" "media" "final"');
     expect(styleSource).toContain(".react-home-home-stage { grid-area: home;");
     expect(styleSource).toContain(".react-home-final-panel { grid-area: final;");
-    expect(styleSource).toContain("grid-template-rows: minmax(0, 1fr) auto;");
+    expect(styleSource).toContain("grid-template-rows: minmax(0, 1fr) clamp(66px,7.7vw,110px);");
   });
 
   it("moves one full-screen panel at a time on desktop wheel input", () => {

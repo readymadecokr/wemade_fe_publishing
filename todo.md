@@ -1455,3 +1455,8 @@
 - [x] GNB·BI·Hero 문구·Hero 하단 CTA의 현재 구조와 반응형·테스트 위치 점검
 - [x] GNB 메뉴·BI·Hero UPDATE·VIEW MORE 확대, Community 외부 아이콘 삭제 및 Hero 하단 단독 Game Start 배치
 - [x] 데스크톱·모바일 Hero와 GNB 렌더링 및 TypeScript·회귀 테스트 검증
+
+## Hero 전체 가시 영역·BI 반응형 충돌 보정
+- [x] Hero 높이·단독 Game Start 경계 배치와 BI·HOME 충돌 조건 점검
+- [x] Hero 전체 가시 영역 확보 및 화면 폭별 BI 축소 규칙 적용
+- [x] 데스크톱·중간 폭·모바일 Hero와 헤더 렌더링 및 TypeScript·회귀 테스트 검증

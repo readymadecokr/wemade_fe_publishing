@@ -99,9 +99,10 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.reference-mobile-menu-toggle { margin-right: -6px; border: 0; }');
     expect(styleSource).toContain('.reference-header-cta { gap: 22px; }');
     expect(styleSource).toContain('.reference-header-game-start { transform: translateY(-3px) scale(1.254); transform-origin: center; }');
-    expect(styleSource).toContain('.home-game-start--hero-solo { width: min(220px,55vw); height: 72px; transform: translate(-50%,calc(-50% - 3px)); }');
+    expect(styleSource).toContain('.home-game-start--hero-solo { width: min(220px,55vw); height: 72px; transform: translateY(calc(-50% - 3px)); }');
     expect(styleSource).toContain('.react-home-hero__tags span { padding: 10px 16px; font-size: 16px; }');
     expect(styleSource).toContain('.react-home-white-cta { padding: 16px 23px; font-size: 18px; }');
+    expect(styleSource).toContain('.react-home-home-stage { grid-template-rows: minmax(0,1fr) 72px; }');
   });
 
   it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {
