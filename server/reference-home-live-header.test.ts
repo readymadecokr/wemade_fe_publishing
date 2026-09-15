@@ -22,7 +22,7 @@ describe("direct React service header", () => {
 
   it("keeps the compact header while the logo artwork bridges both stacked header bars", () => {
     expect(headerStyles).toContain(".reference-header-main-row { position: relative; display: grid;");
-    expect(headerStyles).toContain("grid-template-columns: clamp(92px,10.3vw,166px) minmax(300px,1fr) auto;");
+    expect(headerStyles).toContain(".reference-home-live-header .reference-header-main-row { width: calc(100% - clamp(28px,5vw,64px)); max-width: none; margin-inline: auto; grid-template-columns: clamp(92px,10.3vw,166px) minmax(440px,1fr) auto; }");
     expect(headerStyles).toContain("position: absolute; top: 50%; left: 0;");
     expect(headerStyles).toContain("height: clamp(60px,6.55vw,96px); max-width: 166px;");
     expect(headerStyles).toContain("transform: translateY(-74%);");
@@ -32,8 +32,8 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-header-cta .reference-header-discord { width: clamp(96px, 9vw, 110px); height: 30px; border-radius: 8px; }");
     expect(headerStyles).toContain("width: clamp(90px,26vw,118px);");
     expect(headerStyles).toContain(".reference-header-logo { z-index: 3; width: 82px; height: 40px; overflow: visible; }");
-    expect(headerStyles).toContain(".reference-header-logo { width: clamp(64px,14vw,98px); height: clamp(34px,6.8vw,48px); }");
-    expect(headerStyles).toContain(".reference-header-logo img { width: clamp(64px,14vw,98px); }");
+    expect(headerStyles).toContain(".reference-header-logo { width: clamp(64px,14vw,98px); height: clamp(34px,6.8vw,48px); margin-left: 0; }");
+    expect(headerStyles).toContain(".reference-header-logo img { left: 0; width: clamp(64px,14vw,98px); }");
     expect(headerStyles).toContain("border-radius: 7px;");
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
     expect(homeHeaderSource).toContain('className="container reference-header-main-row"');
@@ -51,6 +51,11 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain('.portal-nav { display: none; }.reference-mobile-menu-toggle { display: grid;');
     expect(headerStyles).toContain('.reference-mobile-menu { position: absolute; z-index: 6; top: 100%; right: 0; left: 0; display: none;');
     expect(headerStyles).toContain('.reference-mobile-menu.is-open { display: grid; }');
+    expect(homeHeaderSource).toContain('const renderUtilityControls = (mobile = false)');
+    expect(homeHeaderSource).toContain('className="reference-header-utility container flex h-9 items-center justify-end gap-2 py-0.5 sm:gap-3"');
+    expect(homeHeaderSource).toContain('className="reference-mobile-menu__utility">{renderUtilityControls(true)}');
+    expect(headerStyles).toContain('.reference-header-utility { display: none; }');
+    expect(headerStyles).toContain('.reference-mobile-menu__utility { grid-column: 1 / -1; display: flex;');
   });
 
   it("keeps Discord before Game Start in the shared header and uses a solo Hero Game Start", () => {
@@ -90,7 +95,7 @@ describe("direct React service header", () => {
     expect(homeHeaderSource).not.toContain('SHOP <ChevronDown');
     expect(headerStyles).toContain(".portal-nav-link--active { border-color:");
     expect(headerStyles).toContain(".portal-nav-link { display: inline-flex; width: 100%;");
-    expect(headerStyles).toContain(".portal-nav { font-size: clamp(12px,1.29vw,16.5px); }");
+    expect(headerStyles).toContain(".portal-nav { grid-template-columns: minmax(48px,.7fr) minmax(95px,1.45fr) minmax(48px,.75fr) minmax(90px,1.32fr) minmax(52px,.8fr) minmax(48px,.7fr); font-size: clamp(12px,1.29vw,16.5px); }");
     expect(headerStyles).toContain(".reference-mobile-menu .portal-nav-link { font-size: 15px; }");
   });
 });

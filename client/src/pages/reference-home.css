@@ -83,9 +83,9 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 .reference-header-cta .reference-header-game-start { width: clamp(92px, 12vw, 150px); height: clamp(32px, 3.85vw, 48px); }
 
 /* Enlarged global navigation and BI keep the desktop header proportional at wider viewports. */
-.reference-header-main-row { grid-template-columns: clamp(92px,10.3vw,166px) minmax(300px,1fr) auto; }
+.reference-home-live-header .reference-header-main-row { width: calc(100% - clamp(28px,5vw,64px)); max-width: none; margin-inline: auto; grid-template-columns: clamp(92px,10.3vw,166px) minmax(440px,1fr) auto; }
 .reference-header-logo img { height: clamp(60px,6.55vw,96px); max-width: 166px; }
-.portal-nav { font-size: clamp(12px,1.29vw,16.5px); }
+.portal-nav { grid-template-columns: minmax(48px,.7fr) minmax(95px,1.45fr) minmax(48px,.75fr) minmax(90px,1.32fr) minmax(52px,.8fr) minmax(48px,.7fr); font-size: clamp(12px,1.29vw,16.5px); }
 
 /* Hero meta controls are deliberately more prominent, while the Game Start sits on the image boundary. */
 .react-home-hero__tags span { padding: 11px 20px; font-size: 20px; }
@@ -296,10 +296,15 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 /* Mobile-specific proportions retain a clear header and position the solo Hero Game Start on the banner edge. */
 @media (max-width: 760px) {
+  .reference-header-utility { display: none; }
+  .reference-home-live-header .reference-header-main-row { width: calc(100% - 28px); grid-template-columns: none; margin-inline: auto; }
   .react-home-home-stage { grid-template-rows: minmax(0,1fr) 72px; }
-  .reference-header-logo { width: clamp(64px,14vw,98px); height: clamp(34px,6.8vw,48px); }
-  .reference-header-logo img { width: clamp(64px,14vw,98px); }
+  .reference-header-logo { width: clamp(64px,14vw,98px); height: clamp(34px,6.8vw,48px); margin-left: 0; }
+  .reference-header-logo img { left: 0; width: clamp(64px,14vw,98px); }
   .reference-mobile-menu .portal-nav-link { font-size: 15px; }
+  .reference-mobile-menu__utility { grid-column: 1 / -1; display: flex; min-height: 40px; align-items: center; justify-content: center; gap: 10px; padding: 5px 2px 1px; border-top: 1px solid rgba(200,216,231,.28); }
+  .reference-mobile-menu__utility .reference-mobile-account { min-width: 0; justify-content: center; }
+  .reference-mobile-menu__utility .reference-header-language { min-height: 32px; padding: 0 8px; border-radius: 6px; background: rgba(9,31,51,.52); }
   .react-home-hero__tags span { padding: 10px 16px; font-size: 16px; }
   .react-home-white-cta { padding: 16px 23px; font-size: 18px; }
   .react-home-hero__controls { bottom: 58px; }
