@@ -323,3 +323,16 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .home-game-start--hero-solo { width: min(220px,55vw); height: 72px; transform: translateY(calc(-50% - 3px)); }
   .home-game-start--hero-solo:hover { transform: translateY(calc(-50% + 1px)); }
 }
+
+/* Keep the BI on one continuous scale across every viewport instead of switching at breakpoints. */
+.reference-home-live-header { --bi-logo-width: clamp(60px,11vw,166px); }
+.reference-header-logo { width: var(--bi-logo-width); }
+.reference-header-logo img { width: var(--bi-logo-width); height: auto; max-width: none; }
+@media (min-width: 761px) and (max-width: 1000px) {
+  .reference-home-live-header .reference-header-main-row { grid-template-columns: var(--bi-logo-width) minmax(0,1fr) clamp(158px,22vw,192px); }
+  .reference-header-logo img { height: auto; max-width: none; }
+}
+@media (max-width: 760px) {
+  .reference-header-logo { width: var(--bi-logo-width); }
+  .reference-header-logo img { width: var(--bi-logo-width); height: auto; max-width: none; }
+}

@@ -35,6 +35,9 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".reference-header-logo { z-index: 3; width: 82px; height: 40px; overflow: visible; }");
     expect(headerStyles).toContain(".reference-header-logo { width: clamp(64px,14vw,98px); height: clamp(34px,6.8vw,48px); margin-left: 0; }");
     expect(headerStyles).toContain(".reference-header-logo img { left: 0; width: clamp(64px,14vw,98px); }");
+    expect(headerStyles).toContain(".reference-home-live-header { --bi-logo-width: clamp(60px,11vw,166px); }");
+    expect(headerStyles).toContain(".reference-header-logo { width: var(--bi-logo-width); }");
+    expect(headerStyles).toContain(".reference-header-logo img { width: var(--bi-logo-width); height: auto; max-width: none; }");
     expect(headerStyles).toContain("border-radius: 7px;");
     expect(headerStyles).toContain(".reference-header-game-start:hover { filter: drop-shadow(0 0 0 rgba(8,39,88,0)); transform: translateY(4px); }");
     expect(homeHeaderSource).toContain('className="container reference-header-main-row"');
@@ -99,6 +102,7 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".portal-nav { grid-template-columns: minmax(48px,.7fr) minmax(95px,1.45fr) minmax(48px,.75fr) minmax(90px,1.32fr) minmax(52px,.8fr) minmax(48px,.7fr); font-size: clamp(12px,1.29vw,16.5px); }");
     expect(headerStyles).toContain("@media (min-width: 761px) and (max-width: 1000px) {");
     expect(headerStyles).toContain(".reference-home-live-header .reference-header-main-row { grid-template-columns: clamp(72px,10.8vw,92px) minmax(0,1fr) clamp(158px,22vw,192px); gap: clamp(6px,1.1vw,10px); }");
+    expect(headerStyles).toContain(".reference-home-live-header .reference-header-main-row { grid-template-columns: var(--bi-logo-width) minmax(0,1fr) clamp(158px,22vw,192px); }");
     expect(headerStyles).toContain(".portal-nav { grid-template-columns: minmax(40px,.65fr) minmax(82px,1.4fr) minmax(40px,.65fr) minmax(76px,1.25fr) minmax(42px,.72fr) minmax(40px,.65fr); gap: 1px; font-size: clamp(8px,1.25vw,11px); }");
     expect(headerStyles).toContain(".reference-mobile-menu .portal-nav-link { font-size: 15px; }");
   });
