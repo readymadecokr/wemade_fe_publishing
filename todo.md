@@ -1465,3 +1465,8 @@
 - [x] GNB 폭 배분·모바일 계정 영역·BI 좌측 여백의 현재 구조와 테스트 위치 점검
 - [x] 긴 GNB 메뉴 폭 확보, 모바일 Sign In / Sign Up·EN의 햄버거 메뉴 이동, BI 좌측 여백 고정
 - [x] 데스크톱·중간 폭·모바일 GNB와 헤더 렌더링 및 TypeScript·회귀 테스트 검증
+
+## Hero CTA·중간 폭 헤더 대칭 여백 보정
+- [x] Hero UPDATE·VIEW MORE 외곽 크기와 중간 폭 헤더 좌우 클리핑 원인 점검
+- [x] Hero CTA 외곽 30% 축소 및 BI·우측 액션의 대칭 여백·크기 규칙 적용
+- [x] 중간 폭·데스크톱·모바일 Hero·헤더 렌더링과 TypeScript·회귀 테스트 검증

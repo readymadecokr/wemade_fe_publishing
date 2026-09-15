@@ -22,7 +22,8 @@ describe("direct React service header", () => {
 
   it("keeps the compact header while the logo artwork bridges both stacked header bars", () => {
     expect(headerStyles).toContain(".reference-header-main-row { position: relative; display: grid;");
-    expect(headerStyles).toContain(".reference-home-live-header .reference-header-main-row { width: calc(100% - clamp(28px,5vw,64px)); max-width: none; margin-inline: auto; grid-template-columns: clamp(92px,10.3vw,166px) minmax(440px,1fr) auto; }");
+    expect(headerStyles).toContain(".reference-home-live-header .reference-header-main-row, .reference-home-live-header .reference-header-utility { box-sizing: border-box; width: calc(100% - clamp(40px,6vw,64px)); max-width: none !important; margin-inline: auto; padding-inline: 0 !important; }");
+    expect(headerStyles).toContain(".reference-home-live-header .reference-header-main-row { grid-template-columns: clamp(92px,10.3vw,166px) minmax(440px,1fr) auto; }");
     expect(headerStyles).toContain("position: absolute; top: 50%; left: 0;");
     expect(headerStyles).toContain("height: clamp(60px,6.55vw,96px); max-width: 166px;");
     expect(headerStyles).toContain("transform: translateY(-74%);");
@@ -96,6 +97,9 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".portal-nav-link--active { border-color:");
     expect(headerStyles).toContain(".portal-nav-link { display: inline-flex; width: 100%;");
     expect(headerStyles).toContain(".portal-nav { grid-template-columns: minmax(48px,.7fr) minmax(95px,1.45fr) minmax(48px,.75fr) minmax(90px,1.32fr) minmax(52px,.8fr) minmax(48px,.7fr); font-size: clamp(12px,1.29vw,16.5px); }");
+    expect(headerStyles).toContain("@media (min-width: 761px) and (max-width: 1000px) {");
+    expect(headerStyles).toContain(".reference-home-live-header .reference-header-main-row { grid-template-columns: clamp(72px,10.8vw,92px) minmax(0,1fr) clamp(158px,22vw,192px); gap: clamp(6px,1.1vw,10px); }");
+    expect(headerStyles).toContain(".portal-nav { grid-template-columns: minmax(40px,.65fr) minmax(82px,1.4fr) minmax(40px,.65fr) minmax(76px,1.25fr) minmax(42px,.72fr) minmax(40px,.65fr); gap: 1px; font-size: clamp(8px,1.25vw,11px); }");
     expect(headerStyles).toContain(".reference-mobile-menu .portal-nav-link { font-size: 15px; }");
   });
 });
