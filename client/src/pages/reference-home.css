@@ -258,3 +258,11 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-final-panel .react-home-footer { padding: clamp(14px,2.5vh,20px) 0 clamp(12px,2vh,16px); }
   .react-home-final-panel .react-home-footer nav { margin: 12px 0 10px; }
 }
+
+/* The closing label is nested inside its content wrapper; match the Media eyebrow exactly. */
+.react-home-section-heading > div > span, .react-home-game-info__copy > span, .react-home-closing__content > span { display: block; margin-bottom: 9px; border: 0; padding: 0; color: var(--home-gold); font-family: inherit; font-size: 11px; font-weight: 400; letter-spacing: .22em; line-height: normal; }
+
+/* Keep the expanded mobile navigation above the current panel instead of changing header height. */
+@media (max-width: 760px) {
+  .reference-mobile-menu { position: absolute; z-index: 6; top: 100%; right: 0; left: 0; display: none; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; border-top: 1px solid rgba(200,216,231,.32); border-bottom: 1px solid rgba(200,216,231,.32); padding: 8px 10px 10px; background: linear-gradient(100deg,rgba(25,52,77,.98),rgba(44,72,99,.98),rgba(20,44,67,.98)); box-shadow: 0 12px 22px rgba(5,16,28,.3); }
+}

@@ -29,7 +29,7 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-final-panel { height: calc(100svh - var(--react-home-header-height));');
     expect(styleSource).toContain('.react-home-final-panel .react-home-closing { min-height: 0; flex: 1 1 auto;');
     expect(styleSource).toContain('.react-home-closing h2 { color: #1b344c; font-size: clamp(31px,3.57vw,53px); line-height: .98; }');
-    expect(styleSource).toContain('.react-home-section-heading > div > span, .react-home-game-info__copy > span, .react-home-closing > span { display: block; margin-bottom: 9px; border: 0; padding: 0; color: var(--home-gold); font-size: 11px; font-weight: 400; letter-spacing: .22em; }');
+    expect(styleSource).toContain('.react-home-section-heading > div > span, .react-home-game-info__copy > span, .react-home-closing__content > span { display: block; margin-bottom: 9px; border: 0; padding: 0; color: var(--home-gold); font-family: inherit; font-size: 11px; font-weight: 400; letter-spacing: .22em; line-height: normal; }');
     expect(styleSource).toContain('.react-home-footer { padding: 38px 0 30px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c; }');
     expect(homeSource).toContain('<span>Copyright © Gravity Co., LTD &amp; Lee MyoungJin(studio DTDS). All Rights Reserved.</span><span>All trademarks used on this website are the property of their respective owners.</span>');
     expect(styleSource).toContain('.react-home-footer p span { display: block; }');

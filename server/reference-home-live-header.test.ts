@@ -48,6 +48,7 @@ describe("direct React service header", () => {
     expect(homeHeaderSource).toContain('className={`reference-mobile-menu${mobileMenuOpen ? " is-open" : ""}`}');
     expect(headerStyles).toContain('.reference-mobile-menu-toggle, .reference-mobile-menu { display: none; }');
     expect(headerStyles).toContain('.portal-nav { display: none; }.reference-mobile-menu-toggle { display: grid;');
+    expect(headerStyles).toContain('.reference-mobile-menu { position: absolute; z-index: 6; top: 100%; right: 0; left: 0; display: none;');
     expect(headerStyles).toContain('.reference-mobile-menu.is-open { display: grid; }');
   });
 
