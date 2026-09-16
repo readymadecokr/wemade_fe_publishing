@@ -1616,3 +1616,10 @@
 - [x] 상단 액션을 Sign in/Sign up · Discord · Game Start 순서로 재배치하고 Discord 고유 아이콘 적용
 - [x] Hero 제목 줄바꿈·Update 배지·View More 재생 아이콘을 참고 디자인 기준으로 개선
 - [x] 다중 화면 폭 렌더링과 TypeScript·회귀 테스트 검증
+
+## Hero·GNB·섹션·Footer 정밀 보정
+- [x] Hero 제목·설명을 데스크톱 한 줄로 보정하고 좌우 화살표를 상단 dot 기준선으로 이동
+- [x] Update 배지·View More CTA·상단 GNB 액션·EN 구분선 시각 규칙 보정
+- [x] Discord·News·Game Info·Media 상하 50px 여백과 Hero 하단 Game Start 배경색 조정
+- [x] Closing CTA 버튼의 데스크톱 좌우·모바일 상하 배치 및 Footer 어두운 표면·SNS 테두리 제거
+- [x] Game Info 이미지 테두리 제거·제목 높이 정렬, 다중 화면 폭·TypeScript·회귀 테스트 검증

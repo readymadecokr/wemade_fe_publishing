@@ -506,3 +506,46 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-closing-panel { min-height: 0; height: auto; padding: 0; }
   .react-home-footer { padding: 30px 0; }
 }
+
+/* Current Hero, header, content, closing CTA, and footer presentation. */
+.reference-header-language { border-left: 0; }
+.reference-header-top-action { font-size: 12px; }
+.react-home-hero h1 { font-size: clamp(28px,4.1vw,58px); letter-spacing: -.045em; }
+.react-home-hero h1 span { width: max-content; max-width: 100%; white-space: nowrap; }
+.react-home-hero p { max-width: none; white-space: nowrap; font-size: clamp(11px,1.1vw,16px); }
+.react-home-hero__tags span, .react-home-white-cta { box-sizing: border-box; min-height: 44px; height: 44px; }
+.react-home-hero__tags span { padding: 0 18px; font-size: 13px; }
+.react-home-hero__controls { top: max(6px, calc(clamp(16px,2vw,30px) - 10px)); right: clamp(20px,3vw,42px); bottom: auto; left: clamp(20px,3vw,42px); }
+.react-home-hero__arrow { width: 32px; height: 32px; }
+.react-home-hero-cta-row { background: #0c2038; }
+.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { padding: 50px 0; }
+.react-home-closing .home-cta-pair { width: min(660px, calc(100% - 44px)); min-height: 64px; flex-direction: row; gap: 20px; }
+.react-home-closing .home-cta-pair .home-discord-button, .react-home-closing .home-cta-pair .home-game-start { box-sizing: border-box; flex: 1 1 0; width: auto; height: 64px; }
+.react-home-closing .home-cta-pair .home-discord-button { align-self: center; }
+.react-home-closing .home-cta-pair .home-game-start { top: 0; flex-basis: auto; }
+.react-home-footer { border-top: 0; background: #0c2038; color: #dce8f2; font-family: Arial, Helvetica, sans-serif; }
+.react-home-footer__brands, .react-home-footer nav a, .react-home-footer p { color: #dce8f2; font-family: inherit; }
+.react-home-footer__brands i { background: rgba(220,232,242,.42); }
+.react-home-footer__social a, .react-home-footer__social a:nth-child(4) { border: 0; }
+.react-home-game-info__art { border: 0; border-radius: 0; }
+
+@media (min-width: 761px) {
+  .react-home-game-info__art { width: clamp(170px,24vw,360px); height: clamp(88px,7.4vw,120px); justify-self: start; align-self: start; }
+  .react-home-game-info__art-paper, .react-home-game-info__art-paper img { width: 100%; height: 100%; }
+  .react-home-game-info__art-paper img { max-width: 100%; object-fit: contain; }
+}
+
+@media (max-width: 760px) {
+  .reference-header-top-action { font-size: 9px; }
+  .react-home-hero h1 { font-size: clamp(16px,4vw,22px); }
+  .react-home-hero p { max-width: none; white-space: nowrap; font-size: clamp(7px,1.8vw,9px); }
+  .react-home-hero__tags span, .react-home-white-cta { min-height: 38px; height: 38px; }
+  .react-home-hero__tags span { padding: 0 14px; font-size: 11px; }
+  .react-home-hero__controls { top: max(5px, calc(clamp(16px,2vw,30px) - 8px)); bottom: auto; }
+  .react-home-hero__arrow { width: 28px; height: 28px; }
+  .react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { padding: 50px 0; }
+  .react-home-closing .home-cta-pair { width: min(276px,calc(100% - 44px)); flex-direction: column; gap: 16px; }
+  .react-home-closing .home-cta-pair .home-discord-button, .react-home-closing .home-cta-pair .home-game-start { flex: 0 0 64px; width: 100%; height: 64px; }
+  .react-home-game-info__art { width: 100%; height: auto; }
+  .react-home-game-info__art-paper img { width: 100%; height: auto; }
+}

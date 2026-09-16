@@ -37,6 +37,8 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain('.portal-nav { display: flex; min-width: 0; align-items: stretch; justify-content: flex-start; gap: clamp(16px,2.3vw,40px);');
     expect(headerStyles).toContain('.portal-nav-link { width: auto; min-height: 64px; justify-content: flex-start;');
     expect(headerStyles).toContain('.portal-nav-link { flex: 0 0 auto; overflow: visible; white-space: nowrap; }');
+    expect(headerStyles).toContain('.reference-header-language { border-left: 0; }');
+    expect(headerStyles).toContain('.reference-header-top-action { font-size: 12px; }');
     expect(headerStyles).toContain('.reference-header-language { display: inline-flex; align-items: center; gap: 4px; border: 0; border-left: 1px solid #dbe3e9;');
     expect(headerStyles).toContain('.reference-home-live-header .reference-header-main-row, .reference-home-live-header .reference-header-utility { width: min(1180px, calc(100% - 64px)); }');
   });

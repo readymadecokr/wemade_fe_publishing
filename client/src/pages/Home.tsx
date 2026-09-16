@@ -50,7 +50,7 @@ export default function Home() {
   const rawHeroTitle = currentHero.heroTitle || "MIDGARD RUNS\nIN YOUR BROWSER";
   const suppliedHeroTitleLines = rawHeroTitle.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).slice(0, 2);
   const heroTitleLines = rawHeroTitle.replace(/\s+/g, " ").trim().toUpperCase() === requestedHeroTitle
-    ? ["MIDGARD RUNS", "IN YOUR BROWSER"]
+    ? [requestedHeroTitle]
     : suppliedHeroTitleLines;
   const heroDescription = currentHero.heroDescription || "No download, no install, no launcher. Open a tab on your phone or PC and begin your adventure.";
   const heroCategory = currentHero.heroCategory || "UPDATE";

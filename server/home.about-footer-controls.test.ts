@@ -31,7 +31,7 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-footer { grid-area: footer; min-height: 0; padding: 30px 0; }');
     expect(styleSource).toContain('.react-home-closing h2 { color: #1b344c; font-size: clamp(31px,3.57vw,53px); line-height: .98; }');
     expect(styleSource).toContain('.react-home-section-heading > div > span, .react-home-game-info__copy > span, .react-home-closing__content > span { display: block; margin-bottom: 9px; border: 0; padding: 0; color: var(--home-gold); font-family: inherit; font-size: 11px; font-weight: 400; letter-spacing: .22em; line-height: normal; }');
-    expect(styleSource).toContain('.react-home-footer { padding: 38px 0 30px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c; }');
+    expect(styleSource).toContain('.react-home-footer { border-top: 0; background: #0c2038; color: #dce8f2; font-family: Arial, Helvetica, sans-serif; }');
     expect(homeSource).toContain('<span>Copyright © Gravity Co., LTD &amp; Lee MyoungJin(studio DTDS). All Rights Reserved.</span><span>All trademarks used on this website are the property of their respective owners.</span>');
     expect(styleSource).toContain('.react-home-footer p span { display: block; }');
     expect(styleSource).toContain('.react-home-footer__inner > div:first-child { display: grid; grid-template-columns: auto auto; align-items: center; justify-content: center; column-gap: 10px; }');
@@ -41,7 +41,7 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-footer__inner > div:first-child > p span { font-size: clamp(9px,.85vw,11px); line-height: 1.35; }');
   });
 
-  it("keeps the two-line Game Info heading, unified fact typography, simple artwork border, and blue Gravity footer asset", () => {
+  it("keeps the two-line Game Info heading, unified fact typography, borderless artwork, and blue Gravity footer asset", () => {
     expect(homeSource).toContain("CLASSIC ADVENTURE<br />A NEW WAY TO PLAY");
     expect(homeSource).toContain('className="react-home-game-info__facts"');
     expect(homeSource).toContain("Web Browser");
@@ -68,11 +68,11 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".react-home-game-info__copy h2 { color: #1a344d; font-size: clamp(31px,3.57vw,53px); line-height: .98; white-space: nowrap;");
     expect(styleSource).toContain(".react-home-game-info__facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); margin: 0 0 26px; border-top: 1px solid rgba(30,55,77,.22); border-left: 1px solid rgba(30,55,77,.22); font-family: inherit;");
     expect(styleSource).toContain(".react-home-game-info__facts strong { display: block; color: #1a344d; font-family: inherit;");
-    expect(styleSource).toContain("Game Info artwork uses one rounded outline");
+    expect(styleSource).toContain('.react-home-game-info__art { border: 0; border-radius: 0; }');
     expect(styleSource).toContain(".react-home-footer__inner { position: relative; justify-content: center; }");
     expect(styleSource).toContain(".react-home-footer p { text-align: center; }");
     expect(styleSource).toContain(".react-home-game-info__grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: center; gap: clamp(26px,3.2vw,48px);");
-    expect(styleSource).toContain(".react-home-game-info__art { position: relative; z-index: 1; width: 100%; justify-self: stretch; overflow: hidden; box-sizing: border-box; padding: 0; border: 1px solid rgba(26,52,77,.52); border-radius: 14px;");
+    expect(styleSource).toContain('.react-home-game-info__art { width: clamp(170px,24vw,360px); height: clamp(88px,7.4vw,120px); justify-self: start; align-self: start; }');
     expect(styleSource).toContain(".react-home-game-info__art { position: relative; z-index: 1; width: 100%; justify-self: stretch;");
     expect(styleSource).toContain("transform: none;");
     expect(styleSource).toContain(".react-home-game-info__art { width: min(100%,220px); justify-self: center;");
@@ -80,8 +80,8 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".react-home-game-info__art-paper img { display: block; width: 100%; height: auto; max-height: none; border: 0; object-fit: initial; filter: saturate(1.08) contrast(1.03); transform: none;");
   });
 
-  it("uses content-driven heights and equal 30px vertical breathing room for every main content section", () => {
-    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { display: block; min-height: 0; height: auto; padding: 30px 0; }');
+  it("uses content-driven heights and equal 50px vertical breathing room for every main content section", () => {
+    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { padding: 50px 0; }');
     expect(styleSource).toContain('.react-home-layout > [data-snap-panel] { height: auto; min-height: 0; overflow: visible; }');
   });
 
@@ -92,7 +92,7 @@ describe("direct React Home CTA, headings, and footer", () => {
   });
 
   it("centers mobile Media and keeps the header Game Start separated while the Hero uses its own centered solo action", () => {
-    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { height: auto; min-height: 0; overflow: visible; padding: 30px 0; }');
+    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { padding: 50px 0; }');
     expect(styleSource).toContain('.reference-mobile-menu-toggle { margin-right: -6px; border: 0; }');
     expect(styleSource).toContain('.reference-header-cta { gap: 22px; }');
     expect(styleSource).toContain('.reference-header-game-start { transform: translateY(-3px) scale(1.254); transform-origin: center; }');
@@ -103,18 +103,17 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-home-stage { grid-template-rows: minmax(0,1fr) 72px; }');
   });
 
-  it("keeps the enlarged Hero text while reducing the UPDATE and VIEW MORE outline footprint", () => {
-    expect(styleSource).toContain('.react-home-hero__tags span { padding: 8px 14px; font-size: 20px; }');
-    expect(styleSource).toContain('.react-home-white-cta { gap: 7px; padding: 7px 11px; font-size: 11px; }');
-    expect(styleSource).toContain('.react-home-white-cta b { font-size: 10px; }');
+  it("keeps a single-line Hero title, aligned top controls, and matching UPDATE / VIEW MORE height", () => {
+    expect(styleSource).toContain('.react-home-hero h1 { font-size: clamp(28px,4.1vw,58px); letter-spacing: -.045em; }');
+    expect(styleSource).toContain('.react-home-hero__tags span, .react-home-white-cta { box-sizing: border-box; min-height: 44px; height: 44px; }');
+    expect(styleSource).toContain('.react-home-hero__controls { top: max(6px, calc(clamp(16px,2vw,30px) - 10px));');
     expect(styleSource).toContain('.react-home-hero__dots { position: absolute; z-index: 3; top: clamp(16px,2vw,30px); left: 50%; transform: translateX(-50%); }');
   });
 
-  it("stacks the final Discord and Game Start buttons with a shared fixed action size", () => {
-    expect(styleSource).toContain('.react-home-closing .home-cta-pair { width: min(276px,calc(100% - 44px)); min-height: auto; flex-direction: column; gap: 16px; }');
-    expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-discord-button, .react-home-closing .home-cta-pair .home-game-start { box-sizing: border-box; flex: 0 0 64px; width: 100%; height: 64px; }');
-    expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-discord-button { width: min(230px,100%); align-self: center; }');
-    expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-game-start { top: 0; flex-basis: 102px; height: 102px; }');
+  it("keeps final Discord and Game Start actions side-by-side on desktop and stacked on mobile", () => {
+    expect(styleSource).toContain('.react-home-closing .home-cta-pair { width: min(660px, calc(100% - 44px)); min-height: 64px; flex-direction: row; gap: 20px; }');
+    expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-discord-button, .react-home-closing .home-cta-pair .home-game-start { box-sizing: border-box; flex: 1 1 0; width: auto; height: 64px; }');
+    expect(styleSource).toContain('.react-home-closing .home-cta-pair { width: min(276px,calc(100% - 44px)); flex-direction: column; gap: 16px; }');
   });
 
   it("uses the official Discord, Facebook, YouTube, and X marks in the Home footer", () => {
@@ -124,7 +123,7 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).toContain('/manus-storage/x-logo-black_193d8b29.webp');
     expect(styleSource).toContain('.react-home-footer__social a { box-sizing: border-box; width: 31px; height: 31px;');
     expect(styleSource).toContain('.react-home-footer__social a:nth-child(1) img { width: 24px; height: 24px; }');
-    expect(styleSource).toContain('.react-home-footer__social a:nth-child(4) { border-color: rgba(22,22,22,.35); padding: 7px; background: #fff; }');
+    expect(styleSource).toContain('.react-home-footer__social a, .react-home-footer__social a:nth-child(4) { border: 0; }');
     expect(styleSource).toContain('@media (max-width: 760px) { .react-home-footer__social a { width: 24px; height: 24px; }');
   });
 

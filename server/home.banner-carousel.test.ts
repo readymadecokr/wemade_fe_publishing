@@ -16,7 +16,7 @@ describe("direct React Home banner", () => {
     expect(homeSource).toContain("react-home-hero__controls");
     expect(homeSource).toContain("heroCategory");
     expect(homeSource).toContain("heroTitleLines");
-    expect(homeSource).toContain('["MIDGARD RUNS", "IN YOUR BROWSER"]');
+    expect(homeSource).toContain('? [requestedHeroTitle]');
     expect(homeSource).toContain("heroDescription");
     expect(homeSource).toContain("heroActionUrl");
     expect(homeSource).toContain("VIEW MORE");
