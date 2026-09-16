@@ -101,7 +101,7 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.reference-mobile-menu-toggle { margin-right: -6px; border: 0; }');
     expect(styleSource).toContain('.reference-header-cta { gap: 22px; }');
     expect(styleSource).toContain('.reference-header-game-start { transform: translateY(-3px) scale(1.254); transform-origin: center; }');
-    expect(styleSource).toContain('.home-game-start--hero-solo { width: min(220px,55vw); height: 72px; transform: translateY(calc(-50% - 3px)); }');
+    expect(styleSource).toContain('.home-game-start--hero-solo { width: min(264px,66vw); height: clamp(72px,21.6vw,86px); transform: translateY(calc(-50% - 3px)); }');
     expect(styleSource).toContain('.react-home-hero__tags span { padding: 7px 11px; font-size: 16px; }');
     expect(styleSource).toContain('.react-home-white-cta { gap: 5px; padding: 6px 8px; font-size: 9px; }');
     expect(styleSource).toContain('.react-home-white-cta b { font-size: 8px; }');

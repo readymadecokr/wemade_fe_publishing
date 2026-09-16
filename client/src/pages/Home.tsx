@@ -131,13 +131,13 @@ export default function Home() {
       return true;
     };
     const handleWheel = (event: WheelEvent) => {
-      if (wheelLocked || Math.abs(event.deltaY) < 8 || event.ctrlKey) return;
+      if (wheelLocked || Math.abs(event.deltaY) < 24 || event.ctrlKey) return;
 
       if (!movePanel(event.deltaY > 0 ? 1 : -1)) return;
 
       event.preventDefault();
       wheelLocked = true;
-      window.setTimeout(() => { wheelLocked = false; }, 680);
+      window.setTimeout(() => { wheelLocked = false; }, 820);
     };
     const handleTouchStart = (event: TouchEvent) => {
       if (!isMobilePanelViewport()) return;
@@ -155,10 +155,10 @@ export default function Home() {
       touchStartY = null;
       const startingPanelIndex = touchStartPanelIndex;
       touchStartPanelIndex = null;
-      if (Math.abs(verticalTravel) < 36 || Math.abs(verticalTravel) <= horizontalTravel) return;
+      if (Math.abs(verticalTravel) < 48 || Math.abs(verticalTravel) <= horizontalTravel) return;
       if (!movePanel(verticalTravel > 0 ? -1 : 1, startingPanelIndex ?? getCurrentPanelIndex())) return;
       touchLocked = true;
-      window.setTimeout(() => { touchLocked = false; }, 680);
+      window.setTimeout(() => { touchLocked = false; }, 820);
     };
 
     root.classList.add("react-home-snap");
@@ -248,7 +248,7 @@ export default function Home() {
         <div className="react-home-section-shell">
           <div className="react-home-section-heading"><div><span>NEWS &amp; NOTICE</span><h2>LATEST FROM MIDGARD</h2></div><Link href="/news" className="react-home-outline-cta react-home-news-more" aria-label="View more news">+</Link></div>
           <div className="react-home-news-grid">
-            {isNewsLoading ? Array.from({ length: 4 }, (_, index) => <div className={`react-home-news-card animate-pulse${index === 3 ? " react-home-news-card--mobile-extra" : ""}`} key={index} aria-label="Loading news"><div className="min-h-40 bg-slate-200/70" /><div className="space-y-3 p-4"><div className="h-3 w-1/3 rounded bg-slate-200" /><div className="h-5 rounded bg-slate-200" /><div className="h-3 rounded bg-slate-200" /></div></div>) : homeNews.length > 0 ? homeNews.map((item, index) => <Link href={`/news/${item.id}`} className={`react-home-news-card${index === 3 ? " react-home-news-card--mobile-extra" : ""}`} key={item.id}><img src={item.imageUrl || NEWS_PLACEHOLDER_IMAGE} alt="" loading="lazy" /><div><div className="react-home-news-card__meta"><span>{item.category.toUpperCase()}</span><time>{formatHomeNewsDate(item.publishedAt)}</time></div><h3>{item.title}</h3><p>{item.summary || item.content?.split(/\n\s*\n/)[0] || ""}</p><span className="react-home-news-card__link">READ MORE <b>›</b></span></div></Link>) : <p className="react-home-news-empty col-span-full py-10 text-center">No news is currently published.</p>}
+            {isNewsLoading ? Array.from({ length: 4 }, (_, index) => <div className={`react-home-news-card animate-pulse${index === 3 ? " react-home-news-card--mobile-extra" : ""}`} key={index} aria-label="Loading news"><div className="min-h-40 bg-slate-200/70" /><div className="space-y-3 p-4"><div className="h-3 w-1/3 rounded bg-slate-200" /><div className="h-5 rounded bg-slate-200" /><div className="h-3 rounded bg-slate-200" /></div></div>) : homeNews.length > 0 ? homeNews.map((item, index) => <Link href={`/news/${item.id}`} aria-label={`Read ${item.title}`} className={`react-home-news-card${index === 3 ? " react-home-news-card--mobile-extra" : ""}`} key={item.id}><img src={item.imageUrl || NEWS_PLACEHOLDER_IMAGE} alt="" loading="lazy" /><div><div className="react-home-news-card__meta"><span>{item.category.toUpperCase()}</span><time>{formatHomeNewsDate(item.publishedAt)}</time></div><h3>{item.title}</h3><p>{item.summary || item.content?.split(/\n\s*\n/)[0] || ""}</p><span className="react-home-news-card__link">READ MORE <b>›</b></span></div></Link>) : <p className="react-home-news-empty col-span-full py-10 text-center">No news is currently published.</p>}
           </div>
         </div>
       </section>
