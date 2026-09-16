@@ -58,7 +58,7 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain('.reference-mobile-menu-toggle, .reference-mobile-menu { display: none; }');
     expect(headerStyles).toContain('.portal-nav { display: none; }.reference-mobile-menu-toggle { display: grid;');
     expect(headerStyles).toContain('/* Mobile navigation stays close to the right edge and slides in without changing header height. */');
-    expect(headerStyles).toContain('right: 8px;\n    left: auto;\n    display: grid;\n    width: min(336px, calc(100vw - 16px));');
+    expect(headerStyles).toContain('right: 0;\n    left: auto;\n    display: grid;\n    width: min(168px, calc(50vw - 8px));');
     expect(headerStyles).toContain('transform: translateX(calc(100% + 18px));');
     expect(headerStyles).toContain('.reference-mobile-menu.is-open {\n    display: grid;\n    opacity: 1;\n    visibility: visible;\n    pointer-events: auto;\n    transform: translateX(0);');
     expect(headerStyles).toContain('@media (prefers-reduced-motion: reduce) {\n  .reference-mobile-menu, .reference-mobile-menu.is-open { transition: none; }');

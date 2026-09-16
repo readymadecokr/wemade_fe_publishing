@@ -380,10 +380,10 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 /* Mobile navigation stays close to the right edge and slides in without changing header height. */
 @media (max-width: 760px) {
   .reference-mobile-menu {
-    right: 8px;
+    right: 0;
     left: auto;
     display: grid;
-    width: min(336px, calc(100vw - 16px));
+    width: min(168px, calc(50vw - 8px));
     gap: 4px;
     padding: 7px 8px 8px;
     border: 1px solid rgba(200,216,231,.34);
