@@ -109,12 +109,14 @@ export default function Home() {
     const root = document.documentElement;
     const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-snap-panel]"));
     let wheelLocked = false;
+    let pendingWheelDelta = 0;
     let touchLocked = false;
     let touchStartX: number | null = null;
     let touchStartY: number | null = null;
     let touchStartPanelIndex: number | null = null;
 
     const isMobilePanelViewport = () => window.matchMedia("(max-width: 760px)").matches;
+    const isDesktopPanelViewport = () => window.matchMedia("(min-width: 761px)").matches;
     const getCurrentPanelIndex = () => {
       const headerHeight = Number.parseFloat(getComputedStyle(root).getPropertyValue("--react-home-header-height")) || 0;
       return panels.reduce((nearestIndex, panel, index) => {
@@ -131,13 +133,19 @@ export default function Home() {
       return true;
     };
     const handleWheel = (event: WheelEvent) => {
-      if (wheelLocked || Math.abs(event.deltaY) < 24 || event.ctrlKey) return;
-
-      if (!movePanel(event.deltaY > 0 ? 1 : -1)) return;
-
+      if (!isDesktopPanelViewport() || event.ctrlKey) return;
       event.preventDefault();
+      if (wheelLocked) return;
+
+      pendingWheelDelta += event.deltaY;
+      if (Math.abs(pendingWheelDelta) < 12) return;
+
+      const direction = pendingWheelDelta > 0 ? 1 : -1;
+      pendingWheelDelta = 0;
+      if (!movePanel(direction)) return;
+
       wheelLocked = true;
-      window.setTimeout(() => { wheelLocked = false; }, 820);
+      window.setTimeout(() => { wheelLocked = false; }, 720);
     };
     const handleTouchStart = (event: TouchEvent) => {
       if (!isMobilePanelViewport()) return;

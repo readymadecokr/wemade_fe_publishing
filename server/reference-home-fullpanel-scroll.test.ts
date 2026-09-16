@@ -14,8 +14,11 @@ describe("direct React Home section navigation", () => {
     expect(homeSource).toContain('window.addEventListener("touchend", handleTouchEnd, { passive: true })');
     expect(homeSource).toContain("touchStartPanelIndex = getCurrentPanelIndex();");
     expect(homeSource).toContain("movePanel(verticalTravel > 0 ? -1 : 1, startingPanelIndex ?? getCurrentPanelIndex())");
-    expect(homeSource).toContain("if (wheelLocked || Math.abs(event.deltaY) < 24 || event.ctrlKey) return;");
-    expect(homeSource).toContain("window.setTimeout(() => { wheelLocked = false; }, 820);");
+    expect(homeSource).toContain("let pendingWheelDelta = 0;");
+    expect(homeSource).toContain("const isDesktopPanelViewport = () => window.matchMedia(\"(min-width: 761px)\").matches;");
+    expect(homeSource).toContain("if (!isDesktopPanelViewport() || event.ctrlKey) return;\n      event.preventDefault();");
+    expect(homeSource).toContain("if (Math.abs(pendingWheelDelta) < 12) return;");
+    expect(homeSource).toContain("window.setTimeout(() => { wheelLocked = false; }, 720);");
     expect(homeSource).not.toContain("!isPanelViewport()");
     expect(homeSource).not.toContain('event.target.closest(".react-home-widget")');
     expect(homeSource).not.toContain("react-home-mobile-panel-return");
@@ -30,7 +33,7 @@ describe("direct React Home section navigation", () => {
     expect(styleSource).toContain(".react-home-home-stage, .react-home-discord { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); min-height: calc(100dvh - var(--react-home-header-height)); overflow: hidden; scroll-snap-align: start; scroll-snap-stop: normal; }");
     expect(styleSource).toContain(".react-home-discord__shell { display: flex; width: calc(100% - 28px); min-height: 0; margin-inline: auto; flex: 0 1 auto; flex-direction: column; }");
     expect(styleSource).toContain(".react-home-media { height: 100svh; height: 100dvh; min-height: 100svh; min-height: 100dvh; }");
-    expect(styleSource).toContain("html.react-home-snap { scroll-snap-type: y proximity; }");
+    expect(styleSource).toContain("html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scroll-behavior: smooth; scroll-snap-type: y mandatory; }");
     expect(styleSource).toContain(".react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { scroll-snap-align: start; scroll-snap-stop: normal; }");
     expect(styleSource).toContain(".react-home-final-panel { box-sizing: border-box; height: 100svh; height: 100dvh; min-height: 100svh; min-height: 100dvh; margin-top: calc(-1 * var(--react-home-header-height)); padding-top: var(--react-home-header-height); scroll-snap-align: start; scroll-snap-stop: normal; }");
     expect(styleSource).toContain(".react-home-hero { position: relative; display: grid;");

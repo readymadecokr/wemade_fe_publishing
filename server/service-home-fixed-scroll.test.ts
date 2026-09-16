@@ -19,7 +19,7 @@ describe("direct React full-page service Home", () => {
   it("offsets sections for the fixed live header without a nested website iframe", () => {
     expect(styleSource).toContain("padding-top: var(--react-home-header-height)");
     expect(styleSource).toContain("scroll-padding-top: var(--react-home-header-height)");
-    expect(styleSource).toContain(".react-home-news, .react-home-game-info, .react-home-media { scroll-snap-align: start; scroll-snap-stop: normal; }");
+    expect(styleSource).toContain(".react-home-layout > [data-snap-panel] { min-height: calc(100svh - var(--react-home-header-height)); scroll-snap-align: start; scroll-snap-stop: always; }");
     expect(styleSource).toContain(".react-home-home-stage, .react-home-discord { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height));");
     expect(styleSource).toContain(".react-home-final-panel { box-sizing: border-box; height: 100svh; height: 100dvh; min-height: 100svh; min-height: 100dvh; margin-top: calc(-1 * var(--react-home-header-height)); padding-top: var(--react-home-header-height); scroll-snap-align: start; scroll-snap-stop: normal; }");
     expect(styleSource).toContain(".react-home-final-panel .react-home-closing { min-height: 0; flex: 1 1 auto; }");
@@ -40,7 +40,7 @@ describe("direct React full-page service Home", () => {
   it("moves one full-screen panel at a time on desktop wheel input", () => {
     expect(homeSource).toContain('querySelectorAll<HTMLElement>("[data-snap-panel]")');
     expect(homeSource).toContain('panels[nextIndex].scrollIntoView({ behavior: "smooth", block: "start" })');
-    expect(styleSource).toContain("scroll-snap-type: y proximity;");
-    expect(styleSource).toContain("scroll-snap-stop: normal;");
+    expect(styleSource).toContain("scroll-snap-type: y mandatory;");
+    expect(styleSource).toContain("scroll-snap-stop: always;");
   });
 });
