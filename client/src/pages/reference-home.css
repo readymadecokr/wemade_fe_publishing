@@ -420,6 +420,47 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 .react-home-game-info__copy > .react-home-outline-cta { border-color: #163a59; background: #183f64; color: #fff; box-shadow: 0 4px 0 #0f2d48, 0 10px 20px rgba(14,40,65,.22); }
 .react-home-game-info__copy > .react-home-outline-cta:hover { background: #214f79; box-shadow: 0 1px 0 #0f2d48, 0 3px 8px rgba(14,40,65,.2); }
 
+/* Header: dark authentication bar above a separate white navigation surface. */
+.reference-header-utility-surface { position: relative; z-index: 2; }
+.reference-header-utility { color: #fff; }
+.reference-header-auth-link, .reference-header-account-links a, .reference-header-account-links button { border: 0; padding: 0; background: transparent; color: rgba(255,255,255,.94); font: inherit; font-size: 12px; font-weight: 700; line-height: 1; text-decoration: none; transition: color 160ms ease; }
+.reference-header-auth-link:hover, .reference-header-account-links a:hover, .reference-header-account-links button:hover { color: #f3d991; }
+.reference-header-auth-link:focus-visible, .reference-header-account-links a:focus-visible, .reference-header-account-links button:focus-visible { outline: 2px solid #f3d991; outline-offset: 4px; }
+.reference-header-account-links { display: inline-flex; align-items: center; gap: 14px; }
+.reference-header-account-links strong { color: #f3d991; }
+.reference-header-gnb-surface { position: relative; z-index: 1; border-bottom: 1px solid #d9e1e8; background: #fff; box-shadow: 0 3px 14px rgba(23,45,67,.12); }
+.reference-home-live-header .reference-header-main-row { grid-template-columns: var(--bi-logo-width) minmax(0,1fr) auto auto; min-height: 64px; gap: clamp(14px,2vw,32px); }
+.reference-header-logo { height: 62px; }
+.reference-header-logo img { position: static; width: min(var(--bi-logo-width),150px); height: auto; max-height: 58px; filter: none; transform: none; }
+.portal-nav { display: flex; min-width: 0; align-items: stretch; justify-content: flex-start; gap: clamp(16px,2.3vw,40px); font-size: clamp(12px,calc(.52vw + 6px),16px); }
+.portal-nav-link { width: auto; min-height: 64px; justify-content: flex-start; border: 0; border-bottom: 3px solid transparent; border-radius: 0; color: #253b50; font-weight: 800; letter-spacing: .035em; }
+.portal-nav-link:hover { color: #0e5d91; text-shadow: none; }
+.portal-nav-link--active { border-color: #0f74ac; background: transparent; color: #0e5d91; box-shadow: none; text-shadow: none; }
+.reference-header-text-actions { display: inline-flex; align-items: center; gap: clamp(10px,1.25vw,18px); white-space: nowrap; }
+.reference-header-text-action { display: inline-flex; align-items: center; gap: 5px; border: 0; color: #263e54; font-size: clamp(10px,.78vw,12px); font-weight: 800; letter-spacing: .025em; text-decoration: none; transition: color 160ms ease; }
+.reference-header-text-action:hover { color: #0e5d91; }
+.reference-header-text-action--discord svg { color: #5865f2; }
+.reference-header-text-action--game-start svg { color: #0f74ac; }
+.reference-header-language { display: inline-flex; align-items: center; gap: 4px; border: 0; border-left: 1px solid #dbe3e9; padding: 0 0 0 clamp(10px,1.2vw,18px); background: transparent; color: #253b50; font-size: 11px; font-weight: 800; line-height: 1; }
+.reference-header-language:hover { color: #0e5d91; }
+.reference-header-cta { display: none; }
+.reference-home-live-header .reference-header-main-row, .reference-home-live-header .reference-header-utility { width: min(1180px, calc(100% - 64px)); }
+
+@media (max-width: 760px) {
+  .reference-header-utility { display: flex !important; width: calc(100% - 46px) !important; height: 30px !important; min-height: 30px; justify-content: flex-end; }
+  .reference-header-auth-link, .reference-header-account-links a, .reference-header-account-links button { font-size: 9px; }
+  .reference-home-live-header .reference-header-main-row { display: grid !important; width: calc(100% - 46px) !important; grid-template-columns: minmax(62px,82px) minmax(0,1fr) auto; grid-template-rows: 44px 35px; column-gap: 8px; row-gap: 0; padding: 0 !important; }
+  .reference-header-logo { grid-column: 1; grid-row: 1; height: 44px; }
+  .reference-header-logo img { width: min(var(--bi-logo-width),82px); max-height: 42px; }
+  .reference-header-text-actions { grid-column: 2; grid-row: 1; justify-content: flex-end; gap: 7px; }
+  .reference-header-text-action { gap: 3px; font-size: 8px; }
+  .reference-header-text-action svg { width: 13px; height: 13px; }
+  .reference-header-language { grid-column: 3; grid-row: 1; padding-left: 8px; font-size: 9px; }
+  .portal-nav { display: flex !important; grid-column: 1 / -1; grid-row: 2; width: 100%; justify-content: space-between; gap: 0; }
+  .portal-nav-link { min-height: 35px; flex: 1 1 0; justify-content: center; border-bottom-width: 2px; font-size: clamp(7px,2vw,10px); letter-spacing: 0; }
+  .reference-mobile-menu-toggle, .reference-mobile-menu { display: none !important; }
+}
+
 /* Content regions remain independent from the fixed GNB: their height follows their actual contents. */
 .react-home-layout { grid-template-areas: "home" "discord" "news" "game-info" "media" "closing" "footer"; }
 .react-home-panel { min-height: 0; overflow: visible; }
