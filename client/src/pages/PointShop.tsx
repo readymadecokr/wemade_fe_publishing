@@ -147,8 +147,7 @@ export default function PointShop() {
   const { user } = useAuth();
   const { data: balance } = trpc.shop.myBalance.useQuery(undefined, { enabled: !!user });
   const [paymentProvider, setPaymentProvider] = useState<ShopEntryProvider>("xsolla");
-  return <Layout>
-    <div className="border-b border-[#617089] bg-[linear-gradient(110deg,#314b66,#557494_55%,#314b66)] py-10 text-white"><div className="container"><h1 className="mb-2 font-serif text-4xl font-bold">Shop</h1><p className="text-[#e9dfc8]">Purchase rCoin</p></div></div>
-    <div className="fantasy-page-shell"><div className="container fantasy-content-guide py-8"><main className="min-w-0 w-full"><ChargeTab rCoin={balance?.ruCash ?? 0} bonusCoin={balance?.bonusCash ?? 0} paymentProvider={paymentProvider} onPaymentProviderChange={setPaymentProvider} /></main></div></div>
+  return <Layout variant="homeChrome" showClosingCta={false}>
+    <><section className="news-detail-page-banner shop-detail-page-banner" aria-labelledby="shop-detail-page-title"><div className="container"><h1 id="shop-detail-page-title">Shop</h1><p>Purchase rCoin and continue your adventure.</p></div></section><div className="fantasy-page-shell shop-detail-page-shell"><div className="container fantasy-content-guide pt-6 pb-8 md:pt-8"><main className="min-w-0 w-full"><ChargeTab rCoin={balance?.ruCash ?? 0} bonusCoin={balance?.bonusCash ?? 0} paymentProvider={paymentProvider} onPaymentProviderChange={setPaymentProvider} /></main></div></div></>
   </Layout>;
 }

@@ -3,7 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminKeyProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { users, memberRestrictionHistories, banners, news, media, products, payments, pointLogs, coupons, couponUses, admins, statsEvents, games } from "../drizzle/schema";
+import { users, memberRestrictionHistories, banners, news, media, screenshots, products, payments, pointLogs, coupons, couponUses, admins, statsEvents, games } from "../drizzle/schema";
 import { ruCashProducts, ruCashBalances, ruCashTransactions } from "../drizzle/schema";
 import { storagePut } from "./storage";
 import { filterMemberTransactionHistory } from "./memberHistory";
@@ -27,6 +27,13 @@ const couponSystemInput = z.object({
   randomGenerated: z.number().int().min(0).max(1).default(0),
   issueQuantity: z.number().int().min(1).max(500000).default(1),
 });
+
+const heroTextInput = (maxBytes: number, maxLineBytes: number) => z.string().trim().max(255).refine((value) => {
+  const lines = value.split(/\r?\n/);
+  return Buffer.byteLength(value.replace(/\r?\n/g, ""), "utf8") <= maxBytes
+    && lines.length <= 2
+    && lines.every((line) => Buffer.byteLength(line, "utf8") <= maxLineBytes);
+}, { message: `Hero text must be at most ${maxBytes} bytes in two lines.` });
 
 function toCouponSystemValues(input: z.infer<typeof couponSystemInput>) {
   const validFrom = input.validFrom ? new Date(input.validFrom) : null;
@@ -87,6 +94,15 @@ export const appRouter = router({
     }),
   }),
 
+  // 공개 스크린샷 목록 (Home.tsx에서 사용)
+  publicScreenshots: router({
+    list: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(screenshots).where(eq(screenshots.isActive, 1)).orderBy(asc(screenshots.sortOrder), asc(screenshots.id));
+    }),
+  }),
+
   // 공개 배너 목록 (Home.tsx에서 사용)
   banner: router({
     list: publicProcedure.query(async () => {
@@ -96,22 +112,38 @@ export const appRouter = router({
         .select()
         .from(banners)
         .where(eq(banners.isActive, 1))
-        .orderBy(asc(banners.sortOrder), asc(banners.id))
-        .limit(10);
+        .orderBy(asc(banners.sortOrder), asc(banners.id));
       return result;
     }),
   }),
 
-  // 공개 메인 News: 활성 상태인 최신 6개만 노출
+  // 공개 News: 관리자에서 공개로 설정한 기사만 서비스에 노출
   publicNews: router({
     list: publicProcedure.query(async () => {
       const db = await getDb();
       if (!db) return [];
       return db.select().from(news)
         .where(eq(news.isActive, 1))
-        .orderBy(desc(news.publishedAt), desc(news.id))
-        .limit(6);
+        .orderBy(desc(news.publishedAt), desc(news.id));
     }),
+    home: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(news)
+        .where(eq(news.isActive, 1))
+        .orderBy(desc(news.publishedAt), desc(news.id))
+        .limit(4);
+    }),
+    byId: publicProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return null;
+        const result = await db.select().from(news)
+          .where(and(eq(news.id, input.id), eq(news.isActive, 1)))
+          .limit(1);
+        return result[0] ?? null;
+      }),
   }),
 
   user: router({
@@ -410,6 +442,19 @@ export const appRouter = router({
         return { url };
       }),
 
+    // 스크린샷 이미지 업로드 (base64 → S3)
+    uploadScreenshotImage: adminKeyProcedure
+      .input(z.object({ base64: z.string(), filename: z.string().default("screenshot.jpg") }))
+      .mutation(async ({ input }) => {
+        const matches = input.base64.match(/^data:([^;]+);base64,(.+)$/);
+        if (!matches) throw new Error("Invalid base64 image data");
+        const buffer = Buffer.from(matches[2], "base64");
+        if (buffer.length > 500 * 1024) throw new Error("파일 용량이 500KB를 초과합니다.");
+        const safeFilename = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const { url } = await storagePut(`screenshots/${Date.now()}-${safeFilename}`, buffer, matches[1]);
+        return { url };
+      }),
+
     // 배너 목록 조회
     listBanners: adminKeyProcedure.query(async () => {
       const db = await getDb();
@@ -424,6 +469,9 @@ export const appRouter = router({
         title: z.string().min(1).max(255),
         imageUrl: z.string().min(1),
         imageKey: z.string().optional(),
+        heroCategory: z.enum(["EVENT", "PROMO", "UPDATE", "NOTE"]).default("UPDATE"),
+        heroTitle: heroTextInput(40, 20).optional(),
+        heroDescription: heroTextInput(100, 100).optional(),
         actionType: z.enum(["url", "content"]),
         actionUrl: z.string().optional(),
         contentTitle: z.string().optional(),
@@ -448,6 +496,9 @@ export const appRouter = router({
         title: z.string().min(1).max(255).optional(),
         imageUrl: z.string().optional(),
         imageKey: z.string().optional(),
+        heroCategory: z.enum(["EVENT", "PROMO", "UPDATE", "NOTE"]).optional(),
+        heroTitle: heroTextInput(40, 20).optional().nullable(),
+        heroDescription: heroTextInput(100, 100).optional().nullable(),
         actionType: z.enum(["url", "content"]).optional(),
         actionUrl: z.string().optional().nullable(),
         contentTitle: z.string().optional().nullable(),
@@ -513,7 +564,7 @@ export const appRouter = router({
         if (input.search) q = q.where(or(like(news.title, `%${input.search}%`), like(news.content ?? news.title, `%${input.search}%`)));
         const items = await q.orderBy(desc(news.publishedAt), desc(news.id)).limit(input.pageSize).offset(offset);
         const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(news);
-        const mainRows = await db.select({ id: news.id }).from(news).where(eq(news.isActive, 1)).orderBy(desc(news.publishedAt), desc(news.id)).limit(6);
+        const mainRows = await db.select({ id: news.id }).from(news).where(eq(news.isActive, 1)).orderBy(desc(news.publishedAt), desc(news.id)).limit(4);
         return { items, total: Number(count), mainNewsIds: mainRows.map(row => row.id) };
       }),
     create: adminKeyProcedure
@@ -576,6 +627,40 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
         await db.delete(media).where(eq(media.id, input.id));
+        return { success: true };
+      }),
+  }),
+
+  // ===== MEDIA SCREENSHOTS =====
+  screenshotsAdmin: router({
+    list: adminKeyProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(screenshots).orderBy(asc(screenshots.sortOrder), asc(screenshots.id));
+    }),
+    create: adminKeyProcedure
+      .input(z.object({ title: z.string().trim().min(1).max(255), imageUrl: z.string().trim().min(1), sortOrder: z.number().int().default(0), isActive: z.number().int().min(0).max(1).default(1) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        const result = await db.insert(screenshots).values(input);
+        return { id: (result as any).insertId };
+      }),
+    update: adminKeyProcedure
+      .input(z.object({ id: z.number().int(), title: z.string().trim().min(1).max(255).optional(), imageUrl: z.string().trim().min(1).optional(), sortOrder: z.number().int().optional(), isActive: z.number().int().min(0).max(1).optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        const { id, ...rest } = input;
+        await db.update(screenshots).set(rest).where(eq(screenshots.id, id));
+        return { success: true };
+      }),
+    delete: adminKeyProcedure
+      .input(z.object({ id: z.number().int() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        await db.delete(screenshots).where(eq(screenshots.id, input.id));
         return { success: true };
       }),
   }),

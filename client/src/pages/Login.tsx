@@ -213,7 +213,7 @@ export default function Login() {
   };
 
   return (
-    <Layout>
+    <Layout showClosingCta={step !== "register_social" && step !== "register_guest"}>
       <div className="fantasy-page-shell container min-h-[75vh] flex items-center justify-center py-12">
         <div className="relative w-full max-w-md">
           {/* Background Decorative Blur */}

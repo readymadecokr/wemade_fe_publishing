@@ -23,4 +23,18 @@ describe("My Page history layout", () => {
     expect(pointShop).not.toContain('"charge-history"');
     expect(pointShop).not.toContain('"use-history"');
   });
+
+  it("removes the closing Two Clicks to Midgard CTA from both My Page states", () => {
+    expect(myPage.match(/<Layout showClosingCta=\{false\}>/g)).toHaveLength(2);
+  });
+
+  it("keeps Coupon registration and restores the history list without a visible history title", () => {
+    expect(myPage).toContain("COUPON REGISTRATION");
+    expect(myPage).not.toContain("MY PAGE · COUPON USE");
+    expect(myPage).not.toContain("Coupon Use History");
+    expect(myPage).toContain("coupon.myHistory.useQuery({ page: historyPage, pageSize: 20 }");
+    expect(myPage).toContain('aria-label="Coupon history"');
+    expect(myPage).toContain("COUPON HISTORY");
+    expect(myPage).toContain('className="mt-6 flex justify-center"');
+  });
 });

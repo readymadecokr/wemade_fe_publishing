@@ -78,20 +78,24 @@ describe("My Page history screens", () => {
     expect(screen.getAllByText("Kafra Card")).toHaveLength(10);
   });
 
-  it("opens the Coupon screen with server, character, confirmation, and history controls", async () => {
+  it("opens the simplified coupon registration screen with server, character, and confirmation controls", async () => {
     const user = userEvent.setup();
     render(<MyPage />);
     await user.click(screen.getByRole("button", { name: "Coupon" }));
     expect(screen.getByTestId("coupon-entry")).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "Coupon" })).toBeTruthy();
-    expect(screen.getByText("Coupon Use History")).toBeTruthy();
+    expect(screen.getAllByText("COUPON REGISTRATION")).toHaveLength(2);
+    expect(screen.queryByRole("heading", { name: "Coupon" })).toBeNull();
+    expect(screen.queryByText("Coupon Use History")).toBeNull();
+    expect(screen.getByLabelText("Coupon history")).toBeTruthy();
+    expect(screen.getByText("COUPON HISTORY")).toBeTruthy();
+    expect(screen.getByText("Welcome Celebration")).toBeTruthy();
     expect(screen.getByRole("combobox", { name: "Coupon server" })).toBeTruthy();
     expect(screen.getByRole("combobox", { name: "Coupon character" })).toBeTruthy();
     expect(screen.getByRole("textbox", { name: "Coupon code" })).toBeTruthy();
     await user.selectOptions(screen.getByRole("combobox", { name: "Coupon server" }), "1");
     await user.selectOptions(screen.getByRole("combobox", { name: "Coupon character" }), "ValkyrieKnight");
     await user.type(screen.getByRole("textbox", { name: "Coupon code" }), "demo-0001-0001");
-    await user.click(screen.getByRole("button", { name: "Redeem Coupon" }));
+    await user.click(screen.getByRole("button", { name: "COUPON REGISTRATION" }));
     expect(screen.getByRole("dialog")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Confirm" })).toBeTruthy();
   });

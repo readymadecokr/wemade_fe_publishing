@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Globe, X, Disc, Moon, Sun } from "lucide-react";
+import { Globe, X, Disc, ChevronDown, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useTheme } from "@/contexts/ThemeContext";
 import PrivacySettingsDialog from "./PrivacySettingsDialog";
+import FloatingSocialLinks from "./FloatingSocialLinks";
 import { trpc } from "@/lib/trpc";
+import HomeHeader from "./HomeHeader";
+import "./news-layout.css";
 
 function fmtRuc(n: number): string { return Math.min(n, 9999999).toLocaleString("en-US"); }
 
@@ -14,17 +17,25 @@ const ASSET_BASE_URL = import.meta.env.VITE_ASSET_BASE_URL ?? '';
 
 interface LayoutProps {
   children: React.ReactNode;
+  variant?: "default" | "homeChrome";
+  showClosingCta?: boolean;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, variant = "homeChrome", showClosingCta = true }: LayoutProps) {
   const [location] = useLocation();
+  const usePlainDetailSurface = variant === "homeChrome" && (location.startsWith("/news") || location === "/point-shop");
+  const useShopSurface = variant === "homeChrome" && location === "/point-shop";
   const [lang, setLang] = useState("EN");
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [showCookieConsent, setShowCookieConsent] = useState(false);
   const [showPrivacySettings, setShowPrivacySettings] = useState(false);
   const [showTTKeyDialog, setShowTTKeyDialog] = useState(false);
   const [showComingSoonDialog, setShowComingSoonDialog] = useState(false);
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [location]);
 
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";
   const userNickname = localStorage.getItem("rou_nickname") || "Adventurer";
@@ -77,108 +88,65 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="fantasy-site-atlas min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/40 selection:text-white overflow-x-hidden">
+    <div className={`fantasy-site-atlas min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/40 selection:text-white overflow-x-hidden${usePlainDetailSurface ? " fantasy-site-atlas--detail-plain" : ""}${useShopSurface ? " fantasy-site-atlas--shop-surface" : ""}`}>
       
 
 
-      {/* Main Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-[#c8d8e7]/30 bg-[#1c3147]/72 text-white shadow-[0_3px_18px_rgba(24,38,57,.28)] backdrop-blur-xl [background-image:linear-gradient(100deg,rgba(32,56,78,.84),rgba(58,84,110,.58),rgba(24,45,66,.82))]">
-        <div className="container flex min-h-16 flex-wrap items-center justify-center gap-x-5 gap-y-1 py-2 lg:min-h-18 lg:flex-nowrap lg:justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group cursor-pointer">
-            <img src={`${ASSET_BASE_URL}/manus-storage/logo_main_ascii_c85e5b8d_8981998e.png`} alt="Ragnarok" className="h-10 w-auto brightness-[1.28] contrast-90 group-hover:opacity-80 transition-opacity" />
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="portal-nav flex items-center justify-center gap-3 text-[11px] sm:gap-5 sm:text-xs lg:gap-7" aria-label="Primary navigation">
-            <Link href="/" className={`transition-colors cursor-pointer ${location === "/" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
-              Home
-            </Link>
-            <Link href="/news" className={`transition-colors cursor-pointer ${location === "/news" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
-              News
-            </Link>
-            <Link href="/game-info" className={`transition-colors cursor-pointer ${location === "/game-info" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
-              Game Info
-            </Link>
-            <Link href="/point-shop" className={`transition-colors cursor-pointer ${location === "/point-shop" ? "text-[#f3d991] font-bold" : "text-slate-100 hover:text-[#f3d991]"}`}>
-              Shop
-            </Link>
-            <button onClick={() => setShowTTKeyDialog(true)} className="cursor-pointer text-[11px] text-slate-100 transition-colors hover:text-[#f3d991] sm:text-xs">
-              Discord
-            </button>
-          </nav>
-
-          {/* Desktop CTA / Profile */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Auth Section */}
-          {isLoggedIn ? (
-            <div className="flex items-center gap-4">
-              {/* rCoin 잔액 + 마이페이지 통합 표기 */}
-              <div className="flex items-center gap-0 rounded-lg border border-slate-200 bg-white dark:bg-slate-800 dark:border-slate-700 overflow-hidden text-xs font-semibold shadow-sm">
-                <Link href="/point-shop" className="flex items-center gap-1 px-3 py-2 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors cursor-pointer text-slate-700 dark:text-slate-200 whitespace-nowrap">
-                  <span>rCoin: <span className="text-[#9b2020] font-black">{fmtRuc(ruCash)}</span></span>
-                  <span className="mx-2 text-slate-300">|</span>
-                  <span>Bonus rCoin: <span className="text-green-700 font-black">{fmtRuc(bonusCash)}</span></span>
-                </Link>
-                <Link href="/mypage" className="flex items-center px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors cursor-pointer border-l border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 whitespace-nowrap">
-                  My Page
-                </Link>
-              </div>
-              <Button variant="outline" size="sm" onClick={handleLogout} className="border-[#e6c972] bg-[#fffaf0] text-xs font-bold text-[#263b5b] shadow-sm hover:bg-[#f8edce] hover:text-[#1d3150]">
-                Logout
-              </Button>
-            </div>
-            ) : (
-              <Link href="/login">
-              <Button size="sm" className="border border-[#d5bd7d]/70 bg-[#476da9] px-3 py-2 text-[10px] font-semibold text-white shadow-lg shadow-[#17283b]/30 transition-all hover:-translate-y-0.5 hover:border-[#fff0bd] hover:bg-[#6188c5] hover:shadow-[0_8px_20px_rgba(18,39,70,.42),inset_0_1px_rgba(255,255,255,.45)] focus-visible:ring-2 focus-visible:ring-[#fff0bd] active:scale-95 sm:px-4 sm:text-xs">
-                  Sign In / Sign Up
-                </Button>
-              </Link>
-            )}
-
-            {/* Language and Theme */}
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className="flex cursor-pointer items-center gap-1 text-[10px] font-bold text-slate-100 transition-colors hover:text-[#f3d991] sm:text-xs">
-                  <Globe size={14} /> {lang}
-                </button>
-                {langDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-lg shadow-lg z-50">
-                    {languages.map((l) => (
-                      <button
-                        key={l.code}
-                        onClick={() => handleLangSelect(l.code)}
-                        className={`w-full text-left px-4 py-2 text-sm hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 ${
-                          lang === l.code ? "text-blue-600 font-bold bg-blue-50 dark:bg-slate-700" : "text-slate-900 dark:text-white"
-                        }`}
-                      >
-                        <span>{l.flag}</span>
-                        <span>{l.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <button onClick={toggleTheme} disabled={!toggleTheme} className="flex cursor-pointer items-center gap-1 text-slate-100 transition-colors hover:text-[#f3d991] disabled:cursor-not-allowed disabled:opacity-50">
-                {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </header>
+      <HomeHeader activeSection={location.startsWith("/news") ? "news" : location === "/point-shop" ? "shop" : "home"} />
 
       {/* Main Content */}
-      <main className="flex-1 w-full">
+      <main className={`flex-1 w-full ${variant === "homeChrome" ? "home-chrome-content" : "pt-[136px] sm:pt-[106px]"}`}>
         {children}
       </main>
 
       {/* Cookie Consent Banner */}
 
 
-      {/* Footer */}
-      <footer className="mt-auto w-full bg-transparent text-[#17120c]">
+      {variant === "homeChrome" ? (
+      <footer id="site-footer" className="news-home-footer mt-auto w-full">
+        {showClosingCta && <section className="news-home-closing" aria-label="Ragnarok Universe closing call to action">
+          <div className="news-home-closing__content">
+            <span>YOUR STORY BEGINS HERE</span>
+            <h2>TWO CLICKS TO<br />MIDGARD</h2>
+            <p>Start the game in your browser, then join the Discord to find a party, get patch news first and take part in founder events.</p>
+            <div className="news-home-closing__actions">
+              <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="news-home-closing__discord"><img src={`${ASSET_BASE_URL}/manus-storage/Discord-Logo-White_b3128ea2.png`} alt="Discord" /></a>
+              <a href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer" className="news-home-closing__game-start"><img src={`${ASSET_BASE_URL}/manus-storage/gamestart_BTN_1c6449da.png`} alt="Game Start" /></a>
+            </div>
+          </div>
+        </section>}
+        <section className="news-home-footer__bar">
+          <div className="news-home-footer__inner">
+            <div>
+              <div className="news-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div>
+              <nav><Link href="/terms-of-service">Terms of Service</Link><Link href="/privacy-policy">Privacy Policy</Link><button type="button" onClick={() => setShowPrivacySettings(true)}>Privacy Settings</button><a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer">Customer Support</a></nav>
+              <img src={`${ASSET_BASE_URL}/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png`} alt="GRAVITY" />
+              <p><span>Copyright © Gravity Co., LTD &amp; Lee MyoungJin(studio DTDS). All Rights Reserved.</span><span>All trademarks used on this website are the property of their respective owners.</span></p>
+            </div>
+            <div className="news-home-footer__social" aria-label="Official social links"><a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" aria-label="Discord"><img src={`${ASSET_BASE_URL}/manus-storage/Discord_icon_230fdb89_6026051e.png`} alt="" /></a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src={`${ASSET_BASE_URL}/manus-storage/facebook-logo-primary_2867583f.webp`} alt="" /></a><a href="https://www.youtube.com/@RagnarokUniverse" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" /></svg></a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer" aria-label="X" className="news-home-footer__social-x"><img src={`${ASSET_BASE_URL}/manus-storage/x-logo-black_193d8b29.webp`} alt="" /></a></div>
+          </div>
+        </section>
+      </footer>
+      ) : (
+      /* Footer */
+      <footer id="site-footer" className="fantasy-site-footer home-scroll-panel home-section-surface home-surface--closing home-panel-fill mt-auto w-full text-[#17120c]">
         <div className="container py-12" style={{paddingTop: '30px'}}>
+          <div className="mx-auto mb-10 max-w-2xl text-center">
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#735c39]">Your story begins here</p>
+            <h2 className="font-serif text-2xl font-black tracking-tight text-[#2c241c] md:text-4xl">Two Clicks to Midgard</h2>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+              <a href="/#game-start" className="rounded-md bg-[#4068a5] px-5 py-2.5 text-xs font-bold text-white shadow-[0_5px_12px_rgba(36,70,120,.28)] transition-transform hover:-translate-y-0.5 hover:bg-[#537fbe] active:scale-[.97]">Game Start</a>
+              <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-md border border-[#6f7df5] bg-[#5865f2] px-5 py-2.5 text-xs font-bold text-white shadow-[0_5px_12px_rgba(53,66,159,.28)] transition-transform hover:-translate-y-0.5 hover:bg-[#6974f5] active:scale-[.97]">Join Discord <ExternalLink size={13} aria-hidden="true" /></a>
+            </div>
+          </div>
+          <div className="mb-8 flex justify-end">
+            <div className="flex items-center gap-2" aria-label="Official social links">
+              <a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" aria-label="Visit Ragnarok Universe on Discord" className="footer-social-link bg-[#5865f2]"><img src={`${ASSET_BASE_URL}/manus-storage/Discord_icon_230fdb89_6026051e.png`} alt="" className="h-5 w-5 object-contain" /></a>
+              <a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer" aria-label="Visit Ragnarok Universe on Facebook" className="footer-social-link bg-[#1877f2]"><svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-current"><path d="M13.8 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5H17V3.9c-.3 0-1.3-.1-2.4-.1c-2.4 0-4 1.4-4 4.1V10H8v3h2.6v8h3.2Z" /></svg></a>
+              <a href="https://www.youtube.com/@RagnarokUniverse" target="_blank" rel="noopener noreferrer" aria-label="Visit Ragnarok Universe on YouTube" className="footer-social-link bg-[#e62429]"><svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-current"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" /></svg></a>
+              <a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer" aria-label="Visit Ragnarok Universe on X" className="footer-social-link bg-[#171717]"><svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-current"><path d="M18.9 2H22l-6.8 7.8 8 12.2H17l-4.8-7.3L5.8 22H2.7l7.3-8.4L2.3 2h6.3l4.3 6.6L18.9 2Zm-1.1 18h1.7L7.7 3.9H5.9L17.8 20Z" /></svg></a>
+            </div>
+          </div>
           {/* Footer Top: Company Logos */}
           <div className="mb-8 flex items-center justify-center gap-6 text-xs font-semibold text-[#17120c]">
             <a href="https://gravity.co.kr/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#163f7d]">GRAVITY</a>
@@ -216,6 +184,7 @@ export default function Layout({ children }: LayoutProps) {
           </div>
         </div>
       </footer>
+      )}
 
       {/* Privacy Settings Dialog */}
       <PrivacySettingsDialog isOpen={showPrivacySettings} onClose={() => setShowPrivacySettings(false)} />
@@ -256,34 +225,7 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       )}
 
-      {/* Floating Social Box — Discord + YouTube in one rounded semi-transparent box */}
-      <style>{`
-        @keyframes float-social {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
-        }
-        .floating-social-box {
-          animation: float-social 3s ease-in-out infinite;
-        }
-      `}</style>
-      <div className="floating-social-box fixed right-3 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-2 rounded-2xl border border-[#d6bc78] bg-[linear-gradient(160deg,rgba(42,64,100,.96),rgba(30,44,70,.96))] px-2 py-3 shadow-[0_10px_28px_rgba(43,53,73,.35),inset_0_1px_rgba(255,247,220,.28)] backdrop-blur-sm">
-        {/* Discord */}
-        <button
-          onClick={() => window.open('https://discord.gg/yVWJkWdkAU', '_blank')}
-          title="Discord"
-          className="flex h-[58px] w-[58px] items-center justify-center rounded-xl border border-transparent transition-all duration-200 hover:scale-110 hover:border-[#f3d991] hover:bg-[#ffffff]/15 active:scale-95"
-        >
-          <img src={`${ASSET_BASE_URL}/manus-storage/Discord_icon_230fdb89_6026051e.png`} alt="Discord" className="w-[43px] h-[43px] object-contain" />
-        </button>
-        {/* YouTube */}
-        <button
-          onClick={() => window.open('https://www.youtube.com/@RagnarokUniverse', '_blank')}
-          title="YouTube"
-          className="flex h-[58px] w-[58px] items-center justify-center rounded-xl border border-transparent transition-all duration-200 hover:scale-110 hover:border-[#f3d991] hover:bg-[#ffffff]/15 active:scale-95"
-        >
-          <img src="/manus-storage/yt_icon_red_digital_78f0d0ca.png" alt="YouTube" className="w-[43px] h-[43px] object-contain" />
-        </button>
-      </div>
+      <FloatingSocialLinks />
     </div>
   );
 }

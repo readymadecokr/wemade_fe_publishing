@@ -3,11 +3,15 @@ import { describe, expect, it } from "vitest";
 
 const source = readFileSync(new URL("../client/src/pages/PointShop.tsx", import.meta.url), "utf8");
 
-describe("Shop category header", () => {
-  it("uses the bright-fantasy portal header and sibling-page spacing", () => {
-    expect(source).toContain('bg-[linear-gradient(110deg,#314b66,#557494_55%,#314b66)]');
-    expect(source).toContain('font-serif text-4xl font-bold');
-    expect(source).toContain('>Shop</h1>');
-    expect(source).toContain('Purchase rCoin');
+describe("Shop page top spacing", () => {
+  it("uses the same reference-style service title banner as News beneath the shared Home header", () => {
+    expect(source).not.toContain('bg-[linear-gradient(110deg,#314b66,#557494_55%,#314b66)]');
+    expect(source).toContain('<h1 id="shop-detail-page-title">Shop</h1>');
+    expect(source).not.toContain('<p className="text-[#e9dfc8]">Purchase rCoin</p>');
+    expect(source).toContain('fantasy-content-guide pt-6 pb-8 md:pt-8');
+    expect(source).toContain('className="news-detail-page-banner shop-detail-page-banner"');
+    expect(source).toContain('Purchase rCoin and continue your adventure.');
+    expect(source).toContain('<Layout variant="homeChrome" showClosingCta={false}>');
+    expect(source).toContain('className="fantasy-page-shell shop-detail-page-shell"');
   });
 });

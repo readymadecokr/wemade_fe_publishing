@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import * as XLSX from "xlsx";
@@ -36,6 +37,26 @@ function createAdminClient(adminKey: string) {
 function fmt(d: Date | string | null | undefined) {
   if (!d) return "-";
   return new Date(d).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
+}
+
+function utf8ByteLength(value: string) {
+  return new TextEncoder().encode(value.replace(/\r?\n/g, "")).byteLength;
+}
+
+function limitHeroText(value: string, bytesPerLine: number, maxBytes: number) {
+  let bytes = 0;
+  return value.replace(/\r\n/g, "\n").split("\n").slice(0, 2).map((line) => {
+    let lineBytes = 0;
+    let output = "";
+    for (const character of line) {
+      const characterBytes = new TextEncoder().encode(character).byteLength;
+      if (lineBytes + characterBytes > bytesPerLine || bytes + characterBytes > maxBytes) break;
+      output += character;
+      lineBytes += characterBytes;
+      bytes += characterBytes;
+    }
+    return output;
+  }).join("\n");
 }
 
 // 24시간 달력 + 시/분 드롭다운 콤포넌트
@@ -1105,28 +1126,28 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
 }
 
 // ─── BANNER SECTION ───────────────────────────────────────────────────────────
-type BannerRow = { id: number; title: string; imageUrl: string; imageKey: string | null; actionType: "url" | "content"; actionUrl: string | null; contentTitle: string | null; contentDate: string | null; contentBody: string | null; sortOrder: number; isActive: number; startDate: string | null; endDate: string | null; createdAt: Date; updatedAt: Date };
-type BannerForm = { id?: number; title: string; imageUrl: string; actionType: "url" | "content"; actionUrl: string; contentTitle: string; contentDate: string; contentBody: string; sortOrder: number; isActive: number; startDate: string; endDate: string };
+type BannerRow = { id: number; title: string; imageUrl: string; imageKey: string | null; heroCategory: "EVENT" | "PROMO" | "UPDATE" | "NOTE"; heroTitle: string | null; heroDescription: string | null; actionType: "url" | "content"; actionUrl: string | null; contentTitle: string | null; contentDate: string | null; contentBody: string | null; sortOrder: number; isActive: number; startDate: string | null; endDate: string | null; createdAt: Date; updatedAt: Date };
+type BannerForm = { id?: number; title: string; imageUrl: string; heroCategory: "EVENT" | "PROMO" | "UPDATE" | "NOTE"; heroTitle: string; heroDescription: string; actionType: "url" | "content"; actionUrl: string; contentTitle: string; contentDate: string; contentBody: string; sortOrder: number; isActive: number; startDate: string; endDate: string };
 
 function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [form, setForm] = useState<BannerForm | null>(null);
   const [preview, setPreview] = useState<BannerRow | null>(null);
+  const [formPreview, setFormPreview] = useState<BannerForm | null>(null);
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState(""); const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1); const [pageSize, setPageSize] = useState(10);
   const [checkedBannerIds, setCheckedBannerIds] = useState<number[]>([]);
   const [isExposureMoving, setIsExposureMoving] = useState(false);
-  const visibleBannerLimit = 10;
 
   const { data, refetch } = useQuery({ queryKey: ["admin-banners"], queryFn: () => adminClient!.admin.listBanners.query(), enabled: !!adminClient });
   const createM = useMutation({ mutationFn: (input: any) => adminClient!.admin.createBanner.mutate(input), onSuccess: () => { toast.success("배너가 등록되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
   const updateM = useMutation({ mutationFn: (input: any) => adminClient!.admin.updateBanner.mutate(input), onSuccess: () => { toast.success("수정되었습니다."); setForm(null); refetch(); }, onError: (e: Error) => toast.error(e.message) });
   const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.admin.deleteBanner.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetch(); }, onError: (e: Error) => toast.error(e.message) });
 
-  const empty: BannerForm = { title: "", imageUrl: "", actionType: "url", actionUrl: "", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (data?.length ?? 0), isActive: 1, startDate: "", endDate: "" };
+  const empty: BannerForm = { title: "", imageUrl: "", heroCategory: "UPDATE", heroTitle: "MIDGARD RUNS\nIN YOUR BROWSER", heroDescription: "No download, no install, no launcher. Open a tab on your phone or PC and begin your adventure.", actionType: "content", actionUrl: "/news", contentTitle: "", contentDate: "", contentBody: "", sortOrder: (data?.length ?? 0), isActive: 1, startDate: "", endDate: "" };
   const submit = () => {
     if (!form?.title || !form?.imageUrl) { toast.error("제목과 이미지를 입력하세요."); return; }
-    const p = { title: form.title, imageUrl: form.imageUrl, actionType: form.actionType, actionUrl: form.actionUrl || undefined, contentTitle: form.contentTitle || undefined, contentDate: form.contentDate || undefined, contentBody: form.contentBody || undefined, sortOrder: form.sortOrder, isActive: form.isActive, startDate: form.startDate || null, endDate: form.endDate || null };
+    const p = { title: form.title, imageUrl: form.imageUrl, heroCategory: form.heroCategory, heroTitle: form.heroTitle || undefined, heroDescription: form.heroDescription || undefined, actionType: form.actionType, actionUrl: form.actionUrl || undefined, contentTitle: form.contentTitle || undefined, contentDate: form.contentDate || undefined, contentBody: form.contentBody || undefined, sortOrder: form.sortOrder, isActive: form.isActive, startDate: form.startDate || null, endDate: form.endDate || null };
     form.id ? updateM.mutate({ id: form.id, ...p }) : createM.mutate(p);
   };
 
@@ -1149,18 +1170,15 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
   };
 
   const allBanners = useMemo(() => [...(data ?? [])].sort((a, b) => a.sortOrder - b.sortOrder || a.id - b.id), [data]);
-  const selectedBanners = allBanners.filter(b => b.isActive === 1).slice(0, visibleBannerLimit);
-  const unselectedBanners = [
-    ...allBanners.filter(b => b.isActive === 1).slice(visibleBannerLimit),
-    ...allBanners.filter(b => b.isActive !== 1),
-  ];
+  const selectedBanners = allBanners.filter(b => b.isActive === 1);
+  const unselectedBanners = allBanners.filter(b => b.isActive !== 1);
   const matchSearch = (banner: BannerRow) => !search || banner.title.toLowerCase().includes(search.toLowerCase());
   const filteredSelected = selectedBanners.filter(matchSearch);
   const filteredUnselected = unselectedBanners.filter(matchSearch);
   const pagedUnselected = filteredUnselected.slice((page - 1) * pageSize, page * pageSize);
   const paged = pagedUnselected;
   const filtered = filteredUnselected;
-  const openBannerForm = (banner: BannerRow) => setForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive, startDate: banner.startDate ?? "", endDate: banner.endDate ?? "" });
+  const openBannerForm = (banner: BannerRow) => setForm({ id: banner.id, title: banner.title, imageUrl: banner.imageUrl, heroCategory: banner.heroCategory ?? "UPDATE", heroTitle: banner.heroTitle ?? "", heroDescription: banner.heroDescription ?? "", actionType: banner.actionType, actionUrl: banner.actionUrl ?? "", contentTitle: banner.contentTitle ?? "", contentDate: banner.contentDate ?? "", contentBody: banner.contentBody ?? "", sortOrder: banner.sortOrder, isActive: banner.isActive, startDate: banner.startDate ?? "", endDate: banner.endDate ?? "" });
   const toggleBannerChecked = (id: number, checked: boolean) => setCheckedBannerIds(current => checked ? Array.from(new Set([...current, id])) : current.filter(item => item !== id));
   const toggleGroupChecked = (rows: BannerRow[], checked: boolean) => setCheckedBannerIds(current => checked ? Array.from(new Set([...current, ...rows.map(row => row.id)])) : current.filter(id => !rows.some(row => row.id === id)));
   const isGroupChecked = (rows: BannerRow[]) => rows.length > 0 && rows.every(row => checkedBannerIds.includes(row.id));
@@ -1169,10 +1187,6 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
     const source = direction === "show" ? unselectedBanners : selectedBanners;
     const moving = source.filter(banner => checkedBannerIds.includes(banner.id));
     if (!moving.length) { toast.error(direction === "show" ? "노출할 배너를 선택하세요." : "미노출할 배너를 선택하세요."); return; }
-    if (direction === "show" && selectedBanners.length + moving.length > visibleBannerLimit) {
-      toast.error(`노출 배너는 최대 ${visibleBannerLimit}개까지 선택할 수 있습니다.`);
-      return;
-    }
     const nextSelected = direction === "show"
       ? [...selectedBanners, ...moving]
       : selectedBanners.filter(banner => !checkedBannerIds.includes(banner.id));
@@ -1218,7 +1232,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
             <tr key={banner.id} className="cursor-pointer border-b last:border-0 hover:bg-accent/30" onClick={() => openBannerForm(banner)}>
               <td className="px-3 py-3 text-center" onClick={event => event.stopPropagation()}><input aria-label={`${banner.title} 선택`} type="checkbox" checked={checkedBannerIds.includes(banner.id)} onChange={event => toggleBannerChecked(banner.id, event.target.checked)} /></td>
               <td className="px-3 py-3 text-center text-sm text-muted-foreground">{exposure === "visible" ? index + 1 : "-"}</td>
-              <td className="px-2 py-3"><div className="h-14 w-24 overflow-hidden rounded bg-slate-100"><img src={banner.imageUrl} alt={banner.title} className="h-full w-full object-cover" /></div></td>
+              <td className="px-2 py-3"><div className="h-[58px] w-24 overflow-hidden rounded bg-slate-100"><img src={banner.imageUrl} alt={banner.title} className="h-full w-full object-cover" /></div></td>
               <td className="px-3 py-3 text-sm font-medium">{banner.title}</td>
               <td className="px-3 py-3"><div className="rounded bg-slate-100 px-3 py-1.5 text-center dark:bg-slate-700"><p className="whitespace-nowrap font-mono text-xs leading-5 text-slate-600 dark:text-slate-300">{banner.startDate ? banner.startDate.replace("T", " ") : "-"}</p><p className="leading-4 text-slate-400">~</p><p className="whitespace-nowrap font-mono text-xs leading-5 text-slate-600 dark:text-slate-300">{banner.endDate ? banner.endDate.replace("T", " ") : "-"}</p></div></td>
               <td className="px-3 py-3 text-center"><StatusBadge active={exposure === "visible"} /></td>
@@ -1253,7 +1267,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
           <CardContent className="space-y-6 p-4">
             <section className="overflow-hidden rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20">
               <div className="flex flex-col gap-3 border-b border-blue-200 bg-white/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-blue-900 dark:bg-slate-900/50">
-                <div><h3 className="text-sm font-bold text-blue-900 dark:text-blue-200">선택된 노출 배너 <span className="ml-1 text-blue-600">{selectedBanners.length} / {visibleBannerLimit}</span></h3><p className="mt-0.5 text-xs text-muted-foreground">메인 화면에 노출되는 배너입니다. 최대 {visibleBannerLimit}개까지 선택할 수 있습니다.</p></div>
+                <div><h3 className="text-sm font-bold text-blue-900 dark:text-blue-200">선택된 노출 배너 <span className="ml-1 text-blue-600">{selectedBanners.length}</span></h3><p className="mt-0.5 text-xs text-muted-foreground">메인 화면에 노출되는 활성 배너입니다.</p></div>
                 <Button size="sm" variant="outline" className="border-blue-300 bg-white text-blue-700 hover:bg-blue-600 hover:text-white" disabled={isExposureMoving || !checkedBannerIds.some(id => selectedBanners.some(banner => banner.id === id))} onClick={() => moveCheckedBanners("hide")}><ChevronDown className="mr-1 h-4 w-4" />아래로 이동</Button>
               </div>
               <BannerTable rows={filteredSelected} exposure="visible" />
@@ -1300,13 +1314,13 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                       <tr
                         key={b.id}
                         className="border-b last:border-0 hover:bg-accent/30 cursor-pointer"
-                        onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}
+                        onClick={() => openBannerForm(b)}
                       >
                         {/* 번호 */}
                         <td className="px-3 py-3 w-14 text-sm text-muted-foreground text-center whitespace-nowrap">{b.sortOrder + 1}</td>
                         {/* 썸네일 */}
                         <td className="px-2 py-3 w-28">
-                          <div className="w-24 h-14 rounded overflow-hidden bg-slate-100">
+                          <div className="w-24 h-[58px] rounded overflow-hidden bg-slate-100">
                             <img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" />
                           </div>
                         </td>
@@ -1332,7 +1346,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
                         </td>
                         {/* 수정 */}
                         <td className="px-2 py-3 w-10 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
-                          <Button variant="ghost" size="sm" onClick={() => setForm({ id: b.id, title: b.title, imageUrl: b.imageUrl, actionType: b.actionType, actionUrl: b.actionUrl ?? "", contentTitle: b.contentTitle ?? "", contentDate: b.contentDate ?? "", contentBody: b.contentBody ?? "", sortOrder: b.sortOrder, isActive: b.isActive, startDate: b.startDate ?? "", endDate: b.endDate ?? "" })}><Pencil className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="sm" onClick={() => openBannerForm(b)}><Pencil className="h-4 w-4" /></Button>
                         </td>
                         {/* 삭제 */}
                         <td className="px-2 py-3 w-10 text-center whitespace-nowrap" onClick={e => e.stopPropagation()}>
@@ -1360,24 +1374,26 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
           <div className="space-y-1">
             <label className="text-sm font-medium">이미지 등록 *</label>
             <div className="flex gap-2"><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." className="flex-1" /><Button type="button" variant="outline" onClick={handleFileSelect} disabled={uploading}>{uploading ? "업로드 중..." : "PC에서 찾아보기"}</Button></div>
-            <p className="text-xs text-muted-foreground">권장: 1900×600px | 500KB 미만 | JPG, WebP, PNG</p>
-            {form.imageUrl && <div className="rounded overflow-hidden border bg-slate-100" style={{ aspectRatio: "1900/600" }}><img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" /></div>}
+            <p className="text-xs text-muted-foreground">권장: 1000×600px (5:3 비율) | 500KB 미만 | JPG, WebP, PNG</p>
+            {form.imageUrl && <div className="rounded overflow-hidden border bg-slate-100" style={{ aspectRatio: "1000/600" }}><img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" /></div>}
           </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-1"><label className="text-sm font-medium">Hero 카테고리 *</label><Select value={form.heroCategory} onValueChange={(value: BannerForm["heroCategory"]) => setForm(f => f && ({ ...f, heroCategory: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{(["EVENT", "PROMO", "UPDATE", "NOTE"] as const).map(category => <SelectItem key={category} value={category}>{category}</SelectItem>)}</SelectContent></Select></div>
+            <div className="space-y-1"><label className="text-sm font-medium">View More 연결 URL</label><Input value={form.actionUrl} onChange={e => setForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="/news 또는 https://..." /><p className="text-xs text-muted-foreground">새창 띄우기 또는 기존 페이지 전환 방식을 선택할 수 있습니다.</p></div>
+          </div>
+          <div className="space-y-1"><label className="text-sm font-medium">Hero 제목 *</label><Textarea rows={2} value={form.heroTitle} onChange={e => setForm(f => f && ({ ...f, heroTitle: limitHeroText(e.target.value, 20, 40) }))} placeholder="직접 Enter로 줄바꿈 · 최대 2줄" /><p className="text-xs text-muted-foreground">{utf8ByteLength(form.heroTitle)} / 40 byte · 한 줄 최대 20 byte · 최대 2줄</p></div>
+          <div className="space-y-1"><label className="text-sm font-medium">Hero 부가 설명</label><Textarea rows={2} value={form.heroDescription} onChange={e => setForm(f => f && ({ ...f, heroDescription: limitHeroText(e.target.value, 100, 100) }))} placeholder="직접 Enter로 줄바꿈 · 최대 2줄" /><p className="text-xs text-muted-foreground">{utf8ByteLength(form.heroDescription)} / 100 byte · 최대 2줄</p></div>
           <div className="space-y-1">
             <label className="text-sm font-medium">클릭 시 동작</label>
             <div className="flex gap-4">
               {(["url", "content"] as const).map(t => <label key={t} className="flex items-center gap-2 cursor-pointer"><input type="radio" checked={form.actionType === t} onChange={() => setForm(f => f && ({ ...f, actionType: t }))} /><span className="text-sm">{t === "url" ? "새창 띄우기" : "기존 페이지 전환"}</span></label>)}
             </div>
           </div>
-          {form.actionType === "url" && <div className="space-y-1"><label className="text-sm font-medium">이동 URL</label><Input value={form.actionUrl} onChange={e => setForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="https://..." /></div>}
-          {form.actionType === "content" && (
-            <div className="space-y-1"><label className="text-sm font-medium">이동 URL</label><Input value={form.actionUrl} onChange={e => setForm(f => f && ({ ...f, actionUrl: e.target.value }))} placeholder="https://..." /></div>
-          )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder + 1} onChange={e => setForm(f => f && ({ ...f, sortOrder: Math.max(0, parseInt(e.target.value) || 1) - 1 }))} min={1} /></div>
             <div className="space-y-1"><label className="text-sm font-medium">활성 상태</label><div className="h-10 flex items-center"><ToggleBtn value={form.isActive} onChange={v => setForm(f => f && ({ ...f, isActive: v }))} /></div></div>
           </div>
-          <div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "배너 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
+          <div className="flex gap-2 pt-2"><Button type="button" variant="outline" onClick={() => setFormPreview({ ...form })}><Eye className="mr-1 h-4 w-4" />미리보기</Button><Button onClick={submit} disabled={createM.isPending || updateM.isPending}>{form.id ? "수정 저장" : "배너 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div>
         </CardContent></Card>
       )}
 
@@ -1385,8 +1401,24 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
       <Dialog open={!!preview} onOpenChange={() => setPreview(null)}>
         <DialogContent className="max-w-4xl">
           <DialogHeader><DialogTitle>배너 미리보기: {preview?.title}</DialogTitle></DialogHeader>
-          {preview && <div className="rounded-lg overflow-hidden border"><img src={preview.imageUrl} alt={preview.title} className="w-full object-cover" style={{ aspectRatio: "1900/600" }} /></div>}
+          {preview && <div className="rounded-lg overflow-hidden border"><img src={preview.imageUrl} alt={preview.title} className="w-full object-cover" style={{ aspectRatio: "1000/600" }} /></div>}
           <DialogFooter><Button variant="outline" onClick={() => setPreview(null)}>닫기</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={!!formPreview} onOpenChange={() => setFormPreview(null)}>
+        <DialogContent className="max-w-5xl overflow-hidden p-0">
+          <DialogHeader className="border-b px-6 py-4"><DialogTitle>Hero 미리보기</DialogTitle><DialogDescription>현재 입력값이 홈페이지 Hero 영역에 표시되는 방식입니다.</DialogDescription></DialogHeader>
+          {formPreview && <div className="relative min-h-[390px] overflow-hidden bg-[#0e2841] text-white" style={{ aspectRatio: "1000/600" }}>
+            {formPreview.imageUrl && <img src={formPreview.imageUrl} alt={formPreview.title || "Hero preview"} className="absolute inset-0 h-full w-full object-cover" />}
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,22,37,.80)_0%,rgba(7,22,37,.42)_45%,rgba(7,22,37,.08)_76%),linear-gradient(0deg,rgba(8,25,42,.25),transparent_42%)]" />
+            <div className="relative z-10 flex h-full max-w-3xl flex-col items-start justify-center px-[7.5%] py-14">
+              <span className="mb-5 rounded-full border border-[#55d9bd] px-3 py-2 text-[10px] font-black tracking-[.13em] text-[#ddfff5]">{formPreview.heroCategory}</span>
+              <h3 className="m-0 whitespace-pre-line font-sans text-[clamp(38px,5.8vw,76px)] font-black italic leading-[.9] tracking-[-.055em] text-white">{formPreview.heroTitle || "HERO TITLE"}</h3>
+              <p className="my-6 max-w-[475px] whitespace-pre-line text-base leading-[1.7] text-[#e4edf5]">{formPreview.heroDescription || "Hero additional description"}</p>
+              <span className="inline-flex items-center gap-3 rounded-full bg-white px-5 py-3 text-[11px] font-black tracking-[.1em] text-[#123354] shadow-[0_4px_0_rgba(10,25,42,.28)]">VIEW MORE <b className="text-xl leading-[.5]">›</b></span>
+            </div>
+          </div>}
+          <DialogFooter className="px-6 py-4"><Button variant="outline" onClick={() => setFormPreview(null)}>닫기</Button></DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
@@ -1494,6 +1526,18 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
           <div className="space-y-1">
             <label className="text-sm font-medium">뉴스 제목</label>
             <Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="뉴스 제목" />
+          </div>
+          <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">분류</label>
+              <select value={form.category} onChange={e => setForm(f => f && ({ ...f, category: e.target.value }))} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+                <option value="Update">Update</option><option value="Event">Event</option><option value="Interview">Interview</option><option value="Notice">Notice</option>
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">홈 요약</label>
+              <Input value={form.summary} onChange={e => setForm(f => f && ({ ...f, summary: e.target.value }))} placeholder="Home 카드에 표시할 짧은 설명" />
+            </div>
           </div>
           {/* ② 이미지 등록 */}
           <div className="space-y-1">
@@ -1636,6 +1680,63 @@ function MediaSection({ adminClient }: { adminClient: ReturnType<typeof createAd
       )}
     </div>
   );
+}
+
+// ─── MEDIA SCREENSHOTS SECTION ────────────────────────────────────────────────
+type ScreenshotRow = { id: number; title: string; imageUrl: string; sortOrder: number; isActive: number };
+type ScreenshotForm = { id?: number; title: string; imageUrl: string; sortOrder: number; isActive: number };
+
+function ScreenshotGallerySection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
+  const [form, setForm] = useState<ScreenshotForm | null>(null);
+  const [checkedIds, setCheckedIds] = useState<number[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [moving, setMoving] = useState(false);
+  const { data, refetch } = useQuery({ queryKey: ["admin-screenshots"], queryFn: () => adminClient!.screenshotsAdmin.list.query(), enabled: !!adminClient });
+  const createM = useMutation({ mutationFn: (input: Omit<ScreenshotForm, "id">) => adminClient!.screenshotsAdmin.create.mutate(input), onSuccess: () => { toast.success("스크린샷이 등록되었습니다."); setForm(null); refetch(); }, onError: (error: Error) => toast.error(error.message) });
+  const updateM = useMutation({ mutationFn: (input: ScreenshotForm & { id: number }) => adminClient!.screenshotsAdmin.update.mutate(input), onSuccess: () => { toast.success("스크린샷이 수정되었습니다."); setForm(null); refetch(); }, onError: (error: Error) => toast.error(error.message) });
+  const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.screenshotsAdmin.delete.mutate({ id }), onSuccess: () => { toast.success("스크린샷이 삭제되었습니다."); refetch(); }, onError: (error: Error) => toast.error(error.message) });
+  const allRows = useMemo(() => [...(data ?? [])].sort((a, b) => a.sortOrder - b.sortOrder || a.id - b.id) as ScreenshotRow[], [data]);
+  const selectedRows = allRows.filter((row) => row.isActive === 1);
+  const unselectedRows = allRows.filter((row) => row.isActive !== 1);
+  const empty: ScreenshotForm = { title: "", imageUrl: "", sortOrder: allRows.length, isActive: 1 };
+  const toggleRow = (id: number, checked: boolean) => setCheckedIds((current) => checked ? Array.from(new Set([...current, id])) : current.filter((currentId) => currentId !== id));
+  const toggleGroup = (rows: ScreenshotRow[], checked: boolean) => setCheckedIds((current) => checked ? Array.from(new Set([...current, ...rows.map((row) => row.id)])) : current.filter((id) => !rows.some((row) => row.id === id)));
+  const isGroupChecked = (rows: ScreenshotRow[]) => rows.length > 0 && rows.every((row) => checkedIds.includes(row.id));
+  const openForm = (row: ScreenshotRow) => setForm({ id: row.id, title: row.title, imageUrl: row.imageUrl, sortOrder: row.sortOrder, isActive: row.isActive });
+  const submit = () => {
+    if (!form?.title.trim() || !form.imageUrl) { toast.error("스크린샷 제목과 이미지를 입력하세요."); return; }
+    if (form.id) updateM.mutate({ ...form, id: form.id }); else createM.mutate({ title: form.title, imageUrl: form.imageUrl, sortOrder: form.sortOrder, isActive: form.isActive });
+  };
+  const uploadImage = async () => {
+    const input = document.createElement("input"); input.type = "file"; input.accept = "image/jpeg,image/png,image/webp";
+    input.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0]; if (!file) return;
+      if (file.size > 500 * 1024) { toast.error("이미지는 500KB 이하로 등록하세요."); return; }
+      setUploading(true);
+      try {
+        const reader = new FileReader();
+        const base64 = await new Promise<string>((resolve) => { reader.onload = (loadEvent) => resolve(loadEvent.target?.result as string); reader.readAsDataURL(file); });
+        const result = await adminClient!.admin.uploadScreenshotImage.mutate({ base64, filename: file.name });
+        setForm((current) => current && ({ ...current, imageUrl: result.url }));
+        toast.success("스크린샷 이미지가 업로드되었습니다.");
+      } catch (error: any) { toast.error(`업로드 실패: ${error.message}`); } finally { setUploading(false); }
+    };
+    input.click();
+  };
+  const moveChecked = async (direction: "show" | "hide") => {
+    const source = direction === "show" ? unselectedRows : selectedRows;
+    const movingRows = source.filter((row) => checkedIds.includes(row.id));
+    if (!movingRows.length) { toast.error(direction === "show" ? "노출할 스크린샷을 선택하세요." : "미노출할 스크린샷을 선택하세요."); return; }
+    const nextSelected = direction === "show" ? [...selectedRows, ...movingRows] : selectedRows.filter((row) => !checkedIds.includes(row.id));
+    const nextUnselected = direction === "show" ? unselectedRows.filter((row) => !checkedIds.includes(row.id)) : [...movingRows, ...unselectedRows.filter((row) => !checkedIds.includes(row.id))];
+    setMoving(true);
+    try {
+      await Promise.all([...nextSelected.map((row, index) => adminClient!.screenshotsAdmin.update.mutate({ id: row.id, isActive: 1, sortOrder: index })), ...nextUnselected.map((row, index) => adminClient!.screenshotsAdmin.update.mutate({ id: row.id, isActive: 0, sortOrder: nextSelected.length + index }))]);
+      setCheckedIds([]); await refetch(); toast.success(direction === "show" ? "선택한 스크린샷을 노출 영역으로 이동했습니다." : "선택한 스크린샷을 미노출 영역으로 이동했습니다.");
+    } catch (error: any) { toast.error(`노출 상태 변경 실패: ${error.message}`); } finally { setMoving(false); }
+  };
+  const ScreenshotTable = ({ rows, exposure }: { rows: ScreenshotRow[]; exposure: "visible" | "hidden" }) => <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700"><table className="w-full min-w-[660px]"><thead><tr className="border-b bg-slate-50 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-300"><th className="w-12 px-3 py-2.5"><input aria-label={`${exposure === "visible" ? "노출" : "미노출"} 스크린샷 전체 선택`} type="checkbox" checked={isGroupChecked(rows)} onChange={(event) => toggleGroup(rows, event.target.checked)} /></th><th className="w-14 px-3 py-2.5">순서</th><th className="w-32 px-3 py-2.5 text-left">이미지</th><th className="px-3 py-2.5 text-left">스크린샷 제목</th><th className="w-24 px-3 py-2.5 text-center">노출</th><th className="w-12 px-3 py-2.5" /><th className="w-12 px-3 py-2.5" /></tr></thead><tbody>{!rows.length ? <tr><td colSpan={7} className="px-3 py-8 text-center text-sm text-muted-foreground">{exposure === "visible" ? "노출 중인 스크린샷이 없습니다." : "미선택 스크린샷이 없습니다."}</td></tr> : rows.map((row, index) => <tr key={row.id} className="cursor-pointer border-b last:border-0 hover:bg-accent/30" onClick={() => openForm(row)}><td className="px-3 py-3 text-center" onClick={(event) => event.stopPropagation()}><input aria-label={`${row.title} 선택`} type="checkbox" checked={checkedIds.includes(row.id)} onChange={(event) => toggleRow(row.id, event.target.checked)} /></td><td className="px-3 py-3 text-center text-sm text-muted-foreground">{exposure === "visible" ? index + 1 : "-"}</td><td className="px-3 py-3"><img src={row.imageUrl} alt={row.title} className="h-14 w-28 rounded object-cover" /></td><td className="px-3 py-3 text-sm font-medium">{row.title}</td><td className="px-3 py-3 text-center"><StatusBadge active={exposure === "visible"} /></td><td className="px-3 py-3 text-center" onClick={(event) => event.stopPropagation()}><Button variant="ghost" size="sm" onClick={() => openForm(row)} aria-label={`${row.title} 수정`}><Pencil className="h-4 w-4" /></Button></td><td className="px-3 py-3 text-center" onClick={(event) => event.stopPropagation()}><Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`\"${row.title}\" 스크린샷을 삭제하시겠습니까?`)) deleteM.mutate(row.id); }} aria-label={`${row.title} 삭제`}><Trash2 className="h-4 w-4" /></Button></td></tr>)}</tbody></table></div>;
+  return <section className="space-y-4 border-t pt-8"><SectionHeader title={form ? (form.id ? "스크린샷 수정" : "스크린샷 등록") : "스크린샷 관리"} desc="서비스 Media 하단 갤러리에 노출할 스크린샷을 선택·관리합니다." action={!form ? <Button onClick={() => setForm(empty)}><Plus className="mr-2 h-4 w-4" />스크린샷 등록</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="mr-1 h-4 w-4" />목록으로</Button>} />{!form ? <Card><CardContent className="space-y-6 p-4"><section className="overflow-hidden rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20"><div className="flex flex-col gap-3 border-b border-blue-200 bg-white/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-blue-900 dark:bg-slate-900/50"><div><h3 className="text-sm font-bold text-blue-900 dark:text-blue-200">선택된 노출 스크린샷 <span className="ml-1 text-blue-600">{selectedRows.length}</span></h3><p className="mt-0.5 text-xs text-muted-foreground">서비스 Media 갤러리에 노출됩니다.</p></div><Button size="sm" variant="outline" disabled={moving || !checkedIds.some((id) => selectedRows.some((row) => row.id === id))} onClick={() => moveChecked("hide")}><ChevronDown className="mr-1 h-4 w-4" />아래로 이동</Button></div><ScreenshotTable rows={selectedRows} exposure="visible" /></section><section className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700"><div className="flex flex-col gap-3 border-b bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:bg-slate-800"><div><h3 className="text-sm font-bold">미선택 스크린샷</h3><p className="mt-0.5 text-xs text-muted-foreground">체크한 스크린샷을 위로 이동하면 서비스 Media 갤러리에 노출됩니다.</p></div><Button size="sm" disabled={moving || !checkedIds.some((id) => unselectedRows.some((row) => row.id === id))} onClick={() => moveChecked("show")}><ChevronUp className="mr-1 h-4 w-4" />위로 이동</Button></div><ScreenshotTable rows={unselectedRows} exposure="hidden" /></section></CardContent></Card> : <Card><CardContent className="space-y-4 pt-6"><div className="space-y-1"><label className="text-sm font-medium">스크린샷 제목 *</label><Input value={form.title} onChange={(event) => setForm((current) => current && ({ ...current, title: event.target.value }))} placeholder="스크린샷 제목" /></div><div className="space-y-2"><label className="text-sm font-medium">스크린샷 이미지 *</label><div className="flex flex-wrap items-center gap-3"><Button type="button" variant="outline" onClick={uploadImage} disabled={uploading}><Upload className="mr-2 h-4 w-4" />{uploading ? "업로드 중..." : "이미지 업로드"}</Button><span className="text-xs text-muted-foreground">JPG, PNG, WEBP / 최대 500KB</span></div>{form.imageUrl && <img src={form.imageUrl} alt="스크린샷 미리보기" className="mt-2 max-h-52 rounded border object-contain" />}</div><div className="grid grid-cols-2 gap-4"><div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={(event) => setForm((current) => current && ({ ...current, sortOrder: Number(event.target.value) || 0 }))} /></div><div className="space-y-1"><label className="text-sm font-medium">노출 상태</label><div className="flex h-10 items-center"><ToggleBtn value={form.isActive} onChange={(value) => setForm((current) => current && ({ ...current, isActive: value }))} /></div></div></div><div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending || uploading}>{form.id ? "수정 저장" : "스크린샷 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div></CardContent></Card>}</section>;
 }
 
 // ─── PRODUCTS SECTION ─────────────────────────────────────────────────────────
@@ -3095,7 +3196,7 @@ export default function AdminPage() {
           {activeMenu === "game" && <GameSection adminClient={adminClient} />}
           {activeMenu === "main-banner" && <BannerSection adminClient={adminClient} />}
           {activeMenu === "news" && <NewsSection adminClient={adminClient} />}
-          {activeMenu === "media" && <MediaSection adminClient={adminClient} />}
+          {activeMenu === "media" && <div className="space-y-10"><MediaSection adminClient={adminClient} /><ScreenshotGallerySection adminClient={adminClient} /></div>}
           {activeMenu === "products" && <ProductsSection adminClient={adminClient} />}
           {activeMenu === "shop" && <ShopSection adminClient={adminClient} />}
           {activeMenu === "payments" && <PaymentsSection adminClient={adminClient} />}
