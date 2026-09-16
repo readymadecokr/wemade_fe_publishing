@@ -57,8 +57,11 @@ describe("direct React service header", () => {
     expect(homeHeaderSource).toContain('className={`reference-mobile-menu${mobileMenuOpen ? " is-open" : ""}`}');
     expect(headerStyles).toContain('.reference-mobile-menu-toggle, .reference-mobile-menu { display: none; }');
     expect(headerStyles).toContain('.portal-nav { display: none; }.reference-mobile-menu-toggle { display: grid;');
-    expect(headerStyles).toContain('.reference-mobile-menu { position: absolute; z-index: 6; top: 100%; right: 0; left: 0; display: none;');
-    expect(headerStyles).toContain('.reference-mobile-menu.is-open { display: grid; }');
+    expect(headerStyles).toContain('/* Mobile navigation stays close to the right edge and slides in without changing header height. */');
+    expect(headerStyles).toContain('right: 8px;\n    left: auto;\n    display: grid;\n    width: min(336px, calc(100vw - 16px));');
+    expect(headerStyles).toContain('transform: translateX(calc(100% + 18px));');
+    expect(headerStyles).toContain('.reference-mobile-menu.is-open {\n    display: grid;\n    opacity: 1;\n    visibility: visible;\n    pointer-events: auto;\n    transform: translateX(0);');
+    expect(headerStyles).toContain('@media (prefers-reduced-motion: reduce) {\n  .reference-mobile-menu, .reference-mobile-menu.is-open { transition: none; }');
     expect(headerStyles).toContain('.reference-mobile-menu { grid-template-columns: 1fr; }');
     expect(homeHeaderSource).toContain('const renderUtilityControls = (mobile = false)');
     expect(homeHeaderSource).toContain('className="reference-header-utility container flex h-9 items-center justify-end gap-2 py-0.5 sm:gap-3"');

@@ -377,6 +377,41 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   transform: translateY(4px) scale(.98);
 }
 
+/* Mobile navigation stays close to the right edge and slides in without changing header height. */
+@media (max-width: 760px) {
+  .reference-mobile-menu {
+    right: 8px;
+    left: auto;
+    display: grid;
+    width: min(336px, calc(100vw - 16px));
+    gap: 4px;
+    padding: 7px 8px 8px;
+    border: 1px solid rgba(200,216,231,.34);
+    border-radius: 0 0 10px 10px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(calc(100% + 18px));
+    transform-origin: top right;
+    transition: transform 240ms cubic-bezier(.23,1,.32,1), opacity 180ms cubic-bezier(.23,1,.32,1), visibility 0s linear 240ms;
+    will-change: transform, opacity;
+  }
+  .reference-mobile-menu.is-open {
+    display: grid;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(0);
+    transition: transform 240ms cubic-bezier(.23,1,.32,1), opacity 180ms cubic-bezier(.23,1,.32,1), visibility 0s;
+  }
+  .reference-mobile-menu .portal-nav-link { min-height: 33px; }
+  .reference-mobile-menu__utility { min-height: 36px; padding: 4px 2px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reference-mobile-menu, .reference-mobile-menu.is-open { transition: none; }
+}
+
 /* The Hero Game Start grows by 20% from its prior desktop size, while retaining proportional changes across widths. */
 @media (min-width: 761px) and (max-width: 920px) { .portal-nav { font-size: 12px; } }
 @media (min-width: 921px) and (max-width: 1080px) { .portal-nav { font-size: 13px; } }
