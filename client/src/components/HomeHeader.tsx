@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useState, type MouseEvent } from "react";
 import { Link, useLocation } from "wouter";
-import { Gamepad2, Globe, Menu, MessageCircle, X } from "lucide-react";
+import { Gamepad2, Globe, Menu, X } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
@@ -22,6 +22,10 @@ export function GameStartButton({ className = "" }: { className?: string }) {
 
 export function DiscordButton({ className = "" }: { className?: string }) {
   return <a className={`home-discord-button ${className}`.trim()} href={DISCORD_URL} target="_blank" rel="noopener noreferrer" aria-label="Join Ragnarok Universe on Discord"><img src={DISCORD_BUTTON_URL} alt="Discord" /></a>;
+}
+
+function DiscordBrandIcon() {
+  return <img className="reference-header-discord-brand-icon" src="/manus-storage/Discord_icon_230fdb89_6026051e.png" alt="" aria-hidden="true" />;
 }
 
 type HomeHeaderProps = {
@@ -70,7 +74,7 @@ export default function HomeHeader({ activeSection, onNavigate }: HomeHeaderProp
 
   return <header ref={headerRef} className="reference-home-live-header fixed inset-x-0 top-0 z-50 w-full text-white" aria-label="Ragnarok Universe service navigation">
     <div className="reference-header-utility-surface bg-[#1c3147] [background-image:linear-gradient(100deg,rgba(32,56,78,1),rgba(58,84,110,.96),rgba(24,45,66,1))]">
-      <div className="reference-header-utility container flex h-9 items-center justify-end gap-2 py-0.5 sm:gap-3">{renderUtilityControls()}</div>
+      <div className="reference-header-utility container flex h-9 items-center justify-end gap-2 py-0.5 sm:gap-3">{renderUtilityControls()}<div className="reference-header-top-actions" aria-label="Quick actions"><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="reference-header-top-action reference-header-top-action--discord"><DiscordBrandIcon /><span>DISCORD</span></a><a href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer" className="reference-header-top-action reference-header-top-action--game-start"><Gamepad2 aria-hidden="true" size={14} /><span>GAME START</span></a></div></div>
     </div>
     <div className="reference-header-gnb-surface">
       <div className="container reference-header-main-row">
@@ -81,7 +85,6 @@ export default function HomeHeader({ activeSection, onNavigate }: HomeHeaderProp
           {(["news", "game-info", "media"] as const).map((sectionId) => isHomeHeader ? <a key={sectionId} href={`#${sectionId}`} onClick={(event) => handleHomeNavigate(event, sectionId)} className={navigationClass(sectionId)}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</a> : <Link key={sectionId} href={sectionId === "news" ? "/news" : pathFor(sectionId)} className={navigationClass(sectionId)}>{sectionId === "game-info" ? "GAME INFO" : sectionId.toUpperCase()}</Link>)}
           <Link href="/point-shop" className={navigationClass("shop")}>SHOP</Link>
         </nav>
-        <div className="reference-header-text-actions" aria-label="Quick actions"><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="reference-header-text-action reference-header-text-action--discord"><MessageCircle aria-hidden="true" size={15} /><span>DISCORD</span></a><a href="https://raguniverse-izcifhmz.manus.space/" target="_blank" rel="noreferrer" className="reference-header-text-action reference-header-text-action--game-start"><Gamepad2 aria-hidden="true" size={15} /><span>GAME START</span></a></div>
         {renderLanguage()}
         <button type="button" className="reference-mobile-menu-toggle" aria-label={mobileMenuOpen ? "Close primary navigation" : "Open primary navigation"} aria-expanded={mobileMenuOpen} aria-controls="reference-mobile-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>{mobileMenuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}</button>
         <nav id="reference-mobile-navigation" className={`reference-mobile-menu${mobileMenuOpen ? " is-open" : ""}`} aria-label="Mobile primary navigation">

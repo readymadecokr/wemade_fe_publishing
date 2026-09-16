@@ -1610,3 +1610,9 @@
 - [x] 상단 로그인 바와 하단 흰색 GNB 분리, 좌측 정렬 메뉴·균등 간격·어두운 메뉴 텍스트 적용
 - [x] 로고·언어·텍스트형 Sign in/Sign up·아이콘+텍스트 Discord·Game Start 재배치
 - [x] 데스크톱·모바일 헤더 렌더링과 TypeScript·회귀 테스트 검증
+
+## GNB·상단 액션·Hero 배너 보정
+- [x] COMMUNITY·GAME INFO 메뉴 텍스트 잘림 없이 표시
+- [x] 상단 액션을 Sign in/Sign up · Discord · Game Start 순서로 재배치하고 Discord 고유 아이콘 적용
+- [x] Hero 제목 줄바꿈·Update 배지·View More 재생 아이콘을 참고 디자인 기준으로 개선
+- [x] 다중 화면 폭 렌더링과 TypeScript·회귀 테스트 검증

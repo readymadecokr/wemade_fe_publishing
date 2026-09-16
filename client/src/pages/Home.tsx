@@ -1,6 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import FloatingSocialLinks from "@/components/FloatingSocialLinks";
 import HomeHeader, { DiscordButton, GameStartButton } from "@/components/HomeHeader";
 import { useEffect, useRef, useState } from "react";
@@ -46,7 +46,12 @@ export default function Home() {
   });
   const heroBanners = managedBanners?.length ? managedBanners : DEFAULT_HERO_BANNERS;
   const currentHero = heroBanners[heroIndex % heroBanners.length];
-  const heroTitleLines = (currentHero.heroTitle || "MIDGARD RUNS\nIN YOUR BROWSER").split(/\r?\n/).filter(Boolean).slice(0, 2);
+  const requestedHeroTitle = "MIDGARD RUNS IN YOUR BROWSER";
+  const rawHeroTitle = currentHero.heroTitle || "MIDGARD RUNS\nIN YOUR BROWSER";
+  const suppliedHeroTitleLines = rawHeroTitle.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).slice(0, 2);
+  const heroTitleLines = rawHeroTitle.replace(/\s+/g, " ").trim().toUpperCase() === requestedHeroTitle
+    ? ["MIDGARD RUNS", "IN YOUR BROWSER"]
+    : suppliedHeroTitleLines;
   const heroDescription = currentHero.heroDescription || "No download, no install, no launcher. Open a tab on your phone or PC and begin your adventure.";
   const heroCategory = currentHero.heroCategory || "UPDATE";
   const heroActionUrl = currentHero.actionUrl || "/news";
@@ -253,7 +258,7 @@ export default function Home() {
           <div className="react-home-hero__tags"><span>{heroCategory}</span></div>
           <h1>{heroTitleLines.map((line) => <span key={line}>{line}</span>)}</h1>
           <p>{heroDescription}</p>
-          <a className="react-home-white-cta" href={heroActionUrl} target={heroActionOpensNewTab ? "_blank" : undefined} rel={heroActionOpensNewTab ? "noopener noreferrer" : undefined}>VIEW MORE <b>›</b></a>
+          <a className="react-home-white-cta" href={heroActionUrl} target={heroActionOpensNewTab ? "_blank" : undefined} rel={heroActionOpensNewTab ? "noopener noreferrer" : undefined}><span>VIEW MORE</span><span className="react-home-white-cta__play" aria-hidden="true"><Play fill="currentColor" /></span></a>
         </div>
         <div className="react-home-hero__dots" aria-label="Hero banner position">{heroBanners.map((banner, index) => <button type="button" key={banner.id} aria-label={`Banner ${index + 1}: ${banner.title}`} aria-current={heroIndex % heroBanners.length === index} className={heroIndex % heroBanners.length === index ? "is-active" : ""} onClick={() => setHeroIndex(index)} />)}</div>
         <div className="react-home-hero__controls" aria-label="Hero banners">

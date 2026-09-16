@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
@@ -17,9 +16,11 @@ describe("direct React Home banner", () => {
     expect(homeSource).toContain("react-home-hero__controls");
     expect(homeSource).toContain("heroCategory");
     expect(homeSource).toContain("heroTitleLines");
+    expect(homeSource).toContain('["MIDGARD RUNS", "IN YOUR BROWSER"]');
     expect(homeSource).toContain("heroDescription");
     expect(homeSource).toContain("heroActionUrl");
     expect(homeSource).toContain("VIEW MORE");
+    expect(homeSource).toContain('className="react-home-white-cta__play"');
     expect(homeSource).not.toContain("REFERENCE_HOME_URL");
   });
 
