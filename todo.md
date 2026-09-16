@@ -1578,3 +1578,8 @@
 - [x] YouTube 플로팅 아이콘 자산·마크업·모바일 대비 규칙 점검
 - [x] YouTube 정식 로고가 모바일 플로팅 배너에서 보이도록 복구
 - [x] 모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## Hero Game Start·GNB 연속형 반응형 크기 보정
+- [x] 메인배너 Game Start와 데스크톱 GNB의 현재 크기 규칙 점검
+- [x] 화면 폭에 비례하는 연속형 Game Start 스케일과 GNB 글꼴 크기 적용
+- [x] 다중 데스크톱 폭 렌더링과 TypeScript·회귀 테스트 검증

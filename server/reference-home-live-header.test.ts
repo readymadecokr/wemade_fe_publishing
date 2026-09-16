@@ -78,7 +78,7 @@ describe("direct React service header", () => {
     expect(headerGameStart).toBeGreaterThan(headerDiscord);
     expect(homeSource).toContain('<div className="react-home-hero-cta-row" aria-label="Hero Game Start"><GameStartButton className="home-game-start--hero-solo" /></div>');
     expect(homeSource).toContain('<DiscordButton /><GameStartButton />');
-    expect(headerStyles).toContain('.home-game-start--hero-solo { position: relative; top: 0; left: auto; width: clamp(360px,calc(20vw + 164px),420px); height: clamp(113px,calc(5.24vw + 65px),132px); transform: translateY(-50%); transform-origin: center; }');
+    expect(headerStyles).toContain('.home-game-start--hero-solo { position: relative; top: 0; left: auto; width: clamp(340px,calc(24vw + 112px),520px); height: clamp(104px,calc(6.35vw + 51px),162px); transform: translateY(-50%); transform-origin: center; }');
   });
 
   it("preserves the Hero artwork and separates the expanded quick-action row", () => {
@@ -119,7 +119,7 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain('.reference-header-cta .reference-header-game-start { flex: 1.2 1.2 0; min-height: 48px; height: 48px; }');
     expect(headerStyles).toContain('.reference-home-live-header .reference-header-main-row { grid-template-columns: var(--bi-logo-width) minmax(0,1fr) clamp(176px,23vw,212px); }');
     expect(headerStyles).toContain('@media (max-width: 760px) {\n  .reference-header-cta { width: 184px; }');
-    expect(headerStyles).toContain('@media (min-width: 1081px) and (max-width: 1240px) { .portal-nav { font-size: 14px; } }');
-    expect(headerStyles).toContain('@media (min-width: 1241px) and (max-width: 1400px) { .portal-nav { font-size: 15px; } }');
+    expect(headerStyles).toContain('/* Hero CTA and desktop navigation scale continuously with the viewport, matching the Hero title\'s behavior. */');
+    expect(headerStyles).toContain('.portal-nav { font-size: clamp(12px,calc(.77vw + 4.9px),16px); }');
   });
 });
