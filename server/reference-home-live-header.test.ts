@@ -87,9 +87,9 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain(".react-home-hero-cta-row { position: relative; z-index: 4; display: flex; min-height: clamp(66px,7.7vw,110px);");
     expect(homeSource).toContain('className="react-home-hero-cta-row"');
     expect(homeSource).not.toContain("PLAY IN YOUR BROWSER");
-    expect(homeSource).toContain('aria-label="Ragnarok Universe closing call to action and footer"');
-    expect(homeSource).toContain('className="react-home-footer" aria-label="Ragnarok Universe footer"');
-    expect(headerStyles).toContain('grid-template-areas: "home" "discord" "news" "game-info" "media" "final";');
+    expect(homeSource).toContain('aria-label="Ragnarok Universe closing call to action"');
+    expect(homeSource).toContain('className="react-home-footer" data-snap-panel aria-label="Ragnarok Universe footer"');
+    expect(headerStyles).toContain('grid-template-areas: "home" "discord" "news" "game-info" "media" "closing" "footer";');
     expect(headerStyles).toContain(".react-home-home-stage { grid-template-rows: minmax(0,1fr) 72px; }");
   });
 

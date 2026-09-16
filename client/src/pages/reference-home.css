@@ -419,3 +419,22 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 .react-home-game-info__copy > .react-home-outline-cta { border-color: #163a59; background: #183f64; color: #fff; box-shadow: 0 4px 0 #0f2d48, 0 10px 20px rgba(14,40,65,.22); }
 .react-home-game-info__copy > .react-home-outline-cta:hover { background: #214f79; box-shadow: 0 1px 0 #0f2d48, 0 3px 8px rgba(14,40,65,.2); }
+
+/* Content regions remain independent from the fixed GNB: their height follows their actual contents. */
+.react-home-layout { grid-template-areas: "home" "discord" "news" "game-info" "media" "closing" "footer"; }
+.react-home-panel { min-height: 0; overflow: visible; }
+.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { display: block; min-height: 0; height: auto; padding: 30px 0; }
+.react-home-closing-panel { grid-area: closing; min-height: 0; overflow: visible; background: #fbf8f1; }
+.react-home-closing { min-height: 0; padding: 30px 0; }
+.react-home-footer { grid-area: footer; min-height: 0; padding: 30px 0; }
+
+@media (min-width: 769px) {
+  .react-home-layout > [data-snap-panel] { height: auto; min-height: 0; overflow: visible; }
+  .react-home-home-stage { height: calc(100svh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); }
+}
+
+@media (max-width: 760px) {
+  .react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { height: auto; min-height: 0; overflow: visible; padding: 30px 0; }
+  .react-home-closing-panel { min-height: 0; height: auto; padding: 0; }
+  .react-home-footer { padding: 30px 0; }
+}

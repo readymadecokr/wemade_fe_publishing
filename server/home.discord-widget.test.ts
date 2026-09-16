@@ -18,7 +18,7 @@ describe("direct React Home community panel", () => {
     expect(homeStyles).toContain("height: min(64vh,660px); min-height: 520px;");
     expect(homeStyles).toContain(".react-home-widget__invite-overlay { position: absolute;");
     expect(homeStyles).toContain("height: 66px;");
-    expect(homeStyles).toContain(".react-home-discord { display: flex; align-items: center; padding: clamp(42px,5vh,64px) 0 clamp(28px,3.5vh,44px);");
+    expect(homeStyles).toContain(".react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { display: block; min-height: 0; height: auto; padding: 30px 0; }");
     expect(homeStyles).toContain(".react-home-discord__shell { display: flex; width: calc(100% - 28px); min-height: 0; margin-inline: auto; flex: 0 1 auto; flex-direction: column; }");
     expect(homeSource).not.toContain("ragnarok-reference-frame");
   });

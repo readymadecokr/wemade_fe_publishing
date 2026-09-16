@@ -36,7 +36,7 @@ describe("Home Media screenshot gallery", () => {
   });
 
   it("keeps Media content inside the panel with compact video, non-cropping thumbnails, and a long position track", () => {
-    expect(homeStyles).toContain(".react-home-media { display: flex; align-items: center; padding: clamp(28px,4vh,48px)");
+    expect(homeStyles).toContain(".react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { display: block; min-height: 0; height: auto; padding: 30px 0; }");
     expect(homeStyles).toContain(".react-home-media__feature { aspect-ratio: 2.5 / 1; }");
     expect(stripStyles).toContain(".react-home-media__strip {\n  display: flex;");
     expect(stripStyles).toContain("gap: 4px;");

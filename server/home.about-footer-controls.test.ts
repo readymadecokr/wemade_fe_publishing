@@ -22,12 +22,13 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".home-discord-button img { display: block; width: 82%; max-height: 38px;");
   });
 
-  it("keeps the closing CTA and footer as separate children in one desktop final panel", () => {
-    expect(homeSource).toContain('aria-label="Ragnarok Universe closing call to action and footer"');
+  it("keeps the closing CTA and footer as independent Home regions", () => {
+    expect(homeSource).toContain('aria-label="Ragnarok Universe closing call to action"');
     expect(homeSource).toContain('<div className="react-home-closing">');
-    expect(homeSource).toContain('<footer className="react-home-footer"');
-    expect(styleSource).toContain('.react-home-final-panel { height: calc(100svh - var(--react-home-header-height));');
-    expect(styleSource).toContain('.react-home-final-panel .react-home-closing { min-height: 0; flex: 1 1 auto;');
+    expect(homeSource).toContain('<footer className="react-home-footer" data-snap-panel');
+    expect(styleSource).toContain('.react-home-closing-panel { grid-area: closing; min-height: 0; overflow: visible; background: #fbf8f1; }');
+    expect(styleSource).toContain('.react-home-closing { min-height: 0; padding: 30px 0; }');
+    expect(styleSource).toContain('.react-home-footer { grid-area: footer; min-height: 0; padding: 30px 0; }');
     expect(styleSource).toContain('.react-home-closing h2 { color: #1b344c; font-size: clamp(31px,3.57vw,53px); line-height: .98; }');
     expect(styleSource).toContain('.react-home-section-heading > div > span, .react-home-game-info__copy > span, .react-home-closing__content > span { display: block; margin-bottom: 9px; border: 0; padding: 0; color: var(--home-gold); font-family: inherit; font-size: 11px; font-weight: 400; letter-spacing: .22em; line-height: normal; }');
     expect(styleSource).toContain('.react-home-footer { padding: 38px 0 30px; border-top: 1px solid rgba(27,52,76,.18); background: #fff; color: #17120c; }');
@@ -79,25 +80,19 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".react-home-game-info__art-paper img { display: block; width: 100%; height: auto; max-height: none; border: 0; object-fit: initial; filter: saturate(1.08) contrast(1.03); transform: none;");
   });
 
-  it("keeps desktop content sections vertically centered like the original Home layout", () => {
-    expect(styleSource).toContain('.react-home-discord { display: flex; align-items: center;');
-    expect(styleSource).toContain('.react-home-news { display: flex; align-items: center;');
-    expect(styleSource).toContain('.react-home-game-info { display: flex; align-items: center;');
-    expect(styleSource).toContain('.react-home-media { display: flex; align-items: center;');
-    expect(styleSource).not.toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; padding-top: 42px; }');
+  it("uses content-driven heights and equal 30px vertical breathing room for every main content section", () => {
+    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { display: block; min-height: 0; height: auto; padding: 30px 0; }');
+    expect(styleSource).toContain('.react-home-layout > [data-snap-panel] { height: auto; min-height: 0; overflow: visible; }');
   });
 
-  it("keeps every short desktop section title within a safe top area below the fixed header", () => {
-    expect(styleSource).toContain('@media (min-width: 761px) and (max-height: 760px) {');
-    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { align-items: flex-start; padding-top: clamp(72px,12vh,96px); padding-bottom: clamp(30px,5vh,48px); scroll-margin-top: var(--react-home-header-height); }');
-    expect(styleSource).toContain('.react-home-final-panel { height: auto; min-height: calc(100svh - var(--react-home-header-height)); overflow: visible; }');
-    expect(styleSource).toContain('.react-home-final-panel .react-home-closing { min-height: 0; flex: 0 0 auto; align-items: flex-start; justify-content: center;');
-    expect(styleSource).toContain('.react-home-final-panel .react-home-closing__content { margin: 0 auto; }');
-    expect(styleSource).toContain('.react-home-final-panel .react-home-closing .home-discord-button, .react-home-final-panel .react-home-closing .home-game-start { height: 64px; align-self: center; }');
+  it("keeps desktop wheel navigation aligned to the start of independent content regions", () => {
+    expect(homeSource).toContain('querySelectorAll<HTMLElement>("[data-snap-panel]")');
+    expect(homeSource).toContain('window.scrollTo({ top: getPanelScrollTop(panels[nextIndex]), behavior });');
+    expect(homeSource).toContain('<footer className="react-home-footer" data-snap-panel');
   });
 
   it("centers mobile Media and keeps the header Game Start separated while the Hero uses its own centered solo action", () => {
-    expect(styleSource).toContain('.react-home-media { align-items: center; padding-top: 0; padding-bottom: 0; }');
+    expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { height: auto; min-height: 0; overflow: visible; padding: 30px 0; }');
     expect(styleSource).toContain('.reference-mobile-menu-toggle { margin-right: -6px; border: 0; }');
     expect(styleSource).toContain('.reference-header-cta { gap: 22px; }');
     expect(styleSource).toContain('.reference-header-game-start { transform: translateY(-3px) scale(1.254); transform-origin: center; }');

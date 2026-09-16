@@ -5,7 +5,7 @@ const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.m
 const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
 describe("direct React Home section navigation", () => {
-  it("smoothly scrolls the mounted React sections without changing or reloading a document URL", () => {
+  it("moves desktop wheel input to the mounted section start without changing or reloading a document URL", () => {
     expect(homeSource).toContain("const getPanelScrollTop = (panel: HTMLElement) => {");
     expect(homeSource).toContain("window.scrollTo({ top: getPanelScrollTop(panels[nextIndex]), behavior });");
     expect(homeSource).toContain("new IntersectionObserver");
@@ -29,17 +29,14 @@ describe("direct React Home section navigation", () => {
     expect(homeSource).not.toContain("postMessage({ type: \"ragnarok-reference-scroll\"");
   });
 
-  it("retains full visual panels and avoids iframe-specific scroll styling", () => {
-    expect(styleSource).toContain(".react-home-layout { display: grid; grid-template-columns: minmax(0, 1fr);");
-    expect(styleSource).toContain(".react-home-panel { min-height: 100svh;");
-    expect(styleSource).toContain(".react-home-layout > [data-snap-panel] { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); min-height: calc(100dvh - var(--react-home-header-height)); overflow: hidden; }");
-    expect(styleSource).toContain(".react-home-news, .react-home-game-info, .react-home-media { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); min-height: calc(100dvh - var(--react-home-header-height)); overflow: hidden; }");
-    expect(styleSource).toContain(".react-home-home-stage, .react-home-discord { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); min-height: calc(100dvh - var(--react-home-header-height)); overflow: hidden; scroll-snap-align: start; scroll-snap-stop: normal; }");
-    expect(styleSource).toContain(".react-home-discord__shell { display: flex; width: calc(100% - 28px); min-height: 0; margin-inline: auto; flex: 0 1 auto; flex-direction: column; }");
-    expect(styleSource).toContain(".react-home-media { height: 100svh; height: 100dvh; min-height: 100svh; min-height: 100dvh; }");
-    expect(styleSource).toContain("html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scroll-behavior: auto; scroll-snap-type: none; }");
-    expect(styleSource).toContain(".react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { scroll-snap-align: start; scroll-snap-stop: normal; }");
-    expect(styleSource).toContain(".react-home-final-panel { box-sizing: border-box; height: 100svh; height: 100dvh; min-height: 100svh; min-height: 100dvh; margin-top: calc(-1 * var(--react-home-header-height)); padding-top: var(--react-home-header-height); scroll-snap-align: start; scroll-snap-stop: normal; }");
+  it("uses content-driven regions with 30px vertical padding and separates the CTA from the footer", () => {
+    expect(styleSource).toContain('grid-template-areas: "home" "discord" "news" "game-info" "media" "closing" "footer";');
+    expect(styleSource).toContain(".react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { display: block; min-height: 0; height: auto; padding: 30px 0; }");
+    expect(styleSource).toContain(".react-home-closing-panel { grid-area: closing; min-height: 0; overflow: visible; background: #fbf8f1; }");
+    expect(styleSource).toContain(".react-home-footer { grid-area: footer; min-height: 0; padding: 30px 0; }");
+    expect(styleSource).toContain(".react-home-layout > [data-snap-panel] { height: auto; min-height: 0; overflow: visible; }");
+    expect(homeSource).toContain('className="react-home-panel react-home-closing-panel"');
+    expect(homeSource).toContain('<footer className="react-home-footer" data-snap-panel');
     expect(styleSource).toContain(".react-home-hero { position: relative; display: grid;");
     expect(styleSource).not.toContain("reference-home-embed__frame");
   });
