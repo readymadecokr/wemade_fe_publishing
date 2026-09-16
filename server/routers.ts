@@ -3,7 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminKeyProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { users, memberRestrictionHistories, banners, news, media, products, payments, pointLogs, coupons, couponUses, admins, statsEvents, games } from "../drizzle/schema";
+import { users, memberRestrictionHistories, banners, news, media, screenshots, products, payments, pointLogs, coupons, couponUses, admins, statsEvents, games } from "../drizzle/schema";
 import { ruCashProducts, ruCashBalances, ruCashTransactions } from "../drizzle/schema";
 import { storagePut } from "./storage";
 import { filterMemberTransactionHistory } from "./memberHistory";
@@ -91,6 +91,15 @@ export const appRouter = router({
       const db = await getDb();
       if (!db) return [];
       return db.select().from(media).where(eq(media.isActive, 1)).orderBy(asc(media.sortOrder), asc(media.id));
+    }),
+  }),
+
+  // 공개 스크린샷 목록 (Home.tsx에서 사용)
+  publicScreenshots: router({
+    list: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(screenshots).where(eq(screenshots.isActive, 1)).orderBy(asc(screenshots.sortOrder), asc(screenshots.id));
     }),
   }),
 
@@ -416,6 +425,19 @@ export const appRouter = router({
         return { url };
       }),
 
+    // 스크린샷 이미지 업로드 (base64 → S3)
+    uploadScreenshotImage: adminKeyProcedure
+      .input(z.object({ base64: z.string(), filename: z.string().default("screenshot.jpg") }))
+      .mutation(async ({ input }) => {
+        const matches = input.base64.match(/^data:([^;]+);base64,(.+)$/);
+        if (!matches) throw new Error("Invalid base64 image data");
+        const buffer = Buffer.from(matches[2], "base64");
+        if (buffer.length > 500 * 1024) throw new Error("파일 용량이 500KB를 초과합니다.");
+        const safeFilename = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const { url } = await storagePut(`screenshots/${Date.now()}-${safeFilename}`, buffer, matches[1]);
+        return { url };
+      }),
+
     // 배너 목록 조회
     listBanners: adminKeyProcedure.query(async () => {
       const db = await getDb();
@@ -588,6 +610,40 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
         await db.delete(media).where(eq(media.id, input.id));
+        return { success: true };
+      }),
+  }),
+
+  // ===== MEDIA SCREENSHOTS =====
+  screenshotsAdmin: router({
+    list: adminKeyProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(screenshots).orderBy(asc(screenshots.sortOrder), asc(screenshots.id));
+    }),
+    create: adminKeyProcedure
+      .input(z.object({ title: z.string().trim().min(1).max(255), imageUrl: z.string().trim().min(1), sortOrder: z.number().int().default(0), isActive: z.number().int().min(0).max(1).default(1) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        const result = await db.insert(screenshots).values(input);
+        return { id: (result as any).insertId };
+      }),
+    update: adminKeyProcedure
+      .input(z.object({ id: z.number().int(), title: z.string().trim().min(1).max(255).optional(), imageUrl: z.string().trim().min(1).optional(), sortOrder: z.number().int().optional(), isActive: z.number().int().min(0).max(1).optional() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        const { id, ...rest } = input;
+        await db.update(screenshots).set(rest).where(eq(screenshots.id, id));
+        return { success: true };
+      }),
+    delete: adminKeyProcedure
+      .input(z.object({ id: z.number().int() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        await db.delete(screenshots).where(eq(screenshots.id, input.id));
         return { success: true };
       }),
   }),

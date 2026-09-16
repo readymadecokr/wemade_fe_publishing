@@ -85,6 +85,13 @@
       "when": 1788939092653,
       "tag": "0011_whole_black_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1789525025563,
+      "tag": "0012_chilly_mockingbird",
+      "breakpoints": true
     }
   ]
 }

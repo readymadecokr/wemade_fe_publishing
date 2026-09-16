@@ -22,7 +22,7 @@ const NEWS_ITEMS = [
   { title: "Ragnarok Online: Patch Update May 27, 2026", copy: "Read the newest interviews, patch notes, and community announcements.", image: "/manus-storage/RO_PatchUpdate_27052026_953943aa_fa54354f.webp", date: "MAY 28, 2026", tag: "INTERVIEW" },
 ] as const;
 
-const MEDIA_SCREENSHOTS = [
+const DEFAULT_MEDIA_SCREENSHOTS = [
   { title: "Ragnarok Online: Patch Update June 17, 2026", image: "/manus-storage/RO1_pathupdate_17062026_f83f13b8_0ccbefaa.jpg" },
   { title: "Ragnarok Online: Patch Update June 10, 2026", image: "/manus-storage/RO_PatchUpdate_10062026_219a465c_5903482d.jpg" },
   { title: "Ragnarok Online: Patch Update June 4, 2026", image: "/manus-storage/RO_PatchUpdate_04062026-1_29153260_878bf95f.jpg" },
@@ -71,6 +71,13 @@ export default function Home() {
   });
   const featuredVideo = managedVideos?.[0];
   const featuredVideoEmbedUrl = featuredVideo ? getYoutubeEmbedUrl(featuredVideo.youtubeUrl) : null;
+  const { data: managedScreenshots } = trpc.publicScreenshots.list.useQuery(undefined, {
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  });
+  const mediaScreenshots = managedScreenshots?.length
+    ? managedScreenshots.map((screenshot) => ({ title: screenshot.title, image: screenshot.imageUrl }))
+    : DEFAULT_MEDIA_SCREENSHOTS;
 
   const navigateTo = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -101,13 +108,13 @@ export default function Home() {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setSelectedScreenshot(null);
-      if (event.key === "ArrowLeft") setSelectedScreenshot((current) => current === null ? current : (current + MEDIA_SCREENSHOTS.length - 1) % MEDIA_SCREENSHOTS.length);
-      if (event.key === "ArrowRight") setSelectedScreenshot((current) => current === null ? current : (current + 1) % MEDIA_SCREENSHOTS.length);
+      if (event.key === "ArrowLeft") setSelectedScreenshot((current) => current === null ? current : (current + mediaScreenshots.length - 1) % mediaScreenshots.length);
+      if (event.key === "ArrowRight") setSelectedScreenshot((current) => current === null ? current : (current + 1) % mediaScreenshots.length);
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [selectedScreenshot]);
+  }, [selectedScreenshot, mediaScreenshots.length]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -277,7 +284,7 @@ export default function Home() {
           <div className="react-home-media__gallery" aria-label="Ragnarok Universe screenshots">
             <div className="react-home-media__gallery-label"><span>SCREENSHOTS</span><span>DRAG TO EXPLORE</span></div>
             <div ref={screenshotStripRef} className="react-home-media__strip" onScroll={syncScreenshotScroll}>
-              {MEDIA_SCREENSHOTS.map((screenshot, index) => (
+              {mediaScreenshots.map((screenshot, index) => (
                 <button type="button" key={screenshot.image} className="react-home-media__thumbnail" onClick={() => setSelectedScreenshot(index)} aria-label={`View screenshot ${index + 1}: ${screenshot.title}`}>
                   <img src={screenshot.image} alt={screenshot.title} loading={index < 6 ? "eager" : "lazy"} />
                   <span>VIEW FULLSCREEN</span>
@@ -305,7 +312,7 @@ export default function Home() {
       </div>
 
       {libraryOpen && <div className="react-home-modal" role="dialog" aria-modal="true" aria-labelledby="library-coming-soon-title"><button aria-label="Close" className="react-home-modal__backdrop" onClick={() => setLibraryOpen(false)} /><div className="react-home-modal__card"><button type="button" className="react-home-modal__close" onClick={() => setLibraryOpen(false)} aria-label="Close">×</button><p>RUNE-MIDGARTS LIBRARY</p><h2 id="library-coming-soon-title">WE&apos;RE GETTING READY!</h2><span>Rune-Midgarts Library is coming soon. Please check back for more information.</span><button type="button" onClick={() => setLibraryOpen(false)}>CONFIRM</button></div></div>}
-      {selectedScreenshot !== null && <div className="react-home-gallery-modal" role="dialog" aria-modal="true" aria-label={`Screenshot ${selectedScreenshot + 1} of ${MEDIA_SCREENSHOTS.length}`}><button type="button" className="react-home-gallery-modal__backdrop" onClick={() => setSelectedScreenshot(null)} aria-label="Close screenshot" /><div className="react-home-gallery-modal__card"><button type="button" className="react-home-gallery-modal__close" onClick={() => setSelectedScreenshot(null)} aria-label="Close screenshot">×</button><button type="button" className="react-home-gallery-modal__nav react-home-gallery-modal__nav--previous" onClick={() => setSelectedScreenshot((selectedScreenshot + MEDIA_SCREENSHOTS.length - 1) % MEDIA_SCREENSHOTS.length)} aria-label="Previous screenshot"><ChevronLeft /></button><img src={MEDIA_SCREENSHOTS[selectedScreenshot].image} alt={MEDIA_SCREENSHOTS[selectedScreenshot].title} /><button type="button" className="react-home-gallery-modal__nav react-home-gallery-modal__nav--next" onClick={() => setSelectedScreenshot((selectedScreenshot + 1) % MEDIA_SCREENSHOTS.length)} aria-label="Next screenshot"><ChevronRight /></button></div></div>}
+      {selectedScreenshot !== null && <div className="react-home-gallery-modal" role="dialog" aria-modal="true" aria-label={`Screenshot ${selectedScreenshot + 1} of ${mediaScreenshots.length}`}><button type="button" className="react-home-gallery-modal__backdrop" onClick={() => setSelectedScreenshot(null)} aria-label="Close screenshot" /><div className="react-home-gallery-modal__card"><button type="button" className="react-home-gallery-modal__close" onClick={() => setSelectedScreenshot(null)} aria-label="Close screenshot">×</button><button type="button" className="react-home-gallery-modal__nav react-home-gallery-modal__nav--previous" onClick={() => setSelectedScreenshot((selectedScreenshot + mediaScreenshots.length - 1) % mediaScreenshots.length)} aria-label="Previous screenshot"><ChevronLeft /></button><img src={mediaScreenshots[selectedScreenshot].image} alt={mediaScreenshots[selectedScreenshot].title} /><button type="button" className="react-home-gallery-modal__nav react-home-gallery-modal__nav--next" onClick={() => setSelectedScreenshot((selectedScreenshot + 1) % mediaScreenshots.length)} aria-label="Next screenshot"><ChevronRight /></button></div></div>}
     </main>
   );
 }

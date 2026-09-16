@@ -6,10 +6,13 @@ const homeStyles = readFileSync(new URL("../client/src/pages/reference-home.css"
 const stripStyles = readFileSync(new URL("../client/src/pages/media-strip.css", import.meta.url), "utf8");
 
 describe("Home Media screenshot gallery", () => {
-  it("reuses twelve existing News image assets in a continuous three-item screenshot strip", () => {
-    expect(homeSource).toContain("const MEDIA_SCREENSHOTS = [");
+  it("uses active administrator-managed screenshots with existing assets as a continuous three-item fallback strip", () => {
+    expect(homeSource).toContain("const DEFAULT_MEDIA_SCREENSHOTS = [");
     expect(homeSource).toContain("RO1_pathupdate_17062026_f83f13b8_0ccbefaa.jpg");
     expect(homeSource).toContain("RO_PatchUpdate_22042026_337d2472_7c5c5406.webp");
+    expect(homeSource).toContain("trpc.publicScreenshots.list.useQuery");
+    expect(homeSource).toContain("const mediaScreenshots = managedScreenshots?.length");
+    expect(homeSource).toContain("mediaScreenshots.map");
     expect(homeSource).toContain('className="react-home-media__strip"');
     expect(homeSource).toContain('className="react-home-media__scrollbar"');
     expect(homeSource).toContain('aria-label="Browse screenshots"');

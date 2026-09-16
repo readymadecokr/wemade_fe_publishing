@@ -99,6 +99,19 @@ export const media = mysqlTable("media", {
 export type Media = typeof media.$inferSelect;
 export type InsertMedia = typeof media.$inferInsert;
 
+/** Media screenshot gallery items */
+export const screenshots = mysqlTable("screenshots", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  imageUrl: text("imageUrl").notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  isActive: int("isActive").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Screenshot = typeof screenshots.$inferSelect;
+export type InsertScreenshot = typeof screenshots.$inferInsert;
+
 /** In-App Products */
 export const products = mysqlTable("products", {
   id: int("id").autoincrement().primaryKey(),
