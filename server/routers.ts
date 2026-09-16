@@ -562,10 +562,21 @@ export const appRouter = router({
         const offset = (input.page - 1) * input.pageSize;
         let q = db.select().from(news).$dynamic();
         if (input.search) q = q.where(or(like(news.title, `%${input.search}%`), like(news.content ?? news.title, `%${input.search}%`)));
-        const items = await q.orderBy(desc(news.publishedAt), desc(news.id)).limit(input.pageSize).offset(offset);
-        const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(news);
+        const allItems = await q.orderBy(desc(news.publishedAt), desc(news.id));
         const mainRows = await db.select({ id: news.id }).from(news).where(eq(news.isActive, 1)).orderBy(desc(news.publishedAt), desc(news.id)).limit(4);
-        return { items, total: Number(count), mainNewsIds: mainRows.map(row => row.id) };
+        const mainNewsIds = mainRows.map(row => row.id);
+        const mainNewsOrder = new Map(mainNewsIds.map((id, index) => [id, index]));
+        const items = allItems
+          .sort((left, right) => {
+            const leftMainOrder = mainNewsOrder.get(left.id);
+            const rightMainOrder = mainNewsOrder.get(right.id);
+            if (leftMainOrder !== undefined && rightMainOrder !== undefined) return leftMainOrder - rightMainOrder;
+            if (leftMainOrder !== undefined) return -1;
+            if (rightMainOrder !== undefined) return 1;
+            return 0;
+          })
+          .slice(offset, offset + input.pageSize);
+        return { items, total: allItems.length, mainNewsIds };
       }),
     create: adminKeyProcedure
       .input(z.object({ title: z.string(), category: z.string().default('Update'), summary: z.string().optional(), content: z.string().optional(), imageUrl: z.string().optional(), isActive: z.number().default(1), publishedAt: z.string().optional() }))

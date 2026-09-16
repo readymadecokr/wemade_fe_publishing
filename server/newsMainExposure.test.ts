@@ -30,6 +30,13 @@ describe("admin news automatic order and main exposure", () => {
     expect(adminSource).toContain("<label className=\"text-sm font-medium\">분류</label>");
   });
 
+  it("places the four active Home News records at the beginning of the administrator list before pagination", () => {
+    expect(routerSource).toContain("const mainNewsOrder = new Map(mainNewsIds.map((id, index) => [id, index]));");
+    expect(routerSource).toContain("const leftMainOrder = mainNewsOrder.get(left.id);");
+    expect(routerSource).toContain(".slice(offset, offset + input.pageSize);");
+    expect(routerSource).toContain("return { items, total: allItems.length, mainNewsIds };");
+  });
+
   it("renders Home, list, and detail from the public administrator-backed News source without static articles", () => {
     expect(homeSource).toContain("trpc.publicNews.home.useQuery");
     expect(homeSource).toContain("href={`/news/${item.id}`}");
