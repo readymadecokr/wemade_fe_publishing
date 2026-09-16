@@ -12,6 +12,11 @@ describe("Home floating social links", () => {
     expect(source).not.toContain("border-white/70");
   });
 
+  it("renders the YouTube mark with explicit brand red and a white play glyph", () => {
+    expect(source).toContain('fill="#ff0033"');
+    expect(source).toContain('M10 8.5 16 12l-6 3.5Z" fill="#fff"');
+  });
+
   it("does not add an extra glowing animation on hover or focus", () => {
     expect(source).not.toContain("@keyframes floating-social-glow");
     expect(source).not.toContain("floating-social-link:hover");
