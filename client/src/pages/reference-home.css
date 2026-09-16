@@ -52,11 +52,11 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 .portal-nav-link:hover { color: #f4db85; text-shadow: 0 0 12px rgba(244,219,133,.65); }.portal-nav-link--active { border-color: rgba(232,202,109,.48); background: linear-gradient(180deg,rgba(237,207,115,.14),rgba(18,38,60,.12)); color: #f4db85; box-shadow: inset 0 -2px 0 #e2c45d, 0 0 14px rgba(244,219,133,.14); text-shadow: 0 0 12px rgba(244,219,133,.65); }
 
 
-.react-home-hero { position: relative; display: grid; min-height: calc(100svh - var(--react-home-header-height)); margin-top: 0; align-items: stretch; overflow: hidden; background: var(--home-navy); }
+.react-home-hero { position: relative; display: grid; min-height: max(500px, calc(100svh - var(--react-home-header-height))); margin-top: 0; align-items: stretch; overflow: hidden; background: var(--home-navy); }
 .react-home-hero__visual, .react-home-hero__shade { position: absolute; inset: 0; width: 100%; height: 100%; }
 .react-home-hero__visual { aspect-ratio: 1000 / 600; object-fit: cover; object-position: center; }
 .react-home-hero__shade { background: linear-gradient(90deg, rgba(7,22,37,.8) 0%, rgba(7,22,37,.42) 45%, rgba(7,22,37,.08) 76%), linear-gradient(0deg, rgba(8,25,42,.25), transparent 42%); }
-.react-home-hero__content { position: relative; z-index: 1; display: flex; width: min(1180px, calc(100% - 64px)); margin: 0 auto; padding: clamp(56px,10vh,110px) 0 clamp(76px,9vh,120px); flex-direction: column; align-items: flex-start; justify-content: center; color: #fff; }
+.react-home-hero__content { position: relative; z-index: 1; display: flex; width: min(1180px, calc(100% - 64px)); margin: 0 auto; padding: clamp(56px,10vh,110px) 0 clamp(62px,7vh,92px); flex-direction: column; align-items: flex-start; justify-content: flex-end; color: #fff; }
 .react-home-hero__tags { display: flex; gap: 9px; margin-bottom: 18px; }
 .react-home-hero__tags span, .react-home-closing > span, .react-home-game-info__copy > span { border: 1px solid #55d9bd; border-radius: 999px; padding: 8px 14px; color: #ddfff5; font-size: 10px; font-weight: 900; letter-spacing: .13em; }
 .react-home-hero h1, .react-home-section-heading h2, .react-home-game-info h2, .react-home-closing h2 { margin: 0; font-family: Arial, Helvetica, sans-serif; font-style: italic; font-weight: 900; letter-spacing: -.055em; line-height: .9; }
@@ -510,7 +510,7 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 /* Current Hero, header, content, closing CTA, and footer presentation. */
 .reference-header-language { border-left: 0; }
 .reference-header-top-action { font-size: 12px; }
-.react-home-hero h1 { font-size: clamp(28px,4.1vw,58px); letter-spacing: -.045em; }
+.react-home-hero h1 { font-size: clamp(25px,3.65vw,52px); letter-spacing: -.045em; }
 .react-home-hero h1 span { width: max-content; max-width: 100%; white-space: nowrap; }
 .react-home-hero p { max-width: none; white-space: nowrap; font-size: clamp(11px,1.1vw,16px); }
 .react-home-hero__tags span, .react-home-white-cta { box-sizing: border-box; min-height: 44px; height: 44px; }
@@ -530,13 +530,15 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 .react-home-game-info__art { border: 0; border-radius: 0; }
 
 @media (min-width: 761px) {
-  .react-home-game-info__art { width: clamp(170px,24vw,360px); height: clamp(88px,7.4vw,120px); justify-self: start; align-self: start; }
+  .react-home-game-info__art { width: 100%; height: clamp(230px,20vw,310px); margin-top: clamp(24px,2.2vw,34px); justify-self: stretch; align-self: start; }
   .react-home-game-info__art-paper, .react-home-game-info__art-paper img { width: 100%; height: 100%; }
-  .react-home-game-info__art-paper img { max-width: 100%; object-fit: contain; }
+  .react-home-game-info__art-paper img { max-width: 100%; object-fit: cover; }
 }
 
 @media (max-width: 760px) {
   .reference-header-top-action { font-size: 9px; }
+  .react-home-hero { min-height: 500px; }
+  .react-home-hero__content { padding-bottom: 58px; }
   .react-home-hero h1 { font-size: clamp(16px,4vw,22px); }
   .react-home-hero p { max-width: none; white-space: nowrap; font-size: clamp(7px,1.8vw,9px); }
   .react-home-hero__tags span, .react-home-white-cta { min-height: 38px; height: 38px; }

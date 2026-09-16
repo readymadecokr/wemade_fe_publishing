@@ -21,6 +21,7 @@ describe("direct React Home banner", () => {
     expect(homeSource).toContain("heroActionUrl");
     expect(homeSource).toContain("VIEW MORE");
     expect(homeSource).toContain('className="react-home-white-cta__play"');
+    expect(readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8")).toContain('min-height: max(500px, calc(100svh - var(--react-home-header-height)))');
     expect(homeSource).not.toContain("REFERENCE_HOME_URL");
   });
 

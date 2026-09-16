@@ -1623,3 +1623,10 @@
 - [x] Discord·News·Game Info·Media 상하 50px 여백과 Hero 하단 Game Start 배경색 조정
 - [x] Closing CTA 버튼의 데스크톱 좌우·모바일 상하 배치 및 Footer 어두운 표면·SNS 테두리 제거
 - [x] Game Info 이미지 테두리 제거·제목 높이 정렬, 다중 화면 폭·TypeScript·회귀 테스트 검증
+
+## Game Info 이미지 크기·정렬 복구
+- [x] CLASSIC ADVENTURE 오른쪽 이미지의 현재 축소·정렬 규칙 점검
+- [x] 제목 시작선부터 본문 영역까지 이어지는 데스크톱 이미지 크기·위치 보정
+- [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+- [x] Hero 제목 크기 축소와 Update·텍스트·View More의 하단 기준 정렬 보정
+- [x] Hero 슬라이드 배너 최소 높이 500px 보장

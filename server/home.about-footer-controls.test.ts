@@ -72,7 +72,8 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain(".react-home-footer__inner { position: relative; justify-content: center; }");
     expect(styleSource).toContain(".react-home-footer p { text-align: center; }");
     expect(styleSource).toContain(".react-home-game-info__grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: center; gap: clamp(26px,3.2vw,48px);");
-    expect(styleSource).toContain('.react-home-game-info__art { width: clamp(170px,24vw,360px); height: clamp(88px,7.4vw,120px); justify-self: start; align-self: start; }');
+    expect(styleSource).toContain('.react-home-game-info__art { width: 100%; height: clamp(230px,20vw,310px); margin-top: clamp(24px,2.2vw,34px); justify-self: stretch; align-self: start; }');
+    expect(styleSource).toContain('.react-home-game-info__art-paper img { max-width: 100%; object-fit: cover; }');
     expect(styleSource).toContain(".react-home-game-info__art { position: relative; z-index: 1; width: 100%; justify-self: stretch;");
     expect(styleSource).toContain("transform: none;");
     expect(styleSource).toContain(".react-home-game-info__art { width: min(100%,220px); justify-self: center;");
@@ -104,7 +105,7 @@ describe("direct React Home CTA, headings, and footer", () => {
   });
 
   it("keeps a single-line Hero title, aligned top controls, and matching UPDATE / VIEW MORE height", () => {
-    expect(styleSource).toContain('.react-home-hero h1 { font-size: clamp(28px,4.1vw,58px); letter-spacing: -.045em; }');
+    expect(styleSource).toContain('.react-home-hero h1 { font-size: clamp(25px,3.65vw,52px); letter-spacing: -.045em; }');
     expect(styleSource).toContain('.react-home-hero__tags span, .react-home-white-cta { box-sizing: border-box; min-height: 44px; height: 44px; }');
     expect(styleSource).toContain('.react-home-hero__controls { top: max(6px, calc(clamp(16px,2vw,30px) - 10px));');
     expect(styleSource).toContain('.react-home-hero__dots { position: absolute; z-index: 3; top: clamp(16px,2vw,30px); left: 50%; transform: translateX(-50%); }');
