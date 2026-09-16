@@ -22,9 +22,9 @@
 .react-home-media { grid-area: media; }
 .react-home-final-panel { grid-area: final; display: flex; flex-direction: column; overflow: hidden; background: #fbf8f1; }
 .react-home-footer { grid-area: footer; min-height: 0; }
-html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scroll-behavior: auto; scroll-snap-type: none; }
 @media (min-width: 769px) {
-  .react-home-layout > [data-snap-panel] { min-height: calc(100svh - var(--react-home-header-height)); scroll-snap-align: start; scroll-snap-stop: always; }
+  .react-home-layout > [data-snap-panel] { box-sizing: border-box; height: calc(100svh - var(--react-home-header-height)); height: calc(100dvh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); min-height: calc(100dvh - var(--react-home-header-height)); overflow: hidden; }
   .react-home-layout > .react-home-panel { min-height: calc(100svh - var(--react-home-header-height)); }
   .react-home-home-stage { height: calc(100svh - var(--react-home-header-height)); }
   .react-home-discord, .react-home-news, .react-home-media { padding-block: clamp(54px, 7vh, 105px) clamp(42px, 5vh, 75px); }

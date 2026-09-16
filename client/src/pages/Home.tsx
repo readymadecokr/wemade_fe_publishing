@@ -111,12 +111,24 @@ export default function Home() {
     let wheelLocked = false;
     let pendingWheelDelta = 0;
     let touchLocked = false;
+    let transitionTimer: number | undefined;
     let touchStartX: number | null = null;
     let touchStartY: number | null = null;
     let touchStartPanelIndex: number | null = null;
 
     const isMobilePanelViewport = () => window.matchMedia("(max-width: 760px)").matches;
     const isDesktopPanelViewport = () => window.matchMedia("(min-width: 761px)").matches;
+    const getPanelScrollTop = (panel: HTMLElement) => {
+      const headerHeight = Number.parseFloat(getComputedStyle(root).getPropertyValue("--react-home-header-height")) || 0;
+      return Math.max(0, Math.round(window.scrollY + panel.getBoundingClientRect().top - headerHeight));
+    };
+    const releaseTransitionLock = () => {
+      window.clearTimeout(transitionTimer);
+      transitionTimer = window.setTimeout(() => {
+        wheelLocked = false;
+        touchLocked = false;
+      }, 760);
+    };
     const getCurrentPanelIndex = () => {
       const headerHeight = Number.parseFloat(getComputedStyle(root).getPropertyValue("--react-home-header-height")) || 0;
       return panels.reduce((nearestIndex, panel, index) => {
@@ -129,7 +141,8 @@ export default function Home() {
       const currentIndex = startingIndex;
       const nextIndex = Math.max(0, Math.min(panels.length - 1, currentIndex + direction));
       if (nextIndex === currentIndex) return false;
-      panels[nextIndex].scrollIntoView({ behavior: "smooth", block: "start" });
+      const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+      window.scrollTo({ top: getPanelScrollTop(panels[nextIndex]), behavior });
       return true;
     };
     const handleWheel = (event: WheelEvent) => {
@@ -145,7 +158,7 @@ export default function Home() {
       if (!movePanel(direction)) return;
 
       wheelLocked = true;
-      window.setTimeout(() => { wheelLocked = false; }, 720);
+      releaseTransitionLock();
     };
     const handleTouchStart = (event: TouchEvent) => {
       if (!isMobilePanelViewport()) return;
@@ -153,6 +166,13 @@ export default function Home() {
       touchStartX = touch?.clientX ?? null;
       touchStartY = touch?.clientY ?? null;
       touchStartPanelIndex = getCurrentPanelIndex();
+    };
+    const handleTouchMove = (event: TouchEvent) => {
+      if (!isMobilePanelViewport() || touchStartX === null || touchStartY === null) return;
+      const touch = event.touches[0];
+      const horizontalTravel = Math.abs((touch?.clientX ?? touchStartX) - touchStartX);
+      const verticalTravel = Math.abs((touch?.clientY ?? touchStartY) - touchStartY);
+      if (verticalTravel > 8 && verticalTravel > horizontalTravel) event.preventDefault();
     };
     const handleTouchEnd = (event: TouchEvent) => {
       if (!isMobilePanelViewport() || touchLocked || touchStartX === null || touchStartY === null) return;
@@ -166,17 +186,20 @@ export default function Home() {
       if (Math.abs(verticalTravel) < 48 || Math.abs(verticalTravel) <= horizontalTravel) return;
       if (!movePanel(verticalTravel > 0 ? -1 : 1, startingPanelIndex ?? getCurrentPanelIndex())) return;
       touchLocked = true;
-      window.setTimeout(() => { touchLocked = false; }, 820);
+      releaseTransitionLock();
     };
 
     root.classList.add("react-home-snap");
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
     window.addEventListener("touchend", handleTouchEnd, { passive: true });
     return () => {
+      window.clearTimeout(transitionTimer);
       root.classList.remove("react-home-snap");
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
     };
   }, []);
