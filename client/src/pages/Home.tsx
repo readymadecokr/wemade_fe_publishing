@@ -22,21 +22,6 @@ const NEWS_ITEMS = [
   { title: "Ragnarok Online: Patch Update May 27, 2026", copy: "Read the newest interviews, patch notes, and community announcements.", image: "/manus-storage/RO_PatchUpdate_27052026_953943aa_fa54354f.webp", date: "MAY 28, 2026", tag: "INTERVIEW" },
 ] as const;
 
-const DEFAULT_MEDIA_SCREENSHOTS = [
-  { title: "Ragnarok Online: Patch Update June 17, 2026", image: "/manus-storage/RO1_pathupdate_17062026_f83f13b8_0ccbefaa.jpg" },
-  { title: "Ragnarok Online: Patch Update June 10, 2026", image: "/manus-storage/RO_PatchUpdate_10062026_219a465c_5903482d.jpg" },
-  { title: "Ragnarok Online: Patch Update June 4, 2026", image: "/manus-storage/RO_PatchUpdate_04062026-1_29153260_878bf95f.jpg" },
-  { title: "Ragnarok Online: Patch Update May 27, 2026", image: "/manus-storage/RO_PatchUpdate_27052026_953943aa_fa54354f.webp" },
-  { title: "Gravity Game Tech Launches LINE Official Account", image: "/manus-storage/PR-pack-Line-OA-Cover-700x36020052026_d4332f85_70996280.webp" },
-  { title: "Ragnarok Online: Music Contest Winners Announced", image: "/manus-storage/RO1-Banner-6TH-Music-Performance-Resize-1920x1080_bc640d8a_0c8f7386.png" },
-  { title: "Ragnarok Online: Patch Update May 13, 2026", image: "/manus-storage/RO1_patchupdate_13052026_700e9d1f_01c2e74f.jpg" },
-  { title: "Ragnarok Online: Special Anniversary Event", image: "/manus-storage/RO1_04032026PatchUpdate_700X360_3345ccff_33b86c1a.webp" },
-  { title: "Ragnarok Monster Shop at Craft and Play 2026", image: "/manus-storage/GGT-RO-Shop-Craft-Play-3-1920x1080_46621aa6_4cf197fb.webp" },
-  { title: "Ragnarok Online: Patch Update May 6, 2026", image: "/manus-storage/RO1_06052026_47ecad62_ae242c6b.jpg" },
-  { title: "Ragnarok Online: Patch Update April 29, 2026", image: "/manus-storage/RO_PatchUpdate18032026_700x360_68e5480e_82a64304.webp" },
-  { title: "Ragnarok Online: Patch Update April 22, 2026", image: "/manus-storage/RO_PatchUpdate_22042026_337d2472_7c5c5406.webp" },
-] as const;
-
 function getYoutubeEmbedUrl(youtubeUrl: string) {
   const match = youtubeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^&?/\s]+)/);
   return match?.[1] ? `https://www.youtube-nocookie.com/embed/${match[1]}?rel=0` : null;
@@ -75,9 +60,7 @@ export default function Home() {
     staleTime: 60_000,
     refetchOnWindowFocus: false,
   });
-  const mediaScreenshots = managedScreenshots?.length
-    ? managedScreenshots.map((screenshot) => ({ title: screenshot.title, image: screenshot.imageUrl }))
-    : DEFAULT_MEDIA_SCREENSHOTS;
+  const mediaScreenshots = managedScreenshots?.map((screenshot) => ({ title: screenshot.title, image: screenshot.imageUrl })) ?? [];
 
   const navigateTo = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -281,7 +264,7 @@ export default function Home() {
               <div className="react-home-media__feature-fallback"><img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="lazy" /><span>NO ACTIVE VIDEO REGISTERED</span></div>
             )}
           </div>
-          <div className="react-home-media__gallery" aria-label="Ragnarok Universe screenshots">
+          {mediaScreenshots.length > 0 && <div className="react-home-media__gallery" aria-label="Ragnarok Universe screenshots">
             <div className="react-home-media__gallery-label"><span>SCREENSHOTS</span><span>DRAG TO EXPLORE</span></div>
             <div ref={screenshotStripRef} className="react-home-media__strip" onScroll={syncScreenshotScroll}>
               {mediaScreenshots.map((screenshot, index) => (
@@ -299,7 +282,7 @@ export default function Home() {
               </div>
               <button type="button" className="react-home-media__scroll-arrow" onClick={() => moveScreenshotStrip(1)} disabled={screenshotScroll >= 99.5} aria-label="Next screenshots"><ChevronRight /></button>
             </div>
-          </div>
+          </div>}
         </div>
       </section>
 

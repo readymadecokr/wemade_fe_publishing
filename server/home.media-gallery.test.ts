@@ -6,12 +6,11 @@ const homeStyles = readFileSync(new URL("../client/src/pages/reference-home.css"
 const stripStyles = readFileSync(new URL("../client/src/pages/media-strip.css", import.meta.url), "utf8");
 
 describe("Home Media screenshot gallery", () => {
-  it("uses active administrator-managed screenshots with existing assets as a continuous three-item fallback strip", () => {
-    expect(homeSource).toContain("const DEFAULT_MEDIA_SCREENSHOTS = [");
-    expect(homeSource).toContain("RO1_pathupdate_17062026_f83f13b8_0ccbefaa.jpg");
-    expect(homeSource).toContain("RO_PatchUpdate_22042026_337d2472_7c5c5406.webp");
+  it("uses only active administrator-managed screenshots and hides the gallery when none are selected", () => {
     expect(homeSource).toContain("trpc.publicScreenshots.list.useQuery");
-    expect(homeSource).toContain("const mediaScreenshots = managedScreenshots?.length");
+    expect(homeSource).toContain("const mediaScreenshots = managedScreenshots?.map");
+    expect(homeSource).not.toContain("DEFAULT_MEDIA_SCREENSHOTS");
+    expect(homeSource).toContain("mediaScreenshots.length > 0 && <div className=\"react-home-media__gallery\"");
     expect(homeSource).toContain("mediaScreenshots.map");
     expect(homeSource).toContain('className="react-home-media__strip"');
     expect(homeSource).toContain('className="react-home-media__scrollbar"');
