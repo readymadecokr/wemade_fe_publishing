@@ -15,12 +15,13 @@ const DEFAULT_HERO_BANNERS = [
   { id: "default", title: "Midgard runs in your browser", imageUrl: HERO_DESKTOP_URL, heroCategory: "UPDATE", heroTitle: "MIDGARD RUNS\nIN YOUR BROWSER", heroDescription: "No download, no install, no launcher. Open a tab on your phone or PC and begin your adventure.", actionType: "content", actionUrl: "/news" },
 ] as const;
 
-const NEWS_ITEMS = [
-  { title: "Ragnarok Online: Patch Update June 17, 2026", copy: "The latest game updates and community announcements from Ragnarok Universe.", image: "/manus-storage/RO1_pathupdate_17062026_f83f13b8_0ccbefaa.jpg", date: "JUN 17, 2026", tag: "UPDATE" },
-  { title: "Ragnarok Online: Patch Update June 10, 2026", copy: "Discover the newest event information and content updates from Midgard.", image: "/manus-storage/RO_PatchUpdate_10062026_219a465c_5903482d.jpg", date: "JUN 17, 2026", tag: "EVENT" },
-  { title: "Ragnarok Online: Patch Update June 4, 2026", copy: "Keep up with the latest Ragnarok Universe news and event updates.", image: "/manus-storage/RO_PatchUpdate_04062026-1_29153260_878bf95f.jpg", date: "JUN 17, 2026", tag: "EVENT" },
-  { title: "Ragnarok Online: Patch Update May 27, 2026", copy: "Read the newest interviews, patch notes, and community announcements.", image: "/manus-storage/RO_PatchUpdate_27052026_953943aa_fa54354f.webp", date: "MAY 28, 2026", tag: "INTERVIEW" },
-] as const;
+const NEWS_PLACEHOLDER_IMAGE = "/manus-storage/ragnarok-news-default-banner_0d5427e8.png";
+
+function formatHomeNewsDate(value: Date | string) {
+  return new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Seoul", month: "short", day: "2-digit", year: "numeric" })
+    .format(new Date(value))
+    .toUpperCase();
+}
 
 function getYoutubeEmbedUrl(youtubeUrl: string) {
   const match = youtubeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^&?/\s]+)/);
@@ -61,6 +62,11 @@ export default function Home() {
     refetchOnWindowFocus: false,
   });
   const mediaScreenshots = managedScreenshots?.map((screenshot) => ({ title: screenshot.title, image: screenshot.imageUrl })) ?? [];
+  const { data: managedNews, isLoading: isNewsLoading } = trpc.publicNews.home.useQuery(undefined, {
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
+  });
+  const homeNews = managedNews ?? [];
 
   const navigateTo = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -242,7 +248,7 @@ export default function Home() {
         <div className="react-home-section-shell">
           <div className="react-home-section-heading"><div><span>NEWS &amp; NOTICE</span><h2>LATEST FROM MIDGARD</h2></div><Link href="/news" className="react-home-outline-cta react-home-news-more" aria-label="View more news">+</Link></div>
           <div className="react-home-news-grid">
-            {NEWS_ITEMS.map((item, index) => <article className={`react-home-news-card${index === 3 ? " react-home-news-card--mobile-extra" : ""}`} key={item.title}><img src={item.image} alt="" loading="lazy" /><div><div className="react-home-news-card__meta"><span>{item.tag}</span><time>{item.date}</time></div><h3>{item.title}</h3><p>{item.copy}</p><button type="button" onClick={() => setLibraryOpen(true)}>READ MORE <b>›</b></button></div></article>)}
+            {isNewsLoading ? Array.from({ length: 4 }, (_, index) => <div className={`react-home-news-card animate-pulse${index === 3 ? " react-home-news-card--mobile-extra" : ""}`} key={index} aria-label="Loading news"><div className="min-h-40 bg-slate-200/70" /><div className="space-y-3 p-4"><div className="h-3 w-1/3 rounded bg-slate-200" /><div className="h-5 rounded bg-slate-200" /><div className="h-3 rounded bg-slate-200" /></div></div>) : homeNews.length > 0 ? homeNews.map((item, index) => <Link href={`/news/${item.id}`} className={`react-home-news-card${index === 3 ? " react-home-news-card--mobile-extra" : ""}`} key={item.id}><img src={item.imageUrl || NEWS_PLACEHOLDER_IMAGE} alt="" loading="lazy" /><div><div className="react-home-news-card__meta"><span>{item.category.toUpperCase()}</span><time>{formatHomeNewsDate(item.publishedAt)}</time></div><h3>{item.title}</h3><p>{item.summary || item.content?.split(/\n\s*\n/)[0] || ""}</p><span className="react-home-news-card__link">READ MORE <b>›</b></span></div></Link>) : <p className="react-home-news-empty col-span-full py-10 text-center">No news is currently published.</p>}
           </div>
         </div>
       </section>

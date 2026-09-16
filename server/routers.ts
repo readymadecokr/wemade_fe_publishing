@@ -117,16 +117,33 @@ export const appRouter = router({
     }),
   }),
 
-  // 공개 메인 News: 활성 상태인 최신 6개만 노출
+  // 공개 News: 관리자에서 공개로 설정한 기사만 서비스에 노출
   publicNews: router({
     list: publicProcedure.query(async () => {
       const db = await getDb();
       if (!db) return [];
       return db.select().from(news)
         .where(eq(news.isActive, 1))
-        .orderBy(desc(news.publishedAt), desc(news.id))
-        .limit(6);
+        .orderBy(desc(news.publishedAt), desc(news.id));
     }),
+    home: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(news)
+        .where(eq(news.isActive, 1))
+        .orderBy(desc(news.publishedAt), desc(news.id))
+        .limit(4);
+    }),
+    byId: publicProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return null;
+        const result = await db.select().from(news)
+          .where(and(eq(news.id, input.id), eq(news.isActive, 1)))
+          .limit(1);
+        return result[0] ?? null;
+      }),
   }),
 
   user: router({
@@ -547,7 +564,7 @@ export const appRouter = router({
         if (input.search) q = q.where(or(like(news.title, `%${input.search}%`), like(news.content ?? news.title, `%${input.search}%`)));
         const items = await q.orderBy(desc(news.publishedAt), desc(news.id)).limit(input.pageSize).offset(offset);
         const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(news);
-        const mainRows = await db.select({ id: news.id }).from(news).where(eq(news.isActive, 1)).orderBy(desc(news.publishedAt), desc(news.id)).limit(6);
+        const mainRows = await db.select({ id: news.id }).from(news).where(eq(news.isActive, 1)).orderBy(desc(news.publishedAt), desc(news.id)).limit(4);
         return { items, total: Number(count), mainNewsIds: mainRows.map(row => row.id) };
       }),
     create: adminKeyProcedure

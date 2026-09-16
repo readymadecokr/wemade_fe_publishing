@@ -1527,6 +1527,18 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
             <label className="text-sm font-medium">뉴스 제목</label>
             <Input value={form.title} onChange={e => setForm(f => f && ({ ...f, title: e.target.value }))} placeholder="뉴스 제목" />
           </div>
+          <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">분류</label>
+              <select value={form.category} onChange={e => setForm(f => f && ({ ...f, category: e.target.value }))} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+                <option value="Update">Update</option><option value="Event">Event</option><option value="Interview">Interview</option><option value="Notice">Notice</option>
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">홈 요약</label>
+              <Input value={form.summary} onChange={e => setForm(f => f && ({ ...f, summary: e.target.value }))} placeholder="Home 카드에 표시할 짧은 설명" />
+            </div>
+          </div>
           {/* ② 이미지 등록 */}
           <div className="space-y-1">
             <label className="text-sm font-medium">이미지 등록 *</label>

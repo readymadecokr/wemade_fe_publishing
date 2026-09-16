@@ -5,11 +5,12 @@ const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.m
 const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
 describe("direct React Home news and game information", () => {
-  it("renders the authored News and Game Info content directly in React", () => {
+  it("renders News and Game Info directly in React while loading News from the public API", () => {
     [/LATEST FROM MIDGARD/, /CLASSIC ADVENTURE/, /A NEW WAY TO PLAY/, /RUNE-MIDGARTS LIBRARY/].forEach((content) => {
       expect(homeSource).toMatch(content);
     });
-    expect(homeSource).toContain("const NEWS_ITEMS = [");
+    expect(homeSource).toContain("trpc.publicNews.home.useQuery");
+    expect(homeSource).not.toContain("const NEWS_ITEMS = [");
     expect(homeSource).toContain('className="react-home-outline-cta react-home-news-more" aria-label="View more news">+</Link>');
     expect(homeSource).toContain('react-home-news-card--mobile-extra');
   });
