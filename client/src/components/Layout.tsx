@@ -8,6 +8,7 @@ import PrivacySettingsDialog from "./PrivacySettingsDialog";
 import FloatingSocialLinks from "./FloatingSocialLinks";
 import { trpc } from "@/lib/trpc";
 import HomeHeader from "./HomeHeader";
+import ServiceFooter from "./ServiceFooter";
 import "./news-layout.css";
 
 function fmtRuc(n: number): string { return Math.min(n, 9999999).toLocaleString("en-US"); }
@@ -103,7 +104,7 @@ export default function Layout({ children, variant = "homeChrome", showClosingCt
 
 
       {variant === "homeChrome" ? (
-      <footer id="site-footer" className="news-home-footer mt-auto w-full">
+      <>
         {showClosingCta && <section className="news-home-closing" aria-label="Ragnarok Universe closing call to action">
           <div className="news-home-closing__content">
             <span>YOUR STORY BEGINS HERE</span>
@@ -115,18 +116,8 @@ export default function Layout({ children, variant = "homeChrome", showClosingCt
             </div>
           </div>
         </section>}
-        <section className="news-home-footer__bar">
-          <div className="news-home-footer__inner">
-            <div>
-              <div className="news-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div>
-              <nav><Link href="/terms-of-service">Terms of Service</Link><Link href="/privacy-policy">Privacy Policy</Link><button type="button" onClick={() => setShowPrivacySettings(true)}>Privacy Settings</button><a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer">Customer Support</a></nav>
-              <img src={`${ASSET_BASE_URL}/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png`} alt="GRAVITY" />
-              <p><span>Copyright © Gravity Co., LTD &amp; Lee MyoungJin(studio DTDS). All Rights Reserved.</span><span>All trademarks used on this website are the property of their respective owners.</span></p>
-            </div>
-            <div className="news-home-footer__social" aria-label="Official social links"><a href="https://discord.gg/yVWJkWdkAU" target="_blank" rel="noopener noreferrer" aria-label="Discord"><img src={`${ASSET_BASE_URL}/manus-storage/Discord_icon_230fdb89_6026051e.png`} alt="" /></a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src={`${ASSET_BASE_URL}/manus-storage/facebook-logo-primary_2867583f.webp`} alt="" /></a><a href="https://www.youtube.com/@RagnarokUniverse" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" /></svg></a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer" aria-label="X" className="news-home-footer__social-x"><img src={`${ASSET_BASE_URL}/manus-storage/x-logo-black_193d8b29.webp`} alt="" /></a></div>
-          </div>
-        </section>
-      </footer>
+        <ServiceFooter onPrivacySettings={() => setShowPrivacySettings(true)} />
+      </>
       ) : (
       /* Footer */
       <footer id="site-footer" className="fantasy-site-footer home-scroll-panel home-section-surface home-surface--closing home-panel-fill mt-auto w-full text-[#17120c]">

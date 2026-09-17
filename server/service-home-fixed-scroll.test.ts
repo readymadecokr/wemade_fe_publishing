@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
+const serviceFooterSource = readFileSync(new URL("../client/src/components/ServiceFooter.tsx", import.meta.url), "utf8");
 const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
 describe("direct React full-page service Home", () => {
@@ -13,7 +14,8 @@ describe("direct React full-page service Home", () => {
     expect(homeSource).toContain("react-home-media");
     expect(homeSource).toContain("react-home-closing-panel");
     expect(homeSource).toContain("react-home-closing");
-    expect(homeSource).toContain("react-home-footer");
+    expect(homeSource).toContain('<ServiceFooter snapPanel />');
+    expect(serviceFooterSource).toContain("react-home-footer");
   });
 
   it("keeps the fixed live header separate from content-driven Home regions without a nested website iframe", () => {

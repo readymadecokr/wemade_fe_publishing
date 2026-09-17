@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
+const serviceFooterSource = readFileSync(new URL("../client/src/components/ServiceFooter.tsx", import.meta.url), "utf8");
 const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
 describe("direct React Hero controls and community visibility", () => {
@@ -15,7 +16,8 @@ describe("direct React Hero controls and community visibility", () => {
   });
 
   it("uses actual official social links in the directly rendered footer", () => {
-    expect(homeSource).toContain("https://facebook.com/RagnarokUniverseEN");
-    expect(homeSource).toContain("https://x.com/RagUniOfficial");
+    expect(homeSource).toContain('<ServiceFooter snapPanel />');
+    expect(serviceFooterSource).toContain("https://facebook.com/RagnarokUniverseEN");
+    expect(serviceFooterSource).toContain("https://x.com/RagUniOfficial");
   });
 });

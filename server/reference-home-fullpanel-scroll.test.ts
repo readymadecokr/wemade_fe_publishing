@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
+const serviceFooterSource = readFileSync(new URL("../client/src/components/ServiceFooter.tsx", import.meta.url), "utf8");
 const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
 describe("direct React Home section navigation", () => {
@@ -36,7 +37,8 @@ describe("direct React Home section navigation", () => {
     expect(styleSource).toContain(".react-home-footer { grid-area: footer; min-height: 0; padding: 30px 0; }");
     expect(styleSource).toContain(".react-home-layout > [data-snap-panel] { height: auto; min-height: 0; overflow: visible; }");
     expect(homeSource).toContain('className="react-home-panel react-home-closing-panel"');
-    expect(homeSource).toContain('<footer className="react-home-footer" data-snap-panel');
+    expect(homeSource).toContain('<ServiceFooter snapPanel />');
+    expect(serviceFooterSource).toContain('className="react-home-footer"');
     expect(styleSource).toContain(".react-home-hero { position: relative; display: grid;");
     expect(styleSource).not.toContain("reference-home-embed__frame");
   });

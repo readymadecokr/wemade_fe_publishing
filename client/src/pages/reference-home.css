@@ -538,7 +538,7 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-hero { min-height: 500px; }
   .react-home-hero__content { padding-bottom: 58px; }
   .react-home-hero h1 { font-size: clamp(16px,4vw,22px); }
-  .react-home-hero p { max-width: none; white-space: nowrap; font-size: clamp(7px,1.8vw,9px); }
+  .react-home-hero p { max-width: none; white-space: nowrap; font-size: clamp(9px,calc(1.8vw + 2px),11px); }
   .react-home-hero__tags span, .react-home-white-cta { min-height: 38px; height: 38px; }
   .react-home-hero__tags span { padding: 0 14px; font-size: 11px; }
   .react-home-hero__controls { top: max(5px, calc(clamp(16px,2vw,30px) - 8px)); bottom: auto; }
@@ -602,6 +602,7 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 /* Footer uses the same 80px breathing room as the requested content regions. */
 .react-home-footer { padding-block: 80px; }
+.react-home-footer nav .react-home-footer__privacy-settings { border: 0; padding: 0; color: inherit; background: transparent; font: inherit; cursor: pointer; }
 @media (max-width: 760px) {
   .react-home-footer { padding-block: 80px; }
   .react-home-discord__game-start { margin-top: -50px; }
@@ -633,6 +634,9 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 @media (min-width: 761px) {
   .react-home-closing .home-cta-pair .home-discord-button { flex: 0 1 210px; width: min(210px, 36vw); height: 64px; }
 }
+
+/* Keep the closing action pair centered as a group within the CTA copy column. */
+.react-home-closing .home-cta-pair { margin-inline: auto; justify-content: center; }
 
 /* The mobile Discord channel retains the same viewport-driven height as desktop. */
 @media (max-width: 760px) {

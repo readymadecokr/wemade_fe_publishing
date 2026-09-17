@@ -3,6 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import FloatingSocialLinks from "@/components/FloatingSocialLinks";
 import HomeHeader, { DiscordButton, GameStartButton } from "@/components/HomeHeader";
+import ServiceFooter from "@/components/ServiceFooter";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import "./reference-home.css";
@@ -354,9 +355,7 @@ export default function Home() {
       <section className="react-home-panel react-home-closing-panel" data-home-section data-snap-panel aria-label="Ragnarok Universe closing call to action">
         <div className="react-home-closing"><div className="react-home-closing__content"><span>YOUR STORY BEGINS HERE</span><h2>TWO CLICKS TO<br />MIDGARD</h2><p>Start the game in your browser, then join the Discord to find a party, get patch news first and take part in founder events.</p><HomeCtaPair /></div></div>
       </section>
-      <footer className="react-home-footer" data-snap-panel aria-label="Ragnarok Universe footer">
-        <div className="react-home-footer__inner"><div><div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div><nav><a href="/">Terms of Service</a><a href="/">Privacy Policy</a><a href="/">Privacy Settings</a><a href="/">Customer Support</a></nav><img src="/manus-storage/rou-gravity-logo-white_c5669483.png" alt="GRAVITY" loading="lazy" /><p><span>Copyright © Gravity Co., LTD &amp; Lee MyoungJin(studio DTDS). All Rights Reserved.</span><span>All trademarks used on this website are the property of their respective owners.</span></p></div><div className="react-home-footer__social"><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" aria-label="Discord"><img src="/manus-storage/Discord_icon_230fdb89_6026051e.png" alt="" /></a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="/manus-storage/facebook-logo-primary_2867583f.webp" alt="" /></a><a href="https://www.youtube.com/@RagnarokUniverse" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" /></svg></a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer" aria-label="X" className="react-home-footer__social-x"><img src="/manus-storage/x-logo-black_193d8b29.webp" alt="" /></a></div></div>
-      </footer>
+      <ServiceFooter snapPanel />
       </div>
 
       {libraryOpen && <div className="react-home-modal" role="dialog" aria-modal="true" aria-labelledby="library-coming-soon-title"><button aria-label="Close" className="react-home-modal__backdrop" onClick={() => setLibraryOpen(false)} /><div className="react-home-modal__card"><button type="button" className="react-home-modal__close" onClick={() => setLibraryOpen(false)} aria-label="Close">×</button><p>RUNE-MIDGARTS LIBRARY</p><h2 id="library-coming-soon-title">WE&apos;RE GETTING READY!</h2><span>Rune-Midgarts Library is coming soon. Please check back for more information.</span><button type="button" onClick={() => setLibraryOpen(false)}>CONFIRM</button></div></div>}

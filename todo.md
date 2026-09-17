@@ -1666,3 +1666,9 @@
 - [x] 모바일 Discord 위젯 높이를 데스크톱 기준과 동일하게 유지
 - [x] 모바일 Footer에서 Gravity 로고 뒤 저작권 문구를 줄바꿈 처리
 - [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## 모바일 Hero·Closing CTA·하위 페이지 Footer 통일
+- [x] 모바일 Hero 설명 문구 글꼴 크기 2px 확대
+- [x] Closing CTA의 home-cta-pair 좌우 중앙 정렬
+- [x] News·My Page·Point Shop 푸터를 Home 푸터와 동일한 구조·스타일로 통일
+- [x] Home·News·My Page·Point Shop 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증

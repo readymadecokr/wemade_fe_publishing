@@ -2,21 +2,22 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
+const serviceFooterSource = readFileSync(new URL("../client/src/components/ServiceFooter.tsx", import.meta.url), "utf8");
 const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
 describe("direct React Home CTA, headings, and footer", () => {
   it("keeps the closing CTA and footer as separate content regions", () => {
     expect(homeSource).toContain('aria-label="Ragnarok Universe closing call to action"');
     expect(homeSource).toContain('<div className="react-home-closing">');
-    expect(homeSource).toContain('<footer className="react-home-footer" data-snap-panel');
+    expect(homeSource).toContain('<ServiceFooter snapPanel />');
     expect(styleSource).toContain('.react-home-closing { padding: 80px 0; }');
   });
 
   it("uses the white Gravity asset and borderless official social marks", () => {
-    expect(homeSource).toContain('rou-gravity-logo-white_c5669483.png');
-    expect(homeSource).toContain('/manus-storage/Discord_icon_230fdb89_6026051e.png');
-    expect(homeSource).toContain('/manus-storage/facebook-logo-primary_2867583f.webp');
-    expect(homeSource).toContain('/manus-storage/x-logo-black_193d8b29.webp');
+    expect(serviceFooterSource).toContain('rou-gravity-logo-white_c5669483.png');
+    expect(serviceFooterSource).toContain('/manus-storage/Discord_icon_230fdb89_6026051e.png');
+    expect(serviceFooterSource).toContain('/manus-storage/facebook-logo-primary_2867583f.webp');
+    expect(serviceFooterSource).toContain('/manus-storage/x-logo-black_193d8b29.webp');
     expect(styleSource).toContain('.react-home-footer__social a, .react-home-footer__social a:nth-child(4) { border: 0; }');
   });
 
@@ -37,6 +38,11 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-game-start { flex: 1.2 1.2 0; height: 77px; }');
     expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-game-start { height: 77px; flex-basis: 77px; }');
     expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-discord-button { flex: 0 1 210px; width: min(210px, 36vw); height: 64px; }');
+    expect(styleSource).toContain('.react-home-closing .home-cta-pair { margin-inline: auto; justify-content: center; }');
+  });
+
+  it("increases the mobile Hero description by exactly 2px at both clamp bounds", () => {
+    expect(styleSource).toContain('font-size: clamp(9px,calc(1.8vw + 2px),11px);');
   });
 
   it("keeps the mobile Discord channel tall and places copyright under the Gravity mark", () => {

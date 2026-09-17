@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
+const serviceFooterSource = readFileSync(new URL("../client/src/components/ServiceFooter.tsx", import.meta.url), "utf8");
 const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 
 describe("direct React Home rendering", () => {
@@ -16,6 +17,7 @@ describe("direct React Home rendering", () => {
     ["home", "discord", "news", "game-info", "media"].forEach((sectionId) => {
       expect(homeSource).toContain(`id="${sectionId}"`);
     });
-    expect(homeSource).toContain('className="react-home-footer"');
+    expect(homeSource).toContain('<ServiceFooter snapPanel />');
+    expect(serviceFooterSource).toContain('className="react-home-footer"');
   });
 });

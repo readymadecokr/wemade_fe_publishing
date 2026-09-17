@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const homeSource = readFileSync(new URL("../client/src/pages/Home.tsx", import.meta.url), "utf8");
+const serviceFooterSource = readFileSync(new URL("../client/src/components/ServiceFooter.tsx", import.meta.url), "utf8");
 
 describe("direct React Home source integrity", () => {
   it("renders the supplied design as direct React sections rather than loading the supplied document", () => {
@@ -19,7 +20,8 @@ describe("direct React Home source integrity", () => {
     expect(homeSource).toContain("selectHero");
     expect(homeSource).toContain('aria-label="Previous banner"');
     expect(homeSource).toContain('aria-label="Next banner"');
-    expect(homeSource).toContain("https://facebook.com/RagnarokUniverseEN");
-    expect(homeSource).toContain("https://x.com/RagUniOfficial");
+    expect(homeSource).toContain('<ServiceFooter snapPanel />');
+    expect(serviceFooterSource).toContain("https://facebook.com/RagnarokUniverseEN");
+    expect(serviceFooterSource).toContain("https://x.com/RagUniOfficial");
   });
 });
