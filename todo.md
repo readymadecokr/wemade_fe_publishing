@@ -1683,3 +1683,7 @@
 - [x] Closing CTA의 Discord·Game Start 이미지 외부 좌우 여백을 동일하게 맞춰 시각적 중심 정렬
 - [x] Footer Privacy Settings에 다른 Footer 링크와 같은 굵기 적용
 - [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## My Page 타이틀 News 디자인 통일
+- [x] My Page fantasy-section-title을 News news-page-title의 구조·글꼴·배경·여백으로 통일
+- [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증

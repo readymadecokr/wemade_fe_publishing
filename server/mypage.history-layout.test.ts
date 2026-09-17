@@ -28,6 +28,13 @@ describe("My Page history layout", () => {
     expect(myPage.match(/<Layout showClosingCta=\{false\}>/g)).toHaveLength(2);
   });
 
+  it("uses the same title banner contract as the News page", () => {
+    expect(myPage).toContain('className="news-detail-page-banner news-detail-page-banner--list" aria-labelledby="mypage-page-title"');
+    expect(myPage).toContain('<h1 id="mypage-page-title">My Page</h1>');
+    expect(myPage).toContain("Manage your profile, coupons, and rCoin activity.");
+    expect(myPage).not.toContain('className="fantasy-section-title mb-8 flex items-center gap-3 text-3xl"');
+  });
+
   it("keeps Coupon registration and restores the history list without a visible history title", () => {
     expect(myPage).toContain("COUPON REGISTRATION");
     expect(myPage).not.toContain("MY PAGE · COUPON USE");

@@ -350,10 +350,14 @@ export default function MyPage() {
 
   return (
     <Layout showClosingCta={false}>
+      <section className="news-detail-page-banner news-detail-page-banner--list" aria-labelledby="mypage-page-title">
+        <div className="container">
+          <h1 id="mypage-page-title">My Page</h1>
+          <p>Manage your profile, coupons, and rCoin activity.</p>
+        </div>
+      </section>
       <div className="fantasy-page-shell fantasy-account min-h-screen py-8 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="fantasy-section-title mb-8 flex items-center gap-3 text-3xl"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#7283a0] bg-[#445d82] text-sm text-[#f9edcb]">✦</span>My Page</h1>
-
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left Sidebar */}
             <div className="lg:col-span-1">
