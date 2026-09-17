@@ -17,6 +17,7 @@ describe("Home Media screenshot gallery", () => {
     expect(homeSource).toContain('aria-label="Browse screenshots"');
     expect(homeSource).toContain('aria-label="Previous screenshots"');
     expect(homeSource).toContain('aria-label="Next screenshots"');
+    expect(homeSource).not.toContain("DRAG TO EXPLORE");
   });
 
   it("renders the first active admin video through the public Media procedure", () => {

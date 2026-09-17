@@ -606,3 +606,20 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-footer { padding-block: 80px; }
   .react-home-discord__game-start { margin-top: -50px; }
 }
+
+/* A dedicated grid-layer CTA keeps the Hero / Discord Game Start at the section boundary without participating in Discord flow. */
+.react-home-boundary-game-start { grid-area: discord; position: relative; z-index: 9; display: flex; height: 0; align-items: flex-start; justify-content: center; overflow: visible; pointer-events: none; }
+.react-home-boundary-game-start .home-game-start--discord-hero { position: relative; z-index: 10; display: inline-flex; flex: 0 0 auto; transform: translateY(-50%); pointer-events: auto; }
+.react-home-boundary-game-start .home-game-start--discord-hero:hover { transform: translateY(calc(-50% + 4px)); }
+.react-home-boundary-game-start .home-game-start--discord-hero:active { transform: translateY(calc(-50% + 4px)) scale(.98); }
+
+/* The closing Discord control keeps its existing height while adopting a proportion closer to Game Start. */
+@media (min-width: 761px) {
+  .react-home-closing .home-cta-pair .home-discord-button { flex: 0 1 266px; width: min(266px,42vw); height: 64px; }
+  .react-home-closing .home-cta-pair .home-game-start { flex: 0 1 320px; width: min(320px,48vw); }
+}
+@media (max-width: 760px) {
+  .react-home-boundary-game-start .home-game-start--discord-hero { transform: translateY(-50%); }
+  .react-home-boundary-game-start .home-game-start--discord-hero:hover { transform: translateY(calc(-50% + 4px)); }
+  .react-home-closing .home-cta-pair .home-discord-button { width: min(230px,84%); align-self: center; }
+}

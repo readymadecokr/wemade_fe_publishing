@@ -1653,3 +1653,9 @@
 - [x] 메인배너·Media 스크린샷의 500KB 검증과 안내 문구 위치 점검
 - [x] 메인배너·Media 스크린샷 이미지 등록 제한을 1,000KB로 변경
 - [x] 선택된 노출 스크린샷 최대 12개 안내 추가와 관리자 UI·TypeScript·회귀 테스트 검증
+
+## Hero·Discord 경계 CTA·Media·마지막 CTA 보정
+- [x] Hero와 Discord 사이에 독립 float Game Start를 정확히 배치
+- [x] Media의 DRAG TO EXPLORE 문구 제거
+- [x] 마지막 CTA Discord 버튼 폭을 Game Start와 유사하게 축소하고 높이는 유지
+- [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증

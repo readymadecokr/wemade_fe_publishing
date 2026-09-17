@@ -41,10 +41,8 @@ describe("direct React service header", () => {
 
   it("keeps the Hero at 500px and moves Game Start onto the Discord boundary", () => {
     expect(headerStyles).toContain('.react-home-home-stage, .react-home-home-stage .react-home-hero, #home.react-home-hero { height: 500px; min-height: 500px; }');
-    expect(homeSource).toContain('<div className="react-home-discord__game-start" aria-label="Hero Game Start"><GameStartButton className="home-game-start--discord-hero" /></div>');
-    expect(headerStyles).toContain('.react-home-discord__game-start { margin-top: calc(-1 * clamp(48px,5.5vw,68px)); z-index: 5; }');
-    expect(headerStyles).toContain('.react-home-discord { position: relative; z-index: 4; overflow: visible; }');
-    expect(headerStyles).toContain('.react-home-discord__shell { overflow: visible; }');
-    expect(headerStyles).toContain('.home-game-start--discord-hero { position: relative; z-index: 6; }');
+    expect(homeSource).toContain('<div className="react-home-boundary-game-start" aria-label="Hero Game Start"><GameStartButton className="home-game-start--discord-hero" /></div>');
+    expect(headerStyles).toContain('.react-home-boundary-game-start { grid-area: discord; position: relative; z-index: 9;');
+    expect(headerStyles).toContain('.react-home-boundary-game-start .home-game-start--discord-hero { position: relative; z-index: 10;');
   });
 });

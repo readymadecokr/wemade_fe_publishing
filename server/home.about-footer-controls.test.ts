@@ -36,5 +36,12 @@ describe("direct React Home CTA, headings, and footer", () => {
   it("enlarges only the final Game Start CTA while preserving mobile stacking", () => {
     expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-game-start { flex: 1.2 1.2 0; height: 77px; }');
     expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-game-start { height: 77px; flex-basis: 77px; }');
+    expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-discord-button { flex: 0 1 266px; width: min(266px,42vw); height: 64px; }');
+  });
+
+  it("floats the Hero Game Start independently on the Hero and Discord boundary", () => {
+    expect(homeSource).toContain('className="react-home-boundary-game-start" aria-label="Hero Game Start"');
+    expect(homeSource).not.toContain('className="react-home-discord__game-start"');
+    expect(styleSource).toContain('.react-home-boundary-game-start { grid-area: discord; position: relative; z-index: 9;');
   });
 });

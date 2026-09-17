@@ -25,7 +25,7 @@ describe("direct React full-page service Home", () => {
     expect(styleSource).toContain(".react-home-closing { min-height: 0; padding: 30px 0; }");
     expect(styleSource).toContain(".react-home-footer { grid-area: footer; min-height: 0; padding: 30px 0; }");
     expect(styleSource).toContain(":root { --react-home-header-height: 112px; }");
-    expect(homeSource).toContain('className="react-home-discord__game-start" aria-label="Hero Game Start"');
+    expect(homeSource).toContain('className="react-home-boundary-game-start" aria-label="Hero Game Start"');
     expect(homeSource).not.toContain("<iframe\n        name=");
   });
 

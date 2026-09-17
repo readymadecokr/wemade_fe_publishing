@@ -291,9 +291,10 @@ export default function Home() {
 
       </div>
 
+      <div className="react-home-boundary-game-start" aria-label="Hero Game Start"><GameStartButton className="home-game-start--discord-hero" /></div>
+
       <section id="discord" data-home-section data-snap-panel className="react-home-panel react-home-discord">
         <div className="react-home-section-shell react-home-discord__shell">
-          <div className="react-home-discord__game-start" aria-label="Hero Game Start"><GameStartButton className="home-game-start--discord-hero" /></div>
           <div className="react-home-section-heading react-home-section-heading--light"><div><span>OFFICIAL COMMUNITY</span><h2>DISCORD</h2></div><p className="react-home-discord__description">Development news and community updates from the official Ragnarok Universe Discord.</p></div>
           <div className="react-home-widget" aria-label="Official Ragnarok Universe Discord channel browser">
             <iframe className="react-home-widget__frame" src="https://e.widgetbot.io/channels/1506232850800709682/1515744472523346051" title="Ragnarok Universe official Discord channel browser" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" />
@@ -329,7 +330,7 @@ export default function Home() {
             )}
           </div>
           {mediaScreenshots.length > 0 && <div className="react-home-media__gallery" aria-label="Ragnarok Universe screenshots">
-            <div className="react-home-media__gallery-label"><span>SCREENSHOTS</span><span>DRAG TO EXPLORE</span></div>
+            <div className="react-home-media__gallery-label"><span>SCREENSHOTS</span></div>
             <div ref={screenshotStripRef} className="react-home-media__strip" onScroll={syncScreenshotScroll}>
               {mediaScreenshots.map((screenshot, index) => (
                 <button type="button" key={screenshot.image} className="react-home-media__thumbnail" onClick={() => setSelectedScreenshot(index)} aria-label={`View screenshot ${index + 1}: ${screenshot.title}`}>
