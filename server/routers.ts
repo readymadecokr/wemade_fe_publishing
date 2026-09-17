@@ -437,7 +437,7 @@ export const appRouter = router({
         if (!matches) throw new Error("Invalid base64 image data");
         const contentType = matches[1];
         const buffer = Buffer.from(matches[2], "base64");
-        if (buffer.length > 500 * 1024) throw new Error("파일 용량이 500KB를 초과합니다.");
+        if (buffer.length > 1000 * 1024) throw new Error("파일 용량이 1,000KB를 초과합니다.");
         const { url } = await storagePut(`banners/${filename}`, buffer, contentType);
         return { url };
       }),
@@ -449,7 +449,7 @@ export const appRouter = router({
         const matches = input.base64.match(/^data:([^;]+);base64,(.+)$/);
         if (!matches) throw new Error("Invalid base64 image data");
         const buffer = Buffer.from(matches[2], "base64");
-        if (buffer.length > 500 * 1024) throw new Error("파일 용량이 500KB를 초과합니다.");
+        if (buffer.length > 1000 * 1024) throw new Error("파일 용량이 1,000KB를 초과합니다.");
         const safeFilename = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
         const { url } = await storagePut(`screenshots/${Date.now()}-${safeFilename}`, buffer, matches[1]);
         return { url };

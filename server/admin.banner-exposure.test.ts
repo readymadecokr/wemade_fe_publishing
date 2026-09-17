@@ -30,6 +30,9 @@ describe("관리자 Main Banner 선택 노출 관리", () => {
 
   it("메인배너 등록 안내와 미리보기를 1000×600px, 5:3 기준으로 제공한다", () => {
     expect(adminPageSource).toContain("권장: 1000×600px (5:3 비율)");
+    expect(adminPageSource).toContain('if (file.size > 1000 * 1024) { toast.error("1,000KB 초과"); return; }');
+    expect(adminPageSource).toContain("1,000KB 이하");
+    expect(routerSource).toContain("buffer.length > 1000 * 1024");
     expect(adminPageSource).toContain('aspectRatio: "1000/600"');
   });
 });
