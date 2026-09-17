@@ -34,20 +34,22 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-game-info__art { height: auto; min-height: 100%; margin-top: 0; align-self: stretch; }');
   });
 
-  it("keeps final CTA button flex shares equal while preserving mobile stacking", () => {
+  it("uses equal fixed outer image slots for the final CTA while preserving mobile stacking", () => {
     expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-game-start { height: 77px; flex-basis: 77px; }');
-    expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-discord-button,\n  .react-home-closing .home-cta-pair .home-game-start { flex: 1 1 0; width: 0; }');
-    expect(styleSource).toContain('.react-home-closing .home-cta-pair { width: min(660px, calc(100% - 44px)); margin-inline: auto; justify-content: center; }');
+    expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-discord-button,\n  .react-home-closing .home-cta-pair .home-game-start { flex: 0 0 210px; width: 210px; }');
+    expect(styleSource).toContain('.react-home-closing .home-cta-pair { width: min(444px, calc(100% - 44px)); margin-inline: auto; justify-content: center; gap: 24px; }');
+    expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-game-start img { width: 100%; max-width: 100%; }');
   });
 
   it("increases the mobile Hero description by exactly 2px at both clamp bounds", () => {
     expect(styleSource).toContain('font-size: clamp(9px,calc(1.8vw + 2px),11px);');
   });
 
-  it("removes the Hero shade overlay and keeps Footer Privacy Settings at link size", () => {
+  it("removes the Hero shade overlay and keeps Footer Privacy Settings bold at link size", () => {
     expect(homeSource).not.toContain('react-home-hero__shade');
     expect(styleSource).not.toContain('.react-home-hero__shade');
-    expect(styleSource).toContain('font-size: 11px; font-weight: inherit;');
+    expect(styleSource).toContain('font-size: 11px; font-weight: 700;');
+    expect(styleSource).toContain('.react-home-footer nav a,\n.react-home-footer nav .react-home-footer__privacy-settings { font-weight: 700; }');
   });
 
   it("keeps the mobile Discord channel tall and places copyright under the Gravity mark", () => {

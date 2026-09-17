@@ -601,7 +601,9 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 /* Footer uses the same 80px breathing room as the requested content regions. */
 .react-home-footer { padding-block: 80px; }
-.react-home-footer nav .react-home-footer__privacy-settings { border: 0; padding: 0; color: inherit; background: transparent; font-family: inherit; font-size: 11px; font-weight: inherit; letter-spacing: normal; line-height: normal; cursor: pointer; }
+.react-home-footer nav a,
+.react-home-footer nav .react-home-footer__privacy-settings { font-weight: 700; }
+.react-home-footer nav .react-home-footer__privacy-settings { border: 0; padding: 0; color: inherit; background: transparent; font-family: inherit; font-size: 11px; font-weight: 700; letter-spacing: normal; line-height: normal; cursor: pointer; }
 @media (max-width: 760px) {
   .react-home-footer { padding-block: 80px; }
   .react-home-discord__game-start { margin-top: -50px; }
@@ -634,13 +636,14 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-closing .home-cta-pair .home-discord-button { flex: 0 1 210px; width: min(210px, 36vw); height: 64px; }
 }
 
-/* Give both closing CTA actions identical flex shares so their group stays truly centered. */
+/* Use equal outer image slots, not flex shares, so the two CTA images have matching side margins. */
 @media (min-width: 761px) {
-  .react-home-closing .home-cta-pair { width: min(660px, calc(100% - 44px)); margin-inline: auto; justify-content: center; }
+  .react-home-closing .home-cta-pair { width: min(444px, calc(100% - 44px)); margin-inline: auto; justify-content: center; gap: 24px; }
   .react-home-closing .home-cta-pair .home-discord-button,
-  .react-home-closing .home-cta-pair .home-game-start { flex: 1 1 0; width: 0; }
+  .react-home-closing .home-cta-pair .home-game-start { flex: 0 0 210px; width: 210px; }
   .react-home-closing .home-cta-pair .home-discord-button { height: 64px; }
-  .react-home-closing .home-cta-pair .home-game-start { height: 77px; }
+  .react-home-closing .home-cta-pair .home-game-start { height: 68px; }
+  .react-home-closing .home-cta-pair .home-game-start img { width: 100%; max-width: 100%; }
 }
 
 /* The mobile Discord channel retains the same viewport-driven height as desktop. */

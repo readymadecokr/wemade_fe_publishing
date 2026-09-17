@@ -1678,3 +1678,8 @@
 - [x] News·My Page·Point Shop Footer Privacy Settings의 글꼴 크기를 Footer 링크와 통일
 - [x] Home Hero 슬라이드 배너의 shade 오버레이 제거
 - [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## CTA 이미지 외곽 여백·Footer 링크 굵기 재보정
+- [x] Closing CTA의 Discord·Game Start 이미지 외부 좌우 여백을 동일하게 맞춰 시각적 중심 정렬
+- [x] Footer Privacy Settings에 다른 Footer 링크와 같은 굵기 적용
+- [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
