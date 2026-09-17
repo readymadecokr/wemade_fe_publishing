@@ -80,12 +80,34 @@ export default function Home() {
 
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-home-section]"));
-    const observer = new IntersectionObserver((entries) => {
-      const current = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (current?.target.id) setActiveSection(current.target.id);
-    }, { threshold: [0.35, 0.55, 0.75] });
+    const syncActiveSection = () => {
+      const headerHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--react-home-header-height")) || 0;
+      const activationLine = headerHeight + 8;
+      let currentSection = sections[0];
+
+      for (const section of sections) {
+        const { top, bottom } = section.getBoundingClientRect();
+        if (top <= activationLine && bottom > activationLine) {
+          currentSection = section;
+          break;
+        }
+        if (top > activationLine) break;
+        currentSection = section;
+      }
+
+      if (currentSection?.id) setActiveSection(currentSection.id);
+    };
+
+    const observer = new IntersectionObserver(syncActiveSection, { threshold: [0, 0.01, 1] });
     sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    window.addEventListener("scroll", syncActiveSection, { passive: true });
+    window.addEventListener("resize", syncActiveSection);
+    syncActiveSection();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", syncActiveSection);
+      window.removeEventListener("resize", syncActiveSection);
+    };
   }, []);
 
   useEffect(() => {
@@ -332,7 +354,7 @@ export default function Home() {
         <div className="react-home-closing"><div className="react-home-closing__content"><span>YOUR STORY BEGINS HERE</span><h2>TWO CLICKS TO<br />MIDGARD</h2><p>Start the game in your browser, then join the Discord to find a party, get patch news first and take part in founder events.</p><HomeCtaPair /></div></div>
       </section>
       <footer className="react-home-footer" data-snap-panel aria-label="Ragnarok Universe footer">
-        <div className="react-home-footer__inner"><div><div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div><nav><a href="/">Terms of Service</a><a href="/">Privacy Policy</a><a href="/">Privacy Settings</a><a href="/">Customer Support</a></nav><img src="/manus-storage/gravity_logo_light_c14f48f8_5e3a7c41.png" alt="GRAVITY" loading="lazy" /><p><span>Copyright © Gravity Co., LTD &amp; Lee MyoungJin(studio DTDS). All Rights Reserved.</span><span>All trademarks used on this website are the property of their respective owners.</span></p></div><div className="react-home-footer__social"><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" aria-label="Discord"><img src="/manus-storage/Discord_icon_230fdb89_6026051e.png" alt="" /></a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="/manus-storage/facebook-logo-primary_2867583f.webp" alt="" /></a><a href="https://www.youtube.com/@RagnarokUniverse" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" /></svg></a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer" aria-label="X" className="react-home-footer__social-x"><img src="/manus-storage/x-logo-black_193d8b29.webp" alt="" /></a></div></div>
+        <div className="react-home-footer__inner"><div><div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div><nav><a href="/">Terms of Service</a><a href="/">Privacy Policy</a><a href="/">Privacy Settings</a><a href="/">Customer Support</a></nav><img src="/manus-storage/rou-gravity-logo-white_c5669483.png" alt="GRAVITY" loading="lazy" /><p><span>Copyright © Gravity Co., LTD &amp; Lee MyoungJin(studio DTDS). All Rights Reserved.</span><span>All trademarks used on this website are the property of their respective owners.</span></p></div><div className="react-home-footer__social"><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" aria-label="Discord"><img src="/manus-storage/Discord_icon_230fdb89_6026051e.png" alt="" /></a><a href="https://facebook.com/RagnarokUniverseEN" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="/manus-storage/facebook-logo-primary_2867583f.webp" alt="" /></a><a href="https://www.youtube.com/@RagnarokUniverse" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" /></svg></a><a href="https://x.com/RagUniOfficial" target="_blank" rel="noopener noreferrer" aria-label="X" className="react-home-footer__social-x"><img src="/manus-storage/x-logo-black_193d8b29.webp" alt="" /></a></div></div>
       </footer>
       </div>
 

@@ -1636,3 +1636,11 @@
 - [x] Hero Game Start를 Discord 섹션 안으로 이동해 동일한 배경으로 표시
 - [x] GNB 언어 제어의 아이콘과 크기 보정
 - [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## GNB·Hero·Discord·섹션·Footer·CTA 재보정
+- [x] 로그인 GNB의 rCoin·Bonus rCoin 텍스트를 첨부 코인 이미지로 교체하고 Logout 제거
+- [x] EN 지구본 아이콘 복원·글자 확대와 GNB 활성 메뉴 오표시 수정
+- [x] `#home` Hero 높이 500px 고정, Discord Game Start의 섹션 경계 배치 보정
+- [x] Discord·News·Game Info·Media·Closing CTA 상하 80px 여백과 Game Info 이미지 높이 보정
+- [x] Closing CTA Game Start 20% 확대와 Footer 흰색 Gravity 로고·SNS 테두리 처리
+- [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
