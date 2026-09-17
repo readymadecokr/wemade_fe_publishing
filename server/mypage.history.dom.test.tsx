@@ -6,6 +6,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   setLocation: vi.fn(),
+  logoutSession: vi.fn().mockResolvedValue(undefined),
+  setBalance: vi.fn(),
+  invalidateBalance: vi.fn(),
   toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() },
   historyItems: (page: number, kind: "purchase" | "usage") => Array.from({ length: page === 1 ? 10 : 5 }, (_, index) => ({
     id: `${kind}-${page}-${index}`,
@@ -28,6 +31,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/lib/trpc", () => ({
   trpc: {
+    useUtils: () => ({ shop: { myBalance: { setData: mocks.setBalance, invalidate: mocks.invalidateBalance } } }),
     auth: { me: { useQuery: () => ({ data: { id: 1, name: "Ryan Kim", createdAt: new Date() } }) } },
     user: { withdraw: { useMutation: () => ({ mutate: vi.fn() }) } },
     shop: {
@@ -45,6 +49,7 @@ vi.mock("@/lib/trpc", () => ({
 vi.mock("@/components/Layout", () => ({ default: ({ children }: { children: React.ReactNode }) => <>{children}</> }));
 vi.mock("wouter", () => ({ Link: ({ children }: { children: React.ReactNode }) => <>{children}</>, useLocation: () => ["/my-page", mocks.setLocation] }));
 vi.mock("sonner", () => ({ toast: mocks.toast }));
+vi.mock("@/_core/hooks/useAuth", () => ({ useAuth: () => ({ logout: mocks.logoutSession }) }));
 
 import MyPage from "@/pages/MyPage";
 
@@ -54,6 +59,10 @@ describe("My Page history screens", () => {
     localStorage.clear();
     localStorage.setItem("rou_logged_in", "true");
     localStorage.setItem("rou_nickname", "Ryan Kim");
+    mocks.logoutSession.mockClear();
+    mocks.setBalance.mockClear();
+    mocks.invalidateBalance.mockClear();
+    mocks.setLocation.mockClear();
   });
 
   it("shows title-free purchase and usage tables with 10-item pagination", async () => {
@@ -98,5 +107,23 @@ describe("My Page history screens", () => {
     await user.click(screen.getByRole("button", { name: "COUPON REGISTRATION" }));
     expect(screen.getByRole("dialog")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Confirm" })).toBeTruthy();
+  });
+
+  it("clears server-auth, local account data, and the header balance when logging out", async () => {
+    const user = userEvent.setup();
+    localStorage.setItem("rou_social_provider", "Google");
+    localStorage.setItem("manus-runtime-user-info", JSON.stringify({ id: 1 }));
+    render(<MyPage />);
+
+    await user.click(screen.getByRole("button", { name: "Logout" }));
+
+    await waitFor(() => expect(mocks.logoutSession).toHaveBeenCalledTimes(1));
+    expect(localStorage.getItem("rou_logged_in")).toBeNull();
+    expect(localStorage.getItem("rou_nickname")).toBeNull();
+    expect(localStorage.getItem("rou_social_provider")).toBeNull();
+    expect(localStorage.getItem("manus-runtime-user-info")).toBeNull();
+    expect(mocks.setBalance).toHaveBeenCalledWith(undefined, { ruCash: 0, bonusCash: 0 });
+    expect(mocks.invalidateBalance).toHaveBeenCalledTimes(1);
+    expect(mocks.setLocation).toHaveBeenCalledWith("/");
   });
 });

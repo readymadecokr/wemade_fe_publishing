@@ -44,4 +44,13 @@ describe("My Page history layout", () => {
     expect(myPage).toContain("COUPON HISTORY");
     expect(myPage).toContain('className="mt-6 flex justify-center"');
   });
+
+  it("logs out through the shared server-auth flow before returning home", () => {
+    expect(myPage).toContain('import { useAuth } from "@/_core/hooks/useAuth";');
+    expect(myPage).toContain("const { logout: logoutSession } = useAuth();");
+    expect(myPage).toContain("await logoutSession();");
+    expect(myPage).toContain('trpcUtils.shop.myBalance.setData(undefined, { ruCash: 0, bonusCash: 0 });');
+    expect(myPage).toContain('localStorage.removeItem("manus-runtime-user-info");');
+    expect(myPage).toContain('setLocation("/");');
+  });
 });

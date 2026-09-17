@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 type HistorySection = "purchase" | "usage";
 type MyPageSection = "account" | HistorySection | "coupon";
@@ -159,6 +160,8 @@ function MyPageCouponEntry() {
 
 export default function MyPage() {
   const [, setLocation] = useLocation();
+  const { logout: logoutSession } = useAuth();
+  const trpcUtils = trpc.useUtils();
   const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [agreeWithdrawTerms, setBgAgreeWithdrawTerms] = useState(false);
@@ -316,11 +319,25 @@ export default function MyPage() {
     setNewNickname("");
   };
 
-  const handleLogout = () => {
+  const clearLocalAccountState = () => {
     localStorage.removeItem("rou_logged_in");
     localStorage.removeItem("rou_nickname");
     localStorage.removeItem("rou_guest_mode");
     localStorage.removeItem("rou_social_provider");
+    localStorage.removeItem("rou_open_id");
+    localStorage.removeItem("manus-runtime-user-info");
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutSession();
+    } catch {
+      toast.error("Unable to complete logout. Please try again.");
+      return;
+    }
+    clearLocalAccountState();
+    trpcUtils.shop.myBalance.setData(undefined, { ruCash: 0, bonusCash: 0 });
+    await trpcUtils.shop.myBalance.invalidate();
     toast.success("Logged out successfully!");
     setLocation("/");
   };
@@ -337,11 +354,9 @@ export default function MyPage() {
     // 서버에 withdrawnAt 저장
     withdrawMutation.mutate(undefined, {
       onSettled: () => {
-        localStorage.removeItem("rou_logged_in");
-        localStorage.removeItem("rou_nickname");
-        localStorage.removeItem("rou_guest_mode");
-        localStorage.removeItem("rou_social_provider");
-        localStorage.removeItem("rou_open_id");
+        clearLocalAccountState();
+        trpcUtils.shop.myBalance.setData(undefined, { ruCash: 0, bonusCash: 0 });
+        void trpcUtils.shop.myBalance.invalidate();
         toast.success("Account withdrawn successfully.");
         setLocation("/");
       },
