@@ -276,7 +276,6 @@ export default function Home() {
       <div className="react-home-home-stage" data-snap-panel>
       <section id="home" data-home-section className="react-home-panel react-home-hero">
         <img className="react-home-hero__visual" src={currentHero.imageUrl} alt="" fetchPriority="high" />
-        <div className="react-home-hero__shade" />
         <div className="react-home-hero__content">
           <div className="react-home-hero__tags"><span>{heroCategory}</span></div>
           <h1>{heroTitleLines.map((line) => <span key={line}>{line}</span>)}</h1>

@@ -52,9 +52,8 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 
 .react-home-hero { position: relative; display: grid; min-height: max(500px, calc(100svh - var(--react-home-header-height))); margin-top: 0; align-items: stretch; overflow: hidden; background: var(--home-navy); }
-.react-home-hero__visual, .react-home-hero__shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+.react-home-hero__visual { position: absolute; inset: 0; width: 100%; height: 100%; }
 .react-home-hero__visual { aspect-ratio: 1000 / 600; object-fit: cover; object-position: center; }
-.react-home-hero__shade { background: linear-gradient(90deg, rgba(7,22,37,.8) 0%, rgba(7,22,37,.42) 45%, rgba(7,22,37,.08) 76%), linear-gradient(0deg, rgba(8,25,42,.25), transparent 42%); }
 .react-home-hero__content { position: relative; z-index: 1; display: flex; width: min(1180px, calc(100% - 64px)); margin: 0 auto; padding: clamp(56px,10vh,110px) 0 clamp(62px,7vh,92px); flex-direction: column; align-items: flex-start; justify-content: flex-end; color: #fff; }
 .react-home-hero__tags { display: flex; gap: 9px; margin-bottom: 18px; }
 .react-home-hero__tags span, .react-home-closing > span, .react-home-game-info__copy > span { border: 1px solid #55d9bd; border-radius: 999px; padding: 8px 14px; color: #ddfff5; font-size: 10px; font-weight: 900; letter-spacing: .13em; }
@@ -602,7 +601,7 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 /* Footer uses the same 80px breathing room as the requested content regions. */
 .react-home-footer { padding-block: 80px; }
-.react-home-footer nav .react-home-footer__privacy-settings { border: 0; padding: 0; color: inherit; background: transparent; font: inherit; cursor: pointer; }
+.react-home-footer nav .react-home-footer__privacy-settings { border: 0; padding: 0; color: inherit; background: transparent; font-family: inherit; font-size: 11px; font-weight: inherit; letter-spacing: normal; line-height: normal; cursor: pointer; }
 @media (max-width: 760px) {
   .react-home-footer { padding-block: 80px; }
   .react-home-discord__game-start { margin-top: -50px; }
@@ -635,8 +634,14 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-closing .home-cta-pair .home-discord-button { flex: 0 1 210px; width: min(210px, 36vw); height: 64px; }
 }
 
-/* Keep the closing action pair centered as a group within the CTA copy column. */
-.react-home-closing .home-cta-pair { margin-inline: auto; justify-content: center; }
+/* Give both closing CTA actions identical flex shares so their group stays truly centered. */
+@media (min-width: 761px) {
+  .react-home-closing .home-cta-pair { width: min(660px, calc(100% - 44px)); margin-inline: auto; justify-content: center; }
+  .react-home-closing .home-cta-pair .home-discord-button,
+  .react-home-closing .home-cta-pair .home-game-start { flex: 1 1 0; width: 0; }
+  .react-home-closing .home-cta-pair .home-discord-button { height: 64px; }
+  .react-home-closing .home-cta-pair .home-game-start { height: 77px; }
+}
 
 /* The mobile Discord channel retains the same viewport-driven height as desktop. */
 @media (max-width: 760px) {

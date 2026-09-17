@@ -1672,3 +1672,9 @@
 - [x] Closing CTA의 home-cta-pair 좌우 중앙 정렬
 - [x] News·My Page·Point Shop 푸터를 Home 푸터와 동일한 구조·스타일로 통일
 - [x] Home·News·My Page·Point Shop 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## CTA Flex·Footer Privacy Settings·Hero shade 보정
+- [x] Closing CTA의 Discord·Game Start 버튼 flex 비율을 통일하고 버튼 그룹을 실제 좌우 중앙 정렬
+- [x] News·My Page·Point Shop Footer Privacy Settings의 글꼴 크기를 Footer 링크와 통일
+- [x] Home Hero 슬라이드 배너의 shade 오버레이 제거
+- [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
