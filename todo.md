@@ -1644,3 +1644,7 @@
 - [x] Discord·News·Game Info·Media·Closing CTA 상하 80px 여백과 Game Info 이미지 높이 보정
 - [x] Closing CTA Game Start 20% 확대와 Footer 흰색 Gravity 로고·SNS 테두리 처리
 - [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## Discord CTA 레이어·Footer 여백 보정
+- [x] Discord 경계 Game Start가 Hero 배너에 가리지 않도록 레이어 우선순위 보정
+- [x] Footer 상하 여백을 80px로 통일하고 데스크톱·모바일 렌더링 검증

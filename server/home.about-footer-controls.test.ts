@@ -23,6 +23,7 @@ describe("direct React Home CTA, headings, and footer", () => {
   it("keeps 80px vertical breathing room across every requested content section", () => {
     expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { padding: 80px 0; }');
     expect(styleSource).toContain('.react-home-closing { padding: 80px 0; }');
+    expect(styleSource).toContain('.react-home-footer { padding-block: 80px; }');
   });
 
   it("matches the Game Info artwork height to the left content on desktop", () => {
