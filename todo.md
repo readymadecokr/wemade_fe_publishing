@@ -1687,3 +1687,9 @@
 ## My Page 타이틀 News 디자인 통일
 - [x] My Page fantasy-section-title을 News news-page-title의 구조·글꼴·배경·여백으로 통일
 - [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## News·Shop GNB Home 디자인 완전 통일
+- [x] Home·News·Shop GNB 구조와 스타일 차이 점검
+- [x] News·Shop GNB를 Home 공통 구조·스타일로 통일
+- [x] 데스크톱·모바일 렌더링 및 회귀 테스트 검증
+- [ ] 체크포인트 저장 및 결과 전달

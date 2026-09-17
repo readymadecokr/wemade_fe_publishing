@@ -29,6 +29,11 @@ describe("News Home-style chrome", () => {
     expect(layoutStyles).toContain(".home-chrome-content { padding-top: var(--react-home-header-height, 104px); }");
   });
 
+  it("keeps News and Shop on the sole shared Home GNB implementation", () => {
+    expect(layoutSource).toContain('<HomeHeader activeSection={location.startsWith("/news") ? "news" : location === "/point-shop" ? "shop" : "home"} />');
+    expect(layoutStyles).not.toMatch(/\.news-home-(header|account-row|signin|main-row|logo|nav|quick-actions|discord|game-start)/);
+  });
+
   it("removes the closing CTA from News and Shop while keeping the shared Home footer", () => {
     expect(newsSource).toContain('<Layout variant="homeChrome" showClosingCta={false}>');
     expect(newsDetailSource).toContain('<Layout variant="homeChrome" showClosingCta={false}>');
