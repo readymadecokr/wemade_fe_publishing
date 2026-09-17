@@ -623,3 +623,26 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-boundary-game-start .home-game-start--discord-hero:hover { transform: translateY(calc(-50% + 4px)); }
   .react-home-closing .home-cta-pair .home-discord-button { width: min(230px,84%); align-self: center; }
 }
+
+/* The Hero image is authored for a fixed 600px showcase, regardless of viewport height. */
+.react-home-home-stage,
+.react-home-home-stage .react-home-hero,
+#home.react-home-hero { height: 600px; min-height: 600px; }
+
+/* Keep the closing Discord control visually proportional to the adjacent Game Start artwork. */
+@media (min-width: 761px) {
+  .react-home-closing .home-cta-pair .home-discord-button { flex: 0 1 210px; width: min(210px, 36vw); height: 64px; }
+}
+
+/* The mobile Discord channel retains the same viewport-driven height as desktop. */
+@media (max-width: 760px) {
+  .react-home-discord__shell { flex: none; }
+  .react-home-discord .react-home-widget { flex: none; }
+  .react-home-discord .react-home-widget__frame { height: min(64vh, 660px); min-height: 520px; }
+
+  /* Place the copyright beneath the Gravity mark instead of beside it on small screens. */
+  .react-home-footer__inner > div:first-child { grid-template-columns: 1fr; }
+  .react-home-footer__inner > div:first-child > img { grid-column: 1; grid-row: 3; justify-self: center; }
+  .react-home-footer__inner > div:first-child > p span:first-child { grid-column: 1; grid-row: 4; margin-top: 10px; text-align: center; }
+  .react-home-footer__inner > div:first-child > p span:last-child { grid-column: 1; grid-row: 5; }
+}

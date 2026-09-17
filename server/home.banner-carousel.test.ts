@@ -21,7 +21,9 @@ describe("direct React Home banner", () => {
     expect(homeSource).toContain("heroActionUrl");
     expect(homeSource).toContain("VIEW MORE");
     expect(homeSource).toContain('className="react-home-white-cta__play"');
-    expect(readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8")).toContain('min-height: max(500px, calc(100svh - var(--react-home-header-height)))');
+    const styleSource = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
+    expect(homeSource).toContain('const HERO_DESKTOP_URL = "/manus-storage/rou-pioneer-test-banner_8ffcd3ab.png"');
+    expect(styleSource).toContain('#home.react-home-hero { height: 600px; min-height: 600px; }');
     expect(homeSource).not.toContain("REFERENCE_HOME_URL");
   });
 

@@ -1659,3 +1659,10 @@
 - [x] Media의 DRAG TO EXPLORE 문구 제거
 - [x] 마지막 CTA Discord 버튼 폭을 Game Start와 유사하게 축소하고 높이는 유지
 - [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
+
+## Hero 이미지·모바일 위젯·Footer 반응형 보정
+- [x] 첨부 Pioneer Test Hero 이미지를 등록하고 home 슬라이드 배너 높이를 600px로 변경
+- [x] 마지막 CTA Discord 버튼 폭을 Game Start와 더 유사하게 축소
+- [x] 모바일 Discord 위젯 높이를 데스크톱 기준과 동일하게 유지
+- [x] 모바일 Footer에서 Gravity 로고 뒤 저작권 문구를 줄바꿈 처리
+- [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증

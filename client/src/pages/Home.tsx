@@ -8,7 +8,7 @@ import { Link } from "wouter";
 import "./reference-home.css";
 import "./media-strip.css";
 
-const HERO_DESKTOP_URL = "/manus-storage/eb185c22e6e1_e39bfa40.png";
+const HERO_DESKTOP_URL = "/manus-storage/rou-pioneer-test-banner_8ffcd3ab.png";
 const DISCORD_URL = "https://discord.gg/yVWJkWdkAU";
 
 const DEFAULT_HERO_BANNERS = [

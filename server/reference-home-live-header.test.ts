@@ -39,8 +39,8 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain('.portal-nav-link--active { border-color: #0f74ac; background: transparent; color: #0e5d91; box-shadow: none; text-shadow: none; }');
   });
 
-  it("keeps the Hero at 500px and moves Game Start onto the Discord boundary", () => {
-    expect(headerStyles).toContain('.react-home-home-stage, .react-home-home-stage .react-home-hero, #home.react-home-hero { height: 500px; min-height: 500px; }');
+  it("keeps the Hero at 600px and moves Game Start onto the Discord boundary", () => {
+    expect(headerStyles).toContain('#home.react-home-hero { height: 600px; min-height: 600px; }');
     expect(homeSource).toContain('<div className="react-home-boundary-game-start" aria-label="Hero Game Start"><GameStartButton className="home-game-start--discord-hero" /></div>');
     expect(headerStyles).toContain('.react-home-boundary-game-start { grid-area: discord; position: relative; z-index: 9;');
     expect(headerStyles).toContain('.react-home-boundary-game-start .home-game-start--discord-hero { position: relative; z-index: 10;');
