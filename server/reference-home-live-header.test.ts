@@ -39,7 +39,9 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain('.portal-nav-link { flex: 0 0 auto; overflow: visible; white-space: nowrap; }');
     expect(headerStyles).toContain('.reference-header-language { border-left: 0; }');
     expect(headerStyles).toContain('.reference-header-top-action { font-size: 12px; }');
-    expect(headerStyles).toContain('.reference-header-language { display: inline-flex; align-items: center; gap: 4px; border: 0; border-left: 1px solid #dbe3e9;');
+    expect(headerStyles).toContain('.reference-header-language { display: inline-flex; min-width: 42px; min-height: 36px; align-items: center; justify-content: center; gap: 6px; border: 0; border-left: 1px solid #dbe3e9;');
+    expect(homeHeaderSource).toContain('import { Gamepad2, Languages, Menu, X } from "lucide-react";');
+    expect(homeHeaderSource).toContain('<Languages size={16} aria-hidden="true" /> <span>EN</span>');
     expect(headerStyles).toContain('.reference-home-live-header .reference-header-main-row, .reference-home-live-header .reference-header-utility { width: min(1180px, calc(100% - 64px)); }');
   });
 
@@ -50,10 +52,12 @@ describe("direct React service header", () => {
     expect(headerStyles).toContain('.reference-header-top-action { gap: 3px; font-size: 7px; }');
   });
 
-  it("preserves the Hero artwork and separate solo Hero Game Start", () => {
-    expect(headerStyles).toContain(".react-home-home-stage { grid-area: home; display: grid; grid-template-rows: minmax(0, 1fr) clamp(66px,7.7vw,110px);");
+  it("preserves the Hero artwork at a true 500px minimum and places Hero Game Start on the Discord surface", () => {
+    expect(headerStyles).toContain(".react-home-home-stage { grid-area: home; display: block; min-width: 0; min-height: max(500px, calc(100svh - var(--react-home-header-height))); }");
     expect(headerStyles).toContain(".react-home-hero__visual { aspect-ratio: 1000 / 600; object-fit: cover;");
-    expect(homeSource).toContain('<div className="react-home-hero-cta-row" aria-label="Hero Game Start"><GameStartButton className="home-game-start--hero-solo" /></div>');
+    expect(headerStyles).toContain('.react-home-discord__game-start { display: flex; min-height: clamp(96px,11vw,136px); align-items: center; justify-content: center; padding: 0 24px 20px; }');
+    expect(homeSource).toContain('<div className="react-home-discord__game-start" aria-label="Hero Game Start"><GameStartButton className="home-game-start--discord-hero" /></div>');
+    expect(homeSource).not.toContain('react-home-hero-cta-row');
     expect(homeSource).toContain('<DiscordButton /><GameStartButton />');
     expect(homeSource).not.toContain("PLAY IN YOUR BROWSER");
   });

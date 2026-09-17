@@ -1630,3 +1630,9 @@
 - [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증
 - [x] Hero 제목 크기 축소와 Update·텍스트·View More의 하단 기준 정렬 보정
 - [x] Hero 슬라이드 배너 최소 높이 500px 보장
+
+## Hero 실제 높이·Discord CTA·GNB 언어 제어 보정
+- [x] `#home` Hero 배너의 실제 표시 높이를 최소 500px으로 보장
+- [x] Hero Game Start를 Discord 섹션 안으로 이동해 동일한 배경으로 표시
+- [x] GNB 언어 제어의 아이콘과 크기 보정
+- [x] 데스크톱·모바일 렌더링과 TypeScript·회귀 테스트 검증

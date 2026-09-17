@@ -92,16 +92,16 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).toContain('<footer className="react-home-footer" data-snap-panel');
   });
 
-  it("centers mobile Media and keeps the header Game Start separated while the Hero uses its own centered solo action", () => {
+  it("centers mobile Media and keeps the Hero Game Start inside the Discord surface", () => {
     expect(styleSource).toContain('.react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { padding: 50px 0; }');
     expect(styleSource).toContain('.reference-mobile-menu-toggle { margin-right: -6px; border: 0; }');
     expect(styleSource).toContain('.reference-header-cta { gap: 22px; }');
     expect(styleSource).toContain('.reference-header-game-start { transform: translateY(-3px) scale(1.254); transform-origin: center; }');
-    expect(styleSource).toContain('.home-game-start--hero-solo { width: min(264px,66vw); height: clamp(72px,21.6vw,86px); transform: translateY(calc(-50% - 3px)); }');
+    expect(styleSource).toContain('.home-game-start--discord-hero { width: min(272px,65vw); height: clamp(78px,20vw,100px); }');
     expect(styleSource).toContain('.react-home-hero__tags span { padding: 7px 11px; font-size: 16px; }');
     expect(styleSource).toContain('.react-home-white-cta { gap: 5px; padding: 6px 8px; font-size: 9px; }');
     expect(styleSource).toContain('.react-home-white-cta b { font-size: 8px; }');
-    expect(styleSource).toContain('.react-home-home-stage { grid-template-rows: minmax(0,1fr) 72px; }');
+    expect(styleSource).toContain('.react-home-home-stage, .react-home-home-stage .react-home-hero { height: 500px; min-height: 500px; }');
   });
 
   it("keeps a single-line Hero title, aligned top controls, and matching UPDATE / VIEW MORE height", () => {
@@ -109,6 +109,12 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-hero__tags span, .react-home-white-cta { box-sizing: border-box; min-height: 44px; height: 44px; }');
     expect(styleSource).toContain('.react-home-hero__controls { top: max(6px, calc(clamp(16px,2vw,30px) - 10px));');
     expect(styleSource).toContain('.react-home-hero__dots { position: absolute; z-index: 3; top: clamp(16px,2vw,30px); left: 50%; transform: translateX(-50%); }');
+  });
+
+  it("guarantees a true 500px Hero before the Discord content begins", () => {
+    expect(styleSource).toContain('.react-home-hero { position: relative; display: grid; min-height: max(500px, calc(100svh - var(--react-home-header-height)));');
+    expect(styleSource).toContain('.react-home-home-stage { height: max(500px, calc(100dvh - var(--react-home-header-height))); min-height: max(500px, calc(100dvh - var(--react-home-header-height))); }');
+    expect(homeSource).toContain('<section id="home" data-home-section className="react-home-panel react-home-hero">');
   });
 
   it("keeps final Discord and Game Start actions side-by-side on desktop and stacked on mobile", () => {

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useState, type MouseEvent } from "react";
 import { Link, useLocation } from "wouter";
-import { Gamepad2, Globe, Menu, X } from "lucide-react";
+import { Gamepad2, Languages, Menu, X } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
@@ -70,7 +70,7 @@ export default function HomeHeader({ activeSection, onNavigate }: HomeHeaderProp
     ? <div className={`reference-header-account-links${mobile ? " reference-mobile-account" : ""}`}><Link href="/point-shop" onClick={mobile ? () => setMobileMenuOpen(false) : undefined}>rCoin <strong>{formatRcoin(balance?.ruCash ?? 0)}</strong> · Bonus rCoin <strong>{formatRcoin(balance?.bonusCash ?? 0)}</strong></Link><Link href="/mypage" onClick={mobile ? () => setMobileMenuOpen(false) : undefined}>My Page</Link><button type="button" onClick={handleLogout}>Logout</button></div>
     : <button type="button" onClick={startLogin} disabled={loading} className="reference-header-auth-link">{loading ? "Checking account…" : "Sign in / Sign up"}</button>;
 
-  const renderLanguage = () => <button type="button" className="reference-header-language" aria-label="Current language: English"><Globe size={14} /> EN</button>;
+  const renderLanguage = () => <button type="button" className="reference-header-language" aria-label="Current language: English"><Languages size={16} aria-hidden="true" /> <span>EN</span></button>;
 
   return <header ref={headerRef} className="reference-home-live-header fixed inset-x-0 top-0 z-50 w-full text-white" aria-label="Ragnarok Universe service navigation">
     <div className="reference-header-utility-surface bg-[#1c3147] [background-image:linear-gradient(100deg,rgba(32,56,78,1),rgba(58,84,110,.96),rgba(24,45,66,1))]">

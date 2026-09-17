@@ -20,12 +20,12 @@ describe("direct React full-page service Home", () => {
     expect(styleSource).toContain("padding-top: var(--react-home-header-height)");
     expect(styleSource).toContain("scroll-padding-top: var(--react-home-header-height)");
     expect(styleSource).toContain(".react-home-layout > [data-snap-panel] { height: auto; min-height: 0; overflow: visible; }");
-    expect(styleSource).toContain(".react-home-home-stage { height: calc(100svh - var(--react-home-header-height)); min-height: calc(100svh - var(--react-home-header-height)); }");
+    expect(styleSource).toContain(".react-home-home-stage { height: max(500px, calc(100dvh - var(--react-home-header-height))); min-height: max(500px, calc(100dvh - var(--react-home-header-height))); }");
     expect(styleSource).toContain(".react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { display: block; min-height: 0; height: auto; padding: 30px 0; }");
     expect(styleSource).toContain(".react-home-closing { min-height: 0; padding: 30px 0; }");
     expect(styleSource).toContain(".react-home-footer { grid-area: footer; min-height: 0; padding: 30px 0; }");
     expect(styleSource).toContain(":root { --react-home-header-height: 112px; }");
-    expect(homeSource).toContain("react-home-hero-cta-row");
+    expect(homeSource).toContain('className="react-home-discord__game-start" aria-label="Hero Game Start"');
     expect(homeSource).not.toContain("<iframe\n        name=");
   });
 
@@ -35,7 +35,7 @@ describe("direct React full-page service Home", () => {
     expect(styleSource).toContain('grid-template-areas: "home" "discord" "news" "game-info" "media" "closing" "footer"');
     expect(styleSource).toContain(".react-home-home-stage { grid-area: home;");
     expect(styleSource).toContain(".react-home-closing-panel { grid-area: closing;");
-    expect(styleSource).toContain("grid-template-rows: minmax(0, 1fr) clamp(66px,7.7vw,110px);");
+    expect(styleSource).toContain(".react-home-home-stage { grid-area: home; display: block; min-width: 0; min-height: max(500px, calc(100svh - var(--react-home-header-height))); }");
   });
 
   it("moves to each variable-height region start on desktop wheel input", () => {
