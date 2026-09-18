@@ -35,6 +35,9 @@ const heroTextInput = (maxBytes: number, maxLineBytes: number) => z.string().tri
     && lines.every((line) => Buffer.byteLength(line, "utf8") <= maxLineBytes);
 }, { message: `Hero text must be at most ${maxBytes} bytes in two lines.` });
 
+const shopPaymentProviderInput = z.enum(["mycard", "xsolla", "goc"]);
+const currencyForShopProvider = (provider: z.infer<typeof shopPaymentProviderInput>) => provider === "mycard" ? "TWD" : "USD";
+
 function toCouponSystemValues(input: z.infer<typeof couponSystemInput>) {
   const validFrom = input.validFrom ? new Date(input.validFrom) : null;
   const expiresAt = input.expiresAt ? new Date(input.expiresAt) : null;
@@ -1339,10 +1342,11 @@ export const appRouter = router({
   // ===== SHOP (rCoin) =====
   shop: router({
     // 공개: 활성 상품 목록
-    listProducts: publicProcedure.query(async () => {
+    listProducts: publicProcedure.input(z.object({ paymentProvider: shopPaymentProviderInput.optional() }).optional()).query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];
-      return db.select().from(ruCashProducts).where(eq(ruCashProducts.isActive, 1)).orderBy(asc(ruCashProducts.sortOrder), asc(ruCashProducts.id));
+      const paymentProvider = input?.paymentProvider ?? "xsolla";
+      return db.select().from(ruCashProducts).where(and(eq(ruCashProducts.isActive, 1), eq(ruCashProducts.paymentProvider, paymentProvider))).orderBy(asc(ruCashProducts.sortOrder), asc(ruCashProducts.id));
     }),
 
     // 공개: 내 잔액 조회
@@ -1408,21 +1412,21 @@ export const appRouter = router({
 
     // 관리자: 상품 등록
     adminCreateProduct: adminKeyProcedure
-      .input(z.object({ name: z.string(), priceUsd: z.string(), ruCashAmount: z.number(), bonusCashAmount: z.number(), imageUrl: z.string().optional(), isActive: z.number().default(1), sortOrder: z.number().default(0) }))
+      .input(z.object({ name: z.string(), priceUsd: z.string(), paymentProvider: shopPaymentProviderInput, currency: z.enum(["TWD", "USD"]).optional(), ruCashAmount: z.number(), bonusCashAmount: z.number(), imageUrl: z.string().optional(), isActive: z.number().default(1), sortOrder: z.number().default(0) }))
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
-        await db.insert(ruCashProducts).values({ name: input.name, priceUsd: input.priceUsd, ruCashAmount: input.ruCashAmount, bonusCashAmount: input.bonusCashAmount, imageUrl: input.imageUrl ?? null, isActive: input.isActive, sortOrder: input.sortOrder });
+        await db.insert(ruCashProducts).values({ name: input.name, priceUsd: input.priceUsd, paymentProvider: input.paymentProvider, currency: currencyForShopProvider(input.paymentProvider), ruCashAmount: input.ruCashAmount, bonusCashAmount: input.bonusCashAmount, imageUrl: input.imageUrl ?? null, isActive: input.isActive, sortOrder: input.sortOrder });
         return { success: true };
       }),
 
     // 관리자: 상품 수정
     adminUpdateProduct: adminKeyProcedure
-      .input(z.object({ id: z.number(), name: z.string(), priceUsd: z.string(), ruCashAmount: z.number(), bonusCashAmount: z.number(), imageUrl: z.string().optional(), isActive: z.number(), sortOrder: z.number() }))
+      .input(z.object({ id: z.number(), name: z.string(), priceUsd: z.string(), paymentProvider: shopPaymentProviderInput, currency: z.enum(["TWD", "USD"]).optional(), ruCashAmount: z.number(), bonusCashAmount: z.number(), imageUrl: z.string().optional(), isActive: z.number(), sortOrder: z.number() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error('DB unavailable');
-        await db.update(ruCashProducts).set({ name: input.name, priceUsd: input.priceUsd, ruCashAmount: input.ruCashAmount, bonusCashAmount: input.bonusCashAmount, imageUrl: input.imageUrl ?? null, isActive: input.isActive, sortOrder: input.sortOrder }).where(eq(ruCashProducts.id, input.id));
+        await db.update(ruCashProducts).set({ name: input.name, priceUsd: input.priceUsd, paymentProvider: input.paymentProvider, currency: currencyForShopProvider(input.paymentProvider), ruCashAmount: input.ruCashAmount, bonusCashAmount: input.bonusCashAmount, imageUrl: input.imageUrl ?? null, isActive: input.isActive, sortOrder: input.sortOrder }).where(eq(ruCashProducts.id, input.id));
         return { success: true };
       }),
 

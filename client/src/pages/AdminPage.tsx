@@ -1933,7 +1933,13 @@ function PaymentsSection({ adminClient }: { adminClient: ReturnType<typeof creat
 // ─── SHOP SECTION ─────────────────────────────────────────────────────────────
 function fmtRuc(n: number): string { return Math.min(n, 9999999).toLocaleString("en-US"); }
 
-type ShopProductForm = { id?: number; name: string; priceUsd: string; ruCashAmount: number; bonusCashAmount: number; imageUrl: string; isActive: number; sortOrder: number };
+const SHOP_PAYMENT_PROVIDERS = [
+  { id: "mycard", label: "MyCard", currency: "TWD" },
+  { id: "xsolla", label: "Xsolla", currency: "USD" },
+  { id: "goc", label: "GOC Pay", currency: "USD" },
+] as const;
+type ShopPaymentProvider = (typeof SHOP_PAYMENT_PROVIDERS)[number]["id"];
+type ShopProductForm = { id?: number; name: string; priceUsd: string; paymentProvider: ShopPaymentProvider; currency: "TWD" | "USD"; ruCashAmount: number; bonusCashAmount: number; imageUrl: string; isActive: number; sortOrder: number };
 
 function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [tab, setTab] = useState<"products" | "charge" | "use" | "balances">("products");
@@ -1952,7 +1958,7 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
   const deleteProductM = useMutation({ mutationFn: (id: number) => adminClient!.shop.adminDeleteProduct.mutate({ id }), onSuccess: () => { toast.success("삭제되었습니다."); refetchProducts(); }, onError: (e: Error) => toast.error(e.message) });
   const adjustM = useMutation({ mutationFn: (input: any) => adminClient!.shop.adminAdjustBalance.mutate(input), onSuccess: () => { toast.success("잔액이 조정되었습니다."); setAdjustForm(null); refetchBalances(); }, onError: (e: Error) => toast.error(e.message) });
 
-  const emptyProduct: ShopProductForm = { name: "", priceUsd: "0.00", ruCashAmount: 0, bonusCashAmount: 0, imageUrl: "", isActive: 1, sortOrder: 0 };
+  const emptyProduct: ShopProductForm = { name: "", priceUsd: "0", paymentProvider: "mycard", currency: "TWD", ruCashAmount: 0, bonusCashAmount: 0, imageUrl: "", isActive: 1, sortOrder: 0 };
 
   const handleExcelCharge = () => {
     const items = (chargeData?.items ?? []) as any[];
@@ -2012,18 +2018,20 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead><tr className="border-b bg-slate-50 dark:bg-slate-800 text-xs text-muted-foreground">
-                      <th className="text-left p-2">순서</th><th className="text-left p-2">상품명</th><th className="text-right p-2">USD</th><th className="text-right p-2">rCoin</th><th className="text-right p-2">Bonus rCoin</th><th className="text-left p-2">상태</th><th className="text-left p-2">수정</th><th className="text-left p-2">삭제</th>
+                      <th className="text-left p-2">순서</th><th className="text-left p-2">상품명</th><th className="text-left p-2">PG사</th><th className="text-right p-2">통화</th><th className="text-right p-2">가격</th><th className="text-right p-2">rCoin</th><th className="text-right p-2">Bonus rCoin</th><th className="text-left p-2">상태</th><th className="text-left p-2">수정</th><th className="text-left p-2">삭제</th>
                     </tr></thead>
                     <tbody>
                       {(productsData.items as any[]).map((p: any) => (
-                        <tr key={p.id} className="border-b hover:bg-accent/20 cursor-pointer" onClick={() => setForm({ id: p.id, name: p.name, priceUsd: String(p.priceUsd), ruCashAmount: p.ruCashAmount, bonusCashAmount: p.bonusCashAmount, imageUrl: p.imageUrl ?? "", isActive: p.isActive, sortOrder: p.sortOrder })}>
+                        <tr key={p.id} className="border-b hover:bg-accent/20 cursor-pointer" onClick={() => setForm({ id: p.id, name: p.name, priceUsd: String(p.priceUsd), paymentProvider: (p.paymentProvider ?? "xsolla") as ShopPaymentProvider, currency: (p.currency ?? "USD") as "TWD" | "USD", ruCashAmount: p.ruCashAmount, bonusCashAmount: p.bonusCashAmount, imageUrl: p.imageUrl ?? "", isActive: p.isActive, sortOrder: p.sortOrder })}>
                           <td className="p-2 text-xs text-muted-foreground">{p.sortOrder}</td>
                           <td className="p-2 font-medium">{p.name}</td>
-                          <td className="p-2 text-right">{Number(p.priceUsd).toFixed(2)}</td>
+                          <td className="p-2">{SHOP_PAYMENT_PROVIDERS.find(provider => provider.id === p.paymentProvider)?.label ?? "Xsolla"}</td>
+                          <td className="p-2 text-right">{p.currency ?? "USD"}</td>
+                          <td className="p-2 text-right">{Number(p.priceUsd).toFixed(p.currency === "TWD" ? 0 : 2)}</td>
                           <td className="p-2 text-right font-mono text-[#9b2020]">{fmtRuc(p.ruCashAmount)}</td>
                           <td className="p-2 text-right font-mono text-green-700">{fmtRuc(p.bonusCashAmount)}</td>
                           <td className="p-2"><StatusBadge active={p.isActive} /></td>
-                          <td className="p-2" onClick={e => e.stopPropagation()}><Button variant="ghost" size="sm" className="h-7" onClick={() => setForm({ id: p.id, name: p.name, priceUsd: String(p.priceUsd), ruCashAmount: p.ruCashAmount, bonusCashAmount: p.bonusCashAmount, imageUrl: p.imageUrl ?? "", isActive: p.isActive, sortOrder: p.sortOrder })}><Pencil className="h-3.5 w-3.5" /></Button></td>
+                          <td className="p-2" onClick={e => e.stopPropagation()}><Button variant="ghost" size="sm" className="h-7" onClick={() => setForm({ id: p.id, name: p.name, priceUsd: String(p.priceUsd), paymentProvider: (p.paymentProvider ?? "xsolla") as ShopPaymentProvider, currency: (p.currency ?? "USD") as "TWD" | "USD", ruCashAmount: p.ruCashAmount, bonusCashAmount: p.bonusCashAmount, imageUrl: p.imageUrl ?? "", isActive: p.isActive, sortOrder: p.sortOrder })}><Pencil className="h-3.5 w-3.5" /></Button></td>
                           <td className="p-2" onClick={e => e.stopPropagation()}><Button variant="ghost" size="sm" className="h-7 text-red-500" onClick={() => { if (confirm(`"${p.name}" 상품을 삭제하시겠습니까?`)) deleteProductM.mutate(p.id); }}><Trash2 className="h-3.5 w-3.5" /></Button></td>
                         </tr>
                       ))}
@@ -2142,8 +2150,10 @@ function ShopSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
         /* 상품 등록/수정 폼 */
         <Card><CardContent className="pt-6 space-y-4">
           <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1 col-span-2"><label className="text-sm font-medium">PG사 *</label><Select value={form.paymentProvider} onValueChange={(value) => { const provider = SHOP_PAYMENT_PROVIDERS.find((item) => item.id === value) ?? SHOP_PAYMENT_PROVIDERS[0]; setForm((current) => current && ({ ...current, paymentProvider: provider.id, currency: provider.currency })); }}><SelectTrigger aria-label="PG사 선택"><SelectValue /></SelectTrigger><SelectContent>{SHOP_PAYMENT_PROVIDERS.map((provider) => <SelectItem key={provider.id} value={provider.id}>{provider.label}</SelectItem>)}</SelectContent></Select><p className="text-xs text-muted-foreground">MyCard는 TWD, Xsolla와 GOC Pay는 USD로 등록됩니다.</p></div>
             <div className="space-y-1 col-span-2"><label className="text-sm font-medium">상품명 *</label><Input value={form.name} onChange={e => setForm(f => f && ({ ...f, name: e.target.value }))} placeholder="예: USD 10" /></div>
-            <div className="space-y-1"><label className="text-sm font-medium">USD 가격 *</label><Input type="number" step="0.01" value={form.priceUsd} onChange={e => setForm(f => f && ({ ...f, priceUsd: e.target.value }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">{form.currency} 가격 *</label><Input type="number" step={form.currency === "TWD" ? "1" : "0.01"} value={form.priceUsd} onChange={e => setForm(f => f && ({ ...f, priceUsd: e.target.value }))} /></div>
+            <div className="space-y-1"><label className="text-sm font-medium">통화</label><Input value={form.currency} readOnly className="bg-slate-50" /></div>
             <div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={e => setForm(f => f && ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} /></div>
             <div className="space-y-1"><label className="text-sm font-medium">rCoin 지급량 *</label><Input type="number" value={form.ruCashAmount} onChange={e => setForm(f => f && ({ ...f, ruCashAmount: parseInt(e.target.value) || 0 }))} /></div>
             <div className="space-y-1"><label className="text-sm font-medium">Bonus rCoin 지급량</label><Input type="number" value={form.bonusCashAmount} onChange={e => setForm(f => f && ({ ...f, bonusCashAmount: parseInt(e.target.value) || 0 }))} /></div>
@@ -2834,7 +2844,6 @@ function AdminAccountsSection({ adminClient }: { adminClient: ReturnType<typeof 
                   { key: "banner", label: "Main banner" },
                   { key: "news", label: "News" },
                   { key: "media", label: "Media" },
-                  { key: "products", label: "인앱상품" },
                   { key: "payments", label: "결제" },
                   { key: "stats", label: "통계" },
                   { key: "coupons", label: "쿠폰관리" },
@@ -3132,7 +3141,6 @@ export default function AdminPage() {
     { key: "news", label: "News", icon: Link },
     { key: "media", label: "Media", icon: Eye },
     { key: "shop", label: "Shop", icon: ShoppingCart },
-    { key: "products", label: "인앱상품", icon: Coins },
     { key: "payments", label: "결제 / 포인트", icon: CreditCard },
     { key: "stats", label: "통계", icon: BarChart2 },
     { key: "coupons", label: "쿠폰 관리", icon: Tag },
@@ -3197,7 +3205,6 @@ export default function AdminPage() {
           {activeMenu === "main-banner" && <BannerSection adminClient={adminClient} />}
           {activeMenu === "news" && <NewsSection adminClient={adminClient} />}
           {activeMenu === "media" && <div className="space-y-10"><MediaSection adminClient={adminClient} /><ScreenshotGallerySection adminClient={adminClient} /></div>}
-          {activeMenu === "products" && <ProductsSection adminClient={adminClient} />}
           {activeMenu === "shop" && <ShopSection adminClient={adminClient} />}
           {activeMenu === "payments" && <PaymentsSection adminClient={adminClient} />}
           {activeMenu === "stats" && <StatsSection adminClient={adminClient} />}

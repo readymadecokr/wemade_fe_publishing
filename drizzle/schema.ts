@@ -229,6 +229,8 @@ export const ruCashProducts = mysqlTable("ruCashProducts", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   priceUsd: decimal("priceUsd", { precision: 10, scale: 2 }).notNull(), // USD 가격
+  paymentProvider: varchar("paymentProvider", { length: 32 }).default("xsolla").notNull(),
+  currency: varchar("currency", { length: 10 }).default("USD").notNull(),
   ruCashAmount: int("ruCashAmount").default(0).notNull(),               // 지급 RU Cash
   bonusCashAmount: int("bonusCashAmount").default(0).notNull(),         // 지급 Bonus RU Cash
   imageUrl: text("imageUrl"),
