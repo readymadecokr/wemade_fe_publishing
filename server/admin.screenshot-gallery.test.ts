@@ -14,7 +14,7 @@ describe("관리자 Media 스크린샷 관리", () => {
     expect(adminSource).toContain("moveChecked(\"hide\")");
     expect(adminSource).toContain("uploadScreenshotImage");
     expect(adminSource).toContain("최대 12개까지 선택할 수 있습니다.");
-    expect(adminSource).toContain("JPG, PNG, WEBP / 최대 1,000KB");
+    expect(adminSource).toContain("JPG, PNG, WEBP / 원본 최대 3,072KB · 홈 미리보기 자동 100KB 이하");
     expect(adminSource).toContain('<MediaSection adminClient={adminClient} /><ScreenshotGallerySection adminClient={adminClient} />');
   });
 
@@ -22,8 +22,7 @@ describe("관리자 Media 스크린샷 관리", () => {
     expect(routerSource).toContain("publicScreenshots: router");
     expect(routerSource).toContain("screenshotsAdmin: router");
     expect(routerSource).toContain("uploadScreenshotImage");
-    expect(routerSource).toContain("buffer.length > 1000 * 1024");
-    expect(routerSource).toContain("파일 용량이 1,000KB를 초과합니다.");
+    expect(routerSource).toContain("uploadScreenshotAssets");
     expect(routerSource).toContain("where(eq(screenshots.isActive, 1))");
     expect(routerSource).toContain("orderBy(asc(screenshots.sortOrder), asc(screenshots.id))");
   });

@@ -1,0 +1,6 @@
+2026-09-21 verification notes
+- Admin browser session is authenticated as cyanima; the sidebar shows Main Banner, News, Media, Shop and no in-app products menu.
+- The Main Banner registration form now visibly states the required 1900×600px / under 1,024KB / JPG-WebP-PNG rule.
+- Media management renders all 12 active screenshot records. The screenshot registration form visibly states that the source is capped at 3,072KB and the homepage preview is generated automatically at 100KB or less.
+- Full-page desktop and mobile Home captures show the Media screenshot strip rendering normally below the feature area. The desktop capture has six visible thumbnail cards and controls, while the mobile capture maintains a compact horizontal strip with no layout regression.
+- Database verification returned 12 screenshot rows and 12 non-empty thumbnailUrl values. Backfill output recorded all generated WebP previews below 100KB.

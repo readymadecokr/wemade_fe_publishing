@@ -104,6 +104,7 @@ export const screenshots = mysqlTable("screenshots", {
   id: int("id").autoincrement().primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
   imageUrl: text("imageUrl").notNull(),
+  thumbnailUrl: text("thumbnailUrl"),
   sortOrder: int("sortOrder").default(0).notNull(),
   isActive: int("isActive").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

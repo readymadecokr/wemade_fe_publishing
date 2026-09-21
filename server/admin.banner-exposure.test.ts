@@ -28,11 +28,11 @@ describe("관리자 Main Banner 선택 노출 관리", () => {
     expect(routerSource).not.toContain(".limit(10)");
   });
 
-  it("메인배너 등록 안내와 미리보기를 1000×600px, 5:3 기준으로 제공한다", () => {
-    expect(adminPageSource).toContain("권장: 1000×600px (5:3 비율)");
-    expect(adminPageSource).toContain('if (file.size > 1000 * 1024) { toast.error("1,000KB 초과"); return; }');
-    expect(adminPageSource).toContain("1,000KB 이하");
-    expect(routerSource).toContain("buffer.length > 1000 * 1024");
-    expect(adminPageSource).toContain('aspectRatio: "1000/600"');
+  it("메인배너 등록 안내와 미리보기를 1900×600px, 1,024KB 미만 기준으로 제공한다", () => {
+    expect(adminPageSource).toContain("필수: 1900×600px | 1,024KB 미만");
+    expect(adminPageSource).toContain('if (file.size >= 1024 * 1024) { toast.error("메인배너 이미지는 1,024KB 미만이어야 합니다."); return; }');
+    expect(adminPageSource).toContain("dimensions.width !== 1900 || dimensions.height !== 600");
+    expect(routerSource).toContain("uploadMainBannerImage");
+    expect(adminPageSource).toContain('aspectRatio: "1900/600"');
   });
 });

@@ -59,6 +59,20 @@ function limitHeroText(value: string, bytesPerLine: number, maxBytes: number) {
   }).join("\n");
 }
 
+async function getImageDimensions(file: File) {
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    return await new Promise<{ width: number; height: number }>((resolve, reject) => {
+      const image = new window.Image();
+      image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+      image.onerror = () => reject(new Error("이미지 크기를 읽을 수 없습니다."));
+      image.src = objectUrl;
+    });
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
 // 24시간 달력 + 시/분 드롭다운 콤포넌트
 function DateTimeInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
   // value: "YYYY-MM-DDTHH:mm" 형식
@@ -978,7 +992,7 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
   const submit = () => { if (!form?.name) { toast.error("게임명을 입력하세요."); return; } form.id ? updateM.mutate(form) : createM.mutate(form); };
 
   const handleIconSelect = async () => {
-    const input = document.createElement("input"); input.type = "file"; input.accept = "image/jpeg,image/webp,image/png,image/gif";
+    const input = document.createElement("input"); input.type = "file"; input.accept = "image/jpeg,image/webp,image/png";
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0]; if (!file) return;
       if (file.size > 500 * 1024) { toast.error("500KB 이하 이미지를 선택해주세요."); return; }
@@ -989,7 +1003,7 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
         // 파일명을 ASCII로 변환 (한글 등 비ASCII 문자 제거)
         const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
         const safeFilename = `game-icon-${Date.now()}.${ext}`;
-        const result = await adminClient!.admin.uploadBannerImage.mutate({ base64, filename: safeFilename });
+        const result = await adminClient!.admin.uploadGameIconImage.mutate({ base64, filename: safeFilename });
         setForm(f => f && ({ ...f, imageUrl: result.url }));
         toast.success("아이콘 업로드 완료");
       } catch (err: any) { toast.error(`업로드 실패: ${err.message}`); }
@@ -1100,7 +1114,7 @@ function GameSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                   {form.imageUrl && (
                     <Button type="button" variant="ghost" size="sm" className="text-red-500 justify-start px-2" onClick={() => setForm(f => f && ({ ...f, imageUrl: "" }))}>아이콘 삭제</Button>
                   )}
-                  <p className="text-xs text-muted-foreground">JPG, PNG, WEBP, GIF · 최대 500KB</p>
+                  <p className="text-xs text-muted-foreground">JPG, PNG, WEBP · 최대 500KB</p>
                   {form.imageUrl && (
                     <p className="text-xs text-muted-foreground break-all max-w-xs">{form.imageUrl}</p>
                   )}
@@ -1155,9 +1169,11 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
     const input = document.createElement("input"); input.type = "file"; input.accept = "image/jpeg,image/webp,image/png";
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0]; if (!file) return;
-      if (file.size > 1000 * 1024) { toast.error("1,000KB 초과"); return; }
+      if (file.size >= 1024 * 1024) { toast.error("메인배너 이미지는 1,024KB 미만이어야 합니다."); return; }
       setUploading(true);
       try {
+        const dimensions = await getImageDimensions(file);
+        if (dimensions.width !== 1900 || dimensions.height !== 600) { toast.error("메인배너 이미지는 1900×600px이어야 합니다."); return; }
         const reader = new FileReader();
         const base64 = await new Promise<string>(r => { reader.onload = ev => r(ev.target?.result as string); reader.readAsDataURL(file); });
         const result = await adminClient!.admin.uploadBannerImage.mutate({ base64, filename: file.name });
@@ -1374,8 +1390,8 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
           <div className="space-y-1">
             <label className="text-sm font-medium">이미지 등록 *</label>
             <div className="flex gap-2"><Input value={form.imageUrl} onChange={e => setForm(f => f && ({ ...f, imageUrl: e.target.value }))} placeholder="/manus-storage/..." className="flex-1" /><Button type="button" variant="outline" onClick={handleFileSelect} disabled={uploading}>{uploading ? "업로드 중..." : "PC에서 찾아보기"}</Button></div>
-            <p className="text-xs text-muted-foreground">권장: 1000×600px (5:3 비율) | 1,000KB 이하 | JPG, WebP, PNG</p>
-            {form.imageUrl && <div className="rounded overflow-hidden border bg-slate-100" style={{ aspectRatio: "1000/600" }}><img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" /></div>}
+            <p className="text-xs text-muted-foreground">필수: 1900×600px | 1,024KB 미만 | JPG, WebP, PNG</p>
+            {form.imageUrl && <div className="rounded overflow-hidden border bg-slate-100" style={{ aspectRatio: "1900/600" }}><img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" /></div>}
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1"><label className="text-sm font-medium">Hero 카테고리 *</label><Select value={form.heroCategory} onValueChange={(value: BannerForm["heroCategory"]) => setForm(f => f && ({ ...f, heroCategory: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{(["EVENT", "PROMO", "UPDATE", "NOTE"] as const).map(category => <SelectItem key={category} value={category}>{category}</SelectItem>)}</SelectContent></Select></div>
@@ -1401,7 +1417,7 @@ function BannerSection({ adminClient }: { adminClient: ReturnType<typeof createA
       <Dialog open={!!preview} onOpenChange={() => setPreview(null)}>
         <DialogContent className="max-w-4xl">
           <DialogHeader><DialogTitle>배너 미리보기: {preview?.title}</DialogTitle></DialogHeader>
-          {preview && <div className="rounded-lg overflow-hidden border"><img src={preview.imageUrl} alt={preview.title} className="w-full object-cover" style={{ aspectRatio: "1000/600" }} /></div>}
+          {preview && <div className="rounded-lg overflow-hidden border"><img src={preview.imageUrl} alt={preview.title} className="w-full object-cover" style={{ aspectRatio: "1900/600" }} /></div>}
           <DialogFooter><Button variant="outline" onClick={() => setPreview(null)}>닫기</Button></DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1548,13 +1564,13 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                 const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/jpeg,image/webp,image/png';
                 input.onchange = async (ev) => {
                   const file = (ev.target as HTMLInputElement).files?.[0]; if (!file) return;
-                  if (file.size > 100 * 1024) { toast.error('100KB 이하 이미지를 선택해주세요.'); return; }
+                  if (file.size > 500 * 1024) { toast.error('News 썸네일은 500KB 이하 이미지를 선택해주세요.'); return; }
                   try {
                     const reader = new FileReader();
                     const base64 = await new Promise<string>(r => { reader.onload = ev => r(ev.target?.result as string); reader.readAsDataURL(file); });
                     const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
                     const safeFilename = `news-img-${Date.now()}.${ext}`;
-                    const result = await adminClient!.admin.uploadBannerImage.mutate({ base64, filename: safeFilename });
+                    const result = await adminClient!.admin.uploadNewsImage.mutate({ base64, filename: safeFilename });
                     setForm(f => f && ({ ...f, imageUrl: result.url }));
                     toast.success('이미지 업로드 완료');
                   } catch (e: any) { toast.error(`업로드 실패: ${e.message}`); }
@@ -1562,7 +1578,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                 input.click();
               }}>PC에서 찾아보기</Button>
             </div>
-            <p className="text-xs text-muted-foreground">권장 : 700 x 360px  |  100KB 미만  |  Jpg,webp,png</p>
+            <p className="text-xs text-muted-foreground">권장 : 700 x 360px  |  최대 500KB  |  Jpg, WebP, PNG</p>
             {form.imageUrl && (
               <img src={form.imageUrl} alt="preview" className="mt-2 rounded border h-24 object-cover" />
             )}
@@ -1683,8 +1699,8 @@ function MediaSection({ adminClient }: { adminClient: ReturnType<typeof createAd
 }
 
 // ─── MEDIA SCREENSHOTS SECTION ────────────────────────────────────────────────
-type ScreenshotRow = { id: number; title: string; imageUrl: string; sortOrder: number; isActive: number };
-type ScreenshotForm = { id?: number; title: string; imageUrl: string; sortOrder: number; isActive: number };
+type ScreenshotRow = { id: number; title: string; imageUrl: string; thumbnailUrl: string | null; sortOrder: number; isActive: number };
+type ScreenshotForm = { id?: number; title: string; imageUrl: string; thumbnailUrl: string; sortOrder: number; isActive: number };
 
 function ScreenshotGallerySection({ adminClient }: { adminClient: ReturnType<typeof createAdminClient> | null }) {
   const [form, setForm] = useState<ScreenshotForm | null>(null);
@@ -1692,33 +1708,34 @@ function ScreenshotGallerySection({ adminClient }: { adminClient: ReturnType<typ
   const [uploading, setUploading] = useState(false);
   const [moving, setMoving] = useState(false);
   const { data, refetch } = useQuery({ queryKey: ["admin-screenshots"], queryFn: () => adminClient!.screenshotsAdmin.list.query(), enabled: !!adminClient });
-  const createM = useMutation({ mutationFn: (input: Omit<ScreenshotForm, "id">) => adminClient!.screenshotsAdmin.create.mutate(input), onSuccess: () => { toast.success("스크린샷이 등록되었습니다."); setForm(null); refetch(); }, onError: (error: Error) => toast.error(error.message) });
-  const updateM = useMutation({ mutationFn: (input: ScreenshotForm & { id: number }) => adminClient!.screenshotsAdmin.update.mutate(input), onSuccess: () => { toast.success("스크린샷이 수정되었습니다."); setForm(null); refetch(); }, onError: (error: Error) => toast.error(error.message) });
+  const createM = useMutation({ mutationFn: (input: Omit<ScreenshotForm, "id" | "thumbnailUrl"> & { thumbnailUrl?: string }) => adminClient!.screenshotsAdmin.create.mutate(input), onSuccess: () => { toast.success("스크린샷이 등록되었습니다."); setForm(null); refetch(); }, onError: (error: Error) => toast.error(error.message) });
+  const updateM = useMutation({ mutationFn: (input: Omit<ScreenshotForm, "thumbnailUrl"> & { id: number; thumbnailUrl?: string }) => adminClient!.screenshotsAdmin.update.mutate(input), onSuccess: () => { toast.success("스크린샷이 수정되었습니다."); setForm(null); refetch(); }, onError: (error: Error) => toast.error(error.message) });
   const deleteM = useMutation({ mutationFn: (id: number) => adminClient!.screenshotsAdmin.delete.mutate({ id }), onSuccess: () => { toast.success("스크린샷이 삭제되었습니다."); refetch(); }, onError: (error: Error) => toast.error(error.message) });
   const allRows = useMemo(() => [...(data ?? [])].sort((a, b) => a.sortOrder - b.sortOrder || a.id - b.id) as ScreenshotRow[], [data]);
   const selectedRows = allRows.filter((row) => row.isActive === 1);
   const unselectedRows = allRows.filter((row) => row.isActive !== 1);
-  const empty: ScreenshotForm = { title: "", imageUrl: "", sortOrder: allRows.length, isActive: 1 };
+  const empty: ScreenshotForm = { title: "", imageUrl: "", thumbnailUrl: "", sortOrder: allRows.length, isActive: 1 };
   const toggleRow = (id: number, checked: boolean) => setCheckedIds((current) => checked ? Array.from(new Set([...current, id])) : current.filter((currentId) => currentId !== id));
   const toggleGroup = (rows: ScreenshotRow[], checked: boolean) => setCheckedIds((current) => checked ? Array.from(new Set([...current, ...rows.map((row) => row.id)])) : current.filter((id) => !rows.some((row) => row.id === id)));
   const isGroupChecked = (rows: ScreenshotRow[]) => rows.length > 0 && rows.every((row) => checkedIds.includes(row.id));
-  const openForm = (row: ScreenshotRow) => setForm({ id: row.id, title: row.title, imageUrl: row.imageUrl, sortOrder: row.sortOrder, isActive: row.isActive });
+  const openForm = (row: ScreenshotRow) => setForm({ id: row.id, title: row.title, imageUrl: row.imageUrl, thumbnailUrl: row.thumbnailUrl ?? "", sortOrder: row.sortOrder, isActive: row.isActive });
   const submit = () => {
     if (!form?.title.trim() || !form.imageUrl) { toast.error("스크린샷 제목과 이미지를 입력하세요."); return; }
-    if (form.id) updateM.mutate({ ...form, id: form.id }); else createM.mutate({ title: form.title, imageUrl: form.imageUrl, sortOrder: form.sortOrder, isActive: form.isActive });
+    const savedForm = { ...form, thumbnailUrl: form.thumbnailUrl || undefined };
+    if (form.id) updateM.mutate({ ...savedForm, id: form.id }); else createM.mutate({ title: form.title, imageUrl: form.imageUrl, thumbnailUrl: form.thumbnailUrl || undefined, sortOrder: form.sortOrder, isActive: form.isActive });
   };
   const uploadImage = async () => {
     const input = document.createElement("input"); input.type = "file"; input.accept = "image/jpeg,image/png,image/webp";
     input.onchange = async (event) => {
       const file = (event.target as HTMLInputElement).files?.[0]; if (!file) return;
-      if (file.size > 1000 * 1024) { toast.error("이미지는 1,000KB 이하로 등록하세요."); return; }
+      if (file.size > 3072 * 1024) { toast.error("스크린샷 원본은 3,072KB 이하로 등록하세요."); return; }
       setUploading(true);
       try {
         const reader = new FileReader();
         const base64 = await new Promise<string>((resolve) => { reader.onload = (loadEvent) => resolve(loadEvent.target?.result as string); reader.readAsDataURL(file); });
         const result = await adminClient!.admin.uploadScreenshotImage.mutate({ base64, filename: file.name });
-        setForm((current) => current && ({ ...current, imageUrl: result.url }));
-        toast.success("스크린샷 이미지가 업로드되었습니다.");
+        setForm((current) => current && ({ ...current, imageUrl: result.imageUrl, thumbnailUrl: result.thumbnailUrl }));
+        toast.success("원본과 100KB 이하 홈 미리보기가 업로드되었습니다.");
       } catch (error: any) { toast.error(`업로드 실패: ${error.message}`); } finally { setUploading(false); }
     };
     input.click();
@@ -1735,8 +1752,8 @@ function ScreenshotGallerySection({ adminClient }: { adminClient: ReturnType<typ
       setCheckedIds([]); await refetch(); toast.success(direction === "show" ? "선택한 스크린샷을 노출 영역으로 이동했습니다." : "선택한 스크린샷을 미노출 영역으로 이동했습니다.");
     } catch (error: any) { toast.error(`노출 상태 변경 실패: ${error.message}`); } finally { setMoving(false); }
   };
-  const ScreenshotTable = ({ rows, exposure }: { rows: ScreenshotRow[]; exposure: "visible" | "hidden" }) => <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700"><table className="w-full min-w-[660px]"><thead><tr className="border-b bg-slate-50 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-300"><th className="w-12 px-3 py-2.5"><input aria-label={`${exposure === "visible" ? "노출" : "미노출"} 스크린샷 전체 선택`} type="checkbox" checked={isGroupChecked(rows)} onChange={(event) => toggleGroup(rows, event.target.checked)} /></th><th className="w-14 px-3 py-2.5">순서</th><th className="w-32 px-3 py-2.5 text-left">이미지</th><th className="px-3 py-2.5 text-left">스크린샷 제목</th><th className="w-24 px-3 py-2.5 text-center">노출</th><th className="w-12 px-3 py-2.5" /><th className="w-12 px-3 py-2.5" /></tr></thead><tbody>{!rows.length ? <tr><td colSpan={7} className="px-3 py-8 text-center text-sm text-muted-foreground">{exposure === "visible" ? "노출 중인 스크린샷이 없습니다." : "미선택 스크린샷이 없습니다."}</td></tr> : rows.map((row, index) => <tr key={row.id} className="cursor-pointer border-b last:border-0 hover:bg-accent/30" onClick={() => openForm(row)}><td className="px-3 py-3 text-center" onClick={(event) => event.stopPropagation()}><input aria-label={`${row.title} 선택`} type="checkbox" checked={checkedIds.includes(row.id)} onChange={(event) => toggleRow(row.id, event.target.checked)} /></td><td className="px-3 py-3 text-center text-sm text-muted-foreground">{exposure === "visible" ? index + 1 : "-"}</td><td className="px-3 py-3"><img src={row.imageUrl} alt={row.title} className="h-14 w-28 rounded object-cover" /></td><td className="px-3 py-3 text-sm font-medium">{row.title}</td><td className="px-3 py-3 text-center"><StatusBadge active={exposure === "visible"} /></td><td className="px-3 py-3 text-center" onClick={(event) => event.stopPropagation()}><Button variant="ghost" size="sm" onClick={() => openForm(row)} aria-label={`${row.title} 수정`}><Pencil className="h-4 w-4" /></Button></td><td className="px-3 py-3 text-center" onClick={(event) => event.stopPropagation()}><Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`\"${row.title}\" 스크린샷을 삭제하시겠습니까?`)) deleteM.mutate(row.id); }} aria-label={`${row.title} 삭제`}><Trash2 className="h-4 w-4" /></Button></td></tr>)}</tbody></table></div>;
-  return <section className="space-y-4 border-t pt-8"><SectionHeader title={form ? (form.id ? "스크린샷 수정" : "스크린샷 등록") : "스크린샷 관리"} desc="서비스 Media 하단 갤러리에 노출할 스크린샷을 선택·관리합니다." action={!form ? <Button onClick={() => setForm(empty)}><Plus className="mr-2 h-4 w-4" />스크린샷 등록</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="mr-1 h-4 w-4" />목록으로</Button>} />{!form ? <Card><CardContent className="space-y-6 p-4"><section className="overflow-hidden rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20"><div className="flex flex-col gap-3 border-b border-blue-200 bg-white/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-blue-900 dark:bg-slate-900/50"><div><h3 className="text-sm font-bold text-blue-900 dark:text-blue-200">선택된 노출 스크린샷 <span className="ml-1 text-blue-600">{selectedRows.length}</span></h3><p className="mt-0.5 text-xs text-muted-foreground">서비스 Media 갤러리에 노출됩니다. 최대 12개까지 선택할 수 있습니다.</p></div><Button size="sm" variant="outline" disabled={moving || !checkedIds.some((id) => selectedRows.some((row) => row.id === id))} onClick={() => moveChecked("hide")}><ChevronDown className="mr-1 h-4 w-4" />아래로 이동</Button></div><ScreenshotTable rows={selectedRows} exposure="visible" /></section><section className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700"><div className="flex flex-col gap-3 border-b bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:bg-slate-800"><div><h3 className="text-sm font-bold">미선택 스크린샷</h3><p className="mt-0.5 text-xs text-muted-foreground">체크한 스크린샷을 위로 이동하면 서비스 Media 갤러리에 노출됩니다.</p></div><Button size="sm" disabled={moving || !checkedIds.some((id) => unselectedRows.some((row) => row.id === id))} onClick={() => moveChecked("show")}><ChevronUp className="mr-1 h-4 w-4" />위로 이동</Button></div><ScreenshotTable rows={unselectedRows} exposure="hidden" /></section></CardContent></Card> : <Card><CardContent className="space-y-4 pt-6"><div className="space-y-1"><label className="text-sm font-medium">스크린샷 제목 *</label><Input value={form.title} onChange={(event) => setForm((current) => current && ({ ...current, title: event.target.value }))} placeholder="스크린샷 제목" /></div><div className="space-y-2"><label className="text-sm font-medium">스크린샷 이미지 *</label><div className="flex flex-wrap items-center gap-3"><Button type="button" variant="outline" onClick={uploadImage} disabled={uploading}><Upload className="mr-2 h-4 w-4" />{uploading ? "업로드 중..." : "이미지 업로드"}</Button><span className="text-xs text-muted-foreground">JPG, PNG, WEBP / 최대 1,000KB</span></div>{form.imageUrl && <img src={form.imageUrl} alt="스크린샷 미리보기" className="mt-2 max-h-52 rounded border object-contain" />}</div><div className="grid grid-cols-2 gap-4"><div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={(event) => setForm((current) => current && ({ ...current, sortOrder: Number(event.target.value) || 0 }))} /></div><div className="space-y-1"><label className="text-sm font-medium">노출 상태</label><div className="flex h-10 items-center"><ToggleBtn value={form.isActive} onChange={(value) => setForm((current) => current && ({ ...current, isActive: value }))} /></div></div></div><div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending || uploading}>{form.id ? "수정 저장" : "스크린샷 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div></CardContent></Card>}</section>;
+  const ScreenshotTable = ({ rows, exposure }: { rows: ScreenshotRow[]; exposure: "visible" | "hidden" }) => <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700"><table className="w-full min-w-[660px]"><thead><tr className="border-b bg-slate-50 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-300"><th className="w-12 px-3 py-2.5"><input aria-label={`${exposure === "visible" ? "노출" : "미노출"} 스크린샷 전체 선택`} type="checkbox" checked={isGroupChecked(rows)} onChange={(event) => toggleGroup(rows, event.target.checked)} /></th><th className="w-14 px-3 py-2.5">순서</th><th className="w-32 px-3 py-2.5 text-left">이미지</th><th className="px-3 py-2.5 text-left">스크린샷 제목</th><th className="w-24 px-3 py-2.5 text-center">노출</th><th className="w-12 px-3 py-2.5" /><th className="w-12 px-3 py-2.5" /></tr></thead><tbody>{!rows.length ? <tr><td colSpan={7} className="px-3 py-8 text-center text-sm text-muted-foreground">{exposure === "visible" ? "노출 중인 스크린샷이 없습니다." : "미선택 스크린샷이 없습니다."}</td></tr> : rows.map((row, index) => <tr key={row.id} className="cursor-pointer border-b last:border-0 hover:bg-accent/30" onClick={() => openForm(row)}><td className="px-3 py-3 text-center" onClick={(event) => event.stopPropagation()}><input aria-label={`${row.title} 선택`} type="checkbox" checked={checkedIds.includes(row.id)} onChange={(event) => toggleRow(row.id, event.target.checked)} /></td><td className="px-3 py-3 text-center text-sm text-muted-foreground">{exposure === "visible" ? index + 1 : "-"}</td><td className="px-3 py-3"><img src={row.thumbnailUrl || row.imageUrl} alt={row.title} className="h-14 w-28 rounded object-cover" /></td><td className="px-3 py-3 text-sm font-medium">{row.title}</td><td className="px-3 py-3 text-center"><StatusBadge active={exposure === "visible"} /></td><td className="px-3 py-3 text-center" onClick={(event) => event.stopPropagation()}><Button variant="ghost" size="sm" onClick={() => openForm(row)} aria-label={`${row.title} 수정`}><Pencil className="h-4 w-4" /></Button></td><td className="px-3 py-3 text-center" onClick={(event) => event.stopPropagation()}><Button variant="ghost" size="sm" className="text-red-500" onClick={() => { if (confirm(`\"${row.title}\" 스크린샷을 삭제하시겠습니까?`)) deleteM.mutate(row.id); }} aria-label={`${row.title} 삭제`}><Trash2 className="h-4 w-4" /></Button></td></tr>)}</tbody></table></div>;
+  return <section className="space-y-4 border-t pt-8"><SectionHeader title={form ? (form.id ? "스크린샷 수정" : "스크린샷 등록") : "스크린샷 관리"} desc="서비스 Media 하단 갤러리에 노출할 스크린샷을 선택·관리합니다." action={!form ? <Button onClick={() => setForm(empty)}><Plus className="mr-2 h-4 w-4" />스크린샷 등록</Button> : <Button variant="outline" onClick={() => setForm(null)}><ChevronLeft className="mr-1 h-4 w-4" />목록으로</Button>} />{!form ? <Card><CardContent className="space-y-6 p-4"><section className="overflow-hidden rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20"><div className="flex flex-col gap-3 border-b border-blue-200 bg-white/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-blue-900 dark:bg-slate-900/50"><div><h3 className="text-sm font-bold text-blue-900 dark:text-blue-200">선택된 노출 스크린샷 <span className="ml-1 text-blue-600">{selectedRows.length}</span></h3><p className="mt-0.5 text-xs text-muted-foreground">서비스 Media 갤러리에 노출됩니다. 최대 12개까지 선택할 수 있습니다.</p></div><Button size="sm" variant="outline" disabled={moving || !checkedIds.some((id) => selectedRows.some((row) => row.id === id))} onClick={() => moveChecked("hide")}><ChevronDown className="mr-1 h-4 w-4" />아래로 이동</Button></div><ScreenshotTable rows={selectedRows} exposure="visible" /></section><section className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700"><div className="flex flex-col gap-3 border-b bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:bg-slate-800"><div><h3 className="text-sm font-bold">미선택 스크린샷</h3><p className="mt-0.5 text-xs text-muted-foreground">체크한 스크린샷을 위로 이동하면 서비스 Media 갤러리에 노출됩니다.</p></div><Button size="sm" disabled={moving || !checkedIds.some((id) => unselectedRows.some((row) => row.id === id))} onClick={() => moveChecked("show")}><ChevronUp className="mr-1 h-4 w-4" />위로 이동</Button></div><ScreenshotTable rows={unselectedRows} exposure="hidden" /></section></CardContent></Card> : <Card><CardContent className="space-y-4 pt-6"><div className="space-y-1"><label className="text-sm font-medium">스크린샷 제목 *</label><Input value={form.title} onChange={(event) => setForm((current) => current && ({ ...current, title: event.target.value }))} placeholder="스크린샷 제목" /></div><div className="space-y-2"><label className="text-sm font-medium">스크린샷 이미지 *</label><div className="flex flex-wrap items-center gap-3"><Button type="button" variant="outline" onClick={uploadImage} disabled={uploading}><Upload className="mr-2 h-4 w-4" />{uploading ? "업로드 중..." : "이미지 업로드"}</Button><span className="text-xs text-muted-foreground">JPG, PNG, WEBP / 원본 최대 3,072KB · 홈 미리보기 자동 100KB 이하</span></div>{form.imageUrl && <img src={form.imageUrl} alt="스크린샷 미리보기" className="mt-2 max-h-52 rounded border object-contain" />}</div><div className="grid grid-cols-2 gap-4"><div className="space-y-1"><label className="text-sm font-medium">순서</label><Input type="number" value={form.sortOrder} onChange={(event) => setForm((current) => current && ({ ...current, sortOrder: Number(event.target.value) || 0 }))} /></div><div className="space-y-1"><label className="text-sm font-medium">노출 상태</label><div className="flex h-10 items-center"><ToggleBtn value={form.isActive} onChange={(value) => setForm((current) => current && ({ ...current, isActive: value }))} /></div></div></div><div className="flex gap-2 pt-2"><Button onClick={submit} disabled={createM.isPending || updateM.isPending || uploading}>{form.id ? "수정 저장" : "스크린샷 등록"}</Button><Button variant="outline" onClick={() => setForm(null)}>취소</Button></div></CardContent></Card>}</section>;
 }
 
 // ─── PRODUCTS SECTION ─────────────────────────────────────────────────────────

@@ -5,7 +5,7 @@ import { adminKeyProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import { users, memberRestrictionHistories, banners, news, media, screenshots, products, payments, pointLogs, coupons, couponUses, admins, statsEvents, games } from "../drizzle/schema";
 import { ruCashProducts, ruCashBalances, ruCashTransactions } from "../drizzle/schema";
-import { storagePut } from "./storage";
+import { uploadBannerImage as uploadMainBannerImage, uploadGameIconImage, uploadNewsImage, uploadScreenshotAssets } from "./imageUpload";
 import { filterMemberTransactionHistory } from "./memberHistory";
 import { calculateCumulativePaymentUsd, filterMemberCouponHistory } from "./memberCouponHistory";
 import { generateRandomCouponCode, getCouponStatus, validateCouponSystemInput } from "./couponSystem";
@@ -433,30 +433,22 @@ export const appRouter = router({
         base64: z.string(), // data:image/...;base64,...
         filename: z.string().default("banner.jpg"),
       }))
-      .mutation(async ({ input }) => {
-        const { base64, filename } = input;
-        // base64 데이터 파싱
-        const matches = base64.match(/^data:([^;]+);base64,(.+)$/);
-        if (!matches) throw new Error("Invalid base64 image data");
-        const contentType = matches[1];
-        const buffer = Buffer.from(matches[2], "base64");
-        if (buffer.length > 1000 * 1024) throw new Error("파일 용량이 1,000KB를 초과합니다.");
-        const { url } = await storagePut(`banners/${filename}`, buffer, contentType);
-        return { url };
-      }),
+      .mutation(({ input }) => uploadMainBannerImage(input)),
 
-    // 스크린샷 이미지 업로드 (base64 → S3)
+    // News 썸네일 이미지 업로드 (500KB 이하)
+    uploadNewsImage: adminKeyProcedure
+      .input(z.object({ base64: z.string(), filename: z.string().default("news.jpg") }))
+      .mutation(({ input }) => uploadNewsImage(input)),
+
+    // 게임 아이콘 업로드 (기존 500KB 정책 유지)
+    uploadGameIconImage: adminKeyProcedure
+      .input(z.object({ base64: z.string(), filename: z.string().default("game-icon.jpg") }))
+      .mutation(({ input }) => uploadGameIconImage(input)),
+
+    // 스크린샷 원본·100KB 이하 미리보기 업로드
     uploadScreenshotImage: adminKeyProcedure
       .input(z.object({ base64: z.string(), filename: z.string().default("screenshot.jpg") }))
-      .mutation(async ({ input }) => {
-        const matches = input.base64.match(/^data:([^;]+);base64,(.+)$/);
-        if (!matches) throw new Error("Invalid base64 image data");
-        const buffer = Buffer.from(matches[2], "base64");
-        if (buffer.length > 1000 * 1024) throw new Error("파일 용량이 1,000KB를 초과합니다.");
-        const safeFilename = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const { url } = await storagePut(`screenshots/${Date.now()}-${safeFilename}`, buffer, matches[1]);
-        return { url };
-      }),
+      .mutation(({ input }) => uploadScreenshotAssets(input)),
 
     // 배너 목록 조회
     listBanners: adminKeyProcedure.query(async () => {
@@ -653,7 +645,7 @@ export const appRouter = router({
       return db.select().from(screenshots).orderBy(asc(screenshots.sortOrder), asc(screenshots.id));
     }),
     create: adminKeyProcedure
-      .input(z.object({ title: z.string().trim().min(1).max(255), imageUrl: z.string().trim().min(1), sortOrder: z.number().int().default(0), isActive: z.number().int().min(0).max(1).default(1) }))
+      .input(z.object({ title: z.string().trim().min(1).max(255), imageUrl: z.string().trim().min(1), thumbnailUrl: z.string().trim().min(1).optional(), sortOrder: z.number().int().default(0), isActive: z.number().int().min(0).max(1).default(1) }))
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("DB unavailable");
@@ -661,7 +653,7 @@ export const appRouter = router({
         return { id: (result as any).insertId };
       }),
     update: adminKeyProcedure
-      .input(z.object({ id: z.number().int(), title: z.string().trim().min(1).max(255).optional(), imageUrl: z.string().trim().min(1).optional(), sortOrder: z.number().int().optional(), isActive: z.number().int().min(0).max(1).optional() }))
+      .input(z.object({ id: z.number().int(), title: z.string().trim().min(1).max(255).optional(), imageUrl: z.string().trim().min(1).optional(), thumbnailUrl: z.string().trim().min(1).optional(), sortOrder: z.number().int().optional(), isActive: z.number().int().min(0).max(1).optional() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("DB unavailable");
