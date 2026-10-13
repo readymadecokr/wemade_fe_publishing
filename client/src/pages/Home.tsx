@@ -319,39 +319,41 @@ export default function Home() {
       <section id="game-info" data-home-section data-snap-panel className="react-home-panel react-home-game-info">
         <div className="react-home-section-shell react-home-game-info__grid">
           <div className="react-home-game-info__copy"><span>ABOUT RAGNAROK UNIVERSE</span><h2>CLASSIC ADVENTURE<br />A NEW WAY TO PLAY</h2><p>Experience the legendary fantasy MMORPG directly in your web browser. Explore a familiar world, meet a growing community, and help shape the next chapter.</p><div className="react-home-game-info__facts" aria-label="Ragnarok Universe game information"><div><span>PLATFORM</span><strong>Web Browser</strong></div><div><span>GENRE</span><strong>Fantasy MMORPG</strong></div><div><span>STATUS</span><strong>Beta Testing</strong></div><div><span>ACCESS</span><strong>No Download</strong></div></div><button type="button" className="react-home-outline-cta" onClick={() => setLibraryOpen(true)}>RUNE-MIDGARTS LIBRARY <b>›</b></button></div>
-          <div className="react-home-game-info__art"><div className="react-home-game-info__art-paper"><img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="eager" /></div></div>
         </div>
       </section>
 
       <section id="media" data-home-section data-snap-panel className="react-home-panel react-home-media">
-        <div className="react-home-section-shell">
-          <div className="react-home-section-heading react-home-section-heading--light"><div><span>SEE THE WORLD IN MOTION</span><h2>MEDIA</h2></div></div>
-          <div className="react-home-media__feature">
-            {featuredVideoEmbedUrl ? (
-              <iframe src={featuredVideoEmbedUrl} title={featuredVideo?.title ?? "Ragnarok Universe video"} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
-            ) : (
-              <div className="react-home-media__feature-fallback"><img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="lazy" /><span>NO ACTIVE VIDEO REGISTERED</span></div>
-            )}
-          </div>
-          {mediaScreenshots.length > 0 && <div className="react-home-media__gallery" aria-label="Ragnarok Universe screenshots">
-            <div className="react-home-media__gallery-label"><span>SCREENSHOTS</span></div>
-            <div ref={screenshotStripRef} className="react-home-media__strip" onScroll={syncScreenshotScroll}>
-              {mediaScreenshots.map((screenshot, index) => (
-                <button type="button" key={screenshot.image} className="react-home-media__thumbnail" onClick={() => setSelectedScreenshot(index)} aria-label={`View screenshot ${index + 1}: ${screenshot.title}`}>
-                  <img src={screenshot.thumbnail} alt={screenshot.title} loading={index < 6 ? "eager" : "lazy"} />
-                  <span>VIEW FULLSCREEN</span>
-                </button>
-              ))}
+        <div className="react-home-section-shell react-home-media__layout">
+          <div className="react-home-media__character-column" aria-hidden="true"><img className="react-home-media__character" src="/manus-storage/ragnarok-universe-media-character_ad636206.png" alt="" loading="lazy" /></div>
+          <div className="react-home-media__content">
+            <div className="react-home-section-heading react-home-section-heading--light"><div><span>SEE THE WORLD IN MOTION</span><h2>MEDIA</h2></div></div>
+            <div className="react-home-media__feature">
+              {featuredVideoEmbedUrl ? (
+                <iframe src={featuredVideoEmbedUrl} title={featuredVideo?.title ?? "Ragnarok Universe video"} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
+              ) : (
+                <div className="react-home-media__feature-fallback"><img src="/manus-storage/main2_0c694426_d1284510.png" alt="Ragnarok Universe gameplay" loading="lazy" /><span>NO ACTIVE VIDEO REGISTERED</span></div>
+              )}
             </div>
-            <div className="react-home-media__scrollbar" aria-label="Screenshot strip position">
-              <button type="button" className="react-home-media__scroll-arrow" onClick={() => moveScreenshotStrip(-1)} disabled={screenshotScroll <= 0.5} aria-label="Previous screenshots"><ChevronLeft /></button>
-              <div className="react-home-media__position-track">
-                <span className="react-home-media__position-window" style={{ width: `${screenshotViewport}%`, left: `${screenshotWindowLeft}%` }} aria-hidden="true" />
-                <input className="react-home-media__position-input" type="range" min="0" max="100" step="1" value={screenshotScroll} onChange={(event) => seekScreenshotStrip(Number(event.target.value))} aria-label="Browse screenshots" />
+            {mediaScreenshots.length > 0 && <div className="react-home-media__gallery" aria-label="Ragnarok Universe screenshots">
+              <div className="react-home-media__gallery-label"><span>SCREENSHOTS</span></div>
+              <div ref={screenshotStripRef} className="react-home-media__strip" onScroll={syncScreenshotScroll}>
+                {mediaScreenshots.map((screenshot, index) => (
+                  <button type="button" key={screenshot.image} className="react-home-media__thumbnail" onClick={() => setSelectedScreenshot(index)} aria-label={`View screenshot ${index + 1}: ${screenshot.title}`}>
+                    <img src={screenshot.thumbnail} alt={screenshot.title} loading={index < 6 ? "eager" : "lazy"} />
+                    <span>VIEW FULLSCREEN</span>
+                  </button>
+                ))}
               </div>
-              <button type="button" className="react-home-media__scroll-arrow" onClick={() => moveScreenshotStrip(1)} disabled={screenshotScroll >= 99.5} aria-label="Next screenshots"><ChevronRight /></button>
-            </div>
-          </div>}
+              <div className="react-home-media__scrollbar" aria-label="Screenshot strip position">
+                <button type="button" className="react-home-media__scroll-arrow" onClick={() => moveScreenshotStrip(-1)} disabled={screenshotScroll <= 0.5} aria-label="Previous screenshots"><ChevronLeft /></button>
+                <div className="react-home-media__position-track">
+                  <span className="react-home-media__position-window" style={{ width: `${screenshotViewport}%`, left: `${screenshotWindowLeft}%` }} aria-hidden="true" />
+                  <input className="react-home-media__position-input" type="range" min="0" max="100" step="1" value={screenshotScroll} onChange={(event) => seekScreenshotStrip(Number(event.target.value))} aria-label="Browse screenshots" />
+                </div>
+                <button type="button" className="react-home-media__scroll-arrow" onClick={() => moveScreenshotStrip(1)} disabled={screenshotScroll >= 99.5} aria-label="Next screenshots"><ChevronRight /></button>
+              </div>
+            </div>}
+          </div>
         </div>
       </section>
 

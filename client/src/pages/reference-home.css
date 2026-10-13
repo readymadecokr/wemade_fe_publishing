@@ -705,3 +705,44 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-closing .home-cta-pair { align-items: flex-start; }
   .react-home-closing .home-cta-pair .home-discord-button { height: 51px; }
 }
+
+/* Game Info becomes a full-panel gameplay backdrop with a translucent content card. */
+.react-home-layout > .react-home-game-info { position: relative; display: flex; box-sizing: border-box; height: min(860px, calc(100dvh - var(--react-home-header-height))); min-height: min(860px, calc(100dvh - var(--react-home-header-height))); max-height: 860px; align-items: center; overflow: hidden; padding: clamp(32px, 5vh, 64px) 0; background: #17364d; }
+.react-home-layout > .react-home-game-info::before { position: absolute; z-index: 0; inset: 0; background: linear-gradient(90deg, rgba(8, 27, 44, .46) 0%, rgba(10, 35, 54, .18) 55%, rgba(11, 35, 52, .28) 100%), center / cover no-repeat url("/manus-storage/main2_0c694426_d1284510.png"); content: ""; filter: saturate(.92) contrast(1.04); }
+.react-home-game-info > .react-home-game-info__grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; }
+.react-home-game-info__copy { box-sizing: border-box; width: min(600px, 100%); padding: clamp(24px, 3vw, 42px); border: 1px solid rgba(246, 237, 205, .62); border-radius: 18px; background: linear-gradient(135deg, rgba(250, 248, 241, .86), rgba(247, 244, 234, .72)); box-shadow: 0 22px 52px rgba(2, 18, 30, .28), inset 0 1px 0 rgba(255, 255, 255, .76); backdrop-filter: blur(9px); }
+.react-home-game-info__copy h2 { font-size: clamp(30px, 3vw, 45px); white-space: nowrap; }
+.react-home-game-info__copy p { color: #415a6b; }
+.react-home-game-info__facts { background: rgba(255, 255, 255, .22); }
+.react-home-game-info__art { display: none; }
+
+/* Media uses a compact character column beside a standard 16:9 YouTube stage. */
+.react-home-layout > .react-home-media { position: relative; display: flex; box-sizing: border-box; height: min(860px, calc(100dvh - var(--react-home-header-height))); min-height: min(860px, calc(100dvh - var(--react-home-header-height))); max-height: 860px; align-items: center; overflow: hidden; padding: clamp(28px, 4vh, 48px) 0; }
+.react-home-media__layout { display: grid; grid-template-columns: minmax(150px, 0.25fr) minmax(0, 1fr); align-items: center; gap: clamp(22px, 3vw, 46px); }
+.react-home-media__character-column { display: flex; height: 100%; min-height: 0; align-items: center; justify-content: center; pointer-events: none; }
+.react-home-media__character { display: block; width: min(100%, 220px); max-height: min(520px, 68vh); object-fit: contain; filter: drop-shadow(0 16px 22px rgba(0, 0, 0, .24)); transform: translateY(0); }
+.react-home-media__content { min-width: 0; }
+.react-home-media__content .react-home-section-heading { margin-bottom: clamp(12px, 1.6vh, 18px); }
+.react-home-media__feature { aspect-ratio: 16 / 9; }
+.react-home-media__gallery { margin-top: clamp(10px, 1.5vh, 16px); }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes react-home-media-character-float { 0%, 100% { transform: translateY(-8px); } 50% { transform: translateY(8px); } }
+  .react-home-media__character { animation: react-home-media-character-float 4.8s cubic-bezier(.45, .05, .55, .95) infinite; }
+}
+
+@media (max-width: 760px) {
+  .react-home-layout > .react-home-game-info, .react-home-layout > .react-home-media { height: min(860px, calc(100dvh - var(--react-home-header-height))); min-height: min(860px, calc(100dvh - var(--react-home-header-height))); max-height: 860px; }
+  .react-home-layout > .react-home-game-info { padding: 26px 0; }
+  .react-home-game-info__copy { padding: 20px; border-radius: 14px; }
+  .react-home-game-info__copy h2 { font-size: clamp(24px, 6.1vw, 31px); white-space: nowrap; }
+  .react-home-game-info__copy p { margin: 14px 0 16px; font-size: 13px; line-height: 1.48; }
+  .react-home-game-info__facts { margin-bottom: 16px; }
+  .react-home-game-info__facts > div { min-height: 42px; padding: 6px 8px; }
+  .react-home-layout > .react-home-media { padding: 26px 0; }
+  .react-home-media__layout { position: relative; grid-template-columns: minmax(0, 1fr); height: 100%; }
+  .react-home-media__character-column { position: absolute; z-index: 0; right: -28px; bottom: -30px; width: 165px; height: 260px; opacity: .26; }
+  .react-home-media__character { width: 100%; max-height: 100%; }
+  .react-home-media__content { position: relative; z-index: 1; }
+  .react-home-media__feature { aspect-ratio: 16 / 9; }
+}

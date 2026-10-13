@@ -36,9 +36,12 @@ describe("Home Media screenshot gallery", () => {
     expect(homeSource).not.toContain('<p>{selectedScreenshot + 1} / {MEDIA_SCREENSHOTS.length}');
   });
 
-  it("keeps Media content inside the panel with compact video, non-cropping thumbnails, and a long position track", () => {
+  it("keeps Media within an 860px panel with a 16:9 video, animated character, non-cropping thumbnails, and a long position track", () => {
     expect(homeStyles).toContain(".react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { display: block; min-height: 0; height: auto; padding: 30px 0; }");
-    expect(homeStyles).toContain(".react-home-media__feature { aspect-ratio: 2.5 / 1; }");
+    expect(homeSource).toContain('className="react-home-media__character" src="/manus-storage/ragnarok-universe-media-character_ad636206.png"');
+    expect(homeStyles).toContain('.react-home-layout > .react-home-media { position: relative; display: flex; box-sizing: border-box; height: min(860px, calc(100dvh - var(--react-home-header-height)));');
+    expect(homeStyles).toContain('.react-home-media__feature { aspect-ratio: 16 / 9; }');
+    expect(homeStyles).toContain('@keyframes react-home-media-character-float');
     expect(stripStyles).toContain(".react-home-media__strip {\n  display: flex;");
     expect(stripStyles).toContain("gap: 4px;");
     expect(stripStyles).toContain("width: calc((100% - 20px) / 6);");
