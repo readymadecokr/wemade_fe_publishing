@@ -356,7 +356,7 @@ export default function Home() {
       </section>
 
       <section className="react-home-panel react-home-closing-panel" data-home-section data-snap-panel aria-label="Ragnarok Universe closing call to action">
-        <div className="react-home-closing"><div className="react-home-closing__frame"><img className="react-home-closing__illustration" src="/manus-storage/ragnarok-universe-closing-cta-illustration_c16b4942.webp" alt="" aria-hidden="true" /><div className="react-home-closing__content"><span>YOUR STORY BEGINS HERE</span><h2>TWO CLICKS TO&nbsp;MIDGARD</h2><p>Start the game in your browser, then join the Discord to find a party, get patch news first and take part in founder events.</p><HomeCtaPair /></div></div></div>
+        <div className="react-home-closing"><div className="react-home-closing__frame"><img className="react-home-closing__illustration" src="/manus-storage/ragnarok-universe-closing-cta-illustration-v2_cf1e336b.png" alt="" aria-hidden="true" /><div className="react-home-closing__content"><span>YOUR STORY BEGINS HERE</span><h2>TWO CLICKS TO&nbsp;MIDGARD</h2><p>Start the game in your browser, then join the Discord to find a party, get patch news first and take part in founder events.</p><HomeCtaPair /></div></div></div>
       </section>
       <ServiceFooter snapPanel />
       </div>

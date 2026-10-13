@@ -13,8 +13,8 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-closing { padding: 80px 0; }');
   });
 
-  it("uses a bright 600px Closing CTA with its text and illustration constrained to 1200px", () => {
-    expect(homeSource).toContain('className="react-home-closing__illustration" src="/manus-storage/ragnarok-universe-closing-cta-illustration_c16b4942.webp"');
+  it("uses a bright 600px Closing CTA with the current illustration constrained to 1200px", () => {
+    expect(homeSource).toContain('className="react-home-closing__illustration" src="/manus-storage/ragnarok-universe-closing-cta-illustration-v2_cf1e336b.png"');
     expect(homeSource).toContain('<h2>TWO CLICKS TO&nbsp;MIDGARD</h2>');
     expect(styleSource).toContain('height: min(600px, calc(100dvh - var(--react-home-header-height)))');
     expect(styleSource).toContain('.react-home-closing__frame { position: relative; box-sizing: border-box; width: min(var(--service-content-max-width), calc(100% - 64px)); height: 100%; margin: 0 auto; }');
