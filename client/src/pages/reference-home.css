@@ -589,7 +589,7 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 @media (max-width: 760px) {
   .reference-header-coin-link img { width: 18px; height: 18px; }
   .reference-header-coin-link strong { font-size: 9px; }
-  .reference-header-language { font-size: 11px; }
+  .reference-header-language { font-size: clamp(7px,2vw,10px); }
   .react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { height: auto; min-height: 0; overflow: visible; padding: 80px 0; }
   .react-home-discord__game-start { margin-top: -100px; padding-bottom: 16px; }
   .react-home-closing { padding: 80px 0; }
@@ -603,6 +603,17 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 .react-home-discord__shell { overflow: visible; }
 .react-home-discord__game-start { margin-top: calc(-1 * clamp(48px,5.5vw,68px)); z-index: 5; }
 .home-game-start--discord-hero { position: relative; z-index: 6; }
+
+/* Keep the shared EN language label on the same type scale as the visible GNB menu. */
+.reference-header-language { font-size: clamp(12px,calc(.52vw + 6px),16px); }
+
+@media (max-width: 1000px) and (min-width: 761px) {
+  .reference-header-language { font-size: clamp(10px,1.13vw,13px); }
+}
+
+@media (max-width: 760px) {
+  .reference-header-language { font-size: clamp(7px,2vw,10px); }
+}
 
 /* Footer uses the same 80px breathing room as the requested content regions. */
 .react-home-footer { padding-block: 80px; }

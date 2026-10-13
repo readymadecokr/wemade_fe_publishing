@@ -9,16 +9,7 @@ function fmtCoin(value: number) {
   return Math.min(Math.max(Number(value) || 0, 0), 9_999_999).toLocaleString("en-US");
 }
 
-const COIN_ICONS: Record<number, string> = {
-  1: "/manus-storage/rcoin-product-normalized-1_3a54dcfa.png",
-  2: "/manus-storage/rcoin-product-normalized-2_e83f10a6.png",
-  3: "/manus-storage/rcoin-product-normalized-3_a2066f09.png",
-  4: "/manus-storage/rcoin-product-normalized-4-original_0c88b775.png",
-  5: "/manus-storage/rcoin-product-normalized-5_1f2fcd6a.png",
-  6: "/manus-storage/rcoin-product-normalized-6_f8d73a29.png",
-  7: "/manus-storage/rcoin-product-normalized-7_1846f0d0.png",
-  8: "/manus-storage/rcoin-product-normalized-8_0af9497e.png",
-};
+const SHOP_RCOIN_IMAGE = "/manus-storage/ragnarok-universe-rcoin_782d398f.png";
 
 type Product = {
   id: number;
@@ -140,7 +131,7 @@ function ChargeTab({ rCoin, bonusCoin, paymentProvider, onPaymentProviderChange 
         const isBestValue = order === 8;
         return <button type="button" key={product.id} data-shop-product={product.id} onClick={() => { setSelectedId(product.id); setPurchaseOpen(true); }} className="fantasy-card relative min-h-[154px] rounded-xl p-4 text-left transition-all hover:-translate-y-0.5 hover:border-[#5c79ad] hover:shadow-md">
           {(isBestSeller || isBestValue) && <span className={`absolute -left-1 -top-3 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-wide text-white shadow-sm ${isBestSeller ? "bg-[#a51f24]" : "bg-[#5d4387]"}`}>{isBestSeller ? "Best Seller" : "Best Value"}</span>}
-          <div className="flex items-center gap-3 pt-2"><div className="flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-lg bg-[#f0e7d2]"><img src={COIN_ICONS[order] ?? COIN_ICONS[index + 1]} alt="rCoin package" className="h-[76px] w-[76px] object-contain" /></div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-baseline gap-x-1 gap-y-1"><span className="text-2xl font-black leading-none text-[#2c241c]">{fmtCoin(product.ruCashAmount)}</span><span className="text-sm font-bold text-[#655540]">rCoin</span>{product.bonusCashAmount > 0 && <span className="text-sm font-black text-green-700">+{fmtCoin(product.bonusCashAmount)} Bonus</span>}</div></div></div>
+          <div className="flex items-center gap-3 pt-2"><div className="flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-lg bg-[#f0e7d2]"><img src={SHOP_RCOIN_IMAGE} alt="rCoin package" className="h-[76px] w-[76px] object-contain" /></div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-baseline gap-x-1 gap-y-1"><span className="text-2xl font-black leading-none text-[#2c241c]">{fmtCoin(product.ruCashAmount)}</span><span className="text-sm font-bold text-[#655540]">rCoin</span>{product.bonusCashAmount > 0 && <span className="text-sm font-black text-green-700">+{fmtCoin(product.bonusCashAmount)} Bonus</span>}</div></div></div>
           <div className="mt-3 rounded-lg border border-[#4a68a0] bg-gradient-to-b from-[#5e80bb] to-[#3d609d] px-3 py-2 text-center text-lg font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,.35),0_3px_0_rgba(46,73,123,.45)]">{formatPrice(product)}</div>
         </button>;
       })}

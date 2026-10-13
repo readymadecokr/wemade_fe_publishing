@@ -29,6 +29,8 @@ describe("direct React service header", () => {
     expect(homeHeaderSource).toContain('import { Gamepad2, Globe2, Menu, X } from "lucide-react";');
     expect(homeHeaderSource).toContain('<Globe2 size={17} aria-hidden="true" /> <span>EN</span>');
     expect(headerStyles).toContain('.reference-header-language { gap: 5px; padding-inline: 8px; font-size: clamp(11px,.86vw,13px); }');
+    expect(headerStyles).toContain('.reference-header-language { font-size: clamp(12px,calc(.52vw + 6px),16px); }');
+    expect(headerStyles).toContain('.reference-header-language { font-size: clamp(7px,2vw,10px); }');
   });
 
   it("keeps all long lower-GNB labels visible and uses section-start active tracking", () => {
