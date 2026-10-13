@@ -33,3 +33,12 @@
   .news-home-footer__social { position: static; }
   .news-home-footer__inner > div:first-child > p span:first-child { white-space: normal; }
 }
+
+/* Align public service content with the 1200px Home page baseline. */
+.news-detail-page-banner > .container,
+.service-content-container { width: min(var(--service-content-max-width, 1200px), calc(100% - 64px)); margin-inline: auto; }
+
+@media (max-width: 760px) {
+  .news-detail-page-banner > .container,
+  .service-content-container { width: calc(100% - 28px); }
+}

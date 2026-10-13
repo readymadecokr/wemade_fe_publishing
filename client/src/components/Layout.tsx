@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Globe, X, Disc, ChevronDown, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,8 +34,12 @@ export default function Layout({ children, variant = "homeChrome", showClosingCt
   const [showComingSoonDialog, setShowComingSoonDialog] = useState(false);
   const { theme } = useTheme();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    root.style.scrollBehavior = previousScrollBehavior;
   }, [location]);
 
   const isLoggedIn = localStorage.getItem("rou_logged_in") === "true";

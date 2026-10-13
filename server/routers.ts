@@ -435,7 +435,7 @@ export const appRouter = router({
       }))
       .mutation(({ input }) => uploadMainBannerImage(input)),
 
-    // News 썸네일 이미지 업로드 (500KB 이하)
+    // News 썸네일 이미지 업로드 (512KB 이하)
     uploadNewsImage: adminKeyProcedure
       .input(z.object({ base64: z.string(), filename: z.string().default("news.jpg") }))
       .mutation(({ input }) => uploadNewsImage(input)),

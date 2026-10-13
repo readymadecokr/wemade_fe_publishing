@@ -2,6 +2,11 @@ import { Link } from "wouter";
 import "../pages/reference-home.css";
 
 const DISCORD_URL = "https://discord.gg/yVWJkWdkAU";
+const PARTNER_LINKS = [
+  { label: "GRAVITY", href: "https://gravity.co.kr/" },
+  { label: "WEMADE CONNECT", href: "https://wemadeconnect.com/" },
+  { label: "GALA", href: "https://www.gala.biz/ko" },
+] as const;
 
 interface ServiceFooterProps {
   onPrivacySettings?: () => void;
@@ -18,7 +23,14 @@ export default function ServiceFooter({ onPrivacySettings, snapPanel = false }: 
     <footer className="react-home-footer" data-snap-panel={snapPanel || undefined} aria-label="Ragnarok Universe footer">
       <div className="react-home-footer__inner">
         <div>
-          <div className="react-home-footer__brands">GRAVITY <i /> WEMADE CONNECT <i /> GALA</div>
+          <div className="react-home-footer__brands" aria-label="Ragnarok Universe partners">
+            {PARTNER_LINKS.map((partner, index) => (
+              <span key={partner.label}>
+                {index > 0 && <i aria-hidden="true" />}
+                <a href={partner.href} target="_blank" rel="noopener noreferrer">{partner.label}</a>
+              </span>
+            ))}
+          </div>
           <nav>
             <Link href="/terms-of-service">Terms of Service</Link>
             <Link href="/privacy-policy">Privacy Policy</Link>

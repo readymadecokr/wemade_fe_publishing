@@ -17,12 +17,12 @@ const schemaSource = readFileSync(new URL("../drizzle/schema.ts", import.meta.ur
 
 describe("administrator image upload and screenshot previews", () => {
   it("applies the requested News, banner, and screenshot size rules", () => {
-    expect(NEWS_IMAGE_MAX_BYTES).toBe(500 * 1024);
+    expect(NEWS_IMAGE_MAX_BYTES).toBe(512 * 1024);
     expect(BANNER_IMAGE_MAX_BYTES).toBe(1024 * 1024);
     expect(SCREENSHOT_IMAGE_MAX_BYTES).toBe(3072 * 1024);
     expect(SCREENSHOT_THUMBNAIL_MAX_BYTES).toBe(100 * 1024);
     expect(adminSource).toContain("1900×600px | 1,024KB 미만");
-    expect(adminSource).toContain("News 썸네일은 500KB 이하 이미지를 선택해주세요.");
+    expect(adminSource).toContain("News 썸네일은 512KB 이하 이미지를 선택해주세요.");
     expect(adminSource).toContain("스크린샷 원본은 3,072KB 이하로 등록하세요.");
     expect(routerSource).toContain("uploadNewsImage");
     expect(routerSource).toContain("uploadScreenshotAssets");

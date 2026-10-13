@@ -36,7 +36,7 @@ function NewsPageContent() {
       <section className="news-detail-page-banner news-detail-page-banner--list" aria-labelledby="news-page-title">
         <div className="container"><h1 id="news-page-title">News</h1><p>Latest news, interviews, and community highlights</p></div>
       </section>
-      <main className="container fantasy-content-guide px-2 py-6 md:px-4 md:py-12">
+      <main className="service-content-container fantasy-content-guide px-2 py-6 md:px-4 md:py-12">
         {isLoading ? (
           <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-6" aria-label="Loading news">
             {Array.from({ length: 6 }, (_, index) => <div className="fantasy-card h-40 animate-pulse rounded-lg bg-slate-100 md:h-64" key={index} />)}

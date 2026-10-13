@@ -371,8 +371,8 @@ export default function MyPage() {
           <p>Manage your profile, coupons, and rCoin activity.</p>
         </div>
       </section>
-      <div className="fantasy-page-shell fantasy-account min-h-screen py-8 px-4">
-        <div className="max-w-7xl mx-auto">
+      <div className="fantasy-page-shell fantasy-account min-h-screen py-8">
+        <div className="service-content-container">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left Sidebar */}
             <div className="lg:col-span-1">

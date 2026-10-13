@@ -9,6 +9,7 @@ const layoutSource = readFileSync(new URL("../client/src/components/Layout.tsx",
 const serviceFooterSource = readFileSync(new URL("../client/src/components/ServiceFooter.tsx", import.meta.url), "utf8");
 const homeHeaderSource = readFileSync(new URL("../client/src/components/HomeHeader.tsx", import.meta.url), "utf8");
 const layoutStyles = readFileSync(new URL("../client/src/components/news-layout.css", import.meta.url), "utf8");
+const homeStyles = readFileSync(new URL("../client/src/pages/reference-home.css", import.meta.url), "utf8");
 const appSource = readFileSync(new URL("../client/src/App.tsx", import.meta.url), "utf8");
 
 describe("News Home-style chrome", () => {
@@ -55,6 +56,16 @@ describe("News Home-style chrome", () => {
     expect(layoutSource).toContain('location === "/point-shop" ? "shop"');
     expect(homeHeaderSource).toContain("pathFor(sectionId)");
     expect(appSource).toContain('<Redirect to="/#game-info" />');
+  });
+
+  it("aligns Home, News, Shop, and My Page content to the shared 1200px baseline", () => {
+    expect(homeStyles).toContain("--service-content-max-width: 1200px;");
+    expect(homeStyles).toContain("width: min(var(--service-content-max-width), calc(100% - 64px));");
+    expect(layoutStyles).toContain(".service-content-container { width: min(var(--service-content-max-width, 1200px), calc(100% - 64px));");
+    expect(layoutStyles).toContain(".service-content-container { width: calc(100% - 28px); }");
+    expect(newsSource).toContain('className="service-content-container fantasy-content-guide');
+    expect(pointShopSource).toContain('className="service-content-container fantasy-content-guide');
+    expect(myPageSource).toContain('className="service-content-container"');
   });
 
   it("renders the reference-style News banner on both the referenced list URL and News detail", () => {

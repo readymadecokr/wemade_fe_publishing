@@ -1564,7 +1564,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                 const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/jpeg,image/webp,image/png';
                 input.onchange = async (ev) => {
                   const file = (ev.target as HTMLInputElement).files?.[0]; if (!file) return;
-                  if (file.size > 500 * 1024) { toast.error('News 썸네일은 500KB 이하 이미지를 선택해주세요.'); return; }
+                  if (file.size > 512 * 1024) { toast.error('News 썸네일은 512KB 이하 이미지를 선택해주세요.'); return; }
                   try {
                     const reader = new FileReader();
                     const base64 = await new Promise<string>(r => { reader.onload = ev => r(ev.target?.result as string); reader.readAsDataURL(file); });
@@ -1578,7 +1578,7 @@ function NewsSection({ adminClient }: { adminClient: ReturnType<typeof createAdm
                 input.click();
               }}>PC에서 찾아보기</Button>
             </div>
-            <p className="text-xs text-muted-foreground">권장 : 700 x 360px  |  최대 500KB  |  Jpg, WebP, PNG</p>
+            <p className="text-xs text-muted-foreground">권장 : 700 x 360px  |  최대 512KB  |  Jpg, WebP, PNG</p>
             {form.imageUrl && (
               <img src={form.imageUrl} alt="preview" className="mt-2 rounded border h-24 object-cover" />
             )}

@@ -1,7 +1,7 @@
 import sharp, { type Metadata } from "sharp";
 import { storagePut } from "./storage";
 
-export const NEWS_IMAGE_MAX_BYTES = 500 * 1024;
+export const NEWS_IMAGE_MAX_BYTES = 512 * 1024;
 export const BANNER_IMAGE_MAX_BYTES = 1024 * 1024;
 export const SCREENSHOT_IMAGE_MAX_BYTES = 3072 * 1024;
 export const SCREENSHOT_THUMBNAIL_MAX_BYTES = 100 * 1024;
@@ -87,7 +87,7 @@ export async function uploadScreenshotAssets(input: { base64: string; filename: 
 
 export async function uploadNewsImage(input: { base64: string; filename: string }) {
   const image = parseImageDataUrl(input.base64, input.filename, "news.jpg");
-  if (image.buffer.length > NEWS_IMAGE_MAX_BYTES) throw new Error("News 썸네일은 500KB를 초과할 수 없습니다.");
+  if (image.buffer.length > NEWS_IMAGE_MAX_BYTES) throw new Error("News 썸네일은 512KB를 초과할 수 없습니다.");
   const upload = await storagePut(`news/${Date.now()}-${image.filename}`, image.buffer, image.contentType);
   return { url: upload.url };
 }
