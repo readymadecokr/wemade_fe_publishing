@@ -13,12 +13,19 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-closing { padding: 80px 0; }');
   });
 
-  it("uses the supplied illustration in a bright maximum 600px two-column Closing CTA", () => {
+  it("uses a bright 600px Closing CTA with its text and illustration constrained to 1200px", () => {
     expect(homeSource).toContain('className="react-home-closing__illustration" src="/manus-storage/ragnarok-universe-closing-cta-illustration_c16b4942.webp"');
+    expect(homeSource).toContain('<h2>TWO CLICKS TO&nbsp;MIDGARD</h2>');
     expect(styleSource).toContain('height: min(600px, calc(100dvh - var(--react-home-header-height)))');
-    expect(styleSource).toContain('grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr)');
+    expect(styleSource).toContain('.react-home-closing__frame { position: relative; box-sizing: border-box; width: min(var(--service-content-max-width), calc(100% - 64px)); height: 100%; margin: 0 auto; }');
     expect(styleSource).toContain('.react-home-closing::before');
-    expect(styleSource).toContain('.react-home-closing__content { position: relative; z-index: 1; box-sizing: border-box; width: min(510px, 100%); padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; text-align: left; backdrop-filter: none; }');
+    expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-discord-button { height: 61px; }');
+  });
+
+  it("uses the supplied visual beneath a maximum 860px Latest From Midgard section", () => {
+    expect(styleSource).toContain('height: min(860px, calc(100dvh - var(--react-home-header-height)))');
+    expect(styleSource).toContain('/manus-storage/ragnarok-universe-latest-midgard-backdrop_569e8f50.png');
+    expect(styleSource).toContain('.react-home-news::before');
   });
 
   it("uses the white Gravity asset and borderless official social marks", () => {

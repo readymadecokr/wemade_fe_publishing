@@ -675,20 +675,33 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-footer__inner > div:first-child > p span:last-child { grid-column: 1; grid-row: 5; }
 }
 
-/* Closing CTA: a bright, balanced two-column composition with direct left-aligned copy. */
-.react-home-closing { position: relative; isolation: isolate; display: grid; box-sizing: border-box; width: 100%; height: min(600px, calc(100dvh - var(--react-home-header-height))); min-height: min(600px, calc(100dvh - var(--react-home-header-height))); grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); align-items: center; overflow: hidden; padding-inline: max(32px, calc((100% - var(--service-content-max-width)) / 2)); background: radial-gradient(circle at 78% 40%, #d5edf0 0%, rgba(213,237,240,0) 40%), linear-gradient(112deg, #fbf8f1 0%, #f3f6ef 48%, #d8ebec 100%); text-align: left; }
+/* Latest From Midgard uses the supplied visual at a quiet opacity, without competing with the news cards. */
+.react-home-layout > .react-home-news { height: min(860px, calc(100dvh - var(--react-home-header-height))); min-height: min(860px, calc(100dvh - var(--react-home-header-height))); max-height: 860px; background: #f8f4eb; }
+.react-home-news::before { position: absolute; z-index: 0; inset: 0; background: center / cover no-repeat url("/manus-storage/ragnarok-universe-latest-midgard-backdrop_569e8f50.png"); content: ""; opacity: .13; pointer-events: none; }
+.react-home-news > .react-home-section-shell { position: relative; z-index: 1; }
+
+/* Closing CTA: direct copy and character art share the same centered 1200px frame. */
+.react-home-closing { position: relative; isolation: isolate; display: block; box-sizing: border-box; width: 100%; height: min(600px, calc(100dvh - var(--react-home-header-height))); min-height: min(600px, calc(100dvh - var(--react-home-header-height))); overflow: hidden; padding: 0; background: radial-gradient(circle at 78% 40%, #d5edf0 0%, rgba(213,237,240,0) 40%), linear-gradient(112deg, #fbf8f1 0%, #f3f6ef 48%, #d8ebec 100%); text-align: left; }
 .react-home-closing::before { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgba(251,248,241,.98) 0%, rgba(251,248,241,.93) 40%, rgba(251,248,241,.56) 59%, rgba(251,248,241,.12) 100%); content: ""; }
-.react-home-closing__illustration { position: absolute; z-index: -2; top: 50%; right: clamp(-130px,-5vw,-34px); width: min(900px, 64vw); max-width: none; height: min(106%, 600px); transform: translateY(-50%); object-fit: contain; object-position: right center; opacity: .96; pointer-events: none; user-select: none; }
-.react-home-closing__content { position: relative; z-index: 1; box-sizing: border-box; width: min(510px, 100%); padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; text-align: left; backdrop-filter: none; }
-.react-home-closing > .react-home-closing__content > span { color: #927029; }
-.react-home-closing h2 { color: #193b55; text-shadow: none; }
+.react-home-closing__frame { position: relative; box-sizing: border-box; width: min(var(--service-content-max-width), calc(100% - 64px)); height: 100%; margin: 0 auto; }
+.react-home-closing__illustration { position: absolute; z-index: -2; top: 50%; right: 0; width: min(780px, 65%); max-width: none; height: min(96%, 560px); transform: translateY(-50%); object-fit: contain; object-position: right center; opacity: .96; pointer-events: none; user-select: none; }
+.react-home-closing__content { position: relative; z-index: 1; display: flex; box-sizing: border-box; width: min(510px, 48%); height: 100%; padding: 0; flex-direction: column; align-items: flex-start; justify-content: center; border: 0; border-radius: 0; background: transparent; box-shadow: none; text-align: left; backdrop-filter: none; }
+.react-home-closing__content > span { color: #927029; }
+.react-home-closing h2 { color: #193b55; font-size: clamp(25px, 3.2vw, 44px); text-shadow: none; white-space: nowrap; }
 .react-home-closing p { color: #526b79; text-shadow: none; }
 .react-home-closing .home-cta-pair { margin-inline: 0; justify-content: flex-start; }
+
+@media (min-width: 761px) {
+  .react-home-closing .home-cta-pair .home-discord-button { height: 61px; }
+}
 
 @media (max-width: 760px) {
   .react-home-closing { height: min(600px, calc(100dvh - var(--react-home-header-height))); min-height: min(600px, calc(100dvh - var(--react-home-header-height))); display: flex; align-items: flex-end; padding: 36px 24px; }
   .react-home-closing::before { background: linear-gradient(180deg, rgba(251,248,241,.16) 0%, rgba(251,248,241,.55) 46%, rgba(251,248,241,.98) 100%); }
+  .react-home-closing__frame { width: 100%; }
   .react-home-closing__illustration { top: 39%; right: 50%; width: min(680px, 150vw); height: 72%; transform: translate(50%, -50%); opacity: .83; }
-  .react-home-closing__content { width: min(390px, 100%); margin: 0; padding: 0; }
+  .react-home-closing__content { width: min(390px, 100%); height: auto; margin: 0; padding: 0; }
+  .react-home-closing h2 { font-size: clamp(23px, 6.3vw, 31px); }
   .react-home-closing .home-cta-pair { align-items: flex-start; }
+  .react-home-closing .home-cta-pair .home-discord-button { height: 51px; }
 }

@@ -1751,3 +1751,10 @@
 - [x] 팝업 패널 제거 및 텍스트 좌측·일러스트 우측 2열 배치
 - [x] 데스크톱·모바일 렌더링 및 회귀 테스트 검증
 - [x] 체크포인트 저장 및 결과 전달
+
+## Latest From Midgard 배경·Closing CTA 1200px 정렬
+- [x] Latest From Midgard·Closing CTA 구조와 현재 크기 규칙 점검
+- [x] Latest From Midgard 최대 860px 및 첨부 배경 이미지 적용
+- [x] Closing CTA 텍스트·일러스트 1200px 기준선, 단일 제목 행, Discord 높이 보정
+- [x] 데스크톱·모바일 렌더링 및 회귀 테스트 검증
+- [x] 체크포인트 저장 및 결과 전달
