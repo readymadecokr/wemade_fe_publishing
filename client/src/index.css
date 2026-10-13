@@ -464,6 +464,11 @@
     z-index: 1;
   }
 
+  /* Shop uses the shared width container directly, without the service-page left inset. */
+  .shop-detail-page-shell .shop-content-guide {
+    padding-left: 0;
+  }
+
   .fantasy-section-decorated::after {
     content: "";
     pointer-events: none;

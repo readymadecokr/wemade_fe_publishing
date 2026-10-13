@@ -27,7 +27,7 @@ describe("News detail entry and service-page title banners", () => {
     expect(newsListSource).toContain('fantasy-content-guide px-2 py-6');
     expect(newsDetailSource).toContain('fantasy-page-shell news-detail-surface pt-6 pb-8 md:pt-8');
     expect(newsDetailSource).toContain('className="fantasy-page-shell news-detail-surface"');
-    expect(pointShopSource).toContain('fantasy-content-guide pt-6 pb-8 md:pt-8');
+    expect(pointShopSource).toContain('fantasy-content-guide shop-content-guide pt-6 pb-8 md:pt-8');
   });
 
   it("removes the atlas image from all News and Shop service surfaces", () => {
