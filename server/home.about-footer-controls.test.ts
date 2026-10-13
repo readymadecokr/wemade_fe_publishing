@@ -22,6 +22,11 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-closing .home-cta-pair .home-discord-button { height: 61px; }');
   });
 
+  it("vertically centers Closing CTA copy on mobile instead of pinning it to the top or bottom", () => {
+    expect(styleSource).toContain('.react-home-closing { height: min(600px, calc(100dvh - var(--react-home-header-height))); min-height: min(600px, calc(100dvh - var(--react-home-header-height))); display: block; padding: 0; }');
+    expect(styleSource).toContain('.react-home-closing__frame { display: flex; width: calc(100% - 48px); min-height: 100%; align-items: center; }');
+  });
+
   it("uses the supplied visual beneath a maximum 860px Latest From Midgard section", () => {
     expect(styleSource).toContain('height: min(860px, calc(100dvh - var(--react-home-header-height)))');
     expect(styleSource).toContain('/manus-storage/ragnarok-universe-latest-midgard-backdrop_569e8f50.png');

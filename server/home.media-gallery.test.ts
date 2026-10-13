@@ -46,6 +46,8 @@ describe("Home Media screenshot gallery", () => {
     expect(homeStyles).toContain('.react-home-media__gallery { width: 100%; margin-top: clamp(10px, 1.5vh, 16px); }');
     expect(homeStyles).toContain('.react-home-media__feature { aspect-ratio: 16 / 9; }');
     expect(homeStyles).toContain('@keyframes react-home-media-character-float');
+    expect(homeStyles).toContain('.react-home-media__layout { position: relative; z-index: 0; display: flex; height: 100%; flex-direction: column; justify-content: center; }');
+    expect(homeStyles).toContain('.react-home-media__character-column { position: absolute; z-index: -1; top: 50%; right: -52px; width: min(330px, 78vw); height: min(530px, 72vh); opacity: .25; transform: translateY(-50%); }');
     expect(stripStyles).toContain(".react-home-media__strip {\n  display: flex;");
     expect(stripStyles).toContain("gap: 4px;");
     expect(stripStyles).toContain("width: calc((100% - 20px) / 6);");
