@@ -39,7 +39,11 @@ describe("Home Media screenshot gallery", () => {
   it("keeps Media within an 860px panel with a 16:9 video, animated character, non-cropping thumbnails, and a long position track", () => {
     expect(homeStyles).toContain(".react-home-discord, .react-home-news, .react-home-game-info, .react-home-media { display: block; min-height: 0; height: auto; padding: 30px 0; }");
     expect(homeSource).toContain('className="react-home-media__character" src="/manus-storage/ragnarok-universe-media-character_ad636206.png"');
+    expect(homeSource).toContain('className="react-home-media__video-row"');
+    expect(homeSource.indexOf('className="react-home-media__character-column"')).toBeLessThan(homeSource.indexOf('className="react-home-media__gallery"'));
     expect(homeStyles).toContain('.react-home-layout > .react-home-media { position: relative; display: flex; box-sizing: border-box; height: min(860px, calc(100dvh - var(--react-home-header-height)));');
+    expect(homeStyles).toContain('.react-home-media__video-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(150px, .25fr);');
+    expect(homeStyles).toContain('.react-home-media__gallery { width: 100%; margin-top: clamp(10px, 1.5vh, 16px); }');
     expect(homeStyles).toContain('.react-home-media__feature { aspect-ratio: 16 / 9; }');
     expect(homeStyles).toContain('@keyframes react-home-media-character-float');
     expect(stripStyles).toContain(".react-home-media__strip {\n  display: flex;");

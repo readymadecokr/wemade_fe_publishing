@@ -718,13 +718,14 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
 
 /* Media uses a compact character column beside a standard 16:9 YouTube stage. */
 .react-home-layout > .react-home-media { position: relative; display: flex; box-sizing: border-box; height: min(860px, calc(100dvh - var(--react-home-header-height))); min-height: min(860px, calc(100dvh - var(--react-home-header-height))); max-height: 860px; align-items: center; overflow: hidden; padding: clamp(28px, 4vh, 48px) 0; }
-.react-home-media__layout { display: grid; grid-template-columns: minmax(150px, 0.25fr) minmax(0, 1fr); align-items: center; gap: clamp(22px, 3vw, 46px); }
+.react-home-media__layout { display: block; }
+.react-home-media__video-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(150px, .25fr); align-items: center; gap: clamp(22px, 3vw, 46px); }
 .react-home-media__character-column { display: flex; height: 100%; min-height: 0; align-items: center; justify-content: center; pointer-events: none; }
 .react-home-media__character { display: block; width: min(100%, 220px); max-height: min(520px, 68vh); object-fit: contain; filter: drop-shadow(0 16px 22px rgba(0, 0, 0, .24)); transform: translateY(0); }
 .react-home-media__content { min-width: 0; }
 .react-home-media__content .react-home-section-heading { margin-bottom: clamp(12px, 1.6vh, 18px); }
 .react-home-media__feature { aspect-ratio: 16 / 9; }
-.react-home-media__gallery { margin-top: clamp(10px, 1.5vh, 16px); }
+.react-home-media__gallery { width: 100%; margin-top: clamp(10px, 1.5vh, 16px); }
 
 @media (prefers-reduced-motion: no-preference) {
   @keyframes react-home-media-character-float { 0%, 100% { transform: translateY(-8px); } 50% { transform: translateY(8px); } }
@@ -740,9 +741,10 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-game-info__facts { margin-bottom: 16px; }
   .react-home-game-info__facts > div { min-height: 42px; padding: 6px 8px; }
   .react-home-layout > .react-home-media { padding: 26px 0; }
-  .react-home-media__layout { position: relative; grid-template-columns: minmax(0, 1fr); height: 100%; }
-  .react-home-media__character-column { position: absolute; z-index: 0; right: -28px; bottom: -30px; width: 165px; height: 260px; opacity: .26; }
+  .react-home-media__layout { height: 100%; }
+  .react-home-media__video-row { grid-template-columns: minmax(0, 1fr) 88px; gap: 10px; }
+  .react-home-media__character-column { height: auto; align-self: stretch; opacity: .72; }
   .react-home-media__character { width: 100%; max-height: 100%; }
-  .react-home-media__content { position: relative; z-index: 1; }
   .react-home-media__feature { aspect-ratio: 16 / 9; }
+  .react-home-media__gallery { width: 100%; }
 }
