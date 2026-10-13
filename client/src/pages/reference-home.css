@@ -674,3 +674,19 @@ html.react-home-snap { scroll-padding-top: var(--react-home-header-height); scro
   .react-home-footer__inner > div:first-child > p span:first-child { grid-column: 1; grid-row: 4; margin-top: 10px; text-align: center; }
   .react-home-footer__inner > div:first-child > p span:last-child { grid-column: 1; grid-row: 5; }
 }
+
+/* Closing CTA: decorative illustration remains behind an accessible, high-contrast message layer. */
+.react-home-closing { position: relative; isolation: isolate; box-sizing: border-box; height: min(800px, calc(100dvh - var(--react-home-header-height))); min-height: min(800px, calc(100dvh - var(--react-home-header-height))); overflow: hidden; background: radial-gradient(circle at 78% 46%, rgba(50,113,137,.76), transparent 43%), linear-gradient(112deg, #071a2d 0%, #102e45 54%, #173a4e 100%); }
+.react-home-closing::before { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgba(4,19,34,.95) 0%, rgba(5,22,39,.88) 31%, rgba(8,29,47,.58) 58%, rgba(8,26,42,.35) 100%); content: ""; }
+.react-home-closing__illustration { position: absolute; z-index: -2; top: 50%; right: clamp(-190px,-8vw,-60px); width: min(1180px, 88vw); max-width: none; height: min(92%, 740px); transform: translateY(-50%); object-fit: contain; object-position: right center; opacity: .9; pointer-events: none; user-select: none; }
+.react-home-closing__content { position: relative; z-index: 1; box-sizing: border-box; width: min(720px, calc(100% - 44px)); padding: clamp(38px,5vw,64px) clamp(26px,4vw,56px); border: 1px solid rgba(223,239,244,.24); border-radius: 22px; background: linear-gradient(140deg, rgba(6,24,41,.84), rgba(9,37,57,.69)); box-shadow: 0 24px 72px rgba(0,10,20,.35), inset 0 1px 0 rgba(255,255,255,.1); backdrop-filter: blur(4px); }
+.react-home-closing > .react-home-closing__content > span { color: #f0cf78; }
+.react-home-closing h2 { color: #fff7df; text-shadow: 0 4px 18px rgba(0,0,0,.52); }
+.react-home-closing p { color: rgba(235,246,251,.94); text-shadow: 0 2px 8px rgba(0,0,0,.5); }
+
+@media (max-width: 760px) {
+  .react-home-closing { height: min(800px, calc(100dvh - var(--react-home-header-height))); min-height: min(700px, calc(100dvh - var(--react-home-header-height))); }
+  .react-home-closing::before { background: linear-gradient(180deg, rgba(4,19,34,.72) 0%, rgba(4,19,34,.84) 46%, rgba(4,19,34,.96) 100%); }
+  .react-home-closing__illustration { top: 35%; right: 50%; width: min(720px, 144vw); height: 62%; transform: translate(50%, -50%); opacity: .7; }
+  .react-home-closing__content { width: min(420px, calc(100% - 32px)); margin-top: clamp(176px,35vh,270px); padding: 28px 20px; border-radius: 18px; }
+}

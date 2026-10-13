@@ -13,6 +13,13 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(styleSource).toContain('.react-home-closing { padding: 80px 0; }');
   });
 
+  it("uses the supplied illustration behind a maximum 800px readable Closing CTA", () => {
+    expect(homeSource).toContain('className="react-home-closing__illustration" src="/manus-storage/ragnarok-universe-closing-cta-illustration_c16b4942.webp"');
+    expect(styleSource).toContain('height: min(800px, calc(100dvh - var(--react-home-header-height)))');
+    expect(styleSource).toContain('.react-home-closing::before');
+    expect(styleSource).toContain('.react-home-closing__content { position: relative; z-index: 1;');
+  });
+
   it("uses the white Gravity asset and borderless official social marks", () => {
     expect(serviceFooterSource).toContain('rou-gravity-logo-white_c5669483.png');
     expect(serviceFooterSource).toContain('/manus-storage/Discord_icon_230fdb89_6026051e.png');
