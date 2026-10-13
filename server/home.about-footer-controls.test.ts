@@ -52,7 +52,8 @@ describe("direct React Home CTA, headings, and footer", () => {
     expect(homeSource).not.toContain('className="react-home-game-info__art"');
     expect(styleSource).toContain('.react-home-layout > .react-home-game-info { position: relative; display: flex; box-sizing: border-box; height: min(860px, calc(100dvh - var(--react-home-header-height)));');
     expect(styleSource).toContain('url("/manus-storage/main2_0c694426_d1284510.png")');
-    expect(styleSource).toContain('background: linear-gradient(135deg, rgba(250, 248, 241, .86), rgba(247, 244, 234, .72));');
+    expect(styleSource).toContain('background: linear-gradient(135deg, rgba(250, 248, 241, .46), rgba(247, 244, 234, .32));');
+    expect(styleSource).toContain('.react-home-game-info__facts { background: rgba(255, 255, 255, .14); }');
   });
 
   it("uses equal fixed outer image slots for the final CTA while preserving mobile stacking", () => {
